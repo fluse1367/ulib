@@ -1,0 +1,49 @@
+dependencies {
+    compile project(':ulib-core')
+    compile project(':ulib-spigot-bungeecord-api')
+    compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.15-SNAPSHOT'
+
+    // annotation
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+}
+
+// publishing
+javadoc {
+    def projects = ['spigot-bungeecord-api', 'core']
+    for (String sub : projects) {
+        def proj = project(':ulib-' + sub)
+        source(proj.projectDir.getPath() + "/src/main/java")
+        classpath = files(classpath.files, proj.configurations.compile.collect(), proj.configurations.compileOnly.collect())
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+uploadArchives {
+    dependsOn 'build'
+    dependsOn 'javadocJar'
+    dependsOn 'sourcesJar'
+    repositories {
+        mavenDeployer {
+            repository(url: rootProject.projectDir.toURI().toURL().toString() + "/repo")
+        }
+    }
+
+    doLast {
+        File targetDir = new File(rootProject.projectDir.getPath(), "javadocs/" + project.name)
+        delete(targetDir)
+        copy {
+            from javadoc.destinationDir
+            into targetDir
+            include '**'
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

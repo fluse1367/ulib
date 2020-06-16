@@ -1,0 +1,78 @@
+dependencies {
+    compile 'org.apache.commons:commons-io:1.3.2'
+    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.4'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    compile group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
+    compile 'com.google.code.gson:gson:2.8.6'
+    compileOnly group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
+    compileOnly group: 'com.sun.mail', name: 'smtp', version: '1.6.3'
+    compileOnly group: 'org.yaml', name: 'snakeyaml', version: '1.23'
+    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    compileOnly group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
+    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.8'
+    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    compileOnly group: 'com.github.oshi', name: 'oshi-core', version: '4.2.0'
+
+    compile 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+    compile 'org.apache.httpcomponents:httpclient:4.3.5'
+
+    // aether; see https://wiki.eclipse.org/Aether
+    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-util', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-impl', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-file', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
+    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-wagon', version: '1.1.0'
+    compileOnly group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
+    compileOnly group: 'org.apache.maven.wagon', name: 'wagon-ssh', version: '3.3.4'
+
+    // annotation
+
+    compile 'org.jetbrains:annotations:16.0.2'
+
+    compile 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
+    }
+}
+
+// publishing
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+uploadArchives {
+    dependsOn 'build'
+    dependsOn 'javadocJar'
+    dependsOn 'sourcesJar'
+    repositories {
+        mavenDeployer {
+            repository(url: rootProject.projectDir.toURI().toURL().toString() + "/repo")
+        }
+    }
+
+    doLast {
+        File targetDir = new File(rootProject.projectDir.getPath(), "javadocs/" + project.name)
+        delete(targetDir)
+        copy {
+            from javadoc.destinationDir
+            into targetDir
+            include '**'
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

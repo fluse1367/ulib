@@ -1,0 +1,63 @@
+defaultTasks 'clean', 'build', 'jar'
+
+allprojects {
+
+    def major = 1, minor = 0, patch = 0, type = "SNAPSHOT"
+
+    group 'eu.software4you.ulib'
+    version "$major.$minor.$patch-$type"
+
+    repositories {
+        mavenCentral()
+
+        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://libraries.minecraft.net/' }
+
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    ext.gitCommitHash = { ->
+        try {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        } catch (Exception ignored) {
+            return "unknown"
+        }
+    }
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    compileJava {
+        options.encoding = 'UTF-8'
+    }
+
+    compileTestJava {
+        options.encoding = 'UTF-8'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    jar.doFirst {
+        manifest {
+            attributes 'Implementation-Title': project.name
+            attributes 'Implementation-Version': version + "-" + gitCommitHash()
+            attributes 'Specification-Version': version
+            attributes 'Implementation-Vendor': 'Software4You.eu'
+            attributes 'Built-By': System.getProperty("user.name")
+            attributes 'Build-Jdk': System.getProperty("java.version")
+            attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        }
+    }
+}

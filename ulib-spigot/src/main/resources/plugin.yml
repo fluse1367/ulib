@@ -1,0 +1,5 @@
+main: eu.software4you.ulib.ULibPlugin
+name: uLib
+version: {{version}}
+author: Software4You.eu
+website: https://software4you.eu

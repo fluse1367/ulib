@@ -1,0 +1,27 @@
+dependencies {
+    compile project(':ulib-core')
+    compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.15-SNAPSHOT'
+    compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.15.2-R0.1-SNAPSHOT'
+
+    // annotation
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+}
+
+// publishing
+java {
+    withSourcesJar()
+}
+
+uploadArchives {
+    dependsOn 'build'
+    dependsOn 'sourcesJar'
+    repositories {
+        mavenDeployer {
+            repository(url: rootProject.projectDir.toURI().toURL().toString() + "/repo")
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+}
