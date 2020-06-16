@@ -87,3 +87,19 @@ dependencies {
     ...
 </dependencies>
 ```
+### Build Instructions
+Linux (bash):
+```bash
+./gradlew build
+```
+
+Windows (cmd):
+```cmd
+./gradlew.bat build
+```
+
+### Attributions
+ - NBTEditor (https://github.com/BananaPuncher714/NBTEditor) Copyright (c) 2018 BananaPuncher714, licensed under the <a href="https://raw.githubusercontent.com/BananaPuncher714/NBTEditor/master/LICENSE">MIT license</a>
+ - Bukkit (Copyright (c) 2020 Bukkit, licensed under the <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/raw/LICENCE.txt">GNU General Public License v3.0</a>):
+    - YAML-Configuration Package (https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/configuration)
+    - NumberConversions Class (https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/util/NumberConversions.java)

@@ -1,4 +1,0 @@
-This software is licensed under the Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0) license. Look "LICENSE.txt" for more information.
-This software depends on some third-party software, which is located in "/lib/". You will find a list of these libraries and its license information in "/lib/LICENSES.txt".
-The spigot implementation of the uLib Software uses some third-party software. You will find a list of these software and its license information in "/lib/ULIB-SPIGOT_LICENSES.txt".
-© 2018, software4you.eu
