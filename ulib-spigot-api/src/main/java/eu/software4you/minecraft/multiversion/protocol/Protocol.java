@@ -10,6 +10,7 @@ public enum Protocol {
     v1_13_R1(401), v1_13_R2(404),
     v1_14_R1(498),
     v1_15_R1(575),
+    v1_16_R1(736),
     UNKNWON(-1);
     final int protocol;
 
