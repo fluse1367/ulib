@@ -30,7 +30,7 @@ public interface Lib {
 
     void error(String error);
 
-    void exception(Exception exception);
+    void exception(Throwable throwable);
 
-    void exception(Exception exception, String message);
+    void exception(Throwable throwable, String message);
 }

@@ -6,6 +6,8 @@ import eu.software4you.utils.ClassUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -15,10 +17,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.function.Function;
+import java.util.logging.*;
 
 public class ULib implements Lib {
 
@@ -41,7 +41,7 @@ public class ULib implements Lib {
         name = String.format("%s-%s", nameOnly, runMode.getName());
 
 
-        logger = Logger.getLogger(name);
+        logger = Logger.getLogger(instance.getClass().getSimpleName());
         logger.setUseParentHandlers(false);
     }
 
@@ -120,20 +120,33 @@ public class ULib implements Lib {
             System.out.println("Log level: " + properties.LOG_LEVEL);
         }
 
+        Function<Throwable, String> stackTraceGetter = throwable -> {
+            StringWriter wr = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(wr));
+            return wr.toString();
+        };
         // init logger
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(runMode == RunMode.STANDALONE ?
                 new Formatter() {
                     @Override
                     public String format(LogRecord record) {
-                        return String.format("[%s] %tT %s: %s\n", nameOnly, new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());
+                        StringBuilder b = new StringBuilder(String.format("[%s] %tT %s: %s\n",
+                                nameOnly, new Date(record.getMillis()), record.getLevel().getName(), record.getMessage()));
+                        if (record.getThrown() != null)
+                            b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
+                        return b.toString();
                     }
                 }
                 :
                 new Formatter() {
                     @Override
                     public String format(LogRecord record) {
-                        return String.format("[%s] %s: %s\n", nameOnly, record.getLevel().getName(), record.getMessage());
+                        StringBuilder b = new StringBuilder(String.format("[%s] %s: %s\n",
+                                nameOnly, record.getLevel().getName(), record.getMessage()));
+                        if (record.getThrown() != null)
+                            b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
+                        return b.toString();
                     }
                 });
         handler.setLevel(properties.LOG_LEVEL);
@@ -277,17 +290,15 @@ public class ULib implements Lib {
     }
 
     @Override
-    public void exception(Exception e) {
-        exception(e, null);
+    public void exception(Throwable throwable) {
+        exception(throwable, null);
     }
 
     @Override
-    public void exception(Exception e, String msg) {
+    public void exception(Throwable throwable, String msg) {
         if (msg != null && !msg.isEmpty())
-            error(msg);
+            logger.log(Level.SEVERE, msg, throwable);
         else
-            error("An unexpected exception occurred!");
-        e.printStackTrace();
-        error("Please contact the support for help.");
+            logger.log(Level.SEVERE, "An unexpected exception occurred!", throwable);
     }
 }
