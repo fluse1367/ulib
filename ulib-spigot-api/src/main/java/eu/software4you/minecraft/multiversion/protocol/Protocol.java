@@ -11,7 +11,7 @@ public enum Protocol {
     v1_14_R1(498),
     v1_15_R1(575),
     v1_16_R1(736),
-    UNKNWON(-1);
+    UNKNOWN(-1);
     final int protocol;
 
     Protocol(int protocol) {

@@ -14,7 +14,7 @@ public class MultiversionManager {
         try {
             ver = Protocol.valueOf(BukkitReflectionUtils.PackageType.getServerVersion());
         } catch (Exception e) {
-            ver = Protocol.UNKNWON;
+            ver = Protocol.UNKNOWN;
         }
         version = ver;
     }
