@@ -20,9 +20,8 @@ public class ClassUtils {
             Class.forName(className);
             return true;
         } catch (Throwable thr) {
-            ULib.getInstance().exception(thr, String.format("%s could not be loaded", className));
+            return false;
         }
-        return false;
     }
 
     /**
