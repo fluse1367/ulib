@@ -28,6 +28,7 @@ public class ULibPlugin extends ExtendedJavaPlugin {
 
 
             spigotBungeeCordBridge = new SpigotSBB(this);
+            registerEvents(spigotBungeeCordBridge);
             SBB.setInstance(spigotBungeeCordBridge);
 
             Messenger messenger = Bukkit.getMessenger();

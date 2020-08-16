@@ -7,11 +7,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import eu.software4you.minecraft.plugin.ExtendedPlugin;
+import eu.software4you.ulib.ULibPlugin;
 import eu.software4you.ulib.spigotbungeecord.bridge.message.Message;
 import eu.software4you.ulib.spigotbungeecord.bridge.message.MessageType;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,16 +23,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public class SpigotSBB extends SBB implements PluginMessageListener {
+public class SpigotSBB extends SBB implements PluginMessageListener, Listener {
     private final ExtendedPlugin plugin;
-    private final String thisServer;
+    private String thisServer = null;
     private String lastReceivedRequest;
     private String lastReceivedCommand;
 
     @SneakyThrows
     public SpigotSBB(ExtendedPlugin plugin) {
         this.plugin = plugin;
-        thisServer = new String(request(PROXY_SERVER_NAME, "ServerName", 20000).get(), StandardCharsets.UTF_8);
     }
 
     private void sendMessage(String server, Message message) {
@@ -110,4 +113,22 @@ public class SpigotSBB extends SBB implements PluginMessageListener {
                 break;
         }
     }
+
+    // attempt to get own server name
+    @EventHandler
+    public void handle(PlayerJoinEvent e) {
+        if (thisServer != null)
+            return;
+        ULibPlugin.getInstance().async(this::attemptSetThisServer);
+    }
+
+    @SneakyThrows // possible exception thrown in Future#get effectively never happens (see SBB.DataSupplier#get)
+    private void attemptSetThisServer() {
+        if (thisServer != null)
+            return;
+        thisServer = ""; // block other attempts
+        byte[] bytes = request(PROXY_SERVER_NAME, "ServerName", 5000).get();
+        thisServer = bytes == null ? null : new String(bytes, StandardCharsets.UTF_8);
+    }
+
 }
