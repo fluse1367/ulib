@@ -35,8 +35,8 @@ public class ULib implements Lib {
     private ULib() {
         properties = Properties.getInstance();
         version = ULib.class.getPackage().getImplementationVersion();
-        runMode = ClassUtils.isClass("eu.software4you.ulib.ULibSpigot") ?
-                RunMode.SPIGOT : (ClassUtils.isClass("eu.software4you.ulib.ULibBungeeCord") ? RunMode.BUNGEECORD : RunMode.STANDALONE);
+        runMode = ClassUtils.isClass("eu.software4you.ulib.spigotbungeecord.bridge.SpigotSBB") ?
+                RunMode.SPIGOT : (ClassUtils.isClass("eu.software4you.ulib.spigotbungeecord.bridge.BungeeCordSBB") ? RunMode.BUNGEECORD : RunMode.STANDALONE);
         nameOnly = "uLib";
         name = String.format("%s-%s", nameOnly, runMode.getName());
 
