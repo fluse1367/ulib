@@ -41,7 +41,7 @@ public class ULib implements Lib {
         name = String.format("%s-%s", nameOnly, runMode.getName());
 
 
-        logger = Logger.getLogger(instance.getClass().getSimpleName());
+        logger = Logger.getLogger(getClass().getName());
         logger.setUseParentHandlers(false);
     }
 
@@ -55,9 +55,12 @@ public class ULib implements Lib {
 
     private void requireLibraryUnsafe(String coords, String testClass) throws Exception {
         logger.fine(String.format("Soft-Requiring %s from maven central repo without further dependency resolving", coords));
-        if (ClassUtils.isClass(testClass))
+        if (ClassUtils.isClass(testClass)) {
             // if this point is reached, the test class is already loaded, which means there is no need to download the library
+            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
+            logger.fine(String.format("Class %s of library %s is already loaded in the runtime: %s", testClass, coords, file));
             return;
+        }
         //  we need to download the library and attach it to classpath
         try {
             requireLibraryUnsafe(coords);
@@ -69,9 +72,11 @@ public class ULib implements Lib {
             // check if testClass is accessible (should be at this point)
             Class.forName(testClass);
             // if this point is reached, the test class was successfully downloaded and added to the classpath
-        } catch (Exception e) {
+            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
+            logger.fine(String.format("Class %s of library %s successfully loaded into the runtime: %s", testClass, coords, file));
+        } catch (Throwable thr) {
             // Class.forName(String) failed (again), library was not loaded (should never happen)
-            throw new Exception(String.format("Class %s of library %s was not loaded", testClass, coords), e);
+            throw new Exception(String.format("Class %s of library %s was not loaded", testClass, coords), thr);
         }
     }
 

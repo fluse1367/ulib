@@ -23,6 +23,8 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 
+import java.io.File;
+
 public class MavenRepository {
     public static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
     public static final RemoteRepository JITPACK = new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build();
@@ -59,9 +61,13 @@ public class MavenRepository {
     public static void requireLibrary(String coords, String testClass, RemoteRepository repository) throws Exception {
         ULib.getInstance().getLogger().fine(String.format("Soft-Requiring %s from repo %s", coords, repository.getUrl()));
         // TODO: dependencies of library?
-        if (ClassUtils.isClass(testClass))
+        if (ClassUtils.isClass(testClass)) {
             // if this point is reached, the test class is already loaded, which means there is no need to download the library
+            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
+            ULib.getInstance().getLogger().fine(String.format("Class %s of library %s is already loaded in the runtime: %s",
+                    testClass, coords, file));
             return;
+        }
         // we need to download the library and attach it to classpath
         try {
             requireLibrary(coords, repository);
@@ -74,6 +80,9 @@ public class MavenRepository {
             // check if testClass is accessible (should be at this point)
             Class.forName(testClass);
             // if this point is reached, the test class was successfully downloaded and added to the classpath
+            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
+            ULib.getInstance().getLogger().fine(String.format("Class %s of library %s successfully loaded into the runtime: %s",
+                    testClass, coords, file));
         } catch (Exception e) {
             // Class.forName(String) failed (again), library was not loaded (should never happen)
             throw new Exception(String.format("Class %s of library %s from %s (%s) was not loaded",
