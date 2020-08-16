@@ -4,7 +4,6 @@ import eu.software4you.ulib.ULib;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +19,10 @@ public class ClassUtils {
         try {
             Class.forName(className);
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (Throwable thr) {
+            ULib.getInstance().exception(thr, String.format("%s could not be loaded", className));
         }
+        return false;
     }
 
     /**
@@ -33,9 +33,10 @@ public class ClassUtils {
     public static Class<?> forName(String className) {
         try {
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            return null;
+        } catch (Throwable thr) {
+            ULib.getInstance().exception(thr, String.format("%s could not be loaded", className));
         }
+        return null;
     }
 
     /**
@@ -46,9 +47,15 @@ public class ClassUtils {
      */
     public static Object getEnumEntry(String enumName, String enumEntry) {
         try {
-            return getEnumEntry(Class.forName(enumName), enumEntry);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Class<?> enumClass = Class.forName(enumName);
+            if (!enumClass.isAssignableFrom(Enum.class)) {
+                ULib.getInstance().error(String.format("%s is not an enumeration", enumClass.getSimpleName()));
+                return null;
+            }
+            Class<? extends Enum<?>> e = (Class<? extends Enum<?>>) enumClass;
+            return getEnumEntry(e, enumEntry);
+        } catch (Throwable thr) {
+            thr.printStackTrace();
         }
         return null;
     }
@@ -59,11 +66,11 @@ public class ClassUtils {
      * @return the {@code Class} object for the class with the
      * specified name, or if the class does not exist null.
      */
-    public static Object getEnumEntry(Class<?> enumClass, String enumEntry) {
+    public static Object getEnumEntry(Class<? extends Enum<?>> enumClass, String enumEntry) {
         try {
             return enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (Throwable thr) {
+            ULib.getInstance().exception(thr, String.format("%s could not be found in %s", enumEntry, enumClass.getName()));
         }
         return null;
     }
@@ -165,100 +172,4 @@ public class ClassUtils {
         ULib.getInstance().debug(String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
         return null;
     }
-
-    /*public static void generateClassLayer(Class<?> clazz, PrintStream out) {
-        java.util.List<String> imports = new java.util.ArrayList<>();
-        java.util.LinkedHashMap<String, String> methods = new java.util.LinkedHashMap<>();
-        for (java.lang.reflect.Method m : clazz.getDeclaredMethods()) {
-
-            String header = m.toString();
-            String[] parts = header.split("\\(")[0].split(" ");
-            String returnment = parts[parts.length - 2];
-            String name = parts[parts.length - 1];
-            String arguments = header.substring(header.indexOf("(") + 1, header.lastIndexOf(")"));
-            String[] parameters = arguments.split(",");
-            String throwing = header.substring(header.lastIndexOf(")") + 1);
-
-
-            if (!imports.contains(returnment) && !eu.software4you.reflection.Datatypes.isPrimitiveDatatype(returnment) && !returnment.endsWith("[]") && !returnment.equals(""))
-                imports.add(returnment);
-            if (returnment.contains(".")) returnment = returnment.substring(returnment.lastIndexOf('.') + 1);
-            if (name.contains(".")) name = name.substring(name.lastIndexOf('.') + 1);
-
-            for (int i = 0; i < parameters.length; i++) {
-                String parameter = parameters[i];
-                if (!imports.contains(parameter) && !eu.software4you.reflection.Datatypes.isPrimitiveDatatype(parameter) && !parameter.endsWith("[]") && !parameter.equals(""))
-                    imports.add(parameter);
-                String repl = parameter.contains(".") ? parameter.substring(parameter.lastIndexOf('.') + 1) : parameter;
-                parameters[i] = repl + (repl.equals("") ? "" : " var" + i);
-            }
-
-            if (throwing.startsWith(" throws ")) {
-                String[] throwed = throwing.substring(" throws ".length()).split(",");
-                for (int i = 0; i < throwed.length; i++) {
-                    String th = throwed[i];
-                    if (!imports.contains(th)) imports.add(th);
-                    throwing = throwing.replace(th, th.substring(th.lastIndexOf('.') + 1));
-                }
-            }
-
-            header = header.substring(0, header.indexOf(parts[parts.length - 2]));
-
-            String vars = "";
-            String params = "";
-            for (int i = 0; i < parameters.length; i++)
-                if (!parameters[i].equals("")) {
-                    params += parameters[i] + (i < parameters.length - 1 ? ", " : "");
-                    vars += "var" + i + (i < parameters.length - 1 ? ", " : "");
-                }
-
-            header += returnment + " " + name + "(" + params + ")" + throwing;
-
-
-            //methods.put(header, (returnment.equals("void") ? "" : "return ")+"this.player."+name+"("+vars+")");
-            methods.put(header, (returnment.equals("void") ? "" : "return (" + returnment + ") ") + "getMethod(\"" + name + "\").invoke(object" + (vars.equals("") ? "" : ", " + vars) + ")");
-        }
-
-        out.println("package " + clazz.getPackage().getName() + ";\n");
-        out.println("import eu.software4you.reflection.UniClass;");
-        out.println("import eu.software4you.utils.ClassUtils;");
-        imports.forEach(im -> out.println("import " + im + ";"));
-        out.println("\npublic class " + clazz.getSimpleName() + " extends UniClass {");
-        out.println();
-        out.println("\tprivate final Object object;");
-        out.println();
-        out.println("\tpunlic " + clazz.getSimpleName() + "(Object object) {");
-        out.println("\t\tsuper(ClassUtils.forName(\"" + clazz.getName() + "\"));");
-        out.println("\t\tthis.object = object;");
-        out.println("\t}");
-        out.println();
-        methods.forEach((method, call) -> out.println("\t" + method + " {\n\t\t" + call + ";\n\t}\n"));
-        out.println("}");
-        if (out != System.out)
-            out.close();
-    }
-
-    public static void loadClasses(File file) throws IOException {
-        JarFile jarFile = new JarFile(file);
-        Enumeration<JarEntry> e = jarFile.entries();
-
-        URL[] urls = {new URL("jar:file:" + file.getPath().replace("\\", "/") + "!/")};
-        URLClassLoader cl = URLClassLoader.newInstance(urls);
-
-        while (e.hasMoreElements()) {
-            JarEntry je = e.nextElement();
-            if (je.isDirectory() || !je.getName().endsWith(".class")) {
-                continue;
-            }
-            // -6 because of .class
-            String className = je.getName().substring(0, je.getName().length() - 6);
-            className = className.replace('/', '.');
-            try {
-                Class c = cl.loadClass(className);
-            } catch (Exception e1) {
-                //e1.printStackTrace();
-            }
-
-        }
-    }*/
 }
