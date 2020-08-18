@@ -54,42 +54,12 @@ public class ULib implements Lib {
 
         if (!properties.QUIET) {
             System.out.println(properties.BRAND);
-            System.out.println(String.format("uLib by software4you.eu, running %s implementation version %s", runMode.getName(), version));
+            System.out.printf("uLib by software4you.eu, running %s implementation version %s%n", runMode.getName(), version);
             System.out.println("Log level: " + properties.LOG_LEVEL);
+            System.out.println("This uLib log file will be placed in: " + properties.DATA_DIR);
         }
 
-        Function<Throwable, String> stackTraceGetter = throwable -> {
-            StringWriter wr = new StringWriter();
-            throwable.printStackTrace(new PrintWriter(wr));
-            return wr.toString();
-        };
-        // init logger
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(runMode == RunMode.STANDALONE ?
-                new Formatter() {
-                    @Override
-                    public String format(LogRecord record) {
-                        StringBuilder b = new StringBuilder(String.format("[%s] %tT %s: %s\n",
-                                nameOnly, new Date(record.getMillis()), record.getLevel().getName(), record.getMessage()));
-                        if (record.getThrown() != null)
-                            b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
-                        return b.toString();
-                    }
-                }
-                :
-                new Formatter() {
-                    @Override
-                    public String format(LogRecord record) {
-                        StringBuilder b = new StringBuilder(String.format("[%s] %s: %s\n",
-                                nameOnly, record.getLevel().getName(), record.getMessage()));
-                        if (record.getThrown() != null)
-                            b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
-                        return b.toString();
-                    }
-                });
-        handler.setLevel(properties.LOG_LEVEL);
-        logger.addHandler(handler);
-        logger.setLevel(properties.LOG_LEVEL);
+        prepareLogger(logger);
 
         long started = System.currentTimeMillis();
         info("Startup ...");
@@ -169,6 +139,51 @@ public class ULib implements Lib {
         info(String.format("Startup done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
                 .divide(BigDecimal.valueOf(1000), new MathContext(2, RoundingMode.HALF_UP)).toPlainString()
         ));
+    }
+
+    private void prepareLogger(Logger logger) {
+        Function<Throwable, String> stackTraceGetter = throwable -> {
+            StringWriter wr = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(wr));
+            return wr.toString();
+        };
+        // init logger
+        PrintStream err = System.err;
+        // make ConsoleHandler use the actual stderr
+        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        // reset System.err to previous one
+        System.setErr(err);
+
+        consoleHandler.setFormatter(new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                StringBuilder b = new StringBuilder(String.format("[%s] %tT %s: %s\n",
+                        nameOnly, new Date(record.getMillis()), record.getLevel().getName(), record.getMessage()));
+                if (record.getThrown() != null)
+                    b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
+                return b.toString();
+            }
+        });
+        consoleHandler.setLevel(properties.LOG_LEVEL);
+        logger.addHandler(consoleHandler);
+        try {
+            FileHandler fileHandler = new FileHandler(properties.DATA_DIR.getPath() + "/ulib.%g.log",
+                    67108864 /*64 MiB*/, 16);
+            fileHandler.setFormatter(new Formatter() {
+                @Override
+                public String format(LogRecord record) {
+                    // trim ansi
+                    // https://stackoverflow.com/questions/25189651/how-to-remove-ansi-control-chars-vt100-from-a-java-string#25189932
+                    return consoleHandler.getFormatter().format(record).replaceAll("\u001B\\[[\\d;]*[^\\d;]", "");
+                }
+            });
+            fileHandler.setLevel(Level.ALL);
+            logger.addHandler(fileHandler);
+        } catch (IOException e) {
+            System.err.println("Could not append the file handler to the logger. All uLib logged records will not be saved to disk.");
+        }
+        logger.setLevel(Level.ALL);
     }
 
     @Override
