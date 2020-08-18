@@ -1,20 +1,13 @@
 package eu.software4you.ulib;
 
 import eu.software4you.aether.MavenRepository;
-import eu.software4you.utils.ClassPathHacker;
+import eu.software4you.aether.UnsafeLibraries;
 import eu.software4you.utils.ClassUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -51,66 +44,6 @@ public class ULib implements Lib {
 
     public static void makeReady() {
         instance.init();
-    }
-
-    private void requireLibraryUnsafe(String coords, String testClass) throws Exception {
-        logger.fine(String.format("Soft-Requiring %s from maven central repo without further dependency resolving", coords));
-        if (ClassUtils.isClass(testClass)) {
-            // if this point is reached, the test class is already loaded, which means there is no need to download the library
-            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
-            logger.fine(String.format("Class %s of library %s is already loaded in the runtime: %s", testClass, coords, file));
-            return;
-        }
-        //  we need to download the library and attach it to classpath
-        try {
-            requireLibraryUnsafe(coords);
-            // library successfully required and attached to classpath
-        } catch (Exception e) {
-            throw new Exception(String.format("An error occurred while loading library %s", coords), e);
-        }
-        try {
-            // check if testClass is accessible (should be at this point)
-            Class.forName(testClass);
-            // if this point is reached, the test class was successfully downloaded and added to the classpath
-            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
-            logger.fine(String.format("Class %s of library %s successfully loaded into the runtime: %s", testClass, coords, file));
-        } catch (Throwable thr) {
-            // Class.forName(String) failed (again), library was not loaded (should never happen)
-            throw new Exception(String.format("Class %s of library %s was not loaded", testClass, coords), thr);
-        }
-    }
-
-    private void requireLibraryUnsafe(String coords) throws Exception {
-        logger.fine(String.format("Requiring %s from maven central repo without further dependency resolving", coords));
-
-        File root = properties.LIBS_UNSAFE_DIR;
-
-        String[] parts = coords.split(":");
-
-        String group = parts[0];
-        String name = parts[1];
-        String version = parts[2];
-
-        String request = String.format("%s/%s/%s/%s-%s.jar",
-                group.replace(".", "/"), name, version, name, version);
-
-        File dest = new File(root, request);
-
-        if (!dest.exists()) {
-            dest.getParentFile().mkdirs();
-
-            URL requestURL = new URL("https://repo1.maven.org/maven2/" + request);
-
-            HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
-            conn.setRequestProperty("User-Agent", this.name + "/" + this.version);
-            ReadableByteChannel in = Channels.newChannel(conn.getInputStream());
-            FileOutputStream out = new FileOutputStream(dest);
-            out.getChannel().transferFrom(in, 0, Long.MAX_VALUE);
-            out.close();
-            in.close();
-        }
-
-        ClassPathHacker.addFile(dest);
     }
 
     @Override
@@ -163,39 +96,43 @@ public class ULib implements Lib {
 
         // (down-)loading dependencies from maven central
         try {
+            UnsafeLibraries libs = new UnsafeLibraries(getLogger(), String.format("%s/%s", nameOnly, version));
+
             debug("Preparing for aether ...");
 
-            requireLibraryUnsafe("org.apache.commons:commons-lang3:3.8.1", "org.apache.commons.lang3.StringUtils");
-            requireLibraryUnsafe("com.google.guava:guava:27.0.1-jre", "com.google.common.base.Objects");
-            requireLibraryUnsafe("commons-logging:commons-logging:1.2", "org.apache.commons.logging.Log");
+            libs.require("org.apache.commons:commons-lang3:3.8.1", "org.apache.commons.lang3.StringUtils");
+            libs.require("com.google.guava:guava:27.0.1-jre", "com.google.common.base.Objects");
+            libs.require("commons-logging:commons-logging:1.2", "org.apache.commons.logging.Log");
 
 
             debug("Loading aether components ...");
 
-            requireLibraryUnsafe("org.eclipse.aether:aether-api:1.1.0", "org.eclipse.aether.RepositorySystem");
-            requireLibraryUnsafe("org.eclipse.aether:aether-util:1.1.0", "org.eclipse.aether.util.StringUtils");
-            requireLibraryUnsafe("org.eclipse.aether:aether-spi:1.1.0", "org.eclipse.aether.spi.connector.transport.Transporter");
-            requireLibraryUnsafe("org.eclipse.aether:aether-impl:1.1.0", "org.eclipse.aether.impl.Installer");
-            requireLibraryUnsafe("org.eclipse.aether:aether-connector-basic:1.1.0", "org.eclipse.aether.connector.basic.ChecksumCalculator");
-            requireLibraryUnsafe("org.eclipse.aether:aether-transport-file:1.1.0", "org.eclipse.aether.transport.file.FileTransporter");
+            libs.require("org.eclipse.aether:aether-api:1.1.0", "org.eclipse.aether.RepositorySystem");
+            libs.require("org.eclipse.aether:aether-util:1.1.0", "org.eclipse.aether.util.StringUtils");
+            libs.require("org.eclipse.aether:aether-spi:1.1.0", "org.eclipse.aether.spi.connector.transport.Transporter");
+            libs.require("org.eclipse.aether:aether-impl:1.1.0", "org.eclipse.aether.impl.Installer");
+            libs.require("org.eclipse.aether:aether-connector-basic:1.1.0", "org.eclipse.aether.connector.basic.ChecksumCalculator");
+            libs.require("org.eclipse.aether:aether-transport-file:1.1.0", "org.eclipse.aether.transport.file.FileTransporter");
 
-            requireLibraryUnsafe("commons-codec:commons-codec:1.11", "org.apache.commons.codec.Decoder");
-            requireLibraryUnsafe("org.apache.httpcomponents:httpcore:4.3.2", "org.apache.http.HttpStatus");
-            requireLibraryUnsafe("org.apache.httpcomponents:httpclient:4.3.5", "org.apache.http.client.HttpClient");
-            requireLibraryUnsafe("org.eclipse.aether:aether-transport-http:1.1.0", "org.eclipse.aether.transport.http.HttpTransporter");
+            libs.require("commons-codec:commons-codec:1.11", "org.apache.commons.codec.Decoder");
+            libs.require("org.apache.httpcomponents:httpcore:4.3.2", "org.apache.http.HttpStatus");
+            libs.require("org.apache.httpcomponents:httpclient:4.3.5", "org.apache.http.client.HttpClient");
+            libs.require("org.eclipse.aether:aether-transport-http:1.1.0", "org.eclipse.aether.transport.http.HttpTransporter");
 
-            requireLibraryUnsafe("org.codehaus.plexus:plexus-utils:3.0.22", "org.codehaus.plexus.util.Scanner");
-            requireLibraryUnsafe("org.apache.maven.wagon:wagon-provider-api:1.0", "org.apache.maven.wagon.Wagon");
-            requireLibraryUnsafe("org.eclipse.aether:aether-transport-wagon:1.1.0", "org.eclipse.aether.transport.wagon.WagonTransporter");
+            libs.require("org.codehaus.plexus:plexus-utils:3.0.22", "org.codehaus.plexus.util.Scanner");
+            libs.require("org.apache.maven.wagon:wagon-provider-api:1.0", "org.apache.maven.wagon.Wagon");
+            libs.require("org.eclipse.aether:aether-transport-wagon:1.1.0", "org.eclipse.aether.transport.wagon.WagonTransporter");
 
-            requireLibraryUnsafe("org.apache.maven:maven-repository-metadata:3.3.9", "org.apache.maven.artifact.repository.metadata.Metadata");
-            requireLibraryUnsafe("org.codehaus.plexus:plexus-interpolation:1.21", "org.codehaus.plexus.interpolation.Interpolator");
-            requireLibraryUnsafe("org.codehaus.plexus:plexus-component-annotations:1.6", "org.codehaus.plexus.component.annotations.Component");
-            requireLibraryUnsafe("org.apache.maven:maven-model:3.3.9", "org.apache.maven.model.Model");
-            requireLibraryUnsafe("org.apache.maven:maven-builder-support:3.3.9", "org.apache.maven.building.Source");
-            requireLibraryUnsafe("org.apache.maven:maven-artifact:3.3.9", "org.apache.maven.artifact.Artifact");
-            requireLibraryUnsafe("org.apache.maven:maven-model-builder:3.3.9", "org.apache.maven.model.building.ModelBuilder");
-            requireLibraryUnsafe("org.apache.maven:maven-aether-provider:3.3.9", "org.apache.maven.repository.internal.MavenWorkspaceReader");
+            libs.require("org.apache.maven:maven-repository-metadata:3.3.9", "org.apache.maven.artifact.repository.metadata.Metadata");
+            libs.require("org.codehaus.plexus:plexus-interpolation:1.21", "org.codehaus.plexus.interpolation.Interpolator");
+            libs.require("org.codehaus.plexus:plexus-component-annotations:1.6", "org.codehaus.plexus.component.annotations.Component");
+            libs.require("org.apache.maven:maven-model:3.3.9", "org.apache.maven.model.Model");
+            libs.require("org.apache.maven:maven-builder-support:3.3.9", "org.apache.maven.building.Source");
+            libs.require("org.apache.maven:maven-artifact:3.3.9", "org.apache.maven.artifact.Artifact");
+            libs.require("org.apache.maven:maven-model-builder:3.3.9", "org.apache.maven.model.building.ModelBuilder");
+            libs.require("org.apache.maven:maven-aether-provider:3.3.9", "org.apache.maven.repository.internal.MavenWorkspaceReader");
+
+            // aether is now loaded with http capabilities
 
             MavenRepository.requireLibrary("org.apache.maven.wagon:wagon-ssh:3.3.4", "org.apache.maven.wagon.providers.ssh.jsch.SftpWagon");
 
@@ -265,8 +202,13 @@ public class ULib implements Lib {
     }
 
     @Override
-    public File getLibsM2dir() {
+    public File getLibsM2Dir() {
         return properties.LIBS_M2_DIR;
+    }
+
+    @Override
+    public File getLibsUnsafeDir() {
+        return properties.LIBS_UNSAFE_DIR;
     }
 
     @Override

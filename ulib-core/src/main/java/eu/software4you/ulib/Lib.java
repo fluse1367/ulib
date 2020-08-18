@@ -18,7 +18,9 @@ public interface Lib {
 
     File getDataDir();
 
-    File getLibsM2dir();
+    File getLibsM2Dir();
+
+    File getLibsUnsafeDir();
 
     void debug(String debug);
 

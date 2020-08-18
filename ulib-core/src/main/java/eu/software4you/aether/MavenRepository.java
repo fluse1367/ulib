@@ -2,7 +2,7 @@ package eu.software4you.aether;
 
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.ClassPathHacker;
-import eu.software4you.utils.ClassUtils;
+import lombok.SneakyThrows;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -22,8 +22,6 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
-
-import java.io.File;
 
 public class MavenRepository {
     public static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
@@ -48,54 +46,28 @@ public class MavenRepository {
     private static RepositorySystemSession _newSession(RepositorySystem system) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository(ULib.getInstance().getLibsM2dir());
+        LocalRepository localRepo = new LocalRepository(ULib.getInstance().getLibsM2Dir());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
         return session;
     }
 
-    public static void requireLibrary(String coords, String testClass) throws Exception {
+    public static void requireLibrary(String coords, String testClass) {
         requireLibrary(coords, testClass, MAVEN_CENTRAL);
     }
 
-    public static void requireLibrary(String coords, String testClass, RemoteRepository repository) throws Exception {
+    @SneakyThrows
+    public static void requireLibrary(String coords, String testClass, RemoteRepository repository) {
         ULib.getInstance().getLogger().fine(String.format("Soft-Requiring %s from repo %s", coords, repository.getUrl()));
-        // TODO: dependencies of library?
-        if (ClassUtils.isClass(testClass)) {
-            // if this point is reached, the test class is already loaded, which means there is no need to download the library
-            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
-            ULib.getInstance().getLogger().fine(String.format("Class %s of library %s is already loaded in the runtime: %s",
-                    testClass, coords, file));
-            return;
-        }
-        // we need to download the library and attach it to classpath
-        try {
-            requireLibrary(coords, repository);
-            // library successfully required and attached to classpath
-        } catch (Exception e) {
-            throw new Exception(String.format("An error occurred while loading library %s from %s (%s)",
-                    coords, repository.getId(), repository.getUrl()), e);
-        }
-        try {
-            // check if testClass is accessible (should be at this point)
-            Class.forName(testClass);
-            // if this point is reached, the test class was successfully downloaded and added to the classpath
-            File file = new File(Class.forName(testClass).getProtectionDomain().getCodeSource().getLocation().toURI());
-            ULib.getInstance().getLogger().fine(String.format("Class %s of library %s successfully loaded into the runtime: %s",
-                    testClass, coords, file));
-        } catch (Exception e) {
-            // Class.forName(String) failed (again), library was not loaded (should never happen)
-            throw new Exception(String.format("Class %s of library %s from %s (%s) was not loaded",
-                    testClass, coords, repository.getId(), repository.getUrl()), e);
-        }
+        UnsafeLibraries.classTest(testClass, coords, () -> requireLibrary(coords, repository));
     }
 
-    public static void requireLibrary(String coords) throws Exception {
-
+    public static void requireLibrary(String coords) {
         requireLibrary(coords, MAVEN_CENTRAL);
     }
 
-    public static void requireLibrary(String coords, RemoteRepository repository) throws Exception {
+    @SneakyThrows
+    public static void requireLibrary(String coords, RemoteRepository repository) {
         ULib.getInstance().getLogger().fine(String.format("Requiring %s from repo %s", coords, repository.getUrl()));
 
         Dependency dependency =
