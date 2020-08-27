@@ -34,6 +34,7 @@ class Properties {
     final File LIBS_M2_DIR;
     final File LIBS_UNSAFE_DIR;
     final boolean QUIET;
+    final boolean NO_SPLASH;
     final Level LOG_LEVEL;
     final String BRAND;
     final Map<String, String> ADDITIONAL_LIBS = new HashMap<>();
@@ -59,6 +60,8 @@ class Properties {
         LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(LIBS_DIR, "unsafe");
 
         QUIET = System.getProperty("eu.software4you.ulib.quiet", "false").equalsIgnoreCase("true");
+
+        NO_SPLASH = System.getProperty("eu.software4you.ulib.splash", "true").equalsIgnoreCase("false");
 
         Level logLevel = Level.INFO;
         try {

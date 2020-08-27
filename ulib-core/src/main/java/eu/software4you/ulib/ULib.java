@@ -51,7 +51,7 @@ public class ULib implements Lib {
             return;
         init = true;
 
-        if (!properties.QUIET) {
+        if (!properties.NO_SPLASH) {
             System.out.println(properties.BRAND);
             System.out.printf("uLib by software4you.eu, running %s implementation version %s%n", runMode.getName(), version);
             System.out.println("Log level: " + properties.LOG_LEVEL);
