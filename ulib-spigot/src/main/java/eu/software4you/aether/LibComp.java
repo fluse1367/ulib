@@ -27,7 +27,7 @@ class LibComp implements Comp {
             Plugin plugin = (Plugin) ReflectUtil.forceCall(pluginClassLoader, classLoader, "plugin");
 
             ULib.getInstance().getLogger().warning(String.format("Library %s was found in the plugin %s (%s). This may cause fatal compatibility issues." +
-                    " If those arise consider removing the library from %2$s (%3$s) as it will be loaded by uLib anyways.", coords, plugin.getName(), file));
+                    " If those arise consider removing the library from %2$s (%3$s) as it will be loaded by uLib anyways.", coords, plugin.getName(), file.getName()));
 
         } catch (Throwable ignored) {
         }

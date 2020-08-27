@@ -32,7 +32,7 @@ public class UnsafeLibraries {
             Class<?> testClazz = Class.forName(testClass);
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.getInstance().getLogger().fine(String.format("Class %s of library %s is already loaded in the runtime: %s",
-                    testClass, coords, file));
+                    testClass, coords, file.getName()));
             getComp().check(coords, testClazz);
             return;
         }
@@ -49,7 +49,7 @@ public class UnsafeLibraries {
             // if this point is reached, the test class was successfully downloaded and added to the classpath
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.getInstance().getLogger().fine(String.format("Class %s of library %s successfully loaded into the runtime: %s",
-                    testClass, coords, file));
+                    testClass, coords, file.getName()));
             getComp().check(coords, testClazz);
         } catch (Throwable thr) {
             // Class.forName(String) failed (again), library was not loaded (should never happen)
