@@ -15,6 +15,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
 public class UnsafeLibraries {
+    private static Comp comp = null;
     private final Logger logger;
     private final String agent;
 
@@ -58,16 +59,19 @@ public class UnsafeLibraries {
 
     @SneakyThrows
     static Comp getComp() {
+        if (comp != null)
+            return comp;
+
         if (!ClassUtils.isClass("eu.software4you.aether.LibComp")) {
             ULib.getInstance().getLogger().warning("Not using a compatibility checker for already loaded libraries");
             // return regular non-checking instance
-            return (coords, clazz) -> {
+            return comp = (coords, clazz) -> {
                 // not checking compatibility
             };
         }
         Constructor<?> constructor = Class.forName("eu.software4you.aether.LibComp").getDeclaredConstructor();
         constructor.setAccessible(true);
-        return (Comp) constructor.newInstance();
+        return comp = (Comp) constructor.newInstance();
     }
 
     public void require(String coords, String testClass) {
