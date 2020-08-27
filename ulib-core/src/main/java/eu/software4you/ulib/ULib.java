@@ -4,14 +4,13 @@ import eu.software4you.aether.MavenRepository;
 import eu.software4you.aether.UnsafeLibraries;
 import eu.software4you.utils.ClassUtils;
 
-import java.io.*;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Date;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ULib implements Lib {
 
@@ -59,7 +58,9 @@ public class ULib implements Lib {
             System.out.println("This uLib log file will be placed in: " + properties.DATA_DIR);
         }
 
-        prepareLogger(logger);
+        LoggingFactory factory = new LoggingFactory(properties, logger, this);
+
+        factory.prepare();
 
         long started = System.currentTimeMillis();
         info("Startup ...");
@@ -122,6 +123,9 @@ public class ULib implements Lib {
             MavenRepository.requireLibrary("javax.mail:javax.mail-api:1.6.2", "javax.mail.Message");
             MavenRepository.requireLibrary("net.sf.jopt-simple:jopt-simple:6.0-alpha-3", "joptsimple.OptionParser");
             MavenRepository.requireLibrary("com.google.code.gson:gson:2.8.6", "com.google.gson.Gson");
+            MavenRepository.requireLibrary("org.fusesource.jansi:jansi:1.18", "org.fusesource.jansi.Ansi");
+
+            factory.systemInstall();
 
             if (!properties.ADDITIONAL_LIBS.isEmpty()) {
                 debug("Loading additional libraries ...");
@@ -139,51 +143,6 @@ public class ULib implements Lib {
         info(String.format("Startup done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
                 .divide(BigDecimal.valueOf(1000), new MathContext(2, RoundingMode.HALF_UP)).toPlainString()
         ));
-    }
-
-    private void prepareLogger(Logger logger) {
-        Function<Throwable, String> stackTraceGetter = throwable -> {
-            StringWriter wr = new StringWriter();
-            throwable.printStackTrace(new PrintWriter(wr));
-            return wr.toString();
-        };
-        // init logger
-        PrintStream err = System.err;
-        // make ConsoleHandler use the actual stderr
-        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        // reset System.err to previous one
-        System.setErr(err);
-
-        consoleHandler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                StringBuilder b = new StringBuilder(String.format("[%s] %tT %s: %s\n",
-                        nameOnly, new Date(record.getMillis()), record.getLevel().getName(), record.getMessage()));
-                if (record.getThrown() != null)
-                    b.append(stackTraceGetter.apply(record.getThrown())).append("\n");
-                return b.toString();
-            }
-        });
-        consoleHandler.setLevel(properties.LOG_LEVEL);
-        logger.addHandler(consoleHandler);
-        try {
-            FileHandler fileHandler = new FileHandler(properties.DATA_DIR.getPath() + "/ulib.%g.log",
-                    67108864 /*64 MiB*/, 16);
-            fileHandler.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    // trim ansi
-                    // https://stackoverflow.com/questions/25189651/how-to-remove-ansi-control-chars-vt100-from-a-java-string#25189932
-                    return consoleHandler.getFormatter().format(record).replaceAll("\u001B\\[[\\d;]*[^\\d;]", "");
-                }
-            });
-            fileHandler.setLevel(Level.ALL);
-            logger.addHandler(fileHandler);
-        } catch (IOException e) {
-            System.err.println("Could not append the file handler to the logger. All uLib logged records will not be saved to disk.");
-        }
-        logger.setLevel(Level.ALL);
     }
 
     @Override

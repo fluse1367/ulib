@@ -20,6 +20,8 @@ dependencies {
     compile 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
     compile 'org.apache.httpcomponents:httpclient:4.3.5'
 
+    compile 'org.fusesource.jansi:jansi:1.18'
+
     // aether; see https://wiki.eclipse.org/Aether
     compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
     compileOnly group: 'org.eclipse.aether', name: 'aether-util', version: '1.1.0'
