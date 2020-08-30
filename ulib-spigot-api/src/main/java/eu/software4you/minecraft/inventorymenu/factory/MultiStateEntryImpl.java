@@ -32,7 +32,7 @@ class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry<T> {
     @Override
     public void setState(T state) {
         currentState = state;
-        setRepresentation(representations.get(state));
+        setRepresentation(getRepresentation(state));
     }
 
     @Override
