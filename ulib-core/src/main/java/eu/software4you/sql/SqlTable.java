@@ -30,7 +30,10 @@ public class SqlTable {
             // INSECURE
             String cmd = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (";
             for (Key key : defaultKeys) {
-                cmd += "`" + key + "` " + key.type;
+                cmd += "`" + key + "` " + key.type.id;
+                if (key.size != null || key.type.size > 0) {
+                    cmd += "(" + (key.size == null ? key.type.size : key.size) + ")";
+                }
                 if (key.notNull) {
                     cmd += " NOT NULL";
                 }
@@ -56,8 +59,12 @@ public class SqlTable {
 
         for (Key key : defaultKeys) {
 
-            cmd += "? " + key.type;
+            cmd += "? " + key.type.id;
             params.add(key.key);
+            if (key.size != null || key.type.size > 0) {
+                cmd += "(?)";
+                params.add(key.size == null ? key.type.size : key.size);
+            }
             if (key.notNull) {
                 cmd += " not null";
             }
@@ -186,6 +193,7 @@ public class SqlTable {
     public static class Key {
         private final String key;
         private final KeyType type;
+        private Integer size;
         private Object defaultValue = null;
         private boolean notNull = false;
         private boolean primary = false;
@@ -237,7 +245,7 @@ public class SqlTable {
          * @return the instance
          */
         public Key size(int size) {
-            type.size = size;
+            this.size = size;
             return this;
         }
 
@@ -300,8 +308,8 @@ public class SqlTable {
             ;
 
 
+            public final int size;
             private final String id;
-            public int size;
 
             KeyType(String id) {
                 this(id, -1);
@@ -310,17 +318,6 @@ public class SqlTable {
             KeyType(String id, int size) {
                 this.id = id;
                 this.size = size;
-            }
-
-            /**
-             * @return query part
-             */
-            @Override
-            public String toString() {
-                String ret = this.id;
-                if (size > 0)
-                    ret += "(" + this.size + ")";
-                return ret;
             }
         }
 
