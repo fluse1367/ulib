@@ -1,6 +1,7 @@
 package eu.software4you.sql;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Same as {@link SqlTableWrapper}, but with a static value to detect the correct entry in the table.
@@ -119,6 +120,35 @@ public class SqlTableEntryWrapper<V> {
      */
     public boolean exists() {
         return wrapper.exists(keyVal);
+    }
+
+    /**
+     * Creates a new element in the table.
+     * <b>This method does not automatically uses the {@code keyVal}!</b>
+     *
+     * @param value  the first value to be used
+     * @param values the other values to be used
+     * @throws SQLException if a database access error occurs;
+     *                      this method is called on a closed  <code>PreparedStatement</code>
+     *                      or the SQL statement returns a <code>ResultSet</code> object
+     * @see SqlTableWrapper#insertValues(Object, Object...)
+     */
+    public void insertValues(Object value, Object... values) throws SQLException {
+        wrapper.insertValues(value, values);
+    }
+
+    /**
+     * Creates a new element in the table.
+     * <b>This method does not automatically uses the {@code keyVal}!</b>
+     *
+     * @param values the values to be used
+     * @throws SQLException if a database access error occurs;
+     *                      this method is called on a closed  <code>PreparedStatement</code>
+     *                      or the SQL statement returns a <code>ResultSet</code> object
+     * @see SqlTableWrapper#insertValues(Object[])
+     */
+    public void insertValues(Object[] values) throws SQLException {
+        wrapper.insertValues(values);
     }
 
 
