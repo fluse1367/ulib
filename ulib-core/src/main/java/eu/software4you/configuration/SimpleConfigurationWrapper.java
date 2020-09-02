@@ -50,23 +50,43 @@ public class SimpleConfigurationWrapper {
     /* primitives */
 
     public boolean bool(String path) {
-        return get(Boolean.class, path, false);
+        return section.getBoolean(path);
+    }
+
+    public boolean bool(String path, boolean def) {
+        return section.getBoolean(path, def);
     }
 
     public int integer(String path) {
-        return get(Integer.class, path, -1);
+        return section.getInt(path);
+    }
+
+    public int integer(String path, int def) {
+        return section.getInt(path, def);
     }
 
     public float floatDec(String path) {
-        return get(Float.class, path, -1F);
+        return (float) doubleDec(path);
+    }
+
+    public float floatDec(String path, float def) {
+        return (float) doubleDec(path, def);
+    }
+
+    public double doubleDec(String path, double def) {
+        return section.getDouble(path, def);
     }
 
     public double doubleDec(String path) {
-        return get(Double.class, path, -1D);
+        return section.getDouble(path);
     }
 
     public long longNum(String path) {
-        return get(Long.class, path, -1L);
+        return section.getLong(path);
+    }
+
+    public long longNum(String path, long def) {
+        return section.getLong(path, def);
     }
 
     /* complex */
