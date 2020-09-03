@@ -12,11 +12,11 @@ import java.util.Map;
  * A Wrapper for a SQL connection
  */
 public class SqlEngine {
+    private final LinkedHashMap<String, SqlTable> defaultTables = new LinkedHashMap<>();
     public boolean disableAutomaticParameterizedQueries = false;
     private ConnectionData connectionData = new ConnectionData();
     private Driver driver;
     private Connection conn = null;
-    private final LinkedHashMap<String, SqlTable> defaultTables = new LinkedHashMap<>();
 
     /**
      * Default constructor. You still have to set the connection data.
@@ -263,7 +263,7 @@ public class SqlEngine {
     }
 
     private void destroyConnection() throws SQLException {
-        if (!conn.isClosed())
+        if (isConnected())
             conn.close();
     }
 
