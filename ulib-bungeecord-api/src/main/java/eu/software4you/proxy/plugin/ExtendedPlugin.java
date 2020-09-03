@@ -1,13 +1,13 @@
 package eu.software4you.proxy.plugin;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
-import eu.software4you.proxy.configuration.SimpleLayoutWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.proxy.configuration.LayoutWrapper;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public abstract class ExtendedPlugin extends Plugin implements ProxySchedulerController, ProxyEventController, ProxyCommandController {
     public abstract void saveDefaultConfig();
 
-    public abstract SimpleConfigurationWrapper getConfig();
+    public abstract ConfigurationWrapper getConfig();
 
     public abstract void reloadConfig();
 
@@ -15,7 +15,7 @@ public abstract class ExtendedPlugin extends Plugin implements ProxySchedulerCon
 
     public abstract void saveResource(String resourcePath, boolean replace);
 
-    public abstract SimpleLayoutWrapper getLayout();
+    public abstract LayoutWrapper getLayout();
 
     public abstract void reloadLayout();
 }

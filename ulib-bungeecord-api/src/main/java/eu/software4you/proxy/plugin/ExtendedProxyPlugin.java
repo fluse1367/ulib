@@ -1,7 +1,7 @@
 package eu.software4you.proxy.plugin;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
-import eu.software4you.proxy.configuration.SimpleLayoutWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.proxy.configuration.LayoutWrapper;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
-    private final SimpleConfigurationWrapper configWrapper = new SimpleConfigurationWrapper(null);
-    private final SimpleLayoutWrapper layoutWrapper = new SimpleLayoutWrapper(null);
+    private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
+    private final LayoutWrapper layoutWrapper = new LayoutWrapper(null);
 
     @Override
     public final void saveDefaultConfig() {
@@ -22,7 +22,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public final SimpleConfigurationWrapper getConfig() {
+    public final ConfigurationWrapper getConfig() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
@@ -41,7 +41,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public final SimpleLayoutWrapper getLayout() {
+    public final LayoutWrapper getLayout() {
         if (layoutWrapper.section() == null)
             reloadLayout();
         return layoutWrapper;

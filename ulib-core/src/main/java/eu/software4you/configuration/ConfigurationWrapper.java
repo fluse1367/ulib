@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class SimpleConfigurationWrapper {
+public class ConfigurationWrapper {
     private ConfigurationSection section;
 
-    public SimpleConfigurationWrapper(ConfigurationSection section) {
+    public ConfigurationWrapper(ConfigurationSection section) {
         this.section = section;
     }
 
@@ -39,12 +39,12 @@ public class SimpleConfigurationWrapper {
         return section.getRoot();
     }
 
-    public SimpleConfigurationWrapper sub(String s) {
-        return section().isConfigurationSection(s) ? new SimpleConfigurationWrapper(section(s)) : null;
+    public ConfigurationWrapper sub(String s) {
+        return section().isConfigurationSection(s) ? new ConfigurationWrapper(section(s)) : null;
     }
 
-    public SimpleConfigurationWrapper subAndCreate(String s) {
-        return new SimpleConfigurationWrapper(sectionAndCreate(s));
+    public ConfigurationWrapper subAndCreate(String s) {
+        return new ConfigurationWrapper(sectionAndCreate(s));
     }
 
     /* primitives */

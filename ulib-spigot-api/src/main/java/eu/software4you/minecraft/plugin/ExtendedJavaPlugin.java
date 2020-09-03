@@ -1,7 +1,7 @@
 package eu.software4you.minecraft.plugin;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
-import eu.software4you.configuration.SimpleLayoutWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.Layout;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -14,8 +14,8 @@ import ported.org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
-    private final SimpleLayoutWrapper layoutWrapper = new SimpleLayoutWrapper(null);
-    private final SimpleConfigurationWrapper configWrapper = new SimpleConfigurationWrapper(null);
+    private final Layout layout = new Layout(null);
+    private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
 
     public ExtendedJavaPlugin() {
         super();
@@ -26,7 +26,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public final SimpleConfigurationWrapper getConf() {
+    public final ConfigurationWrapper getConf() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
@@ -45,16 +45,16 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public final SimpleLayoutWrapper getLayout() {
-        if (layoutWrapper.section() == null)
+    public final Layout getLayout() {
+        if (layout.section() == null)
             reloadLayout();
-        return layoutWrapper;
+        return layout;
     }
 
     @Override
     public final void reloadLayout() {
         saveDefaultLayout();
-        layoutWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "layout.yml")));
+        layout.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "layout.yml")));
     }
 
     @Override

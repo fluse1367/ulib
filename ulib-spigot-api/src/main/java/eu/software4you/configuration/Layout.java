@@ -6,8 +6,8 @@ import ported.org.bukkit.configuration.ConfigurationSection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleLayoutWrapper extends SimpleConfigurationWrapper {
-    public SimpleLayoutWrapper(ConfigurationSection section) {
+public class Layout extends ConfigurationWrapper {
+    public Layout(ConfigurationSection section) {
         super(section);
     }
 
@@ -36,5 +36,15 @@ public class SimpleLayoutWrapper extends SimpleConfigurationWrapper {
 
     public void send(CommandSender receiver, String path, Object def) {
         receiver.sendMessage(String.valueOf(get(Object.class, path, def)));
+    }
+
+    @Override
+    public Layout sub(String s) {
+        return section().isConfigurationSection(s) ? new Layout(section(s)) : null;
+    }
+
+    @Override
+    public Layout subAndCreate(String s) {
+        return new Layout(sectionAndCreate(s));
     }
 }

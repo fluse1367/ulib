@@ -7,17 +7,17 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
-public class SimpleItemStackWrapper {
+public class ItemStackWrapper {
 
     private final ConfigurationSection section;
 
     private ItemStack stack;
 
-    public SimpleItemStackWrapper(File file) {
+    public ItemStackWrapper(File file) {
         this(YamlConfiguration.loadConfiguration(file));
     }
 
-    public SimpleItemStackWrapper(ConfigurationSection section) {
+    public ItemStackWrapper(ConfigurationSection section) {
         this.section = section;
     }
 

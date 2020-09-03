@@ -1,6 +1,6 @@
 package eu.software4you.proxy.usercache;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
 import eu.software4you.proxy.plugin.ExtendedPlugin;
 import eu.software4you.reflection.ReflectUtil;
 import eu.software4you.sql.SqlEngine;
@@ -34,13 +34,13 @@ public class MainUserCache {
         SqlEngine engine = new SqlEngine();
         engine.disableAutomaticParameterizedQueries = true;
 
-        SimpleConfigurationWrapper backend = plugin.getConfig().sub("user-cache-backend");
+        ConfigurationWrapper backend = plugin.getConfig().sub("user-cache-backend");
         switch (backend.string("type").toUpperCase()) {
             case "FILE":
                 engine.setConnectionData(new SqlEngine.ConnectionData(new File(plugin.getDataFolder(), "user_cache.db")));
                 break;
             case "MYSQL":
-                SimpleConfigurationWrapper login = backend.sub("login");
+                ConfigurationWrapper login = backend.sub("login");
                 engine.setConnectionData(new SqlEngine.ConnectionData(
                         login.string("host"), login.string("user"),
                         login.string("password"), login.string("database")));

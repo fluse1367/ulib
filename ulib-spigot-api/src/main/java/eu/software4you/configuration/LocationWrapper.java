@@ -7,21 +7,21 @@ import ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-public class SimpleLocationWrapper {
+public class LocationWrapper {
 
     private final ConfigurationSection section;
 
     private Location location;
 
-    public SimpleLocationWrapper(SimpleConfigurationWrapper wrapper) {
+    public LocationWrapper(ConfigurationWrapper wrapper) {
         this(wrapper.section());
     }
 
-    public SimpleLocationWrapper(File file) {
+    public LocationWrapper(File file) {
         this(YamlConfiguration.loadConfiguration(file));
     }
 
-    public SimpleLocationWrapper(ConfigurationSection section) {
+    public LocationWrapper(ConfigurationSection section) {
         this.section = section;
     }
 

@@ -1,15 +1,15 @@
 package eu.software4you.minecraft.plugin;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
-import eu.software4you.configuration.SimpleLayoutWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.Layout;
 import org.bukkit.plugin.Plugin;
 
 public interface ExtendedPlugin extends Plugin, BukkitSchedulerController, BukkitEventController {
-    SimpleConfigurationWrapper getConf();
+    ConfigurationWrapper getConf();
 
     void saveDefaultLayout();
 
-    SimpleLayoutWrapper getLayout();
+    Layout getLayout();
 
     void reloadLayout();
 }

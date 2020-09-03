@@ -1,6 +1,6 @@
 package eu.software4you.proxy.configuration;
 
-import eu.software4you.configuration.SimpleConfigurationWrapper;
+import eu.software4you.configuration.ConfigurationWrapper;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import ported.org.bukkit.configuration.ConfigurationSection;
@@ -8,8 +8,8 @@ import ported.org.bukkit.configuration.ConfigurationSection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleLayoutWrapper extends SimpleConfigurationWrapper {
-    public SimpleLayoutWrapper(ConfigurationSection section) {
+public class LayoutWrapper extends ConfigurationWrapper {
+    public LayoutWrapper(ConfigurationSection section) {
         super(section);
     }
 
