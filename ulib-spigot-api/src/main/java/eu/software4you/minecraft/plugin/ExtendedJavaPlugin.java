@@ -12,10 +12,15 @@ import org.bukkit.scheduler.BukkitTask;
 import ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.Locale;
 
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
+    private final static String layoutBaseName = "layout";
+    private final static String layoutFileExtension = "yml";
+    private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
     private final Layout layout = new Layout(null);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
+    private String layoutFileName = defaultLayoutFileName;
 
     public ExtendedJavaPlugin() {
         super();
@@ -40,8 +45,8 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
 
     @Override
     public final void saveDefaultLayout() {
-        if (!new File(getDataFolder(), "layout.yml").exists())
-            saveResource("layout.yml", false);
+        if (!new File(getDataFolder(), layoutFileName).exists())
+            saveResource(layoutFileName, false);
     }
 
     @Override
@@ -54,7 +59,18 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     @Override
     public final void reloadLayout() {
         saveDefaultLayout();
-        layout.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "layout.yml")));
+        File layoutFile = new File(getDataFolder(), layoutFileName);
+        layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
+    }
+
+    @Override
+    public void setLayoutLocale(Locale locale) {
+        if (locale == null || locale.getLanguage().isEmpty()) {
+            layoutFileName = defaultLayoutFileName;
+        } else {
+            layoutFileName = String.format("%s.%s.%s", layoutBaseName, locale.getLanguage(), layoutFileExtension);
+        }
+        reloadLayout();
     }
 
     @Override
