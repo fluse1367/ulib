@@ -1,60 +1,76 @@
 package eu.software4you.proxy.plugin;
 
 import eu.software4you.configuration.ConfigurationWrapper;
-import eu.software4you.proxy.configuration.LayoutWrapper;
+import eu.software4you.proxy.configuration.Layout;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
+    private final static String layoutBaseName = "layout";
+    private final static String layoutFileExtension = "yml";
+    private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final LayoutWrapper layoutWrapper = new LayoutWrapper(null);
+    private final Layout layout = new Layout(null);
+    private String layoutFileName = defaultLayoutFileName;
 
     @Override
-    public final void saveDefaultConfig() {
+    public void saveDefaultConfig() {
         if (!new File(getDataFolder(), "config.yml").exists())
             saveResource("config.yml", false);
     }
 
     @Override
-    public final ConfigurationWrapper getConfig() {
+    public ConfigurationWrapper getConfig() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
     }
 
     @Override
-    public final void reloadConfig() {
+    public void reloadConfig() {
         saveDefaultConfig();
         configWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
     }
 
     @Override
-    public final void saveDefaultLayout() {
-        if (!new File(getDataFolder(), "layout.yml").exists())
-            saveResource("layout.yml", false);
+    public void saveDefaultLayout() {
+        if (!new File(getDataFolder(), layoutFileName).exists())
+            saveResource(layoutFileName, false);
     }
 
     @Override
-    public final LayoutWrapper getLayout() {
-        if (layoutWrapper.section() == null)
+    public Layout getLayout() {
+        if (layout.section() == null)
             reloadLayout();
-        return layoutWrapper;
+        return layout;
     }
 
     @Override
-    public final void reloadLayout() {
+    public void reloadLayout() {
         saveDefaultLayout();
-        layoutWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "layout.yml")));
+        File layoutFile = new File(getDataFolder(), layoutFileName);
+        layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
     }
 
     @Override
-    public final void saveResource(String resourcePath, boolean replace) {
+    public void setLayoutLocale(Locale locale) {
+        if (locale == null || locale.getLanguage().isEmpty()) {
+            layoutFileName = defaultLayoutFileName;
+        } else {
+            layoutFileName = String.format("%s.%s.%s", layoutBaseName, locale.getLanguage(), layoutFileExtension);
+        }
+        reloadLayout();
+    }
+
+    @Override
+    public void saveResource(String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -92,52 +108,52 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public final ScheduledTask async(Runnable runnable) {
+    public ScheduledTask async(Runnable runnable) {
         return getProxy().getScheduler().runAsync(this, runnable);
     }
 
     @Override
-    public final ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
+    public ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
         return getProxy().getScheduler().schedule(this, runnable, delay, unit);
     }
 
     @Override
-    public final ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
         return getProxy().getScheduler().schedule(this, runnable, delay, period, unit);
     }
 
     @Override
-    public final void cancelAllTasks() {
+    public void cancelAllTasks() {
         getProxy().getScheduler().cancel(this);
     }
 
     @Override
-    public final void registerEvents(Listener listener) {
+    public void registerEvents(Listener listener) {
         getProxy().getPluginManager().registerListener(this, listener);
     }
 
     @Override
-    public final void unregisterEvents(Listener listener) {
+    public void unregisterEvents(Listener listener) {
         getProxy().getPluginManager().unregisterListener(listener);
     }
 
     @Override
-    public final void unregisterAllEvents() {
+    public void unregisterAllEvents() {
         getProxy().getPluginManager().unregisterListeners(this);
     }
 
     @Override
-    public final void registerCommand(Command command) {
+    public void registerCommand(Command command) {
         getProxy().getPluginManager().registerCommand(this, command);
     }
 
     @Override
-    public final void unregisterCommand(Command command) {
+    public void unregisterCommand(Command command) {
         getProxy().getPluginManager().unregisterCommand(command);
     }
 
     @Override
-    public final void unregisterAllCommands() {
+    public void unregisterAllCommands() {
         getProxy().getPluginManager().unregisterCommands(this);
     }
 }

@@ -11,7 +11,7 @@ public class ULibPlugin extends ExtendedJavaPlugin {
     private static ULibPlugin instance = null;
 
     static {
-        Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.2.1", "com.cryptomorin.xseries.XMaterial");
+        Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.2.1.2", "com.cryptomorin.xseries.XMaterial");
         ULib.makeReady();
     }
 

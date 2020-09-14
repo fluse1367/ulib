@@ -31,33 +31,33 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public final ConfigurationWrapper getConf() {
+    public ConfigurationWrapper getConf() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
     }
 
     @Override
-    public final void reloadConfig() {
+    public void reloadConfig() {
         saveDefaultConfig();
         configWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
     }
 
     @Override
-    public final void saveDefaultLayout() {
+    public void saveDefaultLayout() {
         if (!new File(getDataFolder(), layoutFileName).exists())
             saveResource(layoutFileName, false);
     }
 
     @Override
-    public final Layout getLayout() {
+    public Layout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;
     }
 
     @Override
-    public final void reloadLayout() {
+    public void reloadLayout() {
         saveDefaultLayout();
         File layoutFile = new File(getDataFolder(), layoutFileName);
         layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
@@ -74,52 +74,52 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public final BukkitTask sync(Runnable runnable) {
+    public BukkitTask sync(Runnable runnable) {
         return Bukkit.getScheduler().runTask(this, runnable);
     }
 
     @Override
-    public final BukkitTask sync(Runnable runnable, long delay) {
+    public BukkitTask sync(Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLater(this, runnable, delay);
     }
 
     @Override
-    public final BukkitTask sync(Runnable runnable, long delay, long period) {
+    public BukkitTask sync(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimer(this, runnable, delay, period);
     }
 
     @Override
-    public final BukkitTask async(Runnable runnable) {
+    public BukkitTask async(Runnable runnable) {
         return Bukkit.getScheduler().runTaskAsynchronously(this, runnable);
     }
 
     @Override
-    public final BukkitTask async(Runnable runnable, long delay) {
+    public BukkitTask async(Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLaterAsynchronously(this, runnable, delay);
     }
 
     @Override
-    public final BukkitTask async(Runnable runnable, long delay, long period) {
+    public BukkitTask async(Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimerAsynchronously(this, runnable, delay, period);
     }
 
     @Override
-    public final void cancelAllTasks() {
+    public void cancelAllTasks() {
         Bukkit.getScheduler().cancelTasks(this);
     }
 
     @Override
-    public final void registerEvents(Listener listener) {
+    public void registerEvents(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, this);
     }
 
     @Override
-    public final void unregisterEvents(Listener listener) {
+    public void unregisterEvents(Listener listener) {
         HandlerList.unregisterAll(listener);
     }
 
     @Override
-    public final void unregisterAllEvents() {
+    public void unregisterAllEvents() {
         HandlerList.unregisterAll(this);
     }
 }
