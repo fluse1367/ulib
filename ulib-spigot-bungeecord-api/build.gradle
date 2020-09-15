@@ -12,12 +12,22 @@ java {
     withSourcesJar()
 }
 
-uploadArchives {
-    dependsOn 'build'
-    dependsOn 'sourcesJar'
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
     repositories {
-        mavenDeployer {
-            repository(url: rootProject.projectDir.toURI().toURL().toString() + "/repo")
+        maven {
+            url deployRepoUrl
+            credentials(HttpHeaderCredentials) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
         }
     }
 }

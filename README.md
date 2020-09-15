@@ -1,4 +1,4 @@
-# uLib
+# uLib <br>[![pipeline status](https://gitlab.com/software4you.eu/ulib/badges/master/pipeline.svg)](https://gitlab.com/software4you.eu/ulib/-/commits/master)
 uLib is a library designed to ease process of developing standalone applications, BungeeCord or Spigot plugins.
 
 You can lookup the current version in the `build.gradle` file.

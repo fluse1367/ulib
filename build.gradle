@@ -2,7 +2,7 @@ defaultTasks 'clean', 'build', 'jar'
 
 allprojects {
 
-    def major = 1, minor = 0, patch = 0, type = "SNAPSHOT"
+    def major = 1, minor = 0, patch = 1, type = "SNAPSHOT"
 
     group 'eu.software4you.ulib'
     version "$major.$minor.$patch-$type"
@@ -10,33 +10,51 @@ allprojects {
     repositories {
         mavenCentral()
 
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+            name 'JitPack'
+        }
 
-        maven { url 'https://libraries.minecraft.net/' }
+        maven {
+            url 'https://libraries.minecraft.net/'
+            name 'Mojang'
+        }
 
-        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        maven {
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+            name 'SpigotMC'
+        }
 
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            name 'Sonatype'
+        }
     }
 
-    ext.gitCommitHash = { ->
-        try {
-            def stdout = new ByteArrayOutputStream()
-            exec {
-                commandLine 'git', 'rev-parse', '--short', 'HEAD'
-                standardOutput = stdout
+    ext {
+        gitCommitHash = { ->
+            try {
+                def stdout = new ByteArrayOutputStream()
+                exec {
+                    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                    standardOutput = stdout
+                }
+                return stdout.toString().trim()
+            } catch (Exception ignored) {
+                return "unknown"
             }
-            return stdout.toString().trim()
-        } catch (Exception ignored) {
-            return "unknown"
         }
+
+        deployRepoUrl = 'https://gitlab.com/api/v4/projects/19415500/packages/maven'
     }
 
 }
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
     compileJava {
         options.encoding = 'UTF-8'
@@ -48,6 +66,11 @@ subprojects {
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
     jar.doFirst {
         manifest {

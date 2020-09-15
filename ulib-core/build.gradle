@@ -48,28 +48,31 @@ jar {
 }
 
 // publishing
+javadoc {
+    failOnError false
+}
+
 java {
     withJavadocJar()
     withSourcesJar()
 }
 
-uploadArchives {
-    dependsOn 'build'
-    dependsOn 'javadocJar'
-    dependsOn 'sourcesJar'
-    repositories {
-        mavenDeployer {
-            repository(url: rootProject.projectDir.toURI().toURL().toString() + "/repo")
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
         }
     }
-
-    doLast {
-        File targetDir = new File(rootProject.projectDir.getPath(), "javadocs/" + project.name)
-        delete(targetDir)
-        copy {
-            from javadoc.destinationDir
-            into targetDir
-            include '**'
+    repositories {
+        maven {
+            url deployRepoUrl
+            credentials(HttpHeaderCredentials) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
         }
     }
 }

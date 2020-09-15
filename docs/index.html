@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>docs - software4you.eu</title>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="assets/css/styles.css" rel="stylesheet">
+        <!-- Fonts CSS-->
+        <link rel="stylesheet" href="assets/css/heading.css">
+        <link rel="stylesheet" href="assets/css/body.css">
+        <link rel="shortcut icon" type="image/png" href="https://software4you.eu/favicon.ico"/>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg bg-secondary">
+            <div class="container"><img id="brandImage" src="assets/img/logo.png">
+            </div>
+        </nav>
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <!-- Masthead Avatar Image--><img class="masthead-avatar mb-5" src="assets/img/docs.png" alt="">
+                <!-- Masthead Heading-->
+                <h1 class="masthead-heading mb-0">docs. - Welcome</h1>
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                </div>
+                <p>
+                    Here is where our javadocs are hosted. They will always be updated to the latest published (snapshot) version.<br/>
+                    Just click on an item below to access the docs.
+                </p>
+                <p id="currentVersionContainer" style="display: none;">The current version is: <span id="currentVersion"></span></p>
+            </div>
+        </header>
+        <section class="page-section portfolio">
+            <div class="container">
+                <!-- Portfolio Grid Items-->
+                <div class="row justify-content-center">
+                    <!-- Portfolio Items-->
+                    <div class="col-md-4 col-lg-4 mb-5">
+                        <a href="core">
+                            <div class="portfolio-item mx-auto">
+                                <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                </div><img class="img-fluid" src="assets/img/icon-ulib-core.png"/>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 col-lg-4 mb-5">
+                        <a href="spigot">
+                            <div class="portfolio-item mx-auto">
+                                <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                </div><img class="img-fluid" src="assets/img/icon-ulib-spigot-api.png"/>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4 col-lg-4 mb-5">
+                        <a href="bungeecord">
+                            <div class="portfolio-item mx-auto">
+                                <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                </div><img class="img-fluid" src="assets/img/icon-ulib-bungeecord-api.png"/>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Copyright Section-->
+        <section class="copyright py-4 text-center text-white">
+            <div class="container"><small class="pre-wrap">Copyright © 2020 software4you.eu </small></div>
+        </section>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+            $(function() {
+                $.get("core", function(data){
+                    $('#currentVersion').text($(data).filter('title').text().split(" ")[1]);
+                    $('#currentVersionContainer').show();
+                });
+            });
+        </script>
+    </body>
+</html>

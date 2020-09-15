@@ -111,11 +111,3 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij+all
-
-# Publishing directories (symlinks)
-# not-connected links (treated as files)
-javadocs
-repo
-# conntected links (treated as directories)
-repo/
-javadocs/

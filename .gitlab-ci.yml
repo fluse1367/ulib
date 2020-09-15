@@ -1,0 +1,45 @@
+image: 'gradle:6.6.1-jdk8'
+
+cache:
+  paths:
+    - .gradle/
+    - ulib-*/build/
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - 'gradle build'
+  artifacts:
+    paths:
+      - ulib-core/build/libs/*.jar
+      - ulib-spigot-bungeecord-api/build/libs/*.jar
+      - ulib-bungeecord-api/build/libs/*.jar
+      - ulib-spigot-api/build/libs/*.jar
+
+repo:
+  stage: deploy
+  script:
+    - 'gradle publish'
+  only:
+    - master
+
+pages:
+  stage: deploy
+  script:
+    - 'gradle javadoc'
+    - 'mkdir public'
+    - 'cd public'
+    - 'cp -r ../docs ./'
+    - 'cd docs'
+    - 'mv ../../ulib-core/build/docs/javadoc core'
+    - 'mv ../../ulib-spigot-api/build/docs/javadoc spigot'
+    - 'mv ../../ulib-bungeecord-api/build/docs/javadoc bungeecord'
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
