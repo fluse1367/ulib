@@ -7,7 +7,6 @@ import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -15,7 +14,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
 public class UnsafeLibraries {
-    private static Comp comp = null;
     private final Logger logger;
     private final String agent;
 
@@ -33,7 +31,6 @@ public class UnsafeLibraries {
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.getInstance().getLogger().fine(String.format("Class %s of library %s is already loaded in the runtime: %s",
                     testClass, coords, file.getName()));
-            getComp().check(coords, testClazz);
             return;
         }
         //  we need to download the library and attach it to classpath
@@ -50,28 +47,10 @@ public class UnsafeLibraries {
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.getInstance().getLogger().fine(String.format("Class %s of library %s successfully loaded into the runtime: %s",
                     testClass, coords, file.getName()));
-            getComp().check(coords, testClazz);
         } catch (Throwable thr) {
             // Class.forName(String) failed (again), library was not loaded (should never happen)
             throw new Exception(String.format("Class %s of library %s was not loaded", testClass, coords), thr);
         }
-    }
-
-    @SneakyThrows
-    static Comp getComp() {
-        if (comp != null)
-            return comp;
-
-        if (!ClassUtils.isClass("eu.software4you.aether.LibComp")) {
-            ULib.getInstance().getLogger().warning("Not using a compatibility checker for already loaded libraries");
-            // return regular non-checking instance
-            return comp = (coords, clazz) -> {
-                // not checking compatibility
-            };
-        }
-        Constructor<?> constructor = Class.forName("eu.software4you.aether.LibComp").getDeclaredConstructor();
-        constructor.setAccessible(true);
-        return comp = (Comp) constructor.newInstance();
     }
 
     public void require(String coords, String testClass) {

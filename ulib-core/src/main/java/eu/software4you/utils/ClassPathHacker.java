@@ -29,13 +29,18 @@ public class ClassPathHacker {
      */
     public static void addURL(URL u) throws IOException {
 
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class<?> sysclass = URLClassLoader.class;
+        ClassLoader cl = ClassPathHacker.class.getClassLoader();
+
+        URLClassLoader ucl;
+        if (cl instanceof URLClassLoader)
+            ucl = (URLClassLoader) cl;
+        else
+            ucl = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
         try {
-            Method method = sysclass.getDeclaredMethod("addURL", parameters);
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", parameters);
             method.setAccessible(true);
-            method.invoke(sysloader, u);
+            method.invoke(ucl, u);
         } catch (Throwable t) {
             throw new IOException("Could not add URL to system classloader", t);
         }
