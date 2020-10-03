@@ -2,7 +2,7 @@ defaultTasks 'clean', 'build', 'jar'
 
 allprojects {
 
-    def major = 1, minor = 0, patch = 1, type = "SNAPSHOT"
+    def major = 1, minor = 0, patch = 1, type = "DEVELOPMENT-SNAPSHOT"
 
     group 'eu.software4you.ulib'
     version "$major.$minor.$patch-$type"
