@@ -21,6 +21,8 @@ build:
       - ulib-spigot-api/build/libs/*.jar
       - ulib-bungeecord/build/libs/*.jar
       - ulib-spigot/build/libs/*.jar
+  only:
+    - master
 
 repo:
   stage: deploy
