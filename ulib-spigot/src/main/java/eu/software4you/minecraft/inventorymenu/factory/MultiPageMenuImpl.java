@@ -29,13 +29,6 @@ class MultiPageMenuImpl implements MultiPageMenu {
         setPageSwitchButtons(previousPageButton, nextPageButton);
     }
 
-    static void validatePageIndex(int index, Map<Integer, Page> pages) {
-        if (index < 0)
-            throw new IndexOutOfBoundsException();
-        if (index > 0 && !pages.containsKey(index - 1))
-            throw new IllegalArgumentException(String.format("Cannot create page index %d with gap to another page: previous page with index %d does not exist", index, index - 1));
-    }
-
     @Override
     public Map<Integer, Page> getPages() {
         return Collections.unmodifiableMap(pages);
@@ -48,7 +41,7 @@ class MultiPageMenuImpl implements MultiPageMenu {
 
     @Override
     public void setPage(int index, Page page) {
-        validatePageIndex(index, pages);
+        MultiPageMenuBuilder.validatePageIndex(index, pages);
         if (page == null) {
             pages.remove(index);
             return;

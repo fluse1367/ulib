@@ -33,7 +33,7 @@ class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry<T> {
     public void setState(T state) {
         currentState = state;
         ItemStack representation = representations.get(state);
-        if(representation == null)
+        if (representation == null)
             representation = getDefaultRepresentation();
         setRepresentation(representation);
     }
