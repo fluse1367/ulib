@@ -1,6 +1,12 @@
 package eu.software4you.ulib;
 
 import eu.software4you.minecraft.PlugMan;
+import eu.software4you.minecraft.inventorymenu.MenuManager;
+import eu.software4you.minecraft.inventorymenu.MenuManagerListener;
+import eu.software4you.minecraft.inventorymenu.factory.EntryFactory;
+import eu.software4you.minecraft.inventorymenu.factory.EntryFactoryImpl;
+import eu.software4you.minecraft.inventorymenu.factory.MenuFactory;
+import eu.software4you.minecraft.inventorymenu.factory.MenuFactoryImpl;
 import eu.software4you.minecraft.plugin.ExtendedJavaPlugin;
 import eu.software4you.ulib.spigotbungeecord.bridge.SBB;
 import eu.software4you.ulib.spigotbungeecord.bridge.SpigotSBB;
@@ -36,6 +42,12 @@ public class ULibPlugin extends ExtendedJavaPlugin {
             messenger.registerIncomingPluginChannel(this, SBB.CHANNEL, spigotBungeeCordBridge);
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
             messenger.registerIncomingPluginChannel(this, "BungeeCord", spigotBungeeCordBridge);
+
+
+            EntryFactory.setInstance(new EntryFactoryImpl());
+            MenuFactory.setInstance(new MenuFactoryImpl());
+
+            MenuManager.setHandlerFunction(MenuManagerListener::new);
 
         } catch (Exception e) {
             e.printStackTrace();
