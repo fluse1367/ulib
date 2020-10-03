@@ -72,6 +72,15 @@ public class MenuManager {
     }
 
     /**
+     * Deletes a menu registration.
+     *
+     * @param menu the menu whose registration should be deleted
+     */
+    public void unregisterMenu(Menu menu) {
+        menus.remove(menu);
+    }
+
+    /**
      * Gets the respective page to an {@link Inventory}.
      *
      * @param inventory the inventory that the page displays
