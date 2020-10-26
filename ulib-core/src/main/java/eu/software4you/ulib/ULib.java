@@ -86,8 +86,8 @@ public class ULib implements Lib {
             libs.require("org.eclipse.aether:aether-transport-file:1.1.0", "org.eclipse.aether.transport.file.FileTransporter");
 
             libs.require("commons-codec:commons-codec:1.11", "org.apache.commons.codec.Decoder");
-            libs.require("org.apache.httpcomponents:httpcore:4.3.2", "org.apache.http.HttpStatus");
-            libs.require("org.apache.httpcomponents:httpclient:4.3.5", "org.apache.http.client.HttpClient");
+            libs.require("org.apache.httpcomponents:httpcore:4.4.12", "org.apache.http.HttpStatus");
+            libs.require("org.apache.httpcomponents:httpclient:4.5.10", "org.apache.http.client.HttpClient");
             libs.require("org.eclipse.aether:aether-transport-http:1.1.0", "org.eclipse.aether.transport.http.HttpTransporter");
 
             libs.require("org.codehaus.plexus:plexus-utils:3.0.22", "org.codehaus.plexus.util.Scanner");
