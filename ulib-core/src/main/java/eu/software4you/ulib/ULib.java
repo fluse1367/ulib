@@ -109,7 +109,7 @@ public class ULib implements Lib {
 
             debug("Loading libraries ...");
 
-            MavenRepository.requireLibrary("org.apache.commons:commons-io:1.3.2", "org.apache.commons.io.IOUtils");
+            MavenRepository.requireLibrary("commons-io:commons-io:2.8.0", "org.apache.commons.io.IOUtils");
             MavenRepository.requireLibrary("com.fasterxml.jackson.core:jackson-core:2.9.8", "com.fasterxml.jackson.core.JsonParser");
             MavenRepository.requireLibrary("com.fasterxml.jackson.core:jackson-databind:2.9.8", "com.fasterxml.jackson.databind.JsonSerializable");
             MavenRepository.requireLibrary("com.github.oshi:oshi-core:4.2.0", "oshi.SystemInfo");
