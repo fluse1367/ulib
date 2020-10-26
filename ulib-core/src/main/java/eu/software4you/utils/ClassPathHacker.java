@@ -1,5 +1,7 @@
 package eu.software4you.utils;
 
+import lombok.SneakyThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -16,7 +18,8 @@ public class ClassPathHacker {
      * @param f file
      * @throws IOException if file could not be added to system classloader
      */
-    public static void addFile(File f) throws IOException {
+    @SneakyThrows
+    public static void addFile(File f) {
         addURL(f.toURI().toURL());
     }
 
@@ -27,7 +30,7 @@ public class ClassPathHacker {
      * @param u url
      * @throws IOException if url could not be added to system classloader
      */
-    public static void addURL(URL u) throws IOException {
+    public static void addURL(URL u) {
 
         ClassLoader cl = ClassPathHacker.class.getClassLoader();
 
@@ -37,10 +40,24 @@ public class ClassPathHacker {
         else
             ucl = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
+        addURL(u, ucl);
+
+    }
+
+    /**
+     * Loads a JAR-File (from {@link URL}) into the Runtime, can be a remote File
+     *
+     * @param url url
+     * @param ucl The ClassLoader to load the file with.
+     * @throws IOException if url could not be added to system classloader
+     */
+    @SneakyThrows
+    public static void addURL(URL url, URLClassLoader ucl) {
+
         try {
             Method method = URLClassLoader.class.getDeclaredMethod("addURL", parameters);
             method.setAccessible(true);
-            method.invoke(ucl, u);
+            method.invoke(ucl, url);
         } catch (Throwable t) {
             throw new IOException("Could not add URL to system classloader", t);
         }
