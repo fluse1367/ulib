@@ -1,7 +1,6 @@
-# uLib <br>[![pipeline status](https://gitlab.com/software4you.eu/ulib/badges/master/pipeline.svg)](https://gitlab.com/software4you.eu/ulib/-/commits/master)
+# uLib <br>[![pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master)](https://gitlab.com/software4you.eu/ulib/-/commits/master) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-core%2Fmaven-metadata.xml) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml)
 uLib is a library designed to ease process of developing standalone applications, BungeeCord or Spigot plugins.
 
-You can lookup the current version in the `build.gradle` file.
 ### First Startup
 When launching uLib for the first time (or if you removed the libs folder), it will download a bunch of dependencies/libraries.
 This usually takes about 40-60s. To total download size is about 35-40 MB.
