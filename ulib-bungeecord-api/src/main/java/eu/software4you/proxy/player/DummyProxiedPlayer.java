@@ -63,6 +63,16 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
     }
 
     @Override
+    public void sendMessage(UUID sender, BaseComponent... message) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void sendMessage(UUID sender, BaseComponent message) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public void connect(ServerInfo serverInfo) {
         throw new NotImplementedException();
     }

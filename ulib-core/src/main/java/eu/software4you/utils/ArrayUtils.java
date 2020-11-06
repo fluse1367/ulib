@@ -13,6 +13,17 @@ public class ArrayUtils {
     }
 
     /**
+     * Checks whether an {@link T} occurs in the array
+     */
+    public static <T> boolean contains(T[] array, T obj) {
+        for (T t : array) {
+            if (t.equals(obj))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Checks whether an {@link String} occurs in the array
      */
     public static boolean arrayContainsStringIgnoreCase(String[] array, String str) {

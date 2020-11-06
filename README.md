@@ -1,5 +1,22 @@
-# uLib <br>[![pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master)](https://gitlab.com/software4you.eu/ulib/-/commits/master) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-core%2Fmaven-metadata.xml) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml)
+# uLib <br>[![pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master)](https://gitlab.com/software4you.eu/ulib/-/commits/master) [![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-core%2Fmaven-metadata.xml)](README.md#maven-setup) [![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml)](README.md#maven-setup) [![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Frepo.software4you.eu%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml)](README.md#maven-setup)
 uLib is a library designed to ease process of developing standalone applications, BungeeCord or Spigot plugins.
+
+### Disclaimer
+This library depends on recent paper/waterfall versions.
+That means it may not work as expected or may not work at all on older server versions.
+You will not receive any support, when using another server version than the one this library is built for.
+
+If you want to use older server versions, consider a cross-version compatibility tool, like
+[ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448/),
+[ViaRewind](https://www.spigotmc.org/resources/viarewind.52109/) or
+[ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201/).
+
+When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io/) and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.<br>
+Paper/Waterfall provides better performance, and an expanded API which allows uLib to implement more and better features.<br>
+uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are needed to implement some features on Spigot.<br>
+Consider using [Paper](https://papermc.io/) or [Tuinity](https://github.com/Spottedleaf/Tuinity) and [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
+
+Another thing: Note the [license of this project](./LICENSE). Use this library at your own risk! The developer(s) / contributors of this project do not take any responsibility/liability in any way.
 
 ### First Startup
 When launching uLib for the first time (or if you removed the libs folder), it will download a bunch of dependencies/libraries.

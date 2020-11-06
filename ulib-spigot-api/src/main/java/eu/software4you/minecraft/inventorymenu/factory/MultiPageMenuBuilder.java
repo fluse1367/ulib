@@ -32,6 +32,13 @@ public class MultiPageMenuBuilder {
         nextPageButton = b.name("§e§l->").build();
     }
 
+    static void validatePageIndex(int index, Map<Integer, Page> pages) {
+        if (index < 0)
+            throw new IndexOutOfBoundsException();
+        if (index > 0 && !pages.containsKey(index - 1))
+            throw new IllegalArgumentException(String.format("Cannot create page index %d with gap to another page: previous page with index %d does not exist", index, index - 1));
+    }
+
     public MultiPageMenuBuilder addPage(Page page) {
         setPage(pages.size(), page);
         return this;
@@ -46,7 +53,7 @@ public class MultiPageMenuBuilder {
     }
 
     public MultiPageMenuBuilder setPage(int index, Page page) {
-        MultiPageMenuImpl.validatePageIndex(index, pages);
+        validatePageIndex(index, pages);
         pages.put(index, page);
         return this;
     }
