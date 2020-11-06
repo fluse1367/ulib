@@ -23,6 +23,9 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 
+import java.io.File;
+import java.util.function.Consumer;
+
 public class MavenRepository {
     public static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
     public static final RemoteRepository JITPACK = new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build();
@@ -56,18 +59,34 @@ public class MavenRepository {
         requireLibrary(coords, testClass, MAVEN_CENTRAL);
     }
 
-    @SneakyThrows
+    public static void requireLibrary(String coords, String testClass, Consumer<File> loader) {
+        requireLibrary(coords, testClass, MAVEN_CENTRAL, loader);
+    }
+
     public static void requireLibrary(String coords, String testClass, RemoteRepository repository) {
+        requireLibrary(coords, testClass, repository, ClassPathHacker::addFile);
+    }
+
+    @SneakyThrows
+    public static void requireLibrary(String coords, String testClass, RemoteRepository repository, Consumer<File> loader) {
         ULib.getInstance().getLogger().fine(String.format("Soft-Requiring %s from repo %s", coords, repository.getUrl()));
-        UnsafeLibraries.classTest(testClass, coords, () -> requireLibrary(coords, repository));
+        UnsafeLibraries.classTest(testClass, coords, () -> requireLibrary(coords, repository, loader));
     }
 
     public static void requireLibrary(String coords) {
         requireLibrary(coords, MAVEN_CENTRAL);
     }
 
-    @SneakyThrows
+    public static void requireLibrary(String coords, Consumer<File> loader) {
+        requireLibrary(coords, MAVEN_CENTRAL, loader);
+    }
+
     public static void requireLibrary(String coords, RemoteRepository repository) {
+        requireLibrary(coords, repository, ClassPathHacker::addFile);
+    }
+
+    @SneakyThrows
+    public static void requireLibrary(String coords, RemoteRepository repository, Consumer<File> loader) {
         ULib.getInstance().getLogger().fine(String.format("Requiring %s from repo %s", coords, repository.getUrl()));
 
         Dependency dependency =
@@ -93,7 +112,7 @@ public class MavenRepository {
         node.accept(nlg);
 
         for (Artifact resolvedArtifact : nlg.getArtifacts(false)) {
-            ClassPathHacker.addFile(resolvedArtifact.getFile());
+            loader.accept(resolvedArtifact.getFile());
         }
     }
 

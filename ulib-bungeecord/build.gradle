@@ -1,9 +1,9 @@
 dependencies {
     compile project(':ulib-bungeecord-api')
-    compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.15-SNAPSHOT'
+    compileOnly coordsWaterfall
 
     // annotation
-    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor coordsLombok
 }
 
 def projects = ['core', 'bungeecord-api', 'spigot-bungeecord-api']

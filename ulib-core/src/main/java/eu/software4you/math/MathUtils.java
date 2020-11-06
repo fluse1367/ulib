@@ -69,4 +69,25 @@ public class MathUtils {
     public static boolean isBetween(int end1, int end2, int looking) {
         return end2 > end1 ? looking > end1 && looking < end2 : looking > end2 && looking < end1;
     }
+
+    /**
+     * Generates a roman number from a decimal one.
+     *
+     * @param num decimal input number
+     * @return roman number
+     */
+    public static String decToRoman(int num) {
+        int[] dec = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] romanLiterals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+        StringBuilder roman = new StringBuilder();
+
+        for (int i = 0; i < dec.length; i++) {
+            while (num >= dec[i]) {
+                num -= dec[i];
+                roman.append(romanLiterals[i]);
+            }
+        }
+        return roman.toString();
+    }
 }
