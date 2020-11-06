@@ -11,28 +11,8 @@ allprojects {
         mavenCentral()
 
         maven {
-            url 'https://jitpack.io'
-            name 'JitPack'
-        }
-
-        maven {
-            url 'https://libraries.minecraft.net/'
-            name 'Mojang'
-        }
-
-        maven {
-            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-            name 'SpigotMC'
-        }
-
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots/'
-            name 'Sonatype'
-        }
-
-        maven {
-            url 'https://papermc.io/repo/repository/maven-public/'
             name 'PaperMC'
+            url 'https://papermc.io/repo/repository/maven-public/'
         }
     }
 
@@ -51,6 +31,13 @@ allprojects {
         }
 
         deployRepoUrl = 'https://gitlab.com/api/v4/projects/19415500/packages/maven'
+
+        coordsPaper = 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
+        coordsWaterfall = 'io.github.waterfallmc:waterfall-api:1.16-R0.4-SNAPSHOT'
+        coordsXSeries = 'com.github.cryptomorin:XSeries:7.5.5'
+
+        coordsJetbrainsAnnotations = 'org.jetbrains:annotations:20.1.0'
+        coordsLombok = 'org.projectlombok:lombok:1.18.6'
     }
 
 }

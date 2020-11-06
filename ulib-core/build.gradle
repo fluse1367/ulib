@@ -35,10 +35,10 @@ dependencies {
 
     // annotation
 
-    compile 'org.jetbrains:annotations:16.0.2'
+    compile coordsJetbrainsAnnotations
 
-    compile 'org.projectlombok:lombok:1.18.6'
-    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+    compile coordsLombok
+    annotationProcessor coordsLombok
 }
 
 jar {
