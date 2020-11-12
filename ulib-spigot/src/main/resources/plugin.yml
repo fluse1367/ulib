@@ -3,3 +3,4 @@ name: uLib
 version: {{version}}
 author: Software4You.eu
 website: https://software4you.eu
+api-version: 1.13
