@@ -1,4 +1,4 @@
-package ported.org.bukkit.configuration.serialization;
+package ulib.ported.org.bukkit.configuration.serialization;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
-import ported.org.bukkit.configuration.Configuration;
+import ulib.ported.org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

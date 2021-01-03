@@ -1,43 +1,42 @@
 dependencies {
-    compile 'commons-io:commons-io:2.8.0'
-    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.4'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    compileOnly 'commons-io:commons-io:2.8.0' // compile
+    compileOnly 'org.apache.commons:commons-configuration2:2.4' // compile
+    compileOnly 'org.apache.commons:commons-lang3:3.8.1' // compile
 
-    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
-    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
-    compile group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
-    compile 'com.google.code.gson:gson:2.8.6'
-    compileOnly group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
-    compileOnly group: 'com.sun.mail', name: 'smtp', version: '1.6.3'
-    compileOnly group: 'org.yaml', name: 'snakeyaml', version: '1.23'
-    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
-    compileOnly group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.8'
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
-    compileOnly group: 'com.github.oshi', name: 'oshi-core', version: '4.2.0'
+    compileOnly 'commons-beanutils:commons-beanutils:1.9.3' // compile
+    compileOnly 'commons-lang:commons-lang:2.6' // compile
+    compileOnly 'commons-codec:commons-codec:1.11' // compile
+    compileOnly 'com.google.guava:guava:27.0.1-jre' // compile
+    compileOnly 'com.google.code.gson:gson:2.8.6' // compile
+    compileOnly 'javax.mail:javax.mail-api:1.6.2'
+    compileOnly 'com.sun.mail:smtp:1.6.3'
+    compileOnly 'org.yaml:snakeyaml:1.23'
+    compileOnly 'mysql:mysql-connector-java:8.0.13'
+    compileOnly 'org.xerial:sqlite-jdbc:3.25.2'
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.9.8'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
-    compile 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
-    compile 'org.apache.httpcomponents:httpclient:4.5.10'
+    compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.10' // compile
 
-    compile 'org.fusesource.jansi:jansi:1.18'
+    compileOnly 'org.fusesource.jansi:jansi:1.18' // compile
 
     // aether; see https://wiki.eclipse.org/Aether
-    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-util', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-impl', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-file', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-wagon', version: '1.1.0'
-    compileOnly group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
-    compileOnly group: 'org.apache.maven.wagon', name: 'wagon-ssh', version: '3.3.4'
+    compileOnly 'org.eclipse.aether:aether-api:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-util:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-impl:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-connector-basic:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-file:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-http:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-wagon:1.1.0'
+    compileOnly 'org.apache.maven:maven-aether-provider:3.3.9'
+    compileOnly 'org.apache.maven.wagon:wagon-ssh:3.3.4'
 
     // annotation
 
-    compile coordsJetbrainsAnnotations
+    compileOnly coordsJetbrainsAnnotations // compile
 
-    compile coordsLombok
+    compileOnly coordsLombok // compile
     annotationProcessor coordsLombok
 }
 
@@ -46,6 +45,21 @@ jar {
         attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
     }
 }
+
+//shadowing
+jar.finalizedBy { shadowJar }
+
+// https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
+shadowJar {
+    dependsOn tasks.relocateShadowJar
+    configurations = [project.configurations.compileOnly, project.configurations.shade]
+
+    archiveClassifier.set('')
+    dependencies {
+        exclude(dependency(coordsLombok))
+    }
+}
+
 
 // publishing
 javadoc {

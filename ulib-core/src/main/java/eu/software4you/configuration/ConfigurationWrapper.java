@@ -1,8 +1,8 @@
 package eu.software4you.configuration;
 
 import org.apache.commons.lang.Validate;
-import ported.org.bukkit.configuration.Configuration;
-import ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.Configuration;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.Iterator;

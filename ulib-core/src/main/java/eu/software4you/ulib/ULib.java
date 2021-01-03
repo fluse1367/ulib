@@ -1,14 +1,13 @@
 package eu.software4you.ulib;
 
 import eu.software4you.aether.MavenRepository;
-import eu.software4you.aether.UnsafeLibraries;
 import eu.software4you.utils.ClassUtils;
+import lombok.val;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,90 +58,27 @@ public class ULib implements Lib {
         }
 
         LoggingFactory factory = new LoggingFactory(properties, logger, this);
-
         factory.prepare();
+        factory.systemInstall();
 
-        long started = System.currentTimeMillis();
-        info("Startup ...");
-
-        // (down-)loading dependencies from maven central
+        // (down-)loading dependencies
         try {
-            UnsafeLibraries libs = new UnsafeLibraries(getLogger(), String.format("%s/%s", nameOnly, version));
-
-            debug("Preparing for aether ...");
-
-            libs.require("org.apache.commons:commons-lang3:3.8.1", "org.apache.commons.lang3.StringUtils");
-            libs.require("com.google.guava:guava:27.0.1-jre", "com.google.common.base.Objects");
-            libs.require("commons-logging:commons-logging:1.2", "org.apache.commons.logging.Log");
-
-
-            debug("Loading aether components ...");
-
-            libs.require("org.eclipse.aether:aether-api:1.1.0", "org.eclipse.aether.RepositorySystem");
-            libs.require("org.eclipse.aether:aether-util:1.1.0", "org.eclipse.aether.util.StringUtils");
-            libs.require("org.eclipse.aether:aether-spi:1.1.0", "org.eclipse.aether.spi.connector.transport.Transporter");
-            libs.require("org.eclipse.aether:aether-impl:1.1.0", "org.eclipse.aether.impl.Installer");
-            libs.require("org.eclipse.aether:aether-connector-basic:1.1.0", "org.eclipse.aether.connector.basic.ChecksumCalculator");
-            libs.require("org.eclipse.aether:aether-transport-file:1.1.0", "org.eclipse.aether.transport.file.FileTransporter");
-
-            libs.require("commons-codec:commons-codec:1.11", "org.apache.commons.codec.Decoder");
-            libs.require("org.apache.httpcomponents:httpcore:4.4.12", "org.apache.http.HttpStatus");
-            libs.require("org.apache.httpcomponents:httpclient:4.5.10", "org.apache.http.client.HttpClient");
-            libs.require("org.eclipse.aether:aether-transport-http:1.1.0", "org.eclipse.aether.transport.http.HttpTransporter");
-
-            libs.require("org.codehaus.plexus:plexus-utils:3.0.22", "org.codehaus.plexus.util.Scanner");
-            libs.require("org.apache.maven.wagon:wagon-provider-api:1.0", "org.apache.maven.wagon.Wagon");
-            libs.require("org.eclipse.aether:aether-transport-wagon:1.1.0", "org.eclipse.aether.transport.wagon.WagonTransporter");
-
-            libs.require("org.apache.maven:maven-repository-metadata:3.3.9", "org.apache.maven.artifact.repository.metadata.Metadata");
-            libs.require("org.codehaus.plexus:plexus-interpolation:1.21", "org.codehaus.plexus.interpolation.Interpolator");
-            libs.require("org.codehaus.plexus:plexus-component-annotations:1.6", "org.codehaus.plexus.component.annotations.Component");
-            libs.require("org.apache.maven:maven-model:3.3.9", "org.apache.maven.model.Model");
-            libs.require("org.apache.maven:maven-builder-support:3.3.9", "org.apache.maven.building.Source");
-            libs.require("org.apache.maven:maven-artifact:3.3.9", "org.apache.maven.artifact.Artifact");
-            libs.require("org.apache.maven:maven-model-builder:3.3.9", "org.apache.maven.model.building.ModelBuilder");
-            libs.require("org.apache.maven:maven-aether-provider:3.3.9", "org.apache.maven.repository.internal.MavenWorkspaceReader");
-
-            // aether is now loaded with http capabilities
-
-            MavenRepository.requireLibrary("org.apache.maven.wagon:wagon-ssh:3.3.4", "org.apache.maven.wagon.providers.ssh.jsch.SftpWagon");
-
-            debug("Loading libraries ...");
-
-            MavenRepository.requireLibrary("commons-io:commons-io:2.8.0", "org.apache.commons.io.IOUtils");
-            MavenRepository.requireLibrary("com.fasterxml.jackson.core:jackson-core:2.9.8", "com.fasterxml.jackson.core.JsonParser");
-            MavenRepository.requireLibrary("com.fasterxml.jackson.core:jackson-databind:2.9.8", "com.fasterxml.jackson.databind.JsonSerializable");
-            MavenRepository.requireLibrary("com.github.oshi:oshi-core:4.2.0", "oshi.SystemInfo");
-            MavenRepository.requireLibrary("org.yaml:snakeyaml:1.23", "org.yaml.snakeyaml.Yaml");
-            MavenRepository.requireLibrary("mysql:mysql-connector-java:8.0.13", "com.mysql.cj.MysqlConnection");
-            MavenRepository.requireLibrary("commons-lang:commons-lang:2.6", "org.apache.commons.lang.Validate");
-            MavenRepository.requireLibrary("org.xerial:sqlite-jdbc:3.25.2", "org.sqlite.core.Codes");
-            MavenRepository.requireLibrary("org.apache.commons:commons-configuration2:2.4", "org.apache.commons.configuration2.Configuration");
-            MavenRepository.requireLibrary("commons-beanutils:commons-beanutils:1.9.3", "org.apache.commons.beanutils.BeanUtils");
-            MavenRepository.requireLibrary("com.sun.mail:smtp:1.6.3", "com.sun.mail.smtp.SMTPMessage");
-            MavenRepository.requireLibrary("javax.mail:javax.mail-api:1.6.2", "javax.mail.Message");
-            MavenRepository.requireLibrary("net.sf.jopt-simple:jopt-simple:6.0-alpha-3", "joptsimple.OptionParser");
-            MavenRepository.requireLibrary("com.google.code.gson:gson:2.8.6", "com.google.gson.Gson");
-            MavenRepository.requireLibrary("org.fusesource.jansi:jansi:1.18", "org.fusesource.jansi.Ansi");
-
-            factory.systemInstall();
-
             if (!properties.ADDITIONAL_LIBS.isEmpty()) {
-                debug("Loading additional libraries ...");
+                long started = System.currentTimeMillis();
+                debug("Loading libraries ...");
 
-                for (Map.Entry<String, String> en : properties.ADDITIONAL_LIBS.entrySet()) {
-                    MavenRepository.requireLibrary(en.getKey(), en.getValue());
+                for (val en : properties.ADDITIONAL_LIBS.entrySet()) {
+                    val v = en.getValue();
+                    MavenRepository.requireLibrary(en.getKey(), v.getFirst(), v.getSecond());
                 }
+
+                info(String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
+                        .divide(BigDecimal.valueOf(1000), new MathContext(2, RoundingMode.HALF_UP)).toPlainString()
+                ));
             }
-
-
         } catch (Exception e) {
             exception(e, "Error while loading dependencies. You might experiencing issues.");
         }
-
-        info(String.format("Startup done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
-                .divide(BigDecimal.valueOf(1000), new MathContext(2, RoundingMode.HALF_UP)).toPlainString()
-        ));
     }
 
     @Override

@@ -1,8 +1,8 @@
-package ported.org.bukkit.configuration.file;
+package ulib.ported.org.bukkit.configuration.file;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import ported.org.bukkit.configuration.serialization.ConfigurationSerialization;
+import ulib.ported.org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.constructor.SafeConstructor;

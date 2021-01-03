@@ -1,6 +1,6 @@
 dependencies {
     compile project(':ulib-core')
-    compile project(':ulib-spigot-bungeecord-api')
+    compile project(':ulib-minecraft-api')
     compileOnly coordsPaper
 
     compile coordsXSeries
@@ -11,7 +11,7 @@ dependencies {
 
 // publishing
 javadoc {
-    def projects = ['spigot-bungeecord-api', 'core']
+    def projects = ['minecraft-api', 'core']
     for (String sub : projects) {
         def proj = project(':ulib-' + sub)
         source(proj.projectDir.getPath() + "/src/main/java")

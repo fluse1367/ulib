@@ -1,8 +1,8 @@
 package eu.software4you.configuration;
 
 
-import ported.org.bukkit.configuration.ConfigurationSection;
-import ported.org.bukkit.configuration.file.YamlConfiguration;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigurationConversionUtil {
     public static YamlConfiguration toPorted(org.bukkit.configuration.ConfigurationSection section) {

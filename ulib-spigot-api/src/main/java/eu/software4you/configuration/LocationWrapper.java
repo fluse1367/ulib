@@ -2,8 +2,8 @@ package eu.software4you.configuration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import ported.org.bukkit.configuration.ConfigurationSection;
-import ported.org.bukkit.configuration.file.YamlConfiguration;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 

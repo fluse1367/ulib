@@ -3,7 +3,7 @@ package eu.software4you.proxy.configuration;
 import eu.software4you.configuration.ConfigurationWrapper;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
-import ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;

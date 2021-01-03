@@ -1,9 +1,9 @@
-package ported.org.bukkit.configuration;
+package ulib.ported.org.bukkit.configuration;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import ported.org.bukkit.configuration.serialization.ConfigurationSerializable;
+import ulib.ported.org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

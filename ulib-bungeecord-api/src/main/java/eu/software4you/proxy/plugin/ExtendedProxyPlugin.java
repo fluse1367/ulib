@@ -5,7 +5,7 @@ import eu.software4you.proxy.configuration.Layout;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
-import ported.org.bukkit.configuration.file.YamlConfiguration;
+import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.util.Locale;

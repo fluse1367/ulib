@@ -6,23 +6,6 @@ dependencies {
     annotationProcessor coordsLombok
 }
 
-def projects = ['core', 'spigot-api', 'spigot-bungeecord-api']
-jar {
-    for (String sub : projects) {
-        def proj = ':ulib-' + sub
-
-        dependsOn "$proj:build"
-
-        def buildDir = project(proj).buildDir.path
-        from("$buildDir/classes/java/main") {
-            include '**'
-        }
-        from("$buildDir/resources/main") {
-            include '**'
-        }
-    }
-}
-
 processResources {
     eachFile {
         copyDetails ->
@@ -32,4 +15,34 @@ processResources {
                 }
             }
     }
+}
+
+//shadowing
+void itSubs(Jar task) {
+    def projects = ['core', 'spigot-api', 'minecraft-api']
+    for (String sub : projects) {
+        def proj = ':ulib-' + sub
+
+        task.dependsOn "$proj:build"
+
+        def buildDir = project(proj).buildDir.path
+        task.from("$buildDir/classes/java/main") { include '**' }
+        task.from("$buildDir/resources/main") { include '**' }
+    }
+
+}
+
+jar.finalizedBy { shadowJar }
+
+// https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
+shadowJar {
+    dependsOn tasks.relocateShadowJar
+    configurations = [project(':ulib-core').configurations.compileOnly]
+    itSubs(shadowJar)
+
+    archiveClassifier.set('')
+    dependencies {
+        exclude(dependency(coordsLombok))
+    }
+
 }

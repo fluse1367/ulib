@@ -3,6 +3,8 @@ dependencies {
     compileOnly coordsPaper
     compileOnly coordsWaterfall
 
+    compile files(project(':ulib-core').configurations.compileOnly) // shadowing
+
     // annotation
     annotationProcessor coordsLombok
 }

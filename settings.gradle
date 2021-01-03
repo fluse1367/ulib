@@ -4,5 +4,5 @@ include 'ulib-spigot-api'
 include 'ulib-spigot'
 include 'ulib-bungeecord-api'
 include 'ulib-bungeecord'
-include 'ulib-spigot-bungeecord-api'
+include 'ulib-minecraft-api'
 

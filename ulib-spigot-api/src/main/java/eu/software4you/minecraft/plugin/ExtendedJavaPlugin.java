@@ -9,7 +9,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
-import ported.org.bukkit.configuration.file.YamlConfiguration;
+import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.Locale;

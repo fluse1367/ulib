@@ -1,5 +1,16 @@
 defaultTasks 'clean', 'build', 'jar'
 
+// shadowing - start
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
+}
+// shadowing - end
+
 allprojects {
 
     def major = 1, minor = 0, patch = 1, type = "SNAPSHOT"
@@ -75,4 +86,19 @@ subprojects {
             attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
         }
     }
+
+    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord')) return
+    // shadowing - start
+    apply plugin: 'com.github.johnrengelman.shadow' // shadowing
+
+    configurations {
+        shade
+    }
+
+    // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
+    task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
+        target = tasks.shadowJar
+        prefix = "ulib.ported"
+    }
+    // shadowing - end
 }

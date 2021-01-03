@@ -1,7 +1,7 @@
 package eu.software4you.configuration;
 
 import org.bukkit.command.CommandSender;
-import ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;

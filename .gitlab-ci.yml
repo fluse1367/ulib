@@ -16,7 +16,7 @@ build:
   artifacts:
     paths:
       - ulib-core/build/libs/*.jar
-      - ulib-spigot-bungeecord-api/build/libs/*.jar
+      - ulib-minecraft-api/build/libs/*.jar
       - ulib-bungeecord-api/build/libs/*.jar
       - ulib-spigot-api/build/libs/*.jar
       - ulib-bungeecord/build/libs/*.jar
