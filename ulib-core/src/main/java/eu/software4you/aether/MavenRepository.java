@@ -2,6 +2,8 @@ package eu.software4you.aether;
 
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.ClassPathHacker;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -24,16 +26,18 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class MavenRepository {
-    public static final RemoteRepository MAVEN_CENTRAL = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
-    public static final RemoteRepository JITPACK = new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build();
-    public static final RemoteRepository JCENTER = new RemoteRepository.Builder("jcenter", "default", "https://jcenter.bintray.com").build();
-    public static final RemoteRepository SONATYPE = new RemoteRepository.Builder("sonatype", "default", "https://oss.sonatype.org/content/repositories/releases").build();
+    public static final Repository MAVEN_CENTRAL = Repository.notPooled("central", "https://repo1.maven.org/maven2/");
+    public static final Repository JITPACK = Repository.notPooled("jitpack", "https://jitpack.io");
+    public static final Repository JCENTER = Repository.notPooled("jcenter", "https://jcenter.bintray.com");
+    public static final Repository SONATYPE = Repository.notPooled("sonatype", "https://oss.sonatype.org/content/repositories/releases");
 
-    public static final RepositorySystem LOCAL_M2_REPOSITORY_SYSTEM = _newRepositorySystem();
-    public static final RepositorySystemSession LOCAL_M2_REPOSITORY_SESSION = _newSession(LOCAL_M2_REPOSITORY_SYSTEM);
+    private static final RepositorySystem LOCAL_M2_REPOSITORY_SYSTEM = _newRepositorySystem();
+    private static final RepositorySystemSession LOCAL_M2_REPOSITORY_SESSION = _newSession(LOCAL_M2_REPOSITORY_SYSTEM);
 
     @Deprecated
     private static RepositorySystem _newRepositorySystem() {
@@ -63,12 +67,12 @@ public class MavenRepository {
         requireLibrary(coords, testClass, MAVEN_CENTRAL, loader);
     }
 
-    public static void requireLibrary(String coords, String testClass, RemoteRepository repository) {
+    public static void requireLibrary(String coords, String testClass, Repository repository) {
         requireLibrary(coords, testClass, repository, ClassPathHacker::addFile);
     }
 
     @SneakyThrows
-    public static void requireLibrary(String coords, String testClass, RemoteRepository repository, Consumer<File> loader) {
+    public static void requireLibrary(String coords, String testClass, Repository repository, Consumer<File> loader) {
         ULib.getInstance().getLogger().fine(String.format("Soft-Requiring %s from repo %s", coords, repository.getUrl()));
         UnsafeLibraries.classTest(testClass, coords, () -> requireLibrary(coords, repository, loader));
     }
@@ -81,12 +85,12 @@ public class MavenRepository {
         requireLibrary(coords, MAVEN_CENTRAL, loader);
     }
 
-    public static void requireLibrary(String coords, RemoteRepository repository) {
+    public static void requireLibrary(String coords, Repository repository) {
         requireLibrary(coords, repository, ClassPathHacker::addFile);
     }
 
     @SneakyThrows
-    public static void requireLibrary(String coords, RemoteRepository repository, Consumer<File> loader) {
+    public static void requireLibrary(String coords, Repository repository, Consumer<File> loader) {
         ULib.getInstance().getLogger().fine(String.format("Requiring %s from repo %s", coords, repository.getUrl()));
 
         Dependency dependency =
@@ -99,7 +103,7 @@ public class MavenRepository {
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot(dependency);
 
-        collectRequest.addRepository(repository);
+        collectRequest.addRepository(repository.repository);
 
         DependencyNode node = repoSystem.collectDependencies(session, collectRequest).getRoot();
 
@@ -116,4 +120,36 @@ public class MavenRepository {
         }
     }
 
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Repository {
+        private static final Map<String, Repository> repositories = new HashMap<>();
+        private final RemoteRepository repository;
+
+        public static Repository of(String id, String url) {
+            Repository repo;
+            if (repositories.containsKey(id) && (repo = repositories.get(id)).repository.getUrl().equals(url)) {
+                return repo;
+            }
+            repositories.put(id, repo = new Repository(new RemoteRepository.Builder(id, "default", url).build()));
+            return repo;
+        }
+
+        private static Repository notPooled(String id, String url) {
+            return new Repository(new RemoteRepository.Builder(id, "default", url).build()) {
+                @Override
+                public boolean unpool() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
+        private String getUrl() {
+            return repository.getUrl();
+        }
+
+        @Deprecated
+        public boolean unpool() {
+            return repositories.remove(repository.getId(), this);
+        }
+    }
 }
