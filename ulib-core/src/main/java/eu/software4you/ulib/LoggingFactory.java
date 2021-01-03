@@ -28,14 +28,21 @@ class LoggingFactory {
         consoleHandler.setFormatter(ansiFormatter());
         consoleHandler.setLevel(properties.LOG_LEVEL);
         logger.addHandler(consoleHandler);
+
         try {
+            if (!properties.DATA_DIR.exists()) {
+                if (!properties.DATA_DIR.mkdirs()) {
+                    throw new IOException(); // trigger error message
+                }
+            }
+
             FileHandler fileHandler = new FileHandler(properties.DATA_DIR.getPath() + "/ulib.%g.log",
                     67108864 /*64 MiB*/, 16);
             fileHandler.setFormatter(normalFormatter());
             fileHandler.setLevel(Level.ALL);
             logger.addHandler(fileHandler);
         } catch (IOException e) {
-            System.err.println("Could not append the file handler to the logger. All uLib logged records will not be saved to disk.");
+            System.err.println("Could not append file handler to logger. All uLib logged records will not be saved to disk.");
         }
         logger.setLevel(Level.ALL);
     }
