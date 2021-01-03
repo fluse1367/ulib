@@ -3,6 +3,7 @@ package eu.software4you.aether;
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.ClassPathHacker;
 import eu.software4you.utils.ClassUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -13,14 +14,14 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
+@RequiredArgsConstructor
 public class UnsafeLibraries {
     private final Logger logger;
     private final String agent;
+    private final String url;
 
-    @SneakyThrows
     public UnsafeLibraries(Logger logger, String agent) {
-        this.logger = logger;
-        this.agent = agent;
+        this(logger, agent, "https://repo1.maven.org/maven2/");
     }
 
     @SneakyThrows
@@ -54,13 +55,13 @@ public class UnsafeLibraries {
     }
 
     public void require(String coords, String testClass) {
-        logger.fine(String.format("Soft-Requiring %s from maven central repo without further dependency resolving", coords));
+        logger.fine(String.format("Soft-Requiring %s from '%s' repo without further dependency resolving", coords, url));
         classTest(testClass, coords, () -> require(coords));
     }
 
     @SneakyThrows
     public void require(String coords) {
-        logger.fine(String.format("Requiring %s from maven central repo without further dependency resolving", coords));
+        logger.fine(String.format("Requiring %s from '%s' repo without further dependency resolving", coords, url));
 
         File root = ULib.getInstance().getLibsUnsafeDir();
 
@@ -78,7 +79,7 @@ public class UnsafeLibraries {
         if (!dest.exists()) {
             dest.getParentFile().mkdirs();
 
-            URL requestURL = new URL("https://repo1.maven.org/maven2/" + request);
+            URL requestURL = new URL(url + request);
 
             HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
             conn.setRequestProperty("User-Agent", agent);
