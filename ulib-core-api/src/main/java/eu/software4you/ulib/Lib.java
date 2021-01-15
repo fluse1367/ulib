@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.logging.Logger;
 
 public interface Lib {
-    void init();
-
-    Logger getLogger();
 
     RunMode getMode();
 
@@ -21,6 +18,8 @@ public interface Lib {
     File getLibsM2Dir();
 
     File getLibsUnsafeDir();
+
+    Logger getLogger();
 
     void debug(String debug);
 

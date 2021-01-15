@@ -13,7 +13,7 @@ buildscript {
 
 allprojects {
 
-    def major = 1, minor = 0, patch = 1, type = "SNAPSHOT"
+    def major = 2, minor = 0, patch = 0, type = "SNAPSHOT"
 
     group 'eu.software4you.ulib'
     version "$major.$minor.$patch-$type"
@@ -55,8 +55,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'maven'
     apply plugin: 'maven-publish'
 
     compileJava {
@@ -87,13 +85,13 @@ subprojects {
         }
     }
 
-    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord')) return
-    // shadowing - start
-    apply plugin: 'com.github.johnrengelman.shadow' // shadowing
-
     configurations {
         shade
     }
+
+    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord')) return
+    // shadowing - start
+    apply plugin: 'com.github.johnrengelman.shadow' // shadowing
 
     // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
     task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {

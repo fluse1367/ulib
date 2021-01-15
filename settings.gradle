@@ -1,4 +1,5 @@
 rootProject.name = 'ulib-root'
+include 'ulib-core-api'
 include 'ulib-core'
 include 'ulib-spigot-api'
 include 'ulib-spigot'

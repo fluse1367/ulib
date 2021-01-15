@@ -1,9 +1,9 @@
 dependencies {
-    compile project(':ulib-core')
     compile project(':ulib-minecraft-api')
     compileOnly coordsPaper
 
-    compile coordsXSeries
+    compileOnly coordsXSeries
+    shade coordsXSeries
 
     // annotation
     annotationProcessor coordsLombok
@@ -11,7 +11,7 @@ dependencies {
 
 // publishing
 javadoc {
-    def projects = ['minecraft-api', 'core']
+    def projects = ['minecraft-api', 'core-api']
     for (String sub : projects) {
         def proj = project(':ulib-' + sub)
         source(proj.projectDir.getPath() + "/src/main/java")

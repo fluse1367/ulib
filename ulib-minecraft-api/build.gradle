@@ -1,9 +1,9 @@
 dependencies {
-    compile project(':ulib-core')
-    compileOnly coordsPaper
-    compileOnly coordsWaterfall
+    compile project(':ulib-core-api')
+    /*compileOnly coordsPaper
+    compileOnly coordsWaterfall*/
 
-    compile files(project(':ulib-core').configurations.compileOnly) // shadowing
+    compile files(project(':ulib-core-api').configurations.compileOnly) // shadowing
 
     // annotation
     annotationProcessor coordsLombok
@@ -12,6 +12,7 @@ dependencies {
 // publishing
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
@@ -36,4 +37,5 @@ publishing {
 
 artifacts {
     archives sourcesJar
+    archives javadocJar
 }

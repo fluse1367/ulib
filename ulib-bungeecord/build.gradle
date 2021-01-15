@@ -1,5 +1,6 @@
 dependencies {
     compile project(':ulib-bungeecord-api')
+    compile project(':ulib-core')
     compileOnly coordsWaterfall
 
     // annotation
@@ -19,7 +20,7 @@ processResources {
 
 //shadowing
 void itSubs(Jar task) {
-    def projects = ['core', 'bungeecord-api', 'minecraft-api']
+    def projects = ['core', 'core-api', 'bungeecord-api', 'minecraft-api']
     for (String sub : projects) {
         def proj = ':ulib-' + sub
 
@@ -32,15 +33,13 @@ void itSubs(Jar task) {
 
 }
 
-jar.finalizedBy { shadowJar }
-
 // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
 shadowJar {
     dependsOn tasks.relocateShadowJar
-    configurations = [project(':ulib-core').configurations.compileOnly]
+    configurations = [project(':ulib-core').configurations.shade]
     itSubs(shadowJar)
 
-    archiveClassifier.set('')
+    archiveClassifier.set('plugin')
     dependencies {
         exclude(dependency(coordsLombok))
     }

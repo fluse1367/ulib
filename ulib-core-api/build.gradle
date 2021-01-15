@@ -1,0 +1,103 @@
+dependencies {
+    compileOnly 'commons-io:commons-io:2.8.0' // compile
+    shade 'commons-io:commons-io:2.8.0' // compile
+    compileOnly 'org.apache.commons:commons-configuration2:2.4' // compile
+    shade 'org.apache.commons:commons-configuration2:2.4' // compile
+    compileOnly 'org.apache.commons:commons-lang3:3.8.1' // compile
+    shade 'org.apache.commons:commons-lang3:3.8.1' // compile
+
+    compileOnly 'commons-beanutils:commons-beanutils:1.9.3' // compile
+    shade 'commons-beanutils:commons-beanutils:1.9.3' // compile
+    compileOnly 'commons-lang:commons-lang:2.6' // compile
+    shade 'commons-lang:commons-lang:2.6' // compile
+    compileOnly 'commons-codec:commons-codec:1.11' // compile
+    shade 'commons-codec:commons-codec:1.11' // compile
+    compileOnly 'com.google.guava:guava:27.0.1-jre' // compile
+    shade 'com.google.guava:guava:27.0.1-jre' // compile
+    compileOnly 'com.google.code.gson:gson:2.8.6' // compile
+    shade 'com.google.code.gson:gson:2.8.6' // compile
+    compileOnly 'javax.mail:javax.mail-api:1.6.2'
+    shade 'javax.mail:javax.mail-api:1.6.2'
+    compileOnly 'com.sun.mail:smtp:1.6.3'
+    shade 'com.sun.mail:smtp:1.6.3'
+    compileOnly 'org.yaml:snakeyaml:1.23'
+    shade 'org.yaml:snakeyaml:1.23'
+    compileOnly 'mysql:mysql-connector-java:8.0.13'
+    shade 'mysql:mysql-connector-java:8.0.13'
+    compileOnly 'org.xerial:sqlite-jdbc:3.25.2'
+    shade 'org.xerial:sqlite-jdbc:3.25.2'
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.9.8'
+    shade 'com.fasterxml.jackson.core:jackson-core:2.9.8'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
+    shade 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
+
+    compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
+    shade 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.10' // compile
+    shade 'org.apache.httpcomponents:httpclient:4.5.10' // compile
+
+    compileOnly 'org.fusesource.jansi:jansi:1.18' // compile
+    shade 'org.fusesource.jansi:jansi:1.18' // compile
+
+    // aether; see https://wiki.eclipse.org/Aether
+    compileOnly 'org.eclipse.aether:aether-api:1.1.0'
+    shade 'org.eclipse.aether:aether-api:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-util:1.1.0'
+    shade 'org.eclipse.aether:aether-util:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-impl:1.1.0'
+    shade 'org.eclipse.aether:aether-impl:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-connector-basic:1.1.0'
+    shade 'org.eclipse.aether:aether-connector-basic:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-file:1.1.0'
+    shade 'org.eclipse.aether:aether-transport-file:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-http:1.1.0'
+    shade 'org.eclipse.aether:aether-transport-http:1.1.0'
+    compileOnly 'org.eclipse.aether:aether-transport-wagon:1.1.0'
+    shade 'org.eclipse.aether:aether-transport-wagon:1.1.0'
+    compileOnly 'org.apache.maven:maven-aether-provider:3.3.9'
+    shade 'org.apache.maven:maven-aether-provider:3.3.9'
+    compileOnly 'org.apache.maven.wagon:wagon-ssh:3.3.4'
+    shade 'org.apache.maven.wagon:wagon-ssh:3.3.4'
+
+
+    compileOnly coordsJetbrainsAnnotations // compile
+    compileOnly coordsLombok // compile
+
+    // annotation
+    annotationProcessor coordsLombok
+}
+
+// publishing
+javadoc {
+    failOnError false
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url deployRepoUrl
+            credentials(HttpHeaderCredentials) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

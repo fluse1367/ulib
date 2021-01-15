@@ -1,9 +1,11 @@
 image: 'gradle:6.6.1-jdk8'
 
 cache:
+  key: '$CI_COMMIT_BRANCH'
   paths:
-    - .gradle/
-    - ulib-*/build/
+    - .gradle
+    - .gradlehome
+  when: always
 
 stages:
   - build
@@ -12,34 +14,29 @@ stages:
 build:
   stage: build
   script:
-    - 'gradle build'
+    - 'gradle shadowJar -g .gradlehome'
   artifacts:
     paths:
-      - ulib-core/build/libs/*.jar
-      - ulib-minecraft-api/build/libs/*.jar
-      - ulib-bungeecord-api/build/libs/*.jar
-      - ulib-spigot-api/build/libs/*.jar
-      - ulib-bungeecord/build/libs/*.jar
-      - ulib-spigot/build/libs/*.jar
+      - ulib-*/build/libs/*.jar
   only:
     - master
 
 repo:
   stage: deploy
   script:
-    - 'gradle publish'
+    - 'gradle publish -g .gradlehome'
   only:
     - master
 
 pages:
   stage: deploy
   script:
-    - 'gradle javadoc'
+    - 'gradle javadoc -g .gradlehome'
     - 'mkdir public'
     - 'cd public'
     - 'cp -r ../docs ./'
     - 'cd docs'
-    - 'mv ../../ulib-core/build/docs/javadoc core'
+    - 'mv ../../ulib-core-api/build/docs/javadoc core'
     - 'mv ../../ulib-spigot-api/build/docs/javadoc spigot'
     - 'mv ../../ulib-bungeecord-api/build/docs/javadoc bungeecord'
   artifacts:

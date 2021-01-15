@@ -11,19 +11,17 @@ import java.math.RoundingMode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ULib implements Lib {
-
-    private static final Lib instance = new ULib();
-
+class Impl implements Init {
     private final Logger logger;
     private final Properties properties;
     private final String version;
     private final RunMode runMode;
     private final String name;
     private final String nameOnly;
+
     private boolean init = false;
 
-    private ULib() {
+    private Impl() {
         properties = Properties.getInstance();
         version = ULib.class.getPackage().getImplementationVersion();
         runMode = ClassUtils.isClass("eu.software4you.ulib.spigotbungeecord.bridge.SpigotSBB") ?
@@ -34,14 +32,6 @@ public class ULib implements Lib {
 
         logger = Logger.getLogger(getClass().getName());
         logger.setUseParentHandlers(false);
-    }
-
-    public static Lib getInstance() {
-        return instance;
-    }
-
-    public static void makeReady() {
-        instance.init();
     }
 
     @Override
