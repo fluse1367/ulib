@@ -14,7 +14,7 @@ If you want to use older server versions, consider a cross-version compatibility
 When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io/) and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.<br>
 Paper/Waterfall provides better performance, and an expanded API which allows uLib to implement more and better features.<br>
 uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are needed to implement some features on Spigot.<br>
-Consider using [Paper](https://papermc.io/) or [Tuinity](https://github.com/Spottedleaf/Tuinity) and [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
+Consider using [Paper](https://papermc.io/), [Yatopia](https://yatopiamc.org/) or [Tuinity](https://github.com/Spottedleaf/Tuinity) and [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
 Another thing: Note the [license of this project](./LICENSE). Use this library at your own risk! The developer(s) / contributors of this project do not take any responsibility/liability in any way.
 
