@@ -1,0 +1,99 @@
+package eu.software4you.ulib.minecraft.proxybridge;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import eu.software4you.bungeecord.plugin.ExtendedPlugin;
+import eu.software4you.ulib.minecraft.proxybridge.message.Message;
+import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
+import lombok.SneakyThrows;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.Future;
+
+public class BungeeCordSBB extends SBB implements Listener {
+    private final ExtendedPlugin plugin;
+    private ServerInfo lastReceivedRequest = null;
+    private ServerInfo lastReceivedCommand = null;
+
+    public BungeeCordSBB(ExtendedPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    private void sendMessage(ServerInfo server, Message message) {
+        server.sendData(CHANNEL, new Gson().toJson(message).getBytes());
+    }
+
+    private ServerInfo findServer(String serverName) {
+        ServerInfo server = plugin.getProxy().getServerInfo(serverName);
+        if (server == null)
+            throw new IllegalArgumentException(String.format("Server %s was not found or is not connected", serverName));
+        return server;
+    }
+
+    @Override
+    public Future<byte[]> request(String targetServer, String line, final long timeout) {
+        ServerInfo server = findServer(targetServer);
+        Message message = new Message(UUID.randomUUID(), null, MessageType.REQUEST, line.getBytes(StandardCharsets.UTF_8));
+        sendMessage(server, message);
+        return awaitData(message.getId(), timeout);
+    }
+
+    @Override
+    public Future<byte[]> request(String line, long timeout) {
+        if (lastReceivedRequest == null)
+            throw new IllegalStateException("No target server known");
+        return request(lastReceivedRequest.getName(), line, timeout);
+    }
+
+    @Override
+    public void trigger(String targetServer, String line) {
+        ServerInfo server = findServer(targetServer);
+        sendMessage(server, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Override
+    public void trigger(String line) {
+        if (lastReceivedCommand == null)
+            throw new IllegalStateException("No target server known");
+        sendMessage(lastReceivedCommand, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @SneakyThrows
+    @EventHandler
+    public void handle(PluginMessageEvent e) {
+        if (!e.getTag().equals(CHANNEL))
+            return;
+
+        JsonElement je = JsonParser.parseString(new String(e.getData(), StandardCharsets.UTF_8));
+        if (!je.isJsonObject())
+            return;
+
+        ServerInfo from = ((ProxiedPlayer) e.getSender()).getServer().getInfo();
+
+        Message message = new Gson().fromJson(je, Message.class);
+
+        switch (message.getType()) {
+            case REQUEST:
+                String line = new String(message.getData(), StandardCharsets.UTF_8);
+                byte[] result = parseCommand(line).execute();
+                sendMessage(from, new Message(message.getId(), PROXY_SERVER_NAME, MessageType.ANSWER, result));
+                lastReceivedRequest = from;
+                break;
+            case COMMAND:
+                line = new String(message.getData(), StandardCharsets.UTF_8);
+                parseCommand(line).execute();
+                lastReceivedCommand = from;
+                break;
+            case ANSWER:
+                putData(message.getId(), message.getData());
+                break;
+        }
+    }
+}
