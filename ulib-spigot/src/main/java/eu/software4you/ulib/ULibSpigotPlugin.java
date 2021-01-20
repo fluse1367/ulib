@@ -12,8 +12,8 @@ import eu.software4you.spigot.inventorymenu.factory.MenuFactoryImpl;
 import eu.software4you.spigot.inventorymenu.factory.MenuFactoryInit;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
-import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.Messenger;
@@ -33,8 +33,13 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
         }
         PAPER = paper;
 
+        // trick the shade plugin
+        char[] clazz = {'c', 'o', 'm',
+                '.', 'c', 'r', 'y', 'p', 't', 'o', 'm', 'o', 'r', 'i', 'n',
+                '.', 'x', 's', 'e', 'r', 'i', 'e', 's',
+                '.', 'X', 'M', 'a', 't', 'e', 'r', 'i', 'a', 'l'};
         Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.5.5",
-                new Pair<>("com.cryptomorin.xseries.XMaterial", Repository.MAVEN_CENTRAL));
+                new Pair<>(new String(clazz), Repository.MAVEN_CENTRAL));
         ULib.makeReady();
     }
 
