@@ -13,10 +13,10 @@ buildscript {
 
 allprojects {
 
-    def major = 2, minor = 0, patch = 0, type = "SNAPSHOT"
+    def major = 2, minor = 0, patch = 0
 
     group 'eu.software4you.ulib'
-    version "$major.$minor.$patch-$type"
+    version "$major.$minor.$patch${project.hasProperty('release') ? '' : '-SNAPSHOT'}"
 
     repositories {
         mavenCentral()

@@ -8,31 +8,37 @@ cache:
   when: always
 
 stages:
-  - build
-  - deploy
+  - build_publish
+  - docs
 
-build:
-  stage: build
+snapshot:
+  stage: build_publish
   script:
     - 'gradle shadowJar -g .gradlehome'
+    - 'gradle publish -g .gradlehome'
   artifacts:
     paths:
       - ulib-*/build/libs/*.jar
   only:
-    - master
-    - web
+    - develop
 
-repo:
-  stage: deploy
+release:
+  stage: build_publish
   script:
-    - 'gradle publish -g .gradlehome'
+    - 'gradle shadowJar -g .gradlehome -Prelease'
+    - 'gradle publish -g .gradlehome -Prelease'
+  artifacts:
+    paths:
+      - ulib-*/build/libs/*.jar
   only:
-    - master
+    - web
+  except:
+    - develop
 
 pages:
-  stage: deploy
+  stage: docs
   script:
-    - 'gradle javadoc -g .gradlehome'
+    - 'gradle javadoc -g .gradlehome -Prelease'
     - 'mkdir public'
     - 'cd public'
     - 'cp -r ../docs ./'
@@ -44,4 +50,6 @@ pages:
     paths:
       - public
   only:
-    - master
+    - web
+  except:
+    - develop
