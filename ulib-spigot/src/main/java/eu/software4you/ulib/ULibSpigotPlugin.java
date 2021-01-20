@@ -1,6 +1,7 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.MavenRepository;
+import eu.software4you.aether.Dependencies;
+import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.spigot.PlugMan;
 import eu.software4you.spigot.enchantment.CustomEnchantmentHandler;
@@ -34,7 +35,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
         PAPER = paper;
 
         Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.5.5",
-                new Pair<>("com.cryptomorin.xseries.XMaterial", MavenRepository.MAVEN_CENTRAL));
+                new Pair<>("com.cryptomorin.xseries.XMaterial", Repository.MAVEN_CENTRAL));
         ULib.makeReady();
     }
 

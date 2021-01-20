@@ -32,7 +32,7 @@ dependencies {
     shade 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
-    shade 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
+
     compileOnly 'org.apache.httpcomponents:httpclient:4.5.10' // compile
     shade 'org.apache.httpcomponents:httpclient:4.5.10' // compile
 
@@ -59,6 +59,7 @@ dependencies {
     compileOnly 'org.apache.maven.wagon:wagon-ssh:3.3.4'
     shade 'org.apache.maven.wagon:wagon-ssh:3.3.4'
 
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
 
     compileOnly coordsJetbrainsAnnotations // compile
     compileOnly coordsLombok // compile

@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.utils.ClassPathHacker;
+import eu.software4you.utils.JarLoader;
 import joptsimple.*;
 import lombok.SneakyThrows;
 
@@ -13,14 +13,10 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 class Launcher {
-    private final Lib instance;
-
-    public Launcher(Lib instance) {
-        this.instance = instance;
-    }
+    static Lib instance;
 
     @SneakyThrows
-    void launch(String... args) {
+    static void launch(String... args) {
         OptionParser parser = new OptionParser();
         parser.accepts("help", "Shows the help message")
                 .forHelp();
@@ -90,7 +86,7 @@ class Launcher {
             instance.info(String.format("Launching %s ...", launchFile.getName()));
 
             try {
-                ClassPathHacker.addFile(launchFile);
+                JarLoader.load(launchFile);
             } catch (Exception e) {
                 instance.exception(e, String.format("Could not load %s", launchFile.getName()));
                 return;

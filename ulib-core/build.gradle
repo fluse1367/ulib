@@ -10,6 +10,8 @@ dependencies {
 
 jar {
     manifest {
+        attributes 'Premain-Class': 'eu.software4you.ulib.Agent'
+        attributes 'Launcher-Agent-Class': 'eu.software4you.ulib.Agent'
         attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
     }
 }

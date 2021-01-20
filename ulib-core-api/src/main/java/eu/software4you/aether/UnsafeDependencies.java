@@ -1,27 +1,28 @@
 package eu.software4you.aether;
 
+import eu.software4you.http.HttpUtil;
 import eu.software4you.ulib.ULib;
-import eu.software4you.utils.ClassPathHacker;
 import eu.software4you.utils.ClassUtils;
+import eu.software4you.utils.JarLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.HttpClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
-public class UnsafeLibraries {
+public class UnsafeDependencies {
     private final Logger logger;
-    private final String agent;
+    private final HttpClient client;
     private final String url;
 
-    public UnsafeLibraries(Logger logger, String agent) {
-        this(logger, agent, "https://repo1.maven.org/maven2/");
+    public UnsafeDependencies(Logger logger, String agent) {
+        this(logger, HttpUtil.buildBasicClient(agent), "https://repo1.maven.org/maven2/");
     }
 
     @SneakyThrows
@@ -54,14 +55,14 @@ public class UnsafeLibraries {
         }
     }
 
-    public void require(String coords, String testClass) {
-        logger.fine(String.format("Soft-Requiring %s from '%s' repo without further dependency resolving", coords, url));
-        classTest(testClass, coords, () -> require(coords));
+    public void depend(String coords, String testClass) {
+        logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
+        classTest(testClass, coords, () -> depend(coords));
     }
 
     @SneakyThrows
-    public void require(String coords) {
-        logger.fine(String.format("Requiring %s from '%s' repo without further dependency resolving", coords, url));
+    public void depend(String coords) {
+        logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
 
         File root = ULib.getInstance().getLibsUnsafeDir();
 
@@ -79,18 +80,13 @@ public class UnsafeLibraries {
         if (!dest.exists()) {
             dest.getParentFile().mkdirs();
 
-            URL requestURL = new URL(url + request);
-
-            HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
-            conn.setRequestProperty("User-Agent", agent);
-            ReadableByteChannel in = Channels.newChannel(conn.getInputStream());
+            ReadableByteChannel in = Channels.newChannel(HttpUtil.getContent(client, url + request));
             FileOutputStream out = new FileOutputStream(dest);
             out.getChannel().transferFrom(in, 0, Long.MAX_VALUE);
-            out.close();
-            in.close();
+            IOUtils.close(out, in);
         }
 
-        ClassPathHacker.addFile(dest);
+        JarLoader.load(dest);
     }
 
 }

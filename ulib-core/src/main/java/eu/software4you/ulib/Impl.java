@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.MavenRepository;
+import eu.software4you.aether.Dependencies;
 import eu.software4you.utils.ClassUtils;
 import lombok.val;
 
@@ -59,7 +59,7 @@ class Impl implements Init {
 
                 for (val en : properties.ADDITIONAL_LIBS.entrySet()) {
                     val v = en.getValue();
-                    MavenRepository.requireLibrary(en.getKey(), v.getFirst(), v.getSecond());
+                    Dependencies.depend(en.getKey(), v.getFirst(), v.getSecond());
                 }
 
                 info(String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)

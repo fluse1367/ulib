@@ -1,12 +1,9 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.MavenRepository;
+import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,7 +19,7 @@ class Properties {
     final boolean NO_SPLASH;
     final Level LOG_LEVEL;
     final String BRAND;
-    final Map<String, Pair<String, MavenRepository.Repository>> ADDITIONAL_LIBS = new HashMap<>();
+    final Map<String, Pair<String, Repository>> ADDITIONAL_LIBS = new HashMap<>();
 
     private Properties() {
         BRAND = "\n" +
