@@ -12,25 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 class Properties {
-    static final Level LOG_LEVEL_DEBUG;
-    private static final Properties instance;
-
-    static {
-
-        try {
-            Constructor<Level> levelConstructor = Level.class.getDeclaredConstructor(String.class, int.class, String.class);
-            levelConstructor.setAccessible(true);
-
-            Field defaultBundleField = Level.class.getDeclaredField("defaultBundle");
-            defaultBundleField.setAccessible(true);
-
-            LOG_LEVEL_DEBUG = levelConstructor.newInstance("DEBUG", 750, (String) defaultBundleField.get(null));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchFieldException e) {
-            throw new Error(e);
-        }
-
-        instance = new Properties();
-    }
+    private static final Properties instance = new Properties();
 
     final File DATA_DIR;
     final File LIBS_DIR;
@@ -69,7 +51,7 @@ class Properties {
         Level logLevel = Level.INFO;
         try {
             String levelStr = System.getProperty("eu.software4you.ulib.loglevel", "INFO").toUpperCase();
-            logLevel = levelStr.equals("DEBUG") ? LOG_LEVEL_DEBUG : Level.parse(levelStr);
+            logLevel = levelStr.equals("DEBUG") ? Level.FINEST : Level.parse(levelStr);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

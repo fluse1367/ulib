@@ -118,7 +118,7 @@ class Impl implements Init {
 
     @Override
     public void debug(String debug) {
-        logger.log(Properties.LOG_LEVEL_DEBUG, debug);
+        logger.fine(debug);
     }
 
     @Override
