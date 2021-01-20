@@ -1,11 +1,9 @@
 package eu.software4you.utils;
 
-import com.google.gson.internal.JavaVersion;
 import eu.software4you.reflection.ReflectUtil;
 import lombok.SneakyThrows;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
@@ -14,6 +12,37 @@ import java.util.jar.JarFile;
 
 public class JarLoader {
     static Consumer<JarFile> loader;
+    private static URLClassLoader urlClassLoader = null;
+
+    private static URLClassLoader getUrlClassLoader() {
+        if (urlClassLoader != null)
+            return urlClassLoader;
+
+        ClassLoader cl = JarLoader.class.getClassLoader();
+        if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
+            urlClassLoader = (URLClassLoader) cl;
+        }
+        return urlClassLoader;
+    }
+
+    private static boolean jre9LoaderAvailable() {
+        URLClassLoader ucl = getUrlClassLoader();
+        if (ucl != null)
+            return false;
+        // we're in java 9
+        if (loader == null) {
+            throw new UnsupportedOperationException("Cannot attach jar files to the jvm.");
+        }
+        return true;
+    }
+
+    private static URLClassLoader getUrlClassLoaderSafe() {
+        URLClassLoader ucl = getUrlClassLoader();
+        if (ucl == null) {
+            throw new UnsupportedOperationException("Cannot attach jar files to the jvm.");
+        }
+        return ucl;
+    }
 
     /**
      * Loads a JAR-File (from {@link File}) into the Runtime. Works with java 8+.
@@ -22,7 +51,7 @@ public class JarLoader {
      */
     @SneakyThrows
     public static void load(File file) {
-        if (JavaVersion.isJava9OrLater()) {
+        if (jre9LoaderAvailable()) {
             loader.accept(new JarFile(file));
             return;
         }
@@ -30,35 +59,19 @@ public class JarLoader {
         load(file.toURI().toURL());
     }
 
-    // Java 8 Only
-
     /**
      * Loads a JAR-File (from {@link URL}) into the Runtime. Only works with java 8.
      *
      * @param url the {@link URL} to load
      */
     public static void load(URL url) {
-        ClassLoader cl = JarLoader.class.getClassLoader();
-
-        URLClassLoader ucl;
-        if (cl instanceof URLClassLoader) {
-            ucl = (URLClassLoader) cl;
-        } else {
-            ClassLoader sysCl = ClassLoader.getSystemClassLoader();
-            if (sysCl instanceof URLClassLoader) {
-                ucl = (URLClassLoader) sysCl;
-            } else {
-                throw new UnsupportedOperationException("Cannot attach URL (" + url.toString() + ") to System Class Loader.");
-            }
-        }
-
-        load(url, ucl);
+        load(url, getUrlClassLoaderSafe());
     }
 
     /**
      * Loads a JAR-File (from {@link URL}) into the Runtime. Only works with java 8.
      *
-     * @param url the {@link URL} to load
+     * @param url         the {@link URL} to load
      * @param classLoader the {@link URLClassLoader} to load the jar file with
      */
     @SneakyThrows
