@@ -3,7 +3,6 @@ package eu.software4you.ulib.minecraft.usercache;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
 import eu.software4you.sql.SqlTableWrapper;
-import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -15,29 +14,22 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class UserCache {
-    private static Class<? extends UserCache> implClazz;
+    static Class<? extends UserCache> implClazz;
     protected final HashMap<UUID, String> cache = new HashMap<>();
     protected final SqlEngine sqlEngine;
     protected final SqlTable table;
 
-    protected UserCache(PluginBase owner, SqlEngine sqlEngine, SqlTable table) {
+    protected UserCache(SqlEngine sqlEngine, SqlTable table) {
         this.sqlEngine = sqlEngine;
         this.table = table;
     }
 
-    public static void setImpl(Class<? extends UserCache> implClazz) {
-        if (UserCache.implClazz != null)
-            throw new IllegalStateException(String.format("User Cache already initialized with %s", implClazz.getName()));
-        UserCache.implClazz = implClazz;
-        ULib.getInstance().debugImplementation("User Cache");
-    }
-
-    public static UserCache of(PluginBase owner, SqlEngine sqlEngine, String tableName) {
+    public static UserCache of(PluginBase<?, ?> owner, SqlEngine sqlEngine, String tableName) {
         return of(owner, sqlEngine, sqlEngine.getDefaultTables().get(tableName));
     }
 
     @SneakyThrows
-    public static UserCache of(PluginBase owner, SqlEngine sqlEngine, SqlTable table) {
+    public static UserCache of(PluginBase<?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
         if (UserCache.implClazz == null)
             throw new IllegalStateException("User Cache not initialized");
         val constructor = implClazz.getConstructor(PluginBase.class, SqlEngine.class, SqlTable.class);

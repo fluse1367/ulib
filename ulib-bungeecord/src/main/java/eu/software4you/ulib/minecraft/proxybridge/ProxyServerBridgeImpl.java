@@ -17,12 +17,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public class BungeeCordSBB extends SBB implements Listener {
+public class ProxyServerBridgeImpl extends ProxyServerBridge implements Listener {
     private final ExtendedPlugin plugin;
     private ServerInfo lastReceivedRequest = null;
     private ServerInfo lastReceivedCommand = null;
 
-    public BungeeCordSBB(ExtendedPlugin plugin) {
+    public ProxyServerBridgeImpl(ExtendedPlugin plugin) {
         this.plugin = plugin;
     }
 

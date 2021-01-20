@@ -1,28 +1,27 @@
 package eu.software4you.ulib;
 
 import eu.software4you.bungeecord.plugin.ExtendedProxyPlugin;
-import eu.software4you.ulib.minecraft.proxybridge.BungeeCordSBB;
-import eu.software4you.ulib.minecraft.proxybridge.SBB;
-import eu.software4you.ulib.minecraft.usercache.MainUserCache;
-import eu.software4you.ulib.minecraft.usercache.UserCache;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
+import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 
 public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
     static {
         ULib.makeReady();
     }
 
-    private BungeeCordSBB spigotBungeeCordBridge;
+    private ProxyServerBridgeImpl proxyServerBridgeImpl;
 
     @Override
     public void onEnable() {
         try {
-            spigotBungeeCordBridge = new BungeeCordSBB(this);
-            SBB.setInstance(spigotBungeeCordBridge);
-            registerEvents(spigotBungeeCordBridge);
-            getProxy().registerChannel(spigotBungeeCordBridge.CHANNEL);
+            proxyServerBridgeImpl = new ProxyServerBridgeImpl(this);
+            ProxyServerBridgeInit.proxyServerBridge(proxyServerBridgeImpl);
+            registerEvents(proxyServerBridgeImpl);
+            getProxy().registerChannel(proxyServerBridgeImpl.CHANNEL);
 
-            UserCache.setImpl(UserCacheImpl.class);
-            MainUserCache.setPlugin(this);
+            UserCacheInit.userCache(UserCacheImpl.class);
+            UserCacheInit.pluginBase(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,9 +30,9 @@ public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
 
     @Override
     public void onDisable() {
-        if (spigotBungeeCordBridge != null) {
-            getProxy().unregisterChannel(spigotBungeeCordBridge.CHANNEL);
-            unregisterEvents(spigotBungeeCordBridge);
+        if (proxyServerBridgeImpl != null) {
+            getProxy().unregisterChannel(proxyServerBridgeImpl.CHANNEL);
+            unregisterEvents(proxyServerBridgeImpl);
         }
     }
 }

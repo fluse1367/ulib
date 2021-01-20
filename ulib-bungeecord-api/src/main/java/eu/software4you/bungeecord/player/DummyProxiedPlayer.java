@@ -23,8 +23,8 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
     private final String name;
 
     public DummyProxiedPlayer(UUID uniqueId) {
-        this(uniqueId, MainUserCache.isMainUserCacheEnabled()
-                ? MainUserCache.getMainUserCache().getUsername(uniqueId) : null);
+        this(uniqueId, MainUserCache.isEnabled()
+                ? MainUserCache.get().getUsername(uniqueId) : null);
     }
 
     public DummyProxiedPlayer(UUID uniqueId, String name) {

@@ -14,9 +14,9 @@ import java.util.function.Supplier;
 /**
  * Implementation and access point of {@link Bridge}.
  */
-public abstract class SBB extends CommandManager implements Bridge {
+public abstract class ProxyServerBridge extends CommandManager implements Bridge {
 
-    private static Bridge instance;
+    static Bridge instance;
     private final HashMap<UUID, DataSupplier> answers = new HashMap<>();
 
     /**
@@ -26,19 +26,6 @@ public abstract class SBB extends CommandManager implements Bridge {
      */
     public static Bridge getInstance() {
         return instance;
-    }
-
-    /**
-     * Sets the current {@link Bridge} instance.
-     *
-     * @param instance the {@link Bridge} instance to set
-     * @throws IllegalStateException if the instance is already set
-     */
-    public static void setInstance(Bridge instance) {
-        if (SBB.instance != null)
-            throw new IllegalStateException("Spigot BungeeCord Bridge already initialized");
-        SBB.instance = instance;
-        ULib.getInstance().debugImplementation("Spigot BungeeCord Bridge");
     }
 
     protected Future<byte[]> awaitData(UUID id, long timeout) {
@@ -82,5 +69,4 @@ public abstract class SBB extends CommandManager implements Bridge {
             return null;
         }
     }
-
 }

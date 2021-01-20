@@ -22,7 +22,7 @@ import java.util.function.Function;
  */
 public class MenuManager {
 
-    private static Function<MenuManager, Handler> handlerFunction;
+    static Function<MenuManager, Handler> handlerFunction;
     private final Handler handler = handlerFunction.apply(this);
     private final Plugin plugin;
     private final List<Menu> menus = new ArrayList<>();
@@ -30,13 +30,6 @@ public class MenuManager {
 
     public MenuManager(Plugin plugin) {
         this.plugin = plugin;
-    }
-
-    public static void setHandlerFunction(Function<MenuManager, ? extends Listener> handlerFunction) {
-        if (MenuManager.handlerFunction != null)
-            throw new IllegalStateException("InventoryMenu Menu-Manager already initialized");
-        MenuManager.handlerFunction = (Function<MenuManager, Handler>) handlerFunction;
-        ULib.getInstance().debugImplementation("InventoryMenu Menu-Manager");
     }
 
     /**

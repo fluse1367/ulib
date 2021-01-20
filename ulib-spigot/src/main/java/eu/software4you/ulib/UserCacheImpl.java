@@ -16,7 +16,7 @@ class UserCacheImpl extends UserCache implements Listener {
     private final ExtendedPlugin owner;
 
     protected UserCacheImpl(PluginBase<?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
-        super(owner, sqlEngine, table);
+        super(sqlEngine, table);
         if (!(owner instanceof ExtendedPlugin))
             throw new IllegalStateException("Implementation of wrong type.");
         this.owner = (ExtendedPlugin) owner;

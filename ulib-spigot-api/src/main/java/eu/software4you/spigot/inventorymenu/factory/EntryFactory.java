@@ -3,7 +3,6 @@ package eu.software4you.spigot.inventorymenu.factory;
 import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.MultiStateEntry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;
-import eu.software4you.ulib.ULib;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -14,14 +13,7 @@ import java.util.function.BiConsumer;
 public abstract class EntryFactory {
 
     // singleton
-    private static EntryFactory instance;
-
-    public static void setInstance(EntryFactory instance) {
-        if (EntryFactory.instance != null)
-            throw new IllegalStateException("InventoryMenu Entry-Factory already initialized");
-        EntryFactory.instance = instance;
-        ULib.getInstance().debugImplementation("InventoryMenu Entry-Factory");
-    }
+    static EntryFactory instance;
 
     static Entry createEntry(ItemStack representation, String clickPermission, BiConsumer<Player, ClickType> clickHandler) {
         return instance.implCreateEntry(representation, clickPermission, clickHandler);

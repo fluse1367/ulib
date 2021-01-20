@@ -11,23 +11,16 @@ import lombok.SneakyThrows;
 import java.io.File;
 
 public class MainUserCache {
+    static PluginBase<?, ?> plugin;
     private static UserCache mainCache;
-    private static PluginBase plugin;
 
-    public static void setPlugin(PluginBase plugin) {
-        if (MainUserCache.plugin != null)
-            throw new IllegalStateException(String.format("Main user cache already initialized by %s", plugin.getName()));
-        MainUserCache.plugin = plugin;
-        ULib.getInstance().debugImplementation("Main User Cache");
-    }
-
-    public static boolean isMainUserCacheEnabled() {
+    public static boolean isEnabled() {
         return mainCache != null;
     }
 
     @SneakyThrows
-    public static void enableMainUserCache() {
-        if (isMainUserCacheEnabled())
+    public static void enable() {
+        if (isEnabled())
             return;
         ULib.getInstance().debug("Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
 
@@ -61,7 +54,7 @@ public class MainUserCache {
         MainUserCache.mainCache = UserCache.of(plugin, engine, table.name());
     }
 
-    public static UserCache getMainUserCache() {
+    public static UserCache get() {
         return mainCache;
     }
 }

@@ -5,7 +5,6 @@ import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;
 import eu.software4you.spigot.inventorymenu.menu.SinglePageMenu;
-import eu.software4you.ulib.ULib;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,14 +14,7 @@ import java.util.function.Consumer;
 public abstract class MenuFactory {
 
     // singleton
-    private static MenuFactory instance;
-
-    public static void setInstance(MenuFactory instance) {
-        if (MenuFactory.instance != null)
-            throw new IllegalStateException("InventoryMenu Menu-Factory already initialized");
-        MenuFactory.instance = instance;
-        ULib.getInstance().debugImplementation("InventoryMenu Menu-Factory");
-    }
+    static MenuFactory instance;
 
     static Page createPage(String title, int rows, Map<Integer, Entry> entries, Consumer<Player> openHandler, Consumer<Player> closeHandler) {
         return instance.implCreatePage(title, rows, entries, openHandler, closeHandler);

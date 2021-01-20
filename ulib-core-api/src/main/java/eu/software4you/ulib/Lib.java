@@ -23,8 +23,6 @@ public interface Lib {
 
     void debug(String debug);
 
-    void debugImplementation(String what);
-
     void info(String info);
 
     void warn(String warn);

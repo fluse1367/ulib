@@ -23,14 +23,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public class SpigotSBB extends SBB implements PluginMessageListener, Listener {
+public class ProxyServerBridgeImpl extends ProxyServerBridge implements PluginMessageListener, Listener {
     private final ExtendedPlugin plugin;
     private String thisServer = null;
     private String lastReceivedRequest;
     private String lastReceivedCommand;
 
     @SneakyThrows
-    public SpigotSBB(ExtendedPlugin plugin) {
+    public ProxyServerBridgeImpl(ExtendedPlugin plugin) {
         this.plugin = plugin;
     }
 

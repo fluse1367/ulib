@@ -1,21 +1,20 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.Dependencies;
 import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.spigot.PlugMan;
 import eu.software4you.spigot.enchantment.CustomEnchantmentHandler;
-import eu.software4you.spigot.inventorymenu.MenuManager;
+import eu.software4you.spigot.inventorymenu.MenuManagerInit;
 import eu.software4you.spigot.inventorymenu.MenuManagerListener;
-import eu.software4you.spigot.inventorymenu.factory.EntryFactory;
 import eu.software4you.spigot.inventorymenu.factory.EntryFactoryImpl;
-import eu.software4you.spigot.inventorymenu.factory.MenuFactory;
+import eu.software4you.spigot.inventorymenu.factory.EntryFactoryInit;
 import eu.software4you.spigot.inventorymenu.factory.MenuFactoryImpl;
+import eu.software4you.spigot.inventorymenu.factory.MenuFactoryInit;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
-import eu.software4you.ulib.minecraft.proxybridge.SBB;
-import eu.software4you.ulib.minecraft.proxybridge.SpigotSBB;
-import eu.software4you.ulib.minecraft.usercache.MainUserCache;
-import eu.software4you.ulib.minecraft.usercache.UserCache;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
+import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.Messenger;
 
@@ -39,7 +38,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
         ULib.makeReady();
     }
 
-    private SpigotSBB spigotBungeeCordBridge;
+    private ProxyServerBridgeImpl proxyServerBridgeImpl;
 
     public static ULibSpigotPlugin getInstance() {
         return instance;
@@ -61,26 +60,26 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
             instance = this;
 
 
-            spigotBungeeCordBridge = new SpigotSBB(this);
-            registerEvents(spigotBungeeCordBridge);
-            SBB.setInstance(spigotBungeeCordBridge);
+            proxyServerBridgeImpl = new ProxyServerBridgeImpl(this);
+            registerEvents(proxyServerBridgeImpl);
+            ProxyServerBridgeInit.proxyServerBridge(proxyServerBridgeImpl);
 
             Messenger messenger = Bukkit.getMessenger();
-            messenger.registerOutgoingPluginChannel(this, SBB.CHANNEL);
-            messenger.registerIncomingPluginChannel(this, SBB.CHANNEL, spigotBungeeCordBridge);
+            messenger.registerOutgoingPluginChannel(this, ProxyServerBridge.CHANNEL);
+            messenger.registerIncomingPluginChannel(this, ProxyServerBridge.CHANNEL, proxyServerBridgeImpl);
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
-            messenger.registerIncomingPluginChannel(this, "BungeeCord", spigotBungeeCordBridge);
+            messenger.registerIncomingPluginChannel(this, "BungeeCord", proxyServerBridgeImpl);
 
 
-            EntryFactory.setInstance(new EntryFactoryImpl());
-            MenuFactory.setInstance(new MenuFactoryImpl());
+            EntryFactoryInit.entryFactory(new EntryFactoryImpl());
+            MenuFactoryInit.menuFactory(new MenuFactoryImpl());
 
-            MenuManager.setHandlerFunction(MenuManagerListener::new);
+            MenuManagerInit.menuManager(MenuManagerListener::new);
 
             registerEvents(new CustomEnchantmentHandler());
 
-            UserCache.setImpl(UserCacheImpl.class);
-            MainUserCache.setPlugin(this);
+            UserCacheInit.userCache(UserCacheImpl.class);
+            UserCacheInit.pluginBase(this);
 
             if (!PAPER) {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +

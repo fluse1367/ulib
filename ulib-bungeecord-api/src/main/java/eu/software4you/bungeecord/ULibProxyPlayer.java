@@ -1,6 +1,6 @@
 package eu.software4you.bungeecord;
 
-import eu.software4you.ulib.minecraft.proxybridge.SBB;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -21,7 +21,7 @@ public class ULibProxyPlayer {
         } else {
             info = ProxyServer.getInstance().getReconnectHandler().getServer(player);
         }
-        SBB.getInstance().trigger(info.getName(), "PlayerPlaySoundEffect " + player.getName() + " " + sound + " " + volume + " " + pitch);
+        ProxyServerBridge.getInstance().trigger(info.getName(), "PlayerPlaySoundEffect " + player.getName() + " " + sound + " " + volume + " " + pitch);
     }
 
 }

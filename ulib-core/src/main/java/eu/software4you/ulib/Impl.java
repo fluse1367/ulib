@@ -112,11 +112,6 @@ class Impl implements Init {
     }
 
     @Override
-    public void debugImplementation(String what) {
-        debug(String.format("Started %s, implementing %s v%s", what, name, getVersion()));
-    }
-
-    @Override
     public void debug(String debug) {
         logger.fine(debug);
     }
