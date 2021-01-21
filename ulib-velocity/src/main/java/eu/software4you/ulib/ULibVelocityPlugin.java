@@ -24,6 +24,10 @@ import java.nio.file.Path;
 )
 public class ULibVelocityPlugin extends VelocityJavaPlugin {
 
+    static {
+        ULib.makeReady();
+    }
+
     private ProxyServerBridgeImpl proxyServerBridge;
 
     @Inject
