@@ -2,7 +2,7 @@ package eu.software4you.spigot.multiversion;
 
 
 import eu.software4you.spigot.multiversion.protocol.Protocol;
-import eu.software4you.reflection.UniClass;
+import eu.software4you.reflect.UniClass;
 import eu.software4you.utils.ClassUtils;
 
 public class MultiversionManager {

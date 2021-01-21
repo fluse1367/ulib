@@ -1,12 +1,12 @@
 package eu.software4you.utils;
 
-import eu.software4you.reflection.ReflectUtil;
+import eu.software4you.reflect.Parameter;
+import eu.software4you.reflect.ReflectUtil;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 
@@ -77,7 +77,7 @@ public class JarLoader {
     @SneakyThrows
     public static void load(URL url, URLClassLoader classLoader) {
         ReflectUtil.forceCall(URLClassLoader.class, classLoader, "addURL()",
-                Collections.singletonList(new ReflectUtil.Parameter<>(URL.class, url)));
+                Parameter.single(URL.class, url));
     }
 
 }

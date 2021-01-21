@@ -1,9 +1,10 @@
 package eu.software4you.spigot.enchantment;
 
 import eu.software4you.math.MathUtils;
+import eu.software4you.reflect.Parameter;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
 import eu.software4you.spigot.plugin.ExtendedPlugin;
-import eu.software4you.reflection.ReflectUtil;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -234,8 +235,7 @@ public class EnchantUtil {
         // return CraftItemStack.asNMSCopy(stack).getItem().c();
 
         return (int) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_INVENTORY.getClass("CraftItemStack"),
-                null, "asNMSCopy().getItem().c()",
-                Collections.singletonList(new ReflectUtil.Parameter<>(ItemStack.class, stack)));
+                null, "asNMSCopy().getItem().c()", Parameter.single(ItemStack.class, stack));
     }
 
     @SneakyThrows
@@ -249,8 +249,7 @@ public class EnchantUtil {
     @SneakyThrows
     public static EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
         String rarityName = (String) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_ENCHANTMENS.getClass("CraftEnchantment"),
-                null, "getRaw().d().name()", Collections.singletonList(
-                        new ReflectUtil.Parameter<>(Enchantment.class, enchantment)));
+                null, "getRaw().d().name()", Parameter.single(Enchantment.class, enchantment));
 
         return EnchantmentRarity.valueOf(rarityName);
     }

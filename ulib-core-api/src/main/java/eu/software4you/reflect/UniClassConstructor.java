@@ -1,8 +1,9 @@
-package eu.software4you.reflection;
+package eu.software4you.reflect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+@Deprecated
 public class UniClassConstructor extends UniClass {
     private final Constructor<?> constructor;
 

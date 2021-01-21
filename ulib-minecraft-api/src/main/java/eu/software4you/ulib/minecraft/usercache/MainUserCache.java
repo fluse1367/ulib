@@ -1,7 +1,7 @@
 package eu.software4you.ulib.minecraft.usercache;
 
 import eu.software4you.configuration.ConfigurationWrapper;
-import eu.software4you.reflection.ReflectUtil;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
 import eu.software4you.ulib.ULib;

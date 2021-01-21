@@ -1,6 +1,6 @@
 package eu.software4you.spigot.multiversion;
 
-import eu.software4you.reflection.ReflectUtil.DataType;
+import eu.software4you.reflect.DataType;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;

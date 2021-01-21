@@ -1,8 +1,9 @@
-package eu.software4you.reflection;
+package eu.software4you.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Deprecated
 public class UniMethod {
     private final Method method;
 

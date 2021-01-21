@@ -1,7 +1,8 @@
-package eu.software4you.reflection;
+package eu.software4you.reflect;
 
 import java.lang.reflect.Field;
 
+@Deprecated
 public class UniField {
     private final Field field;
 

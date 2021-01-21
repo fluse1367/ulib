@@ -3,7 +3,7 @@ package eu.software4you.spigot.enchantment;
 import com.cryptomorin.xseries.XEnchantment;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
-import eu.software4you.reflection.ReflectUtil;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import lombok.SneakyThrows;
 import org.bukkit.Material;

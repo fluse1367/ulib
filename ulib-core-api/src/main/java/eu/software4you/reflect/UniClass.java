@@ -1,4 +1,4 @@
-package eu.software4you.reflection;
+package eu.software4you.reflect;
 
 import eu.software4you.utils.ClassUtils;
 import org.apache.commons.lang3.Validate;
@@ -6,6 +6,7 @@ import org.apache.commons.lang3.Validate;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+@Deprecated
 public class UniClass {
     private final Class<?> clazz;
 

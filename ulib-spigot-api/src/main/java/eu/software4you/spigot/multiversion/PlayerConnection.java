@@ -1,7 +1,7 @@
 package eu.software4you.spigot.multiversion;
 
 import eu.software4you.spigot.multiversion.packet.Packet;
-import eu.software4you.reflection.UniClass;
+import eu.software4you.reflect.UniClass;
 import org.bukkit.Location;
 
 public class PlayerConnection extends UniClass {
