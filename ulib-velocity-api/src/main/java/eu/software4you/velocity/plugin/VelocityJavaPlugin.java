@@ -1,25 +1,54 @@
-package eu.software4you.bungeecord.plugin;
+package eu.software4you.velocity.plugin;
 
+import com.google.common.collect.Multimap;
+import com.velocitypowered.api.plugin.PluginContainer;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.minecraft.plugin.Layout;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
+import eu.software4you.utils.FileUtils;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import net.kyori.adventure.audience.Audience;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
+@RequiredArgsConstructor
+public abstract class VelocityJavaPlugin implements VelocityPlugin {
+
     private final static String layoutBaseName = "layout";
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
+    @Getter
+    private final String id;
+    @Getter
+    private final ProxyServer proxyServer;
+    @Getter
+    private final Logger logger;
+    @Getter
+    private final File dataFolder;
+    @Getter
+    private final File file = FileUtils.getClassFile(getClass());
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final Layout<CommandSender> layout = new BungeecordLayout(null);
+    private final Layout<Audience> layout = new VelocityLayout(null);
     private String layoutFileName = defaultLayoutFileName;
+
+    private PluginContainer getPlugin() {
+        return proxyServer.getPluginManager().getPlugin(id)
+                .orElseThrow(() -> new IllegalStateException("Invalid Plugin ID"));
+    }
+
+    @Override
+    public String getName() {
+        return getPlugin().getDescription().getName().orElse(null);
+    }
 
     @Override
     public void saveDefaultConfig() {
@@ -47,7 +76,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public Layout<CommandSender> getLayout() {
+    public Layout<Audience> getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;
@@ -77,7 +106,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
         }
 
         resourcePath = resourcePath.replace('\\', '/');
-        InputStream in = getResourceAsStream(resourcePath);
+        InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (in == null) {
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getFile().getPath());
         }
@@ -110,66 +139,43 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
 
     @Override
     public ScheduledTask async(Runnable runnable) {
-        return getProxy().getScheduler().runAsync(this, runnable);
+        return proxyServer.getScheduler().buildTask(this, runnable).schedule();
     }
 
     @Override
     public ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
-        return getProxy().getScheduler().schedule(this, runnable, delay, unit);
+        return proxyServer.getScheduler().buildTask(this, runnable)
+                .delay(delay, unit)
+                .schedule();
     }
 
     @Override
     public ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
-        return getProxy().getScheduler().schedule(this, runnable, delay, period, unit);
+        return proxyServer.getScheduler().buildTask(this, runnable)
+                .delay(delay, unit)
+                .repeat(period, unit)
+                .schedule();
     }
 
+    @SneakyThrows
     @Override
     public void cancelAllTasks() {
-        getProxy().getScheduler().cancel(this);
+        ((Multimap<Object, ScheduledTask>) ReflectUtil.forceCall("com.velocitypowered.proxy.scheduler.VelocityScheduler",
+                proxyServer.getScheduler(), "tasksByPlugin")).get(this).forEach(ScheduledTask::cancel);
     }
 
     @Override
-    public void registerEvents(Listener listener) {
-        getProxy().getPluginManager().registerListener(this, listener);
+    public void registerEvents(Object listener) {
+        proxyServer.getEventManager().register(this, listener);
     }
 
     @Override
-    public void unregisterEvents(Listener listener) {
-        getProxy().getPluginManager().unregisterListener(listener);
+    public void unregisterEvents(Object listener) {
+        proxyServer.getEventManager().unregisterListener(this, listener);
     }
 
     @Override
     public void unregisterAllEvents() {
-        getProxy().getPluginManager().unregisterListeners(this);
-    }
-
-    @Override
-    public void registerCommand(Command command) {
-        getProxy().getPluginManager().registerCommand(this, command);
-    }
-
-    @Override
-    public void unregisterCommand(Command command) {
-        getProxy().getPluginManager().unregisterCommand(command);
-    }
-
-    @Override
-    public void unregisterAllCommands() {
-        getProxy().getPluginManager().unregisterCommands(this);
-    }
-
-    @Override
-    public ScheduledTask sync(Runnable runnable) {
-        throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
-    }
-
-    @Override
-    public ScheduledTask sync(Runnable runnable, long delay, TimeUnit unit) {
-        throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
-    }
-
-    @Override
-    public ScheduledTask sync(Runnable runnable, long delay, long period, TimeUnit unit) {
-        throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
+        proxyServer.getEventManager().unregisterListeners(this);
     }
 }

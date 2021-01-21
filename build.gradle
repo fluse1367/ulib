@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 defaultTasks 'clean', 'build', 'jar'
 
 // shadowing - start
@@ -25,6 +27,12 @@ allprojects {
             name 'PaperMC'
             url 'https://papermc.io/repo/repository/maven-public/'
         }
+        if (project.name.contains('velocity')) {
+            maven {
+                name = 'velocitypowered-repo'
+                url = 'https://repo.velocitypowered.com/releases/'
+            }
+        }
     }
 
     ext {
@@ -45,10 +53,16 @@ allprojects {
 
         coordsPaper = 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
         coordsWaterfall = 'io.github.waterfallmc:waterfall-api:1.16-R0.4-SNAPSHOT'
+        coordsVelocity = 'com.velocitypowered:velocity-api:1.1.3-SNAPSHOT'
         coordsXSeries = 'com.github.cryptomorin:XSeries:7.5.5'
 
         coordsJetbrainsAnnotations = 'org.jetbrains:annotations:20.1.0'
         coordsLombok = 'org.projectlombok:lombok:1.18.6'
+
+        def props = new Properties()
+        props.putAll(version: version.toString())
+
+        replacementTokens = props
     }
 
 }
@@ -89,7 +103,21 @@ subprojects {
         shade
     }
 
-    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord')) return
+    // replace tokens - start
+    task processSources(type: Sync) {
+        from sourceSets.main.java.srcDirs
+        //inputs.property 'version', version.toString()
+        filter ReplaceTokens, beginToken : '{{', endToken : '}}', tokens: replacementTokens
+        into "$buildDir/src"
+    }
+    compileJava.source = processSources.outputs
+
+    processResources {
+        filter ReplaceTokens, beginToken : '{{', endToken : '}}', tokens: replacementTokens
+    }
+    // replace tokens - end
+
+    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord' || project.name == 'ulib-velocity')) return
     // shadowing - start
     apply plugin: 'com.github.johnrengelman.shadow' // shadowing
 

@@ -1,17 +1,16 @@
 dependencies {
-    compile project(':ulib-spigot-api')
+    compile project(':ulib-velocity-api')
     compile project(':ulib-core')
-    compileOnly coordsPaper
 
-    compileOnly coordsXSeries
+    compileOnly coordsVelocity
+    annotationProcessor coordsVelocity
 
-    // annotation
     annotationProcessor coordsLombok
 }
 
 //shadowing
 void itSubs(Jar task) {
-    def projects = ['core', 'core-api', 'spigot-api', 'minecraft-api']
+    def projects = ['core', 'core-api', 'velocity-api', 'minecraft-api']
     for (String sub : projects) {
         def proj = ':ulib-' + sub
 
@@ -27,7 +26,7 @@ void itSubs(Jar task) {
 // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
 shadowJar {
     dependsOn tasks.relocateShadowJar
-    configurations = [project(':ulib-core').configurations.shade, project(':ulib-spigot-api').configurations.shade]
+    configurations = [project(':ulib-core').configurations.shade]
     itSubs(shadowJar)
 
     archiveClassifier.set('plugin')

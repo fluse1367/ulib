@@ -4,14 +4,14 @@ import eu.software4you.ulib.minecraft.plugin.Layout;
 import org.bukkit.command.CommandSender;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
-class LayoutImpl extends Layout<CommandSender> {
-    LayoutImpl(ConfigurationSection section) {
+public class SpigotLayout extends Layout<CommandSender> {
+    public SpigotLayout(ConfigurationSection section) {
         super(section);
     }
 
     @Override
     protected Layout<CommandSender> create(ConfigurationSection section) {
-        return new LayoutImpl(section);
+        return new SpigotLayout(section);
     }
 
     @Override

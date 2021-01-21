@@ -7,17 +7,6 @@ dependencies {
     annotationProcessor coordsLombok
 }
 
-processResources {
-    eachFile {
-        copyDetails ->
-            if (copyDetails.path == 'bungee.yml') {
-                filter { line ->
-                    line.replace('{{version}}', project.version)
-                }
-            }
-    }
-}
-
 //shadowing
 void itSubs(Jar task) {
     def projects = ['core', 'core-api', 'bungeecord-api', 'minecraft-api']

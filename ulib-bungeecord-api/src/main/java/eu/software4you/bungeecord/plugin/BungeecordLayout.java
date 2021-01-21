@@ -5,14 +5,14 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
-class LayoutImpl extends Layout<CommandSender> {
-    LayoutImpl(ConfigurationSection section) {
+public class BungeecordLayout extends Layout<CommandSender> {
+    public BungeecordLayout(ConfigurationSection section) {
         super(section);
     }
 
     @Override
     protected Layout<CommandSender> create(ConfigurationSection section) {
-        return new LayoutImpl(section);
+        return new BungeecordLayout(section);
     }
 
     @Override

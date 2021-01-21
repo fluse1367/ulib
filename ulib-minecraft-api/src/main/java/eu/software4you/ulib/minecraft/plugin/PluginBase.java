@@ -10,8 +10,9 @@ import java.util.Locale;
 /**
  * @param <L> Listener type
  * @param <R> Scheduler return type
+ * @param <E> Layout receiver
  */
-public interface PluginBase<L, R> extends EventController<L>, SchedulerController<R> {
+public interface PluginBase<L, R, E> extends EventController<L>, SchedulerController<R> {
     String LAYOUT_BASE_NAME = "layout";
     String LAYOUT_FILE_EXTENSION = "yml";
     String DEFAULT_LAYOUT_FILE_NAME = String.format("%s.%s", LAYOUT_BASE_NAME, LAYOUT_FILE_EXTENSION);
@@ -26,7 +27,7 @@ public interface PluginBase<L, R> extends EventController<L>, SchedulerControlle
 
     void saveDefaultLayout();
 
-    Layout<?> getLayout();
+    Layout<E> getLayout();
 
     void reloadLayout();
 

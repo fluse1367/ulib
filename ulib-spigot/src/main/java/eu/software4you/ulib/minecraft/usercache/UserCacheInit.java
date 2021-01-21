@@ -7,7 +7,7 @@ public class UserCacheInit {
         UserCache.implClazz = implClazz;
     }
 
-    public static void pluginBase(PluginBase<?, ?> plugin) {
+    public static void pluginBase(PluginBase<?, ?, ?> plugin) {
         MainUserCache.plugin = plugin;
     }
 }

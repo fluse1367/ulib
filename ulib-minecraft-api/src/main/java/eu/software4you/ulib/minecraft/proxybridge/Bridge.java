@@ -4,7 +4,7 @@ import java.util.concurrent.Future;
 
 public interface Bridge {
     String CHANNEL = "ulib:sbb";
-    String PROXY_SERVER_NAME = ":bungeecord:";
+    String PROXY_SERVER_NAME = ":proxy:";
 
     /**
      * Requests data from a specific server. Use {@link #PROXY_SERVER_NAME} to send the request to the proxy itself.

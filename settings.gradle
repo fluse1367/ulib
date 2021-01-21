@@ -5,5 +5,7 @@ include 'ulib-spigot-api'
 include 'ulib-spigot'
 include 'ulib-bungeecord-api'
 include 'ulib-bungeecord'
+include 'ulib-velocity-api'
+include 'ulib-velocity'
 include 'ulib-minecraft-api'
 

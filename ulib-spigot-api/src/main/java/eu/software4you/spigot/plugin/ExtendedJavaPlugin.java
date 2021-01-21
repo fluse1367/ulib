@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
-    private final Layout<CommandSender> layout = new LayoutImpl(null);
+    private final Layout<CommandSender> layout = new SpigotLayout(null);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
     private String layoutFileName = DEFAULT_LAYOUT_FILE_NAME;
 

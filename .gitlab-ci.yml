@@ -44,6 +44,7 @@ pages:
     - 'mv ../../ulib-core-api/build/docs/javadoc core'
     - 'mv ../../ulib-spigot-api/build/docs/javadoc spigot'
     - 'mv ../../ulib-bungeecord-api/build/docs/javadoc bungeecord'
+    - 'mv ../../ulib-velocity-api/build/docs/javadoc velocity'
   artifacts:
     paths:
       - public

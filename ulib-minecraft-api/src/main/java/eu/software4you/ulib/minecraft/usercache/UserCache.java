@@ -24,12 +24,12 @@ public abstract class UserCache {
         this.table = table;
     }
 
-    public static UserCache of(PluginBase<?, ?> owner, SqlEngine sqlEngine, String tableName) {
+    public static UserCache of(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, String tableName) {
         return of(owner, sqlEngine, sqlEngine.getDefaultTables().get(tableName));
     }
 
     @SneakyThrows
-    public static UserCache of(PluginBase<?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
+    public static UserCache of(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
         if (UserCache.implClazz == null)
             throw new IllegalStateException("User Cache not initialized");
         val constructor = implClazz.getConstructor(PluginBase.class, SqlEngine.class, SqlTable.class);

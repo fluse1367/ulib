@@ -11,7 +11,7 @@ import lombok.SneakyThrows;
 import java.io.File;
 
 public class MainUserCache {
-    static PluginBase<?, ?> plugin;
+    static PluginBase<?, ?, ?> plugin;
     private static UserCache mainCache;
 
     public static boolean isEnabled() {
