@@ -11,9 +11,9 @@ import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 import eu.software4you.velocity.plugin.VelocityJavaPlugin;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
 @Plugin(
         id = "ulib",

@@ -12,13 +12,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
+import org.slf4j.Logger;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public abstract class VelocityJavaPlugin implements VelocityPlugin {
@@ -130,10 +129,10 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
                 out.close();
                 in.close();
             } else {
-                getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
-            getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
+            logger.error("Could not save " + outFile.getName() + " to " + outFile, ex);
         }
     }
 

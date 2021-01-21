@@ -4,10 +4,10 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import net.kyori.adventure.audience.Audience;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public interface VelocityPlugin extends PluginBase<Object, ScheduledTask, Audience> {
 
