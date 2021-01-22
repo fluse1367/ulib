@@ -12,7 +12,8 @@ import java.io.File;
 
 public class MainUserCache {
     static PluginBase<?, ?, ?> plugin;
-    private static UserCache mainCache;
+    static SqlEngine engine;
+    static UserCache mainCache;
 
     public static boolean isEnabled() {
         return mainCache != null;
@@ -24,7 +25,6 @@ public class MainUserCache {
             return;
         ULib.getInstance().debug("Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
 
-        SqlEngine engine = new SqlEngine();
         engine.disableAutomaticParameterizedQueries = true;
 
         ConfigurationWrapper backend = plugin.getConf().sub("user-cache-backend");

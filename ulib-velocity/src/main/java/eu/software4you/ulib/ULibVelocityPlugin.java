@@ -7,10 +7,12 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import eu.software4you.sql.SqlEngine;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 import eu.software4you.velocity.plugin.VelocityJavaPlugin;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -29,6 +31,7 @@ public class ULibVelocityPlugin extends VelocityJavaPlugin {
     }
 
     private ProxyServerBridgeImpl proxyServerBridge;
+    private SqlEngine mainUserCacheEngine;
 
     @Inject
     public ULibVelocityPlugin(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataPath) {
@@ -44,11 +47,16 @@ public class ULibVelocityPlugin extends VelocityJavaPlugin {
 
         UserCacheInit.userCache(UserCacheImpl.class);
         UserCacheInit.pluginBase(this);
+        UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
     }
 
 
+    @SneakyThrows
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent e) {
+        if (mainUserCacheEngine.isConnected()) {
+            mainUserCacheEngine.disconnect();
+        }
         if (proxyServerBridge != null) {
             getProxyServer().getChannelRegistrar().unregister(ProxyServerBridgeImpl.IDENTIFIER);
             unregisterEvents(proxyServerBridge);

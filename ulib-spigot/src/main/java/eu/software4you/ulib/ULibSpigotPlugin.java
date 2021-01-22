@@ -11,10 +11,12 @@ import eu.software4you.spigot.inventorymenu.factory.EntryFactoryInit;
 import eu.software4you.spigot.inventorymenu.factory.MenuFactoryImpl;
 import eu.software4you.spigot.inventorymenu.factory.MenuFactoryInit;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
+import eu.software4you.sql.SqlEngine;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.Messenger;
 
@@ -44,6 +46,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
     }
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
+    private SqlEngine mainUserCacheEngine;
 
     public static ULibSpigotPlugin getInstance() {
         return instance;
@@ -85,6 +88,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
 
             UserCacheInit.userCache(UserCacheImpl.class);
             UserCacheInit.pluginBase(this);
+            UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
 
             if (!PAPER) {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
@@ -109,8 +113,13 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
         System.setProperty(PROP_KEY, "enabled");
     }
 
+    @SneakyThrows
     @Override
     public void onDisable() {
+        if (mainUserCacheEngine.isConnected()) {
+            mainUserCacheEngine.disconnect();
+        }
+
         Messenger messenger = Bukkit.getMessenger();
         messenger.unregisterIncomingPluginChannel(this);
         messenger.unregisterOutgoingPluginChannel(this);

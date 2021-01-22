@@ -1,9 +1,11 @@
 package eu.software4you.ulib;
 
 import eu.software4you.bungeecord.plugin.ExtendedProxyPlugin;
+import eu.software4you.sql.SqlEngine;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
 import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
+import lombok.SneakyThrows;
 
 public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
     static {
@@ -11,6 +13,7 @@ public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
     }
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
+    private SqlEngine mainUserCacheEngine;
 
     @Override
     public void onEnable() {
@@ -22,14 +25,19 @@ public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
 
             UserCacheInit.userCache(UserCacheImpl.class);
             UserCacheInit.pluginBase(this);
+            UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
+    @SneakyThrows
     @Override
     public void onDisable() {
+        if (mainUserCacheEngine.isConnected()) {
+            mainUserCacheEngine.disconnect();
+        }
         if (proxyServerBridgeImpl != null) {
             getProxy().unregisterChannel(proxyServerBridgeImpl.CHANNEL);
             unregisterEvents(proxyServerBridgeImpl);
