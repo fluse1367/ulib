@@ -1,11 +1,11 @@
 package eu.software4you.ulib.minecraft.usercache;
 
+import eu.software4you.function.TriFunction;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
 import eu.software4you.sql.SqlTableWrapper;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class UserCache {
-    static Class<? extends UserCache> implClazz;
+    static TriFunction<PluginBase<?, ?, ?>, SqlEngine, SqlTable, UserCache> constructor;
     protected final HashMap<UUID, String> cache = new HashMap<>();
     protected final SqlEngine sqlEngine;
     protected final SqlTable table;
@@ -29,13 +29,9 @@ public abstract class UserCache {
 
     @SneakyThrows
     public static UserCache of(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
-        if (UserCache.implClazz == null)
+        if (UserCache.constructor == null)
             throw new IllegalStateException("User Cache not initialized");
-        val constructor = implClazz.getConstructor(PluginBase.class, SqlEngine.class, SqlTable.class);
-        if (!constructor.isAccessible())
-            throw new RuntimeException("Invalid User Cache implementation");
-
-        return constructor.newInstance(owner, sqlEngine, table);
+        return constructor.apply(owner, sqlEngine, table);
     }
 
     @SneakyThrows

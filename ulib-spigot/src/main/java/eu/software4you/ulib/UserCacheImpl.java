@@ -12,10 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-class UserCacheImpl extends UserCache implements Listener {
+public class UserCacheImpl extends UserCache implements Listener {
     private final ExtendedPlugin owner;
 
-    protected UserCacheImpl(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
+    UserCacheImpl(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
         super(sqlEngine, table);
         if (!(owner instanceof ExtendedPlugin))
             throw new IllegalStateException("Implementation of wrong type.");

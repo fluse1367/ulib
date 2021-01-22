@@ -86,7 +86,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
 
             registerEvents(new CustomEnchantmentHandler());
 
-            UserCacheInit.userCache(UserCacheImpl.class);
+            UserCacheInit.constructor(UserCacheImpl::new);
             UserCacheInit.pluginBase(this);
             UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
 

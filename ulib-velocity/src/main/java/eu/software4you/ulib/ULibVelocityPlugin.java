@@ -45,7 +45,7 @@ public class ULibVelocityPlugin extends VelocityJavaPlugin {
         registerEvents(proxyServerBridge);
         getProxyServer().getChannelRegistrar().register(ProxyServerBridgeImpl.IDENTIFIER);
 
-        UserCacheInit.userCache(UserCacheImpl.class);
+        UserCacheInit.constructor(UserCacheImpl::new);
         UserCacheInit.pluginBase(this);
         UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
     }

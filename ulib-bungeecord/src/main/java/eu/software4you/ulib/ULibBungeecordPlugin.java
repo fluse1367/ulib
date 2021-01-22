@@ -23,7 +23,7 @@ public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
             registerEvents(proxyServerBridgeImpl);
             getProxy().registerChannel(proxyServerBridgeImpl.CHANNEL);
 
-            UserCacheInit.userCache(UserCacheImpl.class);
+            UserCacheInit.constructor(UserCacheImpl::new);
             UserCacheInit.pluginBase(this);
             UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
         } catch (Exception e) {

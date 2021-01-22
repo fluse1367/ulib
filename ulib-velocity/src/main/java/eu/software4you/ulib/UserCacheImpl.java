@@ -11,10 +11,10 @@ import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import eu.software4you.velocity.plugin.VelocityPlugin;
 
-class UserCacheImpl extends UserCache {
+public class UserCacheImpl extends UserCache {
     private final VelocityPlugin owner;
 
-    protected UserCacheImpl(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
+    UserCacheImpl(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
         super(sqlEngine, table);
         if (!(owner instanceof VelocityPlugin))
             throw new IllegalStateException("Implementation of wrong type.");
