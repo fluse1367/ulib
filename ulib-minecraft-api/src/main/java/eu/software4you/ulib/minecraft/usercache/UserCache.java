@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,66 +38,50 @@ public abstract class UserCache {
         return constructor.newInstance(owner, sqlEngine, table);
     }
 
-    public boolean cache(UUID uuid, String name) {
-        try {
-            if (getUsername(uuid) == null) {
-                new SqlTableWrapper<String>(sqlEngine, table, "uuid").insertValues(uuid.toString(), name);
-            } else {
-                sqlEngine.execute(String.format("update %s set name = '%s' where uuid = '%s'", table.name(), name, uuid.toString()));
-            }
-            cache.put(uuid, name);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
+    @SneakyThrows
+    public void cache(UUID uuid, String name) {
+        if (getUsername(uuid) == null) {
+            new SqlTableWrapper<String>(sqlEngine, table, "uuid").insertValues(uuid.toString(), name);
+        } else {
+            sqlEngine.execute(String.format("update %s set name = '%s' where uuid = '%s'", table.name(), name, uuid.toString()));
         }
-        return false;
+        cache.put(uuid, name);
     }
 
-    public boolean purge(UUID uuid) {
+    @SneakyThrows
+    public void purge(UUID uuid) {
         if (getUsername(uuid) == null)
-            return true;
-        try {
-            sqlEngine.execute(String.format("delete from from %s where uuid = '%s'", table.name(), uuid.toString()));
-            cache.remove(uuid);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+            return;
+        sqlEngine.execute(String.format("delete from from %s where uuid = '%s'", table.name(), uuid.toString()));
+        cache.remove(uuid);
     }
 
-    public boolean purge(String username) {
+    public void purge(String username) {
         UUID uuid;
         if ((uuid = getUUID(username)) == null)
-            return true;
-        return purge(uuid);
+            return;
+        purge(uuid);
     }
 
+    @SneakyThrows
     public String getUsername(UUID uuid) {
-        if (!cache.containsKey(uuid))
-            try {
-                ResultSet rs = sqlEngine.query(
-                        String.format("select name from %s where uuid = '%s'", table.name(), uuid.toString()));
-                if (rs.next()) {
-                    cache.put(uuid, rs.getString("name"));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
+        if (!cache.containsKey(uuid)) {
+            ResultSet rs = sqlEngine.query(
+                    String.format("select name from %s where uuid = '%s'", table.name(), uuid.toString()));
+            if (rs.next()) {
+                cache.put(uuid, rs.getString("name"));
             }
+        }
         return cache.get(uuid);
     }
 
+    @SneakyThrows
     public UUID getUUID(String username) {
         if (!cache.containsValue(username)) {
-            try {
-                ResultSet rs = sqlEngine.query(
-                        String.format("select uuid from %s where name = '%s'", table.name(), username));
-                if (rs.next()) {
-                    cache.put(UUID.fromString(rs.getString("uuid")), username);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return null;
+            ResultSet rs = sqlEngine.query(
+                    String.format("select uuid from %s where name = '%s'", table.name(), username));
+            if (rs.next()) {
+                cache.put(UUID.fromString(rs.getString("uuid")), username);
             }
         }
         for (Map.Entry<UUID, String> entry : cache.entrySet()) {
