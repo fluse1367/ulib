@@ -54,6 +54,8 @@ class Properties {
         }
 
         LOG_LEVEL = QUIET ? Level.OFF : logLevel;
+
+        ADDITIONAL_LIBS.put("org.xerial:sqlite-jdbc:3.25.2", new Pair<>("org.sqlite.JDBC", Repository.MAVEN_CENTRAL));
     }
 
     static Properties getInstance() {

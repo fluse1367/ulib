@@ -24,8 +24,6 @@ dependencies {
     shade 'org.yaml:snakeyaml:1.23'
     compileOnly 'mysql:mysql-connector-java:8.0.13'
     shade 'mysql:mysql-connector-java:8.0.13'
-    compileOnly 'org.xerial:sqlite-jdbc:3.25.2'
-    shade 'org.xerial:sqlite-jdbc:3.25.2'
     compileOnly 'com.fasterxml.jackson.core:jackson-core:2.9.8'
     shade 'com.fasterxml.jackson.core:jackson-core:2.9.8'
     compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
