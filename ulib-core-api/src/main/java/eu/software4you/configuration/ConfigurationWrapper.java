@@ -89,37 +89,20 @@ public class ConfigurationWrapper {
         return section.getLong(path, def);
     }
 
-    /* complex */
-
-    @Deprecated
-    public String string(String path, String... replacements) {
-        return string(path, null, replacements);
-    }
-
-    public String string(String path, Object def, String... replacements) {
+    public String string(String path, Object def, Object... replacements) {
         return get(String.class, path, def != null ? def.toString() : null, replacements);
     }
 
-    @Deprecated
-    public List<String> stringList(String path, String... replacements) {
-        return stringList(path, new ArrayList<>(), replacements);
-    }
-
-    public List<String> stringList(String path, List<String> def, String... replacements) {
+    public List<String> stringList(String path, List<String> def, Object... replacements) {
         return list(String.class, path, def, replacements);
     }
 
-    @Deprecated
-    public <T> T get(Class<T> clazz, String path, String... replacements) {
-        return get(clazz, path, null, replacements);
-    }
-
-    public <T> T get(Class<T> clazz, String path, T def, String... replacements) {
+    public <T> T get(Class<T> clazz, String path, T def, Object... replacements) {
         Object val = clazz.equals(String.class) ? section.getString(path, def != null ? def.toString() : null) : section.get(path, def);
         if (val == null)
             return def;
         if (val instanceof String)
-            val = replace((String) val, replacements);
+            val = String.format((String) val, replacements);
         else if (val instanceof Number) {
             if (clazz == Integer.class && !(val instanceof Integer))
                 return clazz.cast(Integer.parseInt(String.valueOf(val)));
@@ -137,12 +120,7 @@ public class ConfigurationWrapper {
         return def;
     }
 
-    @Deprecated
-    public <T> List<T> list(Class<T> clazz, String path, String... replacements) {
-        return list(clazz, path, null, replacements);
-    }
-
-    public <T> List<T> list(Class<T> clazz, String path, List<T> def, String... replacements) {
+    public <T> List<T> list(Class<T> clazz, String path, List<T> def, Object... replacements) {
         List<T> list = new ArrayList<>();
         List<?> myList = section.getList(path, def);
         if (myList == null)
@@ -152,19 +130,10 @@ public class ConfigurationWrapper {
             Object val = iterator.next();
             isInstance(val, clazz, path);
             if (val instanceof String)
-                val = replace((String) val, replacements);
+                val = String.format((String) val, replacements);
             list.add((T) val);
         }
         return list;
-    }
-
-    /* util */
-
-    private String replace(String s, String... replacements) {
-        for (int i = replacements.length - 1; i >= 0; i--) {
-            s = s.replace("%" + i, replacements[i]);
-        }
-        return s;
     }
 
     private void isInstance(Object val, Class<?> clazz, String path) {

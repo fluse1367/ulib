@@ -28,18 +28,18 @@ public class MainUserCache {
         engine.disableAutomaticParameterizedQueries = true;
 
         ConfigurationWrapper backend = plugin.getConf().sub("user-cache-backend");
-        switch (backend.string("type").toUpperCase()) {
+        switch (backend.string("type", "FILE").toUpperCase()) {
             case "FILE":
                 engine.setConnectionData(new SqlEngine.ConnectionData(new File(plugin.getDataFolder(), "user_cache.db")));
                 break;
             case "MYSQL":
                 ConfigurationWrapper login = backend.sub("login");
                 engine.setConnectionData(new SqlEngine.ConnectionData(
-                        login.string("host"), login.string("user"),
-                        login.string("password"), login.string("database")));
+                        login.string("host", "localhost"), login.string("user", "root"),
+                        login.string("password", "root"), login.string("database", "mainusercache")));
                 break;
             default:
-                throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type")));
+                throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type", "null")));
         }
 
         SqlTable table = engine.newTable("cached_users");
