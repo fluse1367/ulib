@@ -89,12 +89,24 @@ public class ConfigurationWrapper {
         return section.getLong(path, def);
     }
 
-    public String string(String path, Object def, Object... replacements) {
-        return get(String.class, path, def != null ? def.toString() : null, replacements);
+    public String string(String path, Object... replacements) {
+        return get(String.class, path, replacements);
+    }
+
+    public String string(String path, String def, Object... replacements) {
+        return get(String.class, path, def, replacements);
+    }
+
+    public List<String> stringList(String path, Object... replacements) {
+        return list(String.class, path, null, replacements);
     }
 
     public List<String> stringList(String path, List<String> def, Object... replacements) {
         return list(String.class, path, def, replacements);
+    }
+
+    public <T> T get(Class<T> clazz, String path, Object... replacements) {
+        return get(clazz, path, null, replacements);
     }
 
     public <T> T get(Class<T> clazz, String path, T def, Object... replacements) {
@@ -118,6 +130,10 @@ public class ConfigurationWrapper {
             return (T) val;
         // TODO: throw IllegalArgumentException?
         return def;
+    }
+
+    public <T> List<T> list(Class<T> clazz, String path, Object... replacements) {
+        return list(clazz, path, null, replacements);
     }
 
     public <T> List<T> list(Class<T> clazz, String path, List<T> def, Object... replacements) {
