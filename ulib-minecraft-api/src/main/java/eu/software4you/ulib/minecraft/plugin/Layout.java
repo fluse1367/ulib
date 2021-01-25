@@ -10,11 +10,11 @@ public abstract class Layout<T> extends ConfigurationWrapper {
         super(section);
     }
 
-    public void sendString(T receiver, String path, Object def, String... replacements) {
+    public void sendString(T receiver, String path, Object def, Object... replacements) {
         sendMessage(receiver, string(path, def, replacements));
     }
 
-    public void sendList(T receiver, String path, List<String> def, String... replacements) {
+    public void sendList(T receiver, String path, List<String> def, Object... replacements) {
         sendMessage(receiver, stringList(path, def, replacements).toArray(new String[0]));
     }
 
