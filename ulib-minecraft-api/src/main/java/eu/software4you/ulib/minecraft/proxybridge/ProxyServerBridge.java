@@ -1,5 +1,6 @@
 package eu.software4you.ulib.minecraft.proxybridge;
 
+import eu.software4you.ulib.ImplRegistry;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.minecraft.proxybridge.command.CommandManager;
 
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
  */
 public abstract class ProxyServerBridge extends CommandManager implements Bridge {
 
-    static Bridge instance;
+    private static Bridge impl;
     private final HashMap<UUID, DataSupplier> answers = new HashMap<>();
 
     /**
@@ -25,7 +26,10 @@ public abstract class ProxyServerBridge extends CommandManager implements Bridge
      * @return the current {@link Bridge} instance
      */
     public static Bridge getInstance() {
-        return instance;
+        if (impl != null) {
+            impl = ImplRegistry.get(ProxyServerBridge.class);
+        }
+        return impl;
     }
 
     protected Future<byte[]> awaitData(UUID id, long timeout) {

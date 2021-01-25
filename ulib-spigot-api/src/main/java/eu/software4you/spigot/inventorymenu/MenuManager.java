@@ -5,7 +5,9 @@ import eu.software4you.spigot.inventorymenu.menu.Menu;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;
 import eu.software4you.spigot.inventorymenu.menu.SinglePageMenu;
-import eu.software4you.ulib.ULib;
+import eu.software4you.ulib.ImplRegistry;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
@@ -14,22 +16,21 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Manages {@link Menu} instances.
  * <p>You have to call {@link #listen()} in order to make the manager effective.</p>
  */
-public class MenuManager {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class MenuManager {
 
-    static Function<MenuManager, Handler> handlerFunction;
-    private final Handler handler = handlerFunction.apply(this);
     private final Plugin plugin;
     private final List<Menu> menus = new ArrayList<>();
+    protected Listener handler;
     private boolean listening = false;
 
-    public MenuManager(Plugin plugin) {
-        this.plugin = plugin;
+    public static MenuManager of(Plugin plugin) {
+        return ImplRegistry.construct(MenuManager.class, plugin);
     }
 
     /**
@@ -38,7 +39,7 @@ public class MenuManager {
     public void listen() {
         if (listening)
             return;
-        handler.clearBlacklist();
+        ((Runnable) handler).run();
         plugin.getServer().getPluginManager().registerEvents(handler, plugin);
         listening = true;
     }
@@ -50,7 +51,7 @@ public class MenuManager {
         if (!listening)
             return;
         HandlerList.unregisterAll(handler);
-        handler.clearBlacklist();
+        ((Runnable) handler).run();
         listening = false;
     }
 
@@ -146,9 +147,5 @@ public class MenuManager {
             }
         }
         return null;
-    }
-
-    abstract static class Handler implements Listener {
-        abstract void clearBlacklist();
     }
 }

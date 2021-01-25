@@ -32,7 +32,7 @@ public class MultiPageMenuBuilder {
         nextPageButton = b.name("§e§l->").build();
     }
 
-    static void validatePageIndex(int index, Map<Integer, Page> pages) {
+    private void validatePageIndex(int index, Map<Integer, Page> pages) {
         if (index < 0)
             throw new IndexOutOfBoundsException();
         if (index > 0 && !pages.containsKey(index - 1))

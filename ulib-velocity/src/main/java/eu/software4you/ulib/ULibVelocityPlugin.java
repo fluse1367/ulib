@@ -8,9 +8,8 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import eu.software4you.sql.SqlEngine;
-import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
-import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
-import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
+import eu.software4you.ulib.impl.velocity.proxybridge.ProxyServerBridgeImpl;
+import eu.software4you.ulib.impl.velocity.usercache.MainUserCacheImpl;
 import eu.software4you.velocity.plugin.VelocityJavaPlugin;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import java.nio.file.Path;
 public class ULibVelocityPlugin extends VelocityJavaPlugin {
 
     static {
-        ULib.makeReady();
+        ULib.init();
     }
 
     private ProxyServerBridgeImpl proxyServerBridge;
@@ -40,14 +39,11 @@ public class ULibVelocityPlugin extends VelocityJavaPlugin {
 
     @Subscribe
     public void onProxyInit(ProxyInitializeEvent e) {
-        proxyServerBridge = new ProxyServerBridgeImpl(this);
-        ProxyServerBridgeInit.proxyServerBridge(proxyServerBridge);
+        proxyServerBridge = ProxyServerBridgeImpl.init(this);
         registerEvents(proxyServerBridge);
         getProxyServer().getChannelRegistrar().register(ProxyServerBridgeImpl.IDENTIFIER);
 
-        UserCacheInit.constructor(UserCacheImpl::new);
-        UserCacheInit.pluginBase(this);
-        UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
+        MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
     }
 
 

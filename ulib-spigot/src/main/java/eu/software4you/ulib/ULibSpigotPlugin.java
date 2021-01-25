@@ -3,19 +3,12 @@ package eu.software4you.ulib;
 import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.spigot.PlugMan;
-import eu.software4you.spigot.enchantment.CustomEnchantmentHandler;
-import eu.software4you.spigot.inventorymenu.MenuManagerInit;
-import eu.software4you.spigot.inventorymenu.MenuManagerListener;
-import eu.software4you.spigot.inventorymenu.factory.EntryFactoryImpl;
-import eu.software4you.spigot.inventorymenu.factory.EntryFactoryInit;
-import eu.software4you.spigot.inventorymenu.factory.MenuFactoryImpl;
-import eu.software4you.spigot.inventorymenu.factory.MenuFactoryInit;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.sql.SqlEngine;
+import eu.software4you.ulib.impl.spigot.enchantment.CustomEnchantmentHandler;
+import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;
+import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
-import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeImpl;
-import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridgeInit;
-import eu.software4you.ulib.minecraft.usercache.UserCacheInit;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.Messenger;
@@ -42,7 +35,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
                 '.', 'X', 'M', 'a', 't', 'e', 'r', 'i', 'a', 'l'};
         Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.5.5",
                 new Pair<>(new String(clazz), Repository.MAVEN_CENTRAL));
-        ULib.makeReady();
+        ULib.init();
     }
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
@@ -68,9 +61,8 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
             instance = this;
 
 
-            proxyServerBridgeImpl = new ProxyServerBridgeImpl(this);
+            proxyServerBridgeImpl = ProxyServerBridgeImpl.init(this);
             registerEvents(proxyServerBridgeImpl);
-            ProxyServerBridgeInit.proxyServerBridge(proxyServerBridgeImpl);
 
             Messenger messenger = Bukkit.getMessenger();
             messenger.registerOutgoingPluginChannel(this, ProxyServerBridge.CHANNEL);
@@ -78,17 +70,10 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
             messenger.registerIncomingPluginChannel(this, "BungeeCord", proxyServerBridgeImpl);
 
-
-            EntryFactoryInit.entryFactory(new EntryFactoryImpl());
-            MenuFactoryInit.menuFactory(new MenuFactoryImpl());
-
-            MenuManagerInit.menuManager(MenuManagerListener::new);
-
             registerEvents(new CustomEnchantmentHandler());
 
-            UserCacheInit.constructor(UserCacheImpl::new);
-            UserCacheInit.pluginBase(this);
-            UserCacheInit.engine(mainUserCacheEngine = new SqlEngine());
+
+            MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
 
             if (!PAPER) {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
