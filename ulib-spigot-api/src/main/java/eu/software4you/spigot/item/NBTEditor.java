@@ -1,20 +1,5 @@
 package eu.software4you.spigot.item;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,15 +8,23 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Sets/Gets NBT tags from ItemStacks
  * Supports 1.8-1.16
- *
+ * <p>
  * Github: https://github.com/BananaPuncher714/NBTEditor
  * Spigot: https://www.spigotmc.org/threads/269621/
  *
- * @version 7.16
  * @author BananaPuncher714
+ * @version 7.16.1
  */
 public final class NBTEditor {
     private static final Map< String, Class<?> > classCache;
@@ -1226,7 +1219,18 @@ public final class NBTEditor {
                 }
             }
         } else {
-            if ( notCompound != null ) {
+            // Add and replace all tags
+            if (notCompound != null) {
+                // Only if they're both an NBTTagCompound
+                // Can't do anything if its a list or something
+                if (getNMSClass("NBTTagCompound").isInstance(notCompound) && getNMSClass("NBTTagCompound").isInstance(compound))
+                    for (String key : getKeys(notCompound)) {
+                        getMethod("set").invoke(compound, key, getMethod("get").invoke(notCompound, key));
+                    }
+            } else {
+                // Did someone make an error?
+                // NBTEditor.set( something, null );
+                // Not sure what to do here
             }
         }
     }
@@ -1313,7 +1317,7 @@ public final class NBTEditor {
     public static final class NBTCompound {
         protected final Object tag;
 
-        protected NBTCompound( @Nonnull Object tag ) {
+        protected NBTCompound(Object tag) {
             this.tag = tag;
         }
 
