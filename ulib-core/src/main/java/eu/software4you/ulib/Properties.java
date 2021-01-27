@@ -30,24 +30,24 @@ class Properties {
                 "\\__,_/  /_____//_/   /_.___/ \n" +
                 "                             ";
 
-        DATA_DIR = new File(System.getProperty("eu.software4you.ulib.directory.main", ".ulib"));
+        DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
 
-        String libsDir = System.getProperty("eu.software4you.ulib.directory.libraries");
+        String libsDir = System.getProperty("ulib.directory.libraries");
         LIBS_DIR = libsDir != null ? new File(libsDir) : new File(DATA_DIR, "libs");
 
-        String libsM2Dir = System.getProperty("eu.software4you.ulib.directory.libraries.m2");
+        String libsM2Dir = System.getProperty("ulib.directory.libraries.m2");
         LIBS_M2_DIR = libsM2Dir != null ? new File(libsM2Dir) : new File(LIBS_DIR, "m2");
 
-        String libsUnsafeDir = System.getProperty("eu.software4you.ulib.directory.libraries.unsafe");
+        String libsUnsafeDir = System.getProperty("ulib.directory.libraries.unsafe");
         LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(LIBS_DIR, "unsafe");
 
-        QUIET = System.getProperty("eu.software4you.ulib.quiet", "false").equalsIgnoreCase("true");
+        QUIET = System.getProperty("ulib.quiet", "false").equalsIgnoreCase("true");
 
-        NO_SPLASH = System.getProperty("eu.software4you.ulib.splash", "true").equalsIgnoreCase("false");
+        NO_SPLASH = System.getProperty("ulib.splash", "true").equalsIgnoreCase("false");
 
         Level logLevel = Level.INFO;
         try {
-            String levelStr = System.getProperty("eu.software4you.ulib.loglevel", "INFO").toUpperCase();
+            String levelStr = System.getProperty("ulib.loglevel", "INFO").toUpperCase();
             logLevel = levelStr.equals("DEBUG") ? Level.FINEST : Level.parse(levelStr);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
