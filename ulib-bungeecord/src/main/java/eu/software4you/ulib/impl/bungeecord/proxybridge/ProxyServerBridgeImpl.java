@@ -4,13 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import eu.software4you.bungeecord.plugin.ExtendedPlugin;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.ImplInjector;
 import eu.software4you.ulib.ULibBungeecordPlugin;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import lombok.SneakyThrows;
-import lombok.val;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -31,9 +30,7 @@ public class ProxyServerBridgeImpl extends ProxyServerBridge implements Listener
     }
 
     public static ProxyServerBridgeImpl init(ULibBungeecordPlugin pl) {
-        val bridge = new ProxyServerBridgeImpl(pl);
-        ImplRegistry.put(ProxyServerBridge.class, bridge);
-        return bridge;
+        return ImplInjector.inject(new ProxyServerBridgeImpl(pl), ProxyServerBridge.class);
     }
 
     private void sendMessage(ServerInfo server, Message message) {

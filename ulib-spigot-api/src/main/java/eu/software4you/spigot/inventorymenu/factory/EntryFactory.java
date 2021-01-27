@@ -4,7 +4,6 @@ import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.MultiStateEntry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;
 import eu.software4you.ulib.Await;
-import eu.software4you.ulib.ImplRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;

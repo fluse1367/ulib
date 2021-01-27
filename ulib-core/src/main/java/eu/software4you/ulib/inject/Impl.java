@@ -1,4 +1,4 @@
-package eu.software4you.ulib;
+package eu.software4you.ulib.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -4,7 +4,7 @@ import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.MultiStateEntry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;
 import eu.software4you.spigot.inventorymenu.factory.EntryFactory;
-import eu.software4you.ulib.Impl;
+import eu.software4you.ulib.inject.Impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;

@@ -7,13 +7,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import eu.software4you.spigot.plugin.ExtendedPlugin;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.ImplInjector;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,9 +37,7 @@ public class ProxyServerBridgeImpl extends ProxyServerBridge implements PluginMe
     }
 
     public static ProxyServerBridgeImpl init(ULibSpigotPlugin pl) {
-        val bridge = new ProxyServerBridgeImpl(pl);
-        ImplRegistry.put(ProxyServerBridge.class, bridge);
-        return bridge;
+        return ImplInjector.inject(new ProxyServerBridgeImpl(pl), ProxyServerBridge.class);
     }
 
     private void sendMessage(String server, Message message) {

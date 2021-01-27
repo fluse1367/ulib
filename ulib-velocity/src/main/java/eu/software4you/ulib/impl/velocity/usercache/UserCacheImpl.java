@@ -7,8 +7,8 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
-import eu.software4you.ulib.Impl;
-import eu.software4you.ulib.ImplConst;
+import eu.software4you.ulib.inject.Impl;
+import eu.software4you.ulib.inject.ImplConst;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import eu.software4you.velocity.plugin.VelocityPlugin;
 

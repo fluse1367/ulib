@@ -3,8 +3,8 @@ package eu.software4you.ulib.impl.utils;
 import eu.software4you.reflect.Parameter;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.Agent;
-import eu.software4you.ulib.Impl;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.Await;
+import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.JarLoader;
 import lombok.SneakyThrows;
 
@@ -15,8 +15,9 @@ import java.util.jar.JarFile;
 
 @Impl(JarLoader.class)
 final class JarLoaderImpl extends JarLoader {
+    @Await
+    private static Agent agent;
     private URLClassLoader urlClassLoader = null;
-    private Agent agent = null;
 
     private JarLoaderImpl() {
     }
@@ -55,9 +56,6 @@ final class JarLoaderImpl extends JarLoader {
     @Override
     protected void load0(File file) {
         if (jre9LoaderAvailable()) {
-            if (agent == null) {
-                agent = ImplRegistry.get(Agent.class);
-            }
             agent.add(new JarFile(file));
             return;
         }

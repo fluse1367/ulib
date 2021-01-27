@@ -10,7 +10,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.ChannelMessageSink;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.ImplInjector;
 import eu.software4you.ulib.ULibVelocityPlugin;
 import eu.software4you.ulib.minecraft.proxybridge.Bridge;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
@@ -35,9 +35,7 @@ public final class ProxyServerBridgeImpl extends ProxyServerBridge {
     }
 
     public static ProxyServerBridgeImpl init(ULibVelocityPlugin pl) {
-        val bridge = new ProxyServerBridgeImpl(pl);
-        ImplRegistry.put(ProxyServerBridge.class, bridge);
-        return bridge;
+        return ImplInjector.inject(new ProxyServerBridgeImpl(pl), ProxyServerBridge.class);
     }
 
     private void sendMessage(ChannelMessageSink sink, Message message) {

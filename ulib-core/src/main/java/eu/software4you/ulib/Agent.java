@@ -29,7 +29,7 @@ public final class Agent {
             return;
 
         agent = new Agent(inst);
-        ImplRegistry.put(Agent.class, agent, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
+        ImplInjector.inject(agent, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
     }
 
     public static boolean available() {

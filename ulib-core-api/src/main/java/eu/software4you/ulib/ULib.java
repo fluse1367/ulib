@@ -5,7 +5,7 @@ package eu.software4you.ulib;
  */
 public final class ULib {
 
-    private static Lib impl;
+    static Lib impl;
 
     static {
         try {

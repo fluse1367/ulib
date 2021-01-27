@@ -1,19 +1,11 @@
 package eu.software4you.ulib;
 
 import eu.software4you.aether.Dependencies;
-import eu.software4you.function.ConstructingFunction;
-import eu.software4you.reflect.Parameter;
-import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -25,16 +17,10 @@ import java.util.logging.Logger;
 class LibImpl implements Lib {
     static {
         long started = System.currentTimeMillis();
-        val impl = new LibImpl();
+        val lib = new LibImpl();
+        ULib.impl = lib;
 
-        // injecting into ULib
-        try {
-            ReflectUtil.forceCall(ULib.class, null, "impl", Parameter.single(Lib.class, impl));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-
-        impl.info("Loading ...");
+        lib.info("Loading ...");
 
         // load/register implementations
         try {
@@ -49,62 +35,12 @@ class LibImpl implements Lib {
 
                 if (name.startsWith(pack) && name.endsWith("Impl.class")) {
                     String clName = name.replace("/", ".").substring(0, name.length() - 6);
-                    impl.getLogger().finer(String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
+                    lib.getLogger().finer(String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
                     val cl = Class.forName(clName);
 
-                    // check for @Impl
-                    if (cl.isAnnotationPresent(Impl.class)) {
-                        Impl im = cl.getDeclaredAnnotation(Impl.class);
+                    ImplInjector.autoInject(cl);
 
-                        // @Impl present, look out of @Await in target type
-                        Class<?> type = im.value();
-                        for (Field field : type.getDeclaredFields()) {
-                            if (!field.isAnnotationPresent(Await.class)
-                                    || !Modifier.isStatic(field.getModifiers()))
-                                continue;
-                            // @Await found, inject
-                            field.setAccessible(true);
-
-                            // ConstructingFunction
-                            if (field.getType() != type) {
-                                if (field.getType() != ConstructingFunction.class) {
-                                    continue;
-                                }
-
-                                for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
-                                    if (!constructor.isAnnotationPresent(ImplConst.class)) {
-                                        continue;
-                                    }
-                                    impl.getLogger().finer(String.format("Injecting %s as constructing function into %s", cl.toString(), field.toString()));
-                                    constructor.setAccessible(true);
-
-                                    ConstructingFunction<?> fun = new ConstructingFunction<Object>() {
-                                        @SneakyThrows
-                                        @Override
-                                        public Object apply(Object... objects) {
-                                            return constructor.newInstance(objects);
-                                        }
-                                    };
-                                    field.set(null, fun);
-
-                                    break;
-                                }
-
-                                break;
-                            }
-                            impl.getLogger().finer(String.format("Injecting %s into %s", cl.toString(), field.toString()));
-
-                            // direct implementation
-                            Constructor<?> constructor = cl.getDeclaredConstructor();
-                            constructor.setAccessible(true);
-
-                            field.set(null, constructor.newInstance());
-
-                            break;
-                        }
-                    }
-
-                    impl.getLogger().finer(String.format("Implementation %s loaded", cl.getName()));
+                    lib.getLogger().finer(String.format("Implementation %s loaded", cl.getName()));
                 }
 
             }
@@ -114,15 +50,15 @@ class LibImpl implements Lib {
 
         // load dependencies
         try {
-            for (val en : impl.properties.ADDITIONAL_LIBS.entrySet()) {
+            for (val en : lib.properties.ADDITIONAL_LIBS.entrySet()) {
                 val v = en.getValue();
                 Dependencies.depend(en.getKey(), v.getFirst(), v.getSecond());
             }
         } catch (Exception e) {
-            impl.exception(e, "Error while loading dependencies. You might experiencing issues.");
+            lib.exception(e, "Error while loading dependencies. You might experiencing issues.");
         }
 
-        impl.info(String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
+        lib.info(String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
                 .divide(BigDecimal.valueOf(1000), new MathContext(4, RoundingMode.HALF_UP)).toPlainString()
         ));
     }
@@ -146,7 +82,6 @@ class LibImpl implements Lib {
         nameOnly = "uLib";
         name = String.format("%s-%s", nameOnly, runMode.getName());
 
-
         logger = Logger.getLogger(getClass().getName());
         logger.setUseParentHandlers(false);
 
@@ -160,8 +95,6 @@ class LibImpl implements Lib {
         LoggingFactory factory = new LoggingFactory(properties, logger, this);
         factory.prepare();
         factory.systemInstall();
-
-
     }
 
     @Override
