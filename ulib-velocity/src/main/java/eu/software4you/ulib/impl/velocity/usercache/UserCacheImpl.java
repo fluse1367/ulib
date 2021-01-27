@@ -7,20 +7,19 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.Impl;
+import eu.software4you.ulib.ImplConst;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import eu.software4you.velocity.plugin.VelocityPlugin;
 
+@Impl(UserCache.class)
 public final class UserCacheImpl extends UserCache {
-    static {
-        ImplRegistry.put(UserCache.class, UserCacheImpl::new);
-    }
-
     private final VelocityPlugin owner;
 
-    private UserCacheImpl(Object[] params) {
-        super((SqlEngine) params[1], (SqlTable) params[2]);
-        this.owner = (VelocityPlugin) params[0];
+    @ImplConst
+    private UserCacheImpl(VelocityPlugin owner, SqlEngine engine, SqlTable table) {
+        super(engine, table);
+        this.owner = owner;
         this.owner.registerEvents(this);
     }
 

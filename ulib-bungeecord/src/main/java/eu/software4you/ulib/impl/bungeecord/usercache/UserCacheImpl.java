@@ -3,7 +3,8 @@ package eu.software4you.ulib.impl.bungeecord.usercache;
 import eu.software4you.bungeecord.plugin.ExtendedPlugin;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.Impl;
+import eu.software4you.ulib.ImplConst;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -12,17 +13,14 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+@Impl(UserCache.class)
 public final class UserCacheImpl extends UserCache implements Listener {
-
-    static {
-        ImplRegistry.put(UserCache.class, UserCacheImpl::new);
-    }
-
     private final ExtendedPlugin owner;
 
-    private UserCacheImpl(Object[] params) {
-        super((SqlEngine) params[1], (SqlTable) params[2]);
-        this.owner = (ExtendedPlugin) params[0];
+    @ImplConst
+    private UserCacheImpl(ExtendedPlugin owner, SqlEngine engine, SqlTable table) {
+        super(engine, table);
+        this.owner = owner;
         this.owner.registerEvents(this);
     }
 

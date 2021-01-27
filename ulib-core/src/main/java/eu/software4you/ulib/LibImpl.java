@@ -1,10 +1,12 @@
 package eu.software4you.ulib;
 
 import eu.software4you.aether.Dependencies;
+import eu.software4you.function.ConstructingFunction;
 import eu.software4you.reflect.Parameter;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
+import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
@@ -58,17 +60,44 @@ class LibImpl implements Lib {
                         Class<?> type = im.value();
                         for (Field field : type.getDeclaredFields()) {
                             if (!field.isAnnotationPresent(Await.class)
-                                    || field.getType() != type
                                     || !Modifier.isStatic(field.getModifiers()))
                                 continue;
                             // @Await found, inject
+                            field.setAccessible(true);
+
+                            // ConstructingFunction
+                            if (field.getType() != type) {
+                                if (field.getType() != ConstructingFunction.class) {
+                                    continue;
+                                }
+
+                                for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
+                                    if (!constructor.isAnnotationPresent(ImplConst.class)) {
+                                        continue;
+                                    }
+                                    impl.getLogger().finer(String.format("Injecting %s as constructing function into %s", cl.toString(), field.toString()));
+                                    constructor.setAccessible(true);
+
+                                    ConstructingFunction<?> fun = new ConstructingFunction<Object>() {
+                                        @SneakyThrows
+                                        @Override
+                                        public Object apply(Object... objects) {
+                                            return constructor.newInstance(objects);
+                                        }
+                                    };
+                                    field.set(null, fun);
+
+                                    break;
+                                }
+
+                                break;
+                            }
                             impl.getLogger().finer(String.format("Injecting %s into %s", cl.toString(), field.toString()));
 
-                            // constructing implementation
+                            // direct implementation
                             Constructor<?> constructor = cl.getDeclaredConstructor();
                             constructor.setAccessible(true);
 
-                            field.setAccessible(true);
                             field.set(null, constructor.newInstance());
 
                             break;

@@ -4,4 +4,6 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface ConstructingFunction<R> extends Function<Object[], R> {
+    @Override
+    R apply(Object... objects);
 }

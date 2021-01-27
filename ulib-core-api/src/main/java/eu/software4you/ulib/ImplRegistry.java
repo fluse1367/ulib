@@ -1,7 +1,6 @@
 package eu.software4you.ulib;
 
 import eu.software4you.common.collection.Pair;
-import eu.software4you.function.ConstructingFunction;
 import eu.software4you.reflect.ReflectUtil;
 import lombok.val;
 
@@ -61,41 +60,10 @@ public final class ImplRegistry {
         place(clazz, instance, access);
     }
 
-    public static <T> void put(Class<? extends T> clazz, ConstructingFunction<T> constructor) {
-        put(clazz, constructor, Collections.singletonList(clazz));
-    }
-
-    public static <T> void put(Class<? extends T> clazz, ConstructingFunction<T> constructor, Class<?> access) {
-        put(clazz, constructor, Collections.singletonList(access));
-    }
-
-    public static <T> void put(Class<? extends T> clazz, ConstructingFunction<T> constructor, Class<?>... access) {
-        put(clazz, constructor, Arrays.asList(access));
-    }
-
-    public static <T> void put(Class<? extends T> clazz, ConstructingFunction<T> constructor, Collection<Class<?>> access) {
-        place(clazz, constructor, access);
-    }
-
     public static <T> T get(Class<T> clazz) {
         Object t = check(clazz);
         if (clazz.isInstance(t))
             return (T) t;
         throw new IllegalStateException(String.format("Registration of '%s' is not an instance: %s", clazz.getName(), t.getClass().getName()));
-    }
-
-    public static <T> T construct(Class<T> clazz, Object... params) {
-        Object obj = check(clazz);
-        val ex = new IllegalStateException(String.format("Registration of '%s' is not an constructable instance: %s", clazz.getName(), obj.getClass().getName()));
-        if (!(obj instanceof ConstructingFunction)) {
-            throw ex;
-        }
-        ConstructingFunction<T> constructor;
-        try {
-            constructor = (ConstructingFunction<T>) obj;
-        } catch (ClassCastException e) {
-            throw ex;
-        }
-        return constructor.apply(params);
     }
 }

@@ -1,9 +1,10 @@
 package eu.software4you.ulib.minecraft.usercache;
 
+import eu.software4you.function.ConstructingFunction;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
 import eu.software4you.sql.SqlTableWrapper;
-import eu.software4you.ulib.ImplRegistry;
+import eu.software4you.ulib.Await;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import lombok.SneakyThrows;
 
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class UserCache {
+    @Await
+    private static ConstructingFunction<UserCache> constructor;
     protected final HashMap<UUID, String> cache = new HashMap<>();
     protected final SqlEngine sqlEngine;
     protected final SqlTable table;
@@ -28,7 +31,7 @@ public abstract class UserCache {
 
     @SneakyThrows
     public static UserCache of(PluginBase<?, ?, ?> owner, SqlEngine sqlEngine, SqlTable table) {
-        return ImplRegistry.construct(UserCache.class, owner, sqlEngine, table);
+        return constructor.apply(owner, sqlEngine, table);
     }
 
     @SneakyThrows
