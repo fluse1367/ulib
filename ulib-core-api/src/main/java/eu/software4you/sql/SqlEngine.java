@@ -132,7 +132,7 @@ public class SqlEngine {
      *                      or the SQL statement returns a <code>ResultSet</code> object
      */
     public void execute(String exec) throws SQLException {
-        ULib.getInstance().debug("[" + toString() + "] SQL EXECUTION -> " + exec);
+        ULib.get().debug("[" + toString() + "] SQL EXECUTION -> " + exec);
         PreparedStatement ps = conn.prepareStatement(exec);
         ps.executeUpdate();
         ps.close();
@@ -148,12 +148,12 @@ public class SqlEngine {
      *                      or the SQL statement returns a <code>ResultSet</code> object
      */
     public void execute(String exec, Object... params) throws SQLException {
-        ULib.getInstance().debug("[" + toString() + "] SQL EXECUTION -> " + exec);
+        ULib.get().debug("[" + toString() + "] SQL EXECUTION -> " + exec);
         String paramsString = "";
         for (Object param : params) {
             paramsString += param + " ";
         }
-        ULib.getInstance().debug("[" + toString() + "] SQL EXECUTION PARAMS -> " + paramsString);
+        ULib.get().debug("[" + toString() + "] SQL EXECUTION PARAMS -> " + paramsString);
         PreparedStatement ps = conn.prepareStatement(exec);
         for (int i = 1; i <= params.length; i++) {
             ps.setObject(i, params[i - 1]);
@@ -174,7 +174,7 @@ public class SqlEngine {
      *                      <code>PreparedStatement</code> or <code>CallableStatement</code>
      */
     public ResultSet query(String query) throws SQLException {
-        ULib.getInstance().debug("[" + toString() + "] SQL QUERY -> " + query);
+        ULib.get().debug("[" + toString() + "] SQL QUERY -> " + query);
         return conn.createStatement().executeQuery(query);
     }
 
@@ -191,7 +191,7 @@ public class SqlEngine {
      *                      <code>PreparedStatement</code> or <code>CallableStatement</code>
      */
     public ResultSet query(String query, Object... params) throws SQLException {
-        ULib.getInstance().debug("[" + toString() + "] SQL QUERY -> " + query);
+        ULib.get().debug("[" + toString() + "] SQL QUERY -> " + query);
         PreparedStatement ps = conn.prepareStatement(query);
         for (int i = 1; i <= params.length; i++) {
             ps.setObject(i, params[i - 1]);

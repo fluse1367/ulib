@@ -6,6 +6,7 @@ import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;
 import eu.software4you.spigot.inventorymenu.menu.SinglePageMenu;
+import eu.software4you.ulib.Impl;
 import eu.software4you.ulib.ImplRegistry;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -16,12 +17,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MenuFactoryImpl extends MenuFactory {
-
-    static {
-        ImplRegistry.put(MenuFactory.class, new MenuFactoryImpl());
-    }
-
+@Impl(MenuFactory.class)
+final class MenuFactoryImpl extends MenuFactory {
     @Override
     protected Page implCreatePage(String title, int rows, Map<Integer, Entry> entries, Consumer<Player> openHandler, Consumer<Player> closeHandler) {
         return new PageImpl(title, rows, entries, openHandler, closeHandler);

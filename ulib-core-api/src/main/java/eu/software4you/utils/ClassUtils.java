@@ -33,7 +33,7 @@ public class ClassUtils {
         try {
             return Class.forName(className);
         } catch (Throwable thr) {
-            ULib.getInstance().exception(thr, String.format("%s could not be loaded", className));
+            ULib.get().exception(thr, String.format("%s could not be loaded", className));
         }
         return null;
     }
@@ -48,7 +48,7 @@ public class ClassUtils {
         try {
             Class<?> enumClass = Class.forName(enumName);
             if (!enumClass.isAssignableFrom(Enum.class)) {
-                ULib.getInstance().error(String.format("%s is not an enumeration", enumClass.getSimpleName()));
+                ULib.get().error(String.format("%s is not an enumeration", enumClass.getSimpleName()));
                 return null;
             }
             Class<? extends Enum<?>> e = (Class<? extends Enum<?>>) enumClass;
@@ -69,7 +69,7 @@ public class ClassUtils {
         try {
             return enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry);
         } catch (Throwable thr) {
-            ULib.getInstance().exception(thr, String.format("%s could not be found in %s", enumEntry, enumClass.getName()));
+            ULib.get().exception(thr, String.format("%s could not be found in %s", enumEntry, enumClass.getName()));
         }
         return null;
     }
@@ -162,13 +162,13 @@ public class ClassUtils {
     public static Method findUnderlyingDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         Class<?> current = clazz;
         do {
-            ULib.getInstance().debug(String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), current.toString()));
+            ULib.get().debug(String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), current.toString()));
             try {
                 return current.getDeclaredMethod(methodName, parameterTypes);
             } catch (NoSuchMethodException ignored) {
             }
         } while ((current = current.getSuperclass()) != null);
-        ULib.getInstance().debug(String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
+        ULib.get().debug(String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
         return null;
     }
 }

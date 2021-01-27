@@ -51,7 +51,7 @@ public class YamlConfiguration extends FileConfiguration {
             config.load(file);
         } catch (FileNotFoundException ex) {
         } catch (IOException | InvalidConfigurationException ex) {
-            ULib.getInstance().exception(ex, "Cannot load " + file);
+            ULib.get().exception(ex, "Cannot load " + file);
         }
 
         return config;
@@ -77,7 +77,7 @@ public class YamlConfiguration extends FileConfiguration {
         try {
             config.load(reader);
         } catch (IOException | InvalidConfigurationException ex) {
-            ULib.getInstance().exception(ex, "Cannot load configuration from stream");
+            ULib.get().exception(ex, "Cannot load configuration from stream");
         }
 
         return config;

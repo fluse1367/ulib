@@ -59,7 +59,7 @@ public abstract class ProxyServerBridge extends CommandManager implements Bridge
             try {
                 queue.put(data);
             } catch (InterruptedException e) {
-                ULib.getInstance().exception(e, "Cannot supply data in SBB");
+                ULib.get().exception(e, "Cannot supply data in SBB");
             }
         }
 
@@ -68,7 +68,7 @@ public abstract class ProxyServerBridge extends CommandManager implements Bridge
             try {
                 return queue.poll(timeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                ULib.getInstance().exception(e, "Cannot pull data from SBB");
+                ULib.get().exception(e, "Cannot pull data from SBB");
             }
             return null;
         }

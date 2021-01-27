@@ -45,7 +45,7 @@ public class Dependencies {
     private static RepositorySystemSession _newSession(RepositorySystem system) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository(ULib.getInstance().getLibsM2Dir());
+        LocalRepository localRepo = new LocalRepository(ULib.get().getLibsM2Dir());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
         return session;
@@ -65,7 +65,7 @@ public class Dependencies {
 
     @SneakyThrows
     public static void depend(String coords, String testClass, Repository repository, Consumer<File> loader) {
-        ULib.getInstance().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
+        ULib.get().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
         UnsafeDependencies.classTest(testClass, coords, () -> depend(coords, repository, loader));
     }
 
@@ -83,7 +83,7 @@ public class Dependencies {
 
     @SneakyThrows
     public static void depend(String coords, Repository repository, Consumer<File> loader) {
-        ULib.getInstance().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
+        ULib.get().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
 
         Dependency dependency =
                 new Dependency(new DefaultArtifact(coords), "compile");

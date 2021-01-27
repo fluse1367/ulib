@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class HttpUtil {
-    private static final HttpClient utilsHttpClient = buildBasicClient(String.format("uLib/%s", ULib.getInstance().getVersion()));
+    private static final HttpClient utilsHttpClient = buildBasicClient(String.format("uLib/%s", ULib.get().getVersion()));
 
     public static HttpClient buildBasicClient(String userAgent) {
         return HttpClientBuilder.create().setUserAgent(userAgent).build();

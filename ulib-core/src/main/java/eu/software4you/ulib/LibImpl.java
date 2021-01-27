@@ -1,11 +1,17 @@
 package eu.software4you.ulib;
 
 import eu.software4you.aether.Dependencies;
+import eu.software4you.reflect.Parameter;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
 import lombok.val;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -18,7 +24,14 @@ class LibImpl implements Lib {
     static {
         long started = System.currentTimeMillis();
         val impl = new LibImpl();
-        ImplRegistry.put(Lib.class, impl, ULib.class);
+
+        // injecting into ULib
+        try {
+            ReflectUtil.forceCall(ULib.class, null, "impl", Parameter.single(Lib.class, impl));
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
         impl.info("Loading ...");
 
         // load/register implementations
@@ -33,8 +46,36 @@ class LibImpl implements Lib {
                 String name = entry.getName();
 
                 if (name.startsWith(pack) && name.endsWith("Impl.class")) {
-                    val cl = Class.forName(name.replace("/", ".").substring(0, name.length() - 6));
-                    impl.debug(String.format("%s: loaded implementation %s%n", cl.getClassLoader().getClass().getName(), cl.getName()));
+                    String clName = name.replace("/", ".").substring(0, name.length() - 6);
+                    impl.getLogger().finer(String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
+                    val cl = Class.forName(clName);
+
+                    // check for @Impl
+                    if (cl.isAnnotationPresent(Impl.class)) {
+                        Impl im = cl.getDeclaredAnnotation(Impl.class);
+
+                        // @Impl present, look out of @Await in target type
+                        Class<?> type = im.value();
+                        for (Field field : type.getDeclaredFields()) {
+                            if (!field.isAnnotationPresent(Await.class)
+                                    || field.getType() != type
+                                    || !Modifier.isStatic(field.getModifiers()))
+                                continue;
+                            // @Await found, inject
+                            impl.getLogger().finer(String.format("Injecting %s into %s", cl.toString(), field.toString()));
+
+                            // constructing implementation
+                            Constructor<?> constructor = cl.getDeclaredConstructor();
+                            constructor.setAccessible(true);
+
+                            field.setAccessible(true);
+                            field.set(null, constructor.newInstance());
+
+                            break;
+                        }
+                    }
+
+                    impl.getLogger().finer(String.format("Implementation %s loaded", cl.getName()));
                 }
 
             }

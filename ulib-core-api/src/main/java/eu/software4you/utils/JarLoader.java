@@ -1,5 +1,6 @@
 package eu.software4you.utils;
 
+import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ImplRegistry;
 
 import java.io.File;
@@ -7,14 +8,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public abstract class JarLoader {
+    @Await
     private static JarLoader impl;
-
-    private static JarLoader impl() {
-        if (impl == null) {
-            impl = ImplRegistry.get(JarLoader.class);
-        }
-        return impl;
-    }
 
     /**
      * Loads a JAR-File (from {@link File}) into the Runtime. Works with java 8+.
@@ -22,7 +17,7 @@ public abstract class JarLoader {
      * @param file the jar file to load
      */
     public static void load(File file) {
-        impl().load0(file);
+        impl.load0(file);
     }
 
     /**
@@ -31,7 +26,7 @@ public abstract class JarLoader {
      * @param url the {@link URL} to load
      */
     public static void load(URL url) {
-        impl().load0(url);
+        impl.load0(url);
     }
 
     /**
@@ -41,7 +36,7 @@ public abstract class JarLoader {
      * @param classLoader the {@link URLClassLoader} to load the jar file with
      */
     public static void load(URL url, URLClassLoader classLoader) {
-        impl().load0(url, classLoader);
+        impl.load0(url, classLoader);
     }
 
     protected abstract void load0(File file);

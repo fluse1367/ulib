@@ -5,7 +5,7 @@ package eu.software4you.ulib;
  */
 public final class ULib {
 
-    private static final Lib impl;
+    private static Lib impl;
 
     static {
         try {
@@ -13,11 +13,10 @@ public final class ULib {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("No implementation", e);
         }
-        impl = ImplRegistry.get(Lib.class);
     }
 
-    public static Lib getInstance() {
-        return impl != null ? impl : ImplRegistry.get(Lib.class);
+    public static Lib get() {
+        return impl;
     }
 
     /**

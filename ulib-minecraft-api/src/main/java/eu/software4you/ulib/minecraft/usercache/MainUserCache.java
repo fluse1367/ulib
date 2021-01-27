@@ -27,7 +27,7 @@ public abstract class MainUserCache {
     public static void enable() {
         if (isEnabled())
             return;
-        ULib.getInstance().debug("Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
+        ULib.get().debug("Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
 
         MainUserCache muc = ImplRegistry.get(MainUserCache.class);
 
