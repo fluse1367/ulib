@@ -25,7 +25,7 @@ import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 import java.io.File;
 import java.util.function.Consumer;
 
-import static eu.software4you.aether.Repository.*;
+import static eu.software4you.aether.Repository.MAVEN_CENTRAL;
 
 public class Dependencies {
     private static final RepositorySystem LOCAL_M2_REPOSITORY_SYSTEM = _newRepositorySystem();
@@ -65,7 +65,6 @@ public class Dependencies {
 
     @SneakyThrows
     public static void depend(String coords, String testClass, Repository repository, Consumer<File> loader) {
-        ULib.get().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
         UnsafeDependencies.classTest(testClass, coords, () -> depend(coords, repository, loader));
     }
 
