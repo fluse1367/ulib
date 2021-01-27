@@ -119,8 +119,8 @@ dependencies {
         ...
         <repository>
             <id>software4you-repo</id>
-            <url>https://repo.software4you.eu/
-            </url> <!-- or <url>https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/</url> -->
+            <url>https://repo.software4you.eu/</url>
+            <!-- or <url>https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/</url> -->
         </repository>
         ...
     </repositories>
