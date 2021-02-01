@@ -1,7 +1,7 @@
 package eu.software4you.ulib;
 
 import eu.software4you.function.ConstructingFunction;
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.impl.reflect.ReflectUtilImpl;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.inject.ImplConst;
 import eu.software4you.ulib.inject.InjectionException;
@@ -14,6 +14,10 @@ import java.lang.reflect.Modifier;
 public final class ImplInjector {
 
     static void autoInject(Class<?> impl) {
+        if (!Modifier.isFinal(impl.getModifiers())) { // reject not final implementations
+            ULib.get().getLogger().warning(String.format("Implementation %s invalid: not final", impl));
+            return;
+        }
         // check for @Impl
         if (impl.isAnnotationPresent(Impl.class)) {
             Impl im = impl.getDeclaredAnnotation(Impl.class);
@@ -84,7 +88,7 @@ public final class ImplInjector {
     }
 
     public static <T> T inject(T instance, Class<?> into) {
-        Class<?> caller = ReflectUtil.getCallerClass();
+        Class<?> caller = ReflectUtilImpl.retrieveCallerClass(1);
         Class<?> inst = instance.getClass();
         if (!inst.isAssignableFrom(caller)) {
             throw new InjectionException(instance, into, String.format("caller (%s) has insufficient permission", caller));
