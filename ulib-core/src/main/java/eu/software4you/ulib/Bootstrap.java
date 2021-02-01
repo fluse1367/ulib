@@ -2,6 +2,9 @@ package eu.software4you.ulib;
 
 import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
+import eu.software4you.database.Databases;
+
+import java.io.File;
 
 public class Bootstrap {
 
@@ -11,8 +14,7 @@ public class Bootstrap {
         ));
         ULib.init();
 
-        Launcher.instance = ULib.get();
-        Launcher.launch(args);
+        Databases.connect(new File("test.db"));
     }
 
 }

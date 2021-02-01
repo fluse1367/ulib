@@ -1,41 +1,36 @@
 dependencies {
-    compileOnly 'commons-io:commons-io:2.8.0' // compile
-    shade 'commons-io:commons-io:2.8.0' // compile
-    compileOnly 'org.apache.commons:commons-configuration2:2.4' // compile
-    shade 'org.apache.commons:commons-configuration2:2.4' // compile
-    compileOnly 'org.apache.commons:commons-lang3:3.8.1' // compile
-    shade 'org.apache.commons:commons-lang3:3.8.1' // compile
+    compileOnly 'commons-io:commons-io:2.8.0'
+    shade 'commons-io:commons-io:2.8.0'
+    compileOnly 'org.apache.commons:commons-configuration2:2.4'
+    shade 'org.apache.commons:commons-configuration2:2.4'
+    compileOnly 'org.apache.commons:commons-lang3:3.8.1'
+    shade 'org.apache.commons:commons-lang3:3.8.1'
 
-    compileOnly 'commons-beanutils:commons-beanutils:1.9.3' // compile
-    shade 'commons-beanutils:commons-beanutils:1.9.3' // compile
-    compileOnly 'commons-lang:commons-lang:2.6' // compile
-    shade 'commons-lang:commons-lang:2.6' // compile
-    compileOnly 'commons-codec:commons-codec:1.11' // compile
-    shade 'commons-codec:commons-codec:1.11' // compile
-    compileOnly 'com.google.guava:guava:27.0.1-jre' // compile
-    shade 'com.google.guava:guava:27.0.1-jre' // compile
-    compileOnly 'com.google.code.gson:gson:2.8.6' // compile
-    shade 'com.google.code.gson:gson:2.8.6' // compile
-    compileOnly 'javax.mail:javax.mail-api:1.6.2'
+    compileOnly 'commons-beanutils:commons-beanutils:1.9.3'
+    shade 'commons-beanutils:commons-beanutils:1.9.3'
+    compileOnly 'commons-lang:commons-lang:2.6'
+    shade 'commons-lang:commons-lang:2.6'
+    compileOnly 'commons-codec:commons-codec:1.11'
+    shade 'commons-codec:commons-codec:1.11'
+    compileOnly 'com.google.guava:guava:27.0.1-jre'
+    shade 'com.google.guava:guava:27.0.1-jre'
+    compileOnly 'com.google.code.gson:gson:2.8.6'
+    shade 'com.google.code.gson:gson:2.8.6'
     shade 'javax.mail:javax.mail-api:1.6.2'
     compileOnly 'com.sun.mail:smtp:1.6.3'
     shade 'com.sun.mail:smtp:1.6.3'
     compileOnly 'org.yaml:snakeyaml:1.23'
     shade 'org.yaml:snakeyaml:1.23'
-    compileOnly 'mysql:mysql-connector-java:8.0.13'
-    shade 'mysql:mysql-connector-java:8.0.13'
-    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.9.8'
     shade 'com.fasterxml.jackson.core:jackson-core:2.9.8'
-    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
     shade 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
-    compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3' // compile
+    compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
 
-    compileOnly 'org.apache.httpcomponents:httpclient:4.5.10' // compile
-    shade 'org.apache.httpcomponents:httpclient:4.5.10' // compile
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.10'
+    shade 'org.apache.httpcomponents:httpclient:4.5.10'
 
-    compileOnly 'org.fusesource.jansi:jansi:1.18' // compile
-    shade 'org.fusesource.jansi:jansi:1.18' // compile
+    compileOnly 'org.fusesource.jansi:jansi:1.18'
+    shade 'org.fusesource.jansi:jansi:1.18'
 
     // aether; see https://wiki.eclipse.org/Aether
     compileOnly 'org.eclipse.aether:aether-api:1.1.0'
@@ -54,17 +49,15 @@ dependencies {
     shade('org.eclipse.aether:aether-transport-http:1.1.0') {
         exclude group: 'org.slf4j'
     }
-    compileOnly 'org.eclipse.aether:aether-transport-wagon:1.1.0'
     shade 'org.eclipse.aether:aether-transport-wagon:1.1.0'
     compileOnly 'org.apache.maven:maven-aether-provider:3.3.9'
     shade 'org.apache.maven:maven-aether-provider:3.3.9'
-    compileOnly 'org.apache.maven.wagon:wagon-ssh:3.3.4'
     shade 'org.apache.maven.wagon:wagon-ssh:3.3.4'
 
     compile files("${System.properties['java.home']}/../lib/tools.jar")
 
-    compileOnly coordsJetbrainsAnnotations // compile
-    compileOnly coordsLombok // compile
+    compileOnly coordsJetbrainsAnnotations
+    compileOnly coordsLombok
 
     // annotation
     annotationProcessor coordsLombok
