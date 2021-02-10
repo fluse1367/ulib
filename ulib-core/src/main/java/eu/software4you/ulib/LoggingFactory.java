@@ -1,6 +1,9 @@
 package eu.software4you.ulib;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.logging.*;
 
@@ -18,12 +21,12 @@ class LoggingFactory {
 
     void prepare() {
         // init logger
-        PrintStream out = System.out;
+        PrintStream err = System.err;
         // make ConsoleHandler use the actual stdout
-        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        System.setErr(System.out);
         ConsoleHandler consoleHandler = new ConsoleHandler();
         // reset System.out to previous one
-        System.setOut(out);
+        System.setErr(err);
 
         consoleHandler.setFormatter(ansiFormatter());
         consoleHandler.setLevel(properties.LOG_LEVEL);
