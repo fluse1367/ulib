@@ -18,12 +18,12 @@ class LoggingFactory {
 
     void prepare() {
         // init logger
-        PrintStream err = System.err;
-        // make ConsoleHandler use the actual stderr
-        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
+        PrintStream out = System.out;
+        // make ConsoleHandler use the actual stdout
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
         ConsoleHandler consoleHandler = new ConsoleHandler();
-        // reset System.err to previous one
-        System.setErr(err);
+        // reset System.out to previous one
+        System.setOut(out);
 
         consoleHandler.setFormatter(ansiFormatter());
         consoleHandler.setLevel(properties.LOG_LEVEL);
@@ -43,6 +43,7 @@ class LoggingFactory {
             logger.addHandler(fileHandler);
         } catch (IOException e) {
             System.err.println("Could not append file handler to logger. All uLib logged records will not be saved to disk.");
+            e.printStackTrace();
         }
         logger.setLevel(Level.ALL);
     }
