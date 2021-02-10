@@ -14,12 +14,12 @@ import java.lang.reflect.Modifier;
 public final class ImplInjector {
 
     static void autoInject(Class<?> impl) {
-        if (!Modifier.isFinal(impl.getModifiers())) { // reject not final implementations
-            ULib.get().getLogger().warning(String.format("Implementation %s invalid: not final", impl));
-            return;
-        }
         // check for @Impl
         if (impl.isAnnotationPresent(Impl.class)) {
+            if (!Modifier.isFinal(impl.getModifiers())) { // reject not final implementations
+                ULib.get().getLogger().warning(String.format("Implementation %s invalid: not final", impl));
+                return;
+            }
             Impl im = impl.getDeclaredAnnotation(Impl.class);
 
             autoInject(impl, im.value());
