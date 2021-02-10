@@ -5,7 +5,7 @@ import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.ClassUtils;
 import lombok.SneakyThrows;
-import lombok.var;
+import lombok.val;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;
@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @Impl(ReflectUtil.class)
@@ -46,18 +47,28 @@ public final class ReflectUtilImpl extends ReflectUtil {
     protected final Object call0(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>[] parameters) {
         String[] callParts = call.split(Pattern.quote("."));
 
-        var src = ReflectUtilImpl.class.getProtectionDomain().getCodeSource();
+        Consumer<Class<?>> checker;
 
-        if (getCallerClass0(0).getProtectionDomain().getCodeSource() == src) {
+        val caller = getCallerClass0(0);
+        val callerSrc = caller.getProtectionDomain().getCodeSource();
+        val ulibSrc = ReflectUtilImpl.class.getProtectionDomain().getCodeSource();
+        if (callerSrc == ulibSrc) {
             // internal reflective access, permitting
-            src = null;
+            checker = cl -> {
+            };
+        } else {
+            checker = accessing -> {
+                val accessingSrc = accessing.getProtectionDomain().getCodeSource();
+                if (accessingSrc == ulibSrc) {
+                    // block reflective access to uLib
+                    throw new SecurityException(String.format("%s tried to access %s", caller, accessing));
+                }
+            };
         }
 
         for (int i = 0; i < callParts.length; i++) {
 
-            // block reflective access to uLib
-            if (src == clazz.getProtectionDomain().getCodeSource())
-                throw new SecurityException();
+            checker.accept(clazz);
 
             Object returned;
             Class<?> returnType;
