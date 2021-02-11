@@ -1,5 +1,6 @@
 package eu.software4you.sql;
 
+import eu.software4you.aether.Dependencies;
 import eu.software4you.ulib.ULib;
 
 import java.io.File;
@@ -12,6 +13,11 @@ import java.util.Map;
  * A Wrapper for a SQL connection
  */
 public class SqlEngine {
+    static {
+        Dependencies.depend("mysql:mysql-connector-java:8.0.23", "com.mysql.cj.jdbc.Driver");
+        Dependencies.depend("org.xerial:sqlite-jdbc:3.25.2", "org.sqlite.JDBC");
+    }
+
     private final LinkedHashMap<String, SqlTable> defaultTables = new LinkedHashMap<>();
     public boolean disableAutomaticParameterizedQueries = false;
     private ConnectionData connectionData = new ConnectionData();
