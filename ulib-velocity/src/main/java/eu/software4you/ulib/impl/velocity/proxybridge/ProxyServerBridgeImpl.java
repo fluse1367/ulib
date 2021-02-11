@@ -33,6 +33,7 @@ public final class ProxyServerBridgeImpl extends ProxyServerBridge {
 
     private ProxyServerBridgeImpl(VelocityPlugin plugin) {
         this.plugin = plugin;
+        registerCommand(new Command("ServerName", (args, origin) -> origin.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static ProxyServerBridgeImpl init(ULibVelocityPlugin pl) {
