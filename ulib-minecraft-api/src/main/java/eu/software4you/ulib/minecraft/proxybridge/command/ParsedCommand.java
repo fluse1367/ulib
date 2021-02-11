@@ -17,7 +17,7 @@ public class ParsedCommand {
         return args;
     }
 
-    public byte[] execute() {
-        return command.execute(getArgs());
+    public byte[] execute(String origin) {
+        return command.execute(getArgs(), origin);
     }
 }

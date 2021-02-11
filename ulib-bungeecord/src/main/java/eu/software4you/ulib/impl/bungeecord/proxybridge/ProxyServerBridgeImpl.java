@@ -89,14 +89,18 @@ public class ProxyServerBridgeImpl extends ProxyServerBridge implements Listener
         switch (message.getType()) {
             case REQUEST:
                 String line = new String(message.getData(), StandardCharsets.UTF_8);
-                byte[] result = parseCommand(line).execute();
-                sendMessage(from, new Message(message.getId(), PROXY_SERVER_NAME, MessageType.ANSWER, result));
-                lastReceivedRequest = from;
+                parseCommand(line).ifPresent(pc -> {
+                    byte[] result = pc.execute(from.getName());
+                    sendMessage(from, new Message(message.getId(), PROXY_SERVER_NAME, MessageType.ANSWER, result));
+                    lastReceivedRequest = from;
+                });
                 break;
             case COMMAND:
                 line = new String(message.getData(), StandardCharsets.UTF_8);
-                parseCommand(line).execute();
-                lastReceivedCommand = from;
+                parseCommand(line).ifPresent(pc -> {
+                    pc.execute(from.getName());
+                    lastReceivedCommand = from;
+                });
                 break;
             case ANSWER:
                 putData(message.getId(), message.getData());

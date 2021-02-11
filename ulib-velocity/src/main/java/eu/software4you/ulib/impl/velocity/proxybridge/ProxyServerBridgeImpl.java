@@ -14,6 +14,7 @@ import eu.software4you.ulib.ImplInjector;
 import eu.software4you.ulib.ULibVelocityPlugin;
 import eu.software4you.ulib.minecraft.proxybridge.Bridge;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
+import eu.software4you.ulib.minecraft.proxybridge.command.Command;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import eu.software4you.velocity.plugin.VelocityPlugin;
@@ -96,14 +97,18 @@ public final class ProxyServerBridgeImpl extends ProxyServerBridge {
         switch (message.getType()) {
             case REQUEST:
                 String line = new String(message.getData(), StandardCharsets.UTF_8);
-                byte[] result = parseCommand(line).execute();
-                sendMessage(from, new Message(message.getId(), PROXY_SERVER_NAME, MessageType.ANSWER, result));
-                lastReceivedRequest = from;
+                parseCommand(line).ifPresent(pc -> {
+                    byte[] result = pc.execute(from.getServerInfo().getName());
+                    sendMessage(from, new Message(message.getId(), PROXY_SERVER_NAME, MessageType.ANSWER, result));
+                    lastReceivedRequest = from;
+                });
                 break;
             case COMMAND:
                 line = new String(message.getData(), StandardCharsets.UTF_8);
-                parseCommand(line).execute();
-                lastReceivedCommand = from;
+                parseCommand(line).ifPresent(pc -> {
+                    pc.execute(from.getServerInfo().getName());
+                    lastReceivedCommand = from;
+                });
                 break;
             case ANSWER:
                 putData(message.getId(), message.getData());

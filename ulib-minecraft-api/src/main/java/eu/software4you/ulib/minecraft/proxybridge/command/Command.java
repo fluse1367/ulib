@@ -14,8 +14,8 @@ public class Command {
         this.executor = executor;
     }
 
-    public byte[] execute(String[] args) {
-        return executor.execute(args);
+    public byte[] execute(String[] args, String origin) {
+        return executor.execute(args, origin);
     }
 
     public void setExecutor(CommandExecutor executor) {
