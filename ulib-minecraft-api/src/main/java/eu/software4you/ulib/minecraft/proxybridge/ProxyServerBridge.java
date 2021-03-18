@@ -1,74 +1,89 @@
 package eu.software4you.ulib.minecraft.proxybridge;
 
 import eu.software4you.ulib.Await;
-import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.minecraft.proxybridge.command.CommandManager;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-/**
- * Implementation and access point of {@link Bridge}.
- */
-public abstract class ProxyServerBridge extends CommandManager implements Bridge {
+public abstract class ProxyServerBridge extends CommandManager {
+
+    public static final String CHANNEL = "ulib:sbb";
+    public static final String PROXY_SERVER_NAME = ":proxy:";
 
     @Await
     private static ProxyServerBridge impl;
-    private final HashMap<UUID, DataSupplier> answers = new HashMap<>();
 
     /**
-     * Returns the current {@link Bridge} instance.
+     * Returns the current instance.
      *
-     * @return the current {@link Bridge} instance
+     * @return the current instance
      */
-    public static Bridge getInstance() {
+    public static ProxyServerBridge getInstance() {
         return impl;
     }
 
-    protected Future<byte[]> awaitData(UUID id, long timeout) {
-        if (timeout == 0) {
-            throw new IllegalArgumentException("Illegal timeout: 0");
-        }
-        DataSupplier supplier = new DataSupplier(timeout);
-        answers.put(id, supplier);
-        return CompletableFuture.supplyAsync(supplier);
+    /**
+     * Requests data from a specific server. Use {@link #PROXY_SERVER_NAME} to send the request to the proxy itself.
+     *
+     * @param targetServer the server to send the request to
+     * @param line         the request "command" line
+     * @param timeout      the maximum time to wait for the answer in milliseconds, -1 for infinite waiting
+     * @return a {@link Future} representing the action
+     * @throws IllegalArgumentException if the targetServer was not found
+     * @throws IllegalArgumentException if the sender and the target is the same server
+     */
+    public abstract Future<byte[]> request(String targetServer, String line, long timeout);
+
+    /**
+     * Requests data from a specific server. Use {@link #PROXY_SERVER_NAME} to send the request to the proxy itself.
+     *
+     * @param targetServer the server to send the request to
+     * @param line         the request "command" line
+     * @return a {@link Future} representing the action
+     * @throws IllegalArgumentException if the targetServer was not found
+     */
+    public Future<byte[]> request(String targetServer, String line) {
+        return request(targetServer, line, -1);
     }
 
-    protected void putData(UUID id, byte[] data) {
-        if (!answers.containsKey(id))
-            return;
-        answers.get(id).supply(data);
+    /**
+     * Requests data from the server the last request was received from.
+     *
+     * @param line    the request "command" line
+     * @param timeout the maximum time to wait for the answer in milliseconds, -1 for infinite waiting
+     * @return a {@link Future} representing the action
+     * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
+     */
+    public abstract Future<byte[]> request(String line, long timeout);
+
+    /**
+     * Requests data from the server the last request was received from.
+     *
+     * @param line the request "command" line
+     * @return a {@link Future} representing the action
+     * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
+     */
+    public Future<byte[]> request(String line) {
+        return request(line, -1);
     }
 
-    private static class DataSupplier implements Supplier<byte[]> {
-        private final LinkedBlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
-        private final long timeout;
+    /**
+     * Sends a command to a specific server. Use {@link #PROXY_SERVER_NAME} to send the request to the proxy itself.
+     * Does not wait for an answer as this method is not designed for answers.
+     *
+     * @param targetServer the server to send the command to
+     * @param line         the command line
+     * @throws IllegalArgumentException if the targetServer was not found
+     * @throws IllegalArgumentException if the sender and the target is the same server
+     */
+    public abstract void trigger(String targetServer, String line);
 
-        public DataSupplier(long timeout) {
-            this.timeout = timeout;
-        }
+    /**
+     * Sends a command to the server the last command was received from.
+     *
+     * @param line the command line
+     * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
+     */
+    public abstract void trigger(String line);
 
-        public void supply(byte[] data) {
-            try {
-                queue.put(data);
-            } catch (InterruptedException e) {
-                ULib.get().exception(e, "Cannot supply data in SBB");
-            }
-        }
-
-        @Override
-        public byte[] get() {
-            try {
-                return queue.poll(timeout, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                ULib.get().exception(e, "Cannot pull data from SBB");
-            }
-            return null;
-        }
-    }
 }

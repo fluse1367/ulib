@@ -1,6 +1,6 @@
 dependencies {
     compile project(':ulib-bungeecord-api')
-    compile project(':ulib-core')
+    compile project(':ulib-minecraft')
     compileOnly coordsWaterfall
 
     // annotation
@@ -9,7 +9,7 @@ dependencies {
 
 //shadowing
 void itSubs(Jar task) {
-    def projects = ['core', 'core-api', 'bungeecord-api', 'minecraft-api']
+    def projects = ['core', 'core-api', 'minecraft', 'minecraft-api', 'bungeecord-api']
     for (String sub : projects) {
         def proj = ':ulib-' + sub
 

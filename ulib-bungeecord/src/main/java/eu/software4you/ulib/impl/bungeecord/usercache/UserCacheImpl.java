@@ -14,7 +14,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 @Impl(UserCache.class)
-public final class UserCacheImpl extends UserCache implements Listener {
+public final class UserCacheImpl extends eu.software4you.ulib.impl.minecraft.usercache.UserCache implements Listener {
     private final ExtendedPlugin owner;
 
     @ImplConst

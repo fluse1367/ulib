@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public class ProxyServerBridgeImpl extends ProxyServerBridge implements PluginMessageListener, Listener {
+public class ProxyServerBridgeImpl extends eu.software4you.ulib.impl.minecraft.proxybridge.ProxyServerBridge implements PluginMessageListener, Listener {
     private final ExtendedPlugin plugin;
     private String thisServer = null;
     private String lastReceivedRequest;

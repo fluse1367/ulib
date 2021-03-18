@@ -1,6 +1,6 @@
 dependencies {
     compile project(':ulib-velocity-api')
-    compile project(':ulib-core')
+    compile project(':ulib-minecraft')
 
     compileOnly coordsVelocity
     annotationProcessor coordsVelocity
@@ -10,7 +10,7 @@ dependencies {
 
 //shadowing
 void itSubs(Jar task) {
-    def projects = ['core', 'core-api', 'velocity-api', 'minecraft-api']
+    def projects = ['core', 'core-api', 'minecraft', 'minecraft-api', 'velocity-api']
     for (String sub : projects) {
         def proj = ':ulib-' + sub
 

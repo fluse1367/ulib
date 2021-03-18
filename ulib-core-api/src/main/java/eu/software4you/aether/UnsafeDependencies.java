@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class UnsafeDependencies {
     private final Logger logger;
-    private final HttpClient client;
+    private final HttpClient httpClient;
     private final String url;
 
     public UnsafeDependencies(Logger logger, String agent) {
@@ -80,7 +80,7 @@ public class UnsafeDependencies {
         if (!dest.exists()) {
             dest.getParentFile().mkdirs();
 
-            ReadableByteChannel in = Channels.newChannel(HttpUtil.getContent(client, url + request));
+            ReadableByteChannel in = Channels.newChannel(HttpUtil.getContent(httpClient, url + request));
             FileOutputStream out = new FileOutputStream(dest);
             out.getChannel().transferFrom(in, 0, Long.MAX_VALUE);
             IOUtils.close(out, in);

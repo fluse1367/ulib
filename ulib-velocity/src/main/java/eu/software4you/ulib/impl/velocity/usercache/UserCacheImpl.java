@@ -13,7 +13,7 @@ import eu.software4you.ulib.minecraft.usercache.UserCache;
 import eu.software4you.velocity.plugin.VelocityPlugin;
 
 @Impl(UserCache.class)
-public final class UserCacheImpl extends UserCache {
+public final class UserCacheImpl extends eu.software4you.ulib.impl.minecraft.usercache.UserCache {
     private final VelocityPlugin owner;
 
     @ImplConst

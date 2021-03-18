@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @Impl(UserCache.class)
-public final class UserCacheImpl extends UserCache implements Listener {
+public final class UserCacheImpl extends eu.software4you.ulib.impl.minecraft.usercache.UserCache implements Listener {
     private final ExtendedPlugin owner;
 
     @ImplConst

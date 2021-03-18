@@ -1,6 +1,6 @@
 dependencies {
     compile project(':ulib-spigot-api')
-    compile project(':ulib-core')
+    compile project(':ulib-minecraft')
     compileOnly coordsPaper
 
     compileOnly coordsXSeries
@@ -11,7 +11,7 @@ dependencies {
 
 //shadowing
 void itSubs(Jar task) {
-    def projects = ['core', 'core-api', 'spigot-api', 'minecraft-api']
+    def projects = ['core', 'core-api', 'minecraft', 'minecraft-api', 'spigot-api']
     for (String sub : projects) {
         def proj = ':ulib-' + sub
 
