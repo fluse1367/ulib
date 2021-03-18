@@ -38,7 +38,7 @@ public final class ImplInjector {
             // ConstructingFunction
             if (into.getType() != into.getDeclaringClass()) {
                 if (into.getType() != ConstructingFunction.class) {
-                    return;
+                    break;
                 }
 
                 injectConstructingFunction(impl, into);
@@ -53,8 +53,10 @@ public final class ImplInjector {
 
             inject(constructor.newInstance(), into);
 
-            break;
+            return;
         }
+
+        throw new InjectionException(impl, target, "Target does not qualify");
     }
 
     private static void injectConstructingFunction(Class<?> impl, Field into) {

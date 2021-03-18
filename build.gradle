@@ -60,7 +60,11 @@ allprojects {
         coordsLombok = 'org.projectlombok:lombok:1.18.6'
 
         def props = new Properties()
-        props.putAll(version: version.toString())
+        props.putAll([
+                version       : version.toString(),
+                'maven.mysql' : 'mysql:mysql-connector-java:8.0.23',
+                'maven.sqlite': 'org.xerial:sqlite-jdbc:3.25.2'
+        ])
 
         replacementTokens = props
     }
@@ -107,13 +111,13 @@ subprojects {
     task processSources(type: Sync) {
         from sourceSets.main.java.srcDirs
         //inputs.property 'version', version.toString()
-        filter ReplaceTokens, beginToken : '{{', endToken : '}}', tokens: replacementTokens
+        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
         into "$buildDir/src"
     }
     compileJava.source = processSources.outputs
 
     processResources {
-        filter ReplaceTokens, beginToken : '{{', endToken : '}}', tokens: replacementTokens
+        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
     }
     // replace tokens - end
 

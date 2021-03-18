@@ -1,6 +1,6 @@
 package eu.software4you.sql;
 
-import eu.software4you.aether.Dependencies;
+import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;
 
 import java.io.File;
@@ -13,11 +13,6 @@ import java.util.Map;
  * A Wrapper for a SQL connection
  */
 public class SqlEngine {
-    static {
-        Dependencies.depend("mysql:mysql-connector-java:8.0.23", "com.mysql.cj.jdbc.Driver");
-        Dependencies.depend("org.xerial:sqlite-jdbc:3.25.2", "org.sqlite.JDBC");
-    }
-
     private final LinkedHashMap<String, SqlTable> defaultTables = new LinkedHashMap<>();
     public boolean disableAutomaticParameterizedQueries = false;
     private ConnectionData connectionData = new ConnectionData();
@@ -255,7 +250,7 @@ public class SqlEngine {
     }
 
     private void createConnection(Driver driver) throws ClassNotFoundException, IllegalAccessException, InstantiationException, SQLException {
-        Class.forName(driver.clazz).newInstance();
+        DriverLoader.load(driver);
 
         if (driver == Driver.SqLite)
             disableAutomaticParameterizedQueries = true;
@@ -291,19 +286,30 @@ public class SqlEngine {
         /**
          * The MySQL JDBC Driver
          */
-        MySQL("com.mysql.cj.jdbc.Driver", "jdbc:mysql://"),
+        MySQL("jdbc:mysql://"),
         /**
          * The sqlite JDBC Driver
          */
-        SqLite("org.sqlite.JDBC", "jdbc:sqlite:"),
+        SqLite("jdbc:sqlite:"),
         ;
-        private final String clazz;
+
         private final String url;
 
-        Driver(String clazz, String url) {
-            this.clazz = clazz;
+        Driver(String url) {
             this.url = url;
         }
+    }
+
+    /* helper to load the driver libraries only when necessary */
+    public abstract static class DriverLoader {
+        @Await
+        private static DriverLoader loader;
+
+        private static void load(Driver driver) {
+            loader.load0(driver);
+        }
+
+        protected abstract void load0(Driver driver);
     }
 
     /**
