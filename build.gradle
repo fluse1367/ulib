@@ -87,7 +87,7 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    jar.doFirst {
+    jar {
         manifest {
             attributes 'Implementation-Title': project.name
             attributes 'Implementation-Version': version + "-" + gitCommitHash()
