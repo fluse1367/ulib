@@ -112,10 +112,14 @@ public class EnchantUtil {
             if (!customEnchantments.contains(ce))
                 return; // not registered
 
+            String loreLine = ce.getLoreLine();
+            if (loreLine == null)
+                return; // custom enchantment doesn't have a lore line
+
             List<String> lore = new ArrayList<>(Collections.singletonList(
                     String.format("§%s%s%s%s",
                             ce.isCursed() ? "c" : "7",
-                            ce.getLoreLine(),
+                            loreLine,
                             // append roman level number if 1 < level < 11 otherwise use the decimal number
                             (level > 1) ? level <= 10 ? " " + MathUtils.decToRoman(level) : level : "",
                             // append control characters
@@ -124,9 +128,10 @@ public class EnchantUtil {
             if (meta.hasLore())
                 lore.addAll(filterLore(meta.getLore()));
             meta.setLore(lore);
-            stack.setItemMeta(meta);
 
         });
+
+        stack.setItemMeta(meta);
     }
 
     /**
