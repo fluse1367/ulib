@@ -1,12 +1,6 @@
 package eu.software4you.spigot.enchantment;
 
-import eu.software4you.math.MathUtils;
-import eu.software4you.reflect.Parameter;
-import eu.software4you.reflect.ReflectUtil;
-import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
-import eu.software4you.spigot.plugin.ExtendedPlugin;
-import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
+import eu.software4you.ulib.Await;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.AnvilInventory;
@@ -14,19 +8,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EnchantUtil {
+public abstract class EnchantUtil {
     /**
      * Control characters to determine custom enchantment lores. They will be appended to any custom enchantment lore line.
      */
     public static final String ENCHANTMENT_LORE_CONTROL_CHARS = "§3§o §r ";
-    private static final Set<CustomEnchantment> customEnchantments = new HashSet<>();
+    @Await
+    private static EnchantUtil impl;
 
     /**
      * Returns an immutable copy of the currently registered custom enchantments.
@@ -34,7 +27,7 @@ public class EnchantUtil {
      * @return an immutable copy of the currently registered custom enchantments
      */
     public static Set<CustomEnchantment> getCustomEnchantments() {
-        return Collections.unmodifiableSet(customEnchantments);
+        return impl.getCustomEnchantments0();
     }
 
     /**
@@ -95,43 +88,7 @@ public class EnchantUtil {
      * @see Enchantment#getName()
      */
     public static void updateCustomEnchantmentLore(ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-
-        // remove all custom enchantment lines
-        if (meta.hasLore()) {
-            List<String> lore = filterLore(meta.getLore());
-            meta.setLore(lore.isEmpty() ? null : lore);
-        }
-
-        getItemEnchants(stack).forEach((enc, level) -> {
-
-            if (!(enc instanceof CustomEnchantment))
-                return; // not a custom enchantment
-
-            CustomEnchantment ce = (CustomEnchantment) enc;
-            if (!customEnchantments.contains(ce))
-                return; // not registered
-
-            String loreLine = ce.getLoreLine();
-            if (loreLine == null)
-                return; // custom enchantment doesn't have a lore line
-
-            List<String> lore = new ArrayList<>(Collections.singletonList(
-                    String.format("§%s%s%s%s",
-                            ce.isCursed() ? "c" : "7",
-                            loreLine,
-                            // append roman level number if 1 < level < 11 otherwise use the decimal number
-                            (level > 1) ? level <= 10 ? " " + MathUtils.decToRoman(level) : level : "",
-                            // append control characters
-                            ENCHANTMENT_LORE_CONTROL_CHARS
-                    )));
-            if (meta.hasLore())
-                lore.addAll(filterLore(meta.getLore()));
-            meta.setLore(lore);
-
-        });
-
-        stack.setItemMeta(meta);
+        impl.updateCustomEnchantmentLore0(stack);
     }
 
     /**
@@ -141,12 +98,12 @@ public class EnchantUtil {
      * @param lore the list
      * @return the list without the custom enchantment lore lines
      */
-    private static List<String> filterLore(List<String> lore) {
+    public static List<String> filterLore(List<String> lore) {
         return lore.stream().filter(line -> !line.endsWith(ENCHANTMENT_LORE_CONTROL_CHARS)).collect(Collectors.toList());
     }
 
     public static void setRepairCost(AnvilInventory inv, int lvl) {
-        ((ExtendedPlugin) Bukkit.getPluginManager().getPlugin("uLib")).sync(() -> inv.setRepairCost(lvl));
+        impl.setRepairCost0(inv, lvl);
     }
 
     /**
@@ -162,41 +119,7 @@ public class EnchantUtil {
      * @return the enchanting exp cost
      */
     public static int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {
-
-        boolean targetIsBook = target instanceof EnchantmentStorageMeta;
-
-        Function<Enchantment, Integer> lvlGet = targetIsBook ?
-                ((EnchantmentStorageMeta) target)::getStoredEnchantLevel : target::getEnchantLevel;
-
-
-        BiConsumer<Enchantment, Integer> enchAdd = targetIsBook ?
-                (e, l) -> ((EnchantmentStorageMeta) target).addStoredEnchant(e, l, false)
-                : (e, l) -> target.addEnchant(e, l, false);
-
-        AtomicInteger cost = new AtomicInteger(0);
-        getItemEnchants(sacrifice).forEach((ench, lvl) -> {
-
-            if (!targetIsBook) {
-                // skip enchantment to be added if enchantment cannot be applied to target
-                if (!ench.canEnchantItem(targetStack))
-                    return;
-                // skip enchantment to be added if enchantment is conflicting with any enchantment on the target
-                if (getItemEnchants(target).keySet().stream().anyMatch(ench::conflictsWith))
-                    return;
-            }
-
-            int currLvl = lvlGet.apply(ench);
-            if (currLvl == lvl && lvl + 1 <= ench.getMaxLevel()) {
-                lvl++;
-            } else {
-                lvl = Integer.max(currLvl, lvl);
-            }
-
-            enchAdd.accept(ench, lvl);
-            cost.addAndGet(lvl);
-        });
-
-        return cost.get();
+        return impl.combineEnchantmentsSafe0(targetStack, target, sacrifice);
     }
 
     /**
@@ -206,19 +129,7 @@ public class EnchantUtil {
      * @return if the registration was successful
      */
     public static boolean registerCustomEnchantment(CustomEnchantment enchantment) {
-        if (!customEnchantments.add(enchantment))
-            return false;
-
-        return byKeyName((byKey, byName) -> {
-            if (byKey.containsKey(enchantment.getKey()) || byName.containsKey(enchantment.getName())) {
-                // throw new IllegalArgumentException("Cannot set already-set enchantment");
-                return false;
-            }
-
-            byKey.put(enchantment.getKey(), enchantment);
-            byName.put(enchantment.getName(), enchantment);
-            return true;
-        });
+        return impl.registerCustomEnchantment0(enchantment);
     }
 
     /**
@@ -228,34 +139,36 @@ public class EnchantUtil {
      * @return if the removal was successful
      */
     public static boolean unregisterCustomEnchantment(CustomEnchantment enchantment) {
-        if (!customEnchantments.remove(enchantment))
-            return false;
-
-        return byKeyName((byKey, byName) -> byKey.remove(enchantment.getKey(), enchantment) && byName.remove(enchantment.getName(), enchantment));
+        return impl.unregisterCustomEnchantment0(enchantment);
     }
 
-    @SneakyThrows
     public static int getItemEnchantability(ItemStack stack) {
-
-        // return CraftItemStack.asNMSCopy(stack).getItem().c();
-
-        return (int) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_INVENTORY.getClass("CraftItemStack"),
-                null, "asNMSCopy().getItem().c()", Parameter.single(ItemStack.class, stack));
+        return impl.getItemEnchantability0(stack);
     }
 
-    @SneakyThrows
-    private static boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
-        Map<NamespacedKey, Enchantment> byKey = (Map<NamespacedKey, Enchantment>) ReflectUtil.forceCall(Enchantment.class, null, "byKey");
-        Map<String, Enchantment> byName = (Map<String, Enchantment>) ReflectUtil.forceCall(Enchantment.class, null, "byName");
-
-        return fun.apply(byKey, byName);
-    }
-
-    @SneakyThrows
+    /**
+     * Retrieves the enchantment rarity of an enchantment.
+     *
+     * @param enchantment the enchantment
+     * @return the rarity
+     */
     public static EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
-        String rarityName = (String) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_ENCHANTMENS.getClass("CraftEnchantment"),
-                null, "getRaw().d().name()", Parameter.single(Enchantment.class, enchantment));
-
-        return EnchantmentRarity.valueOf(rarityName);
+        return impl.getEnchantRarity0(enchantment);
     }
+
+    protected abstract Set<CustomEnchantment> getCustomEnchantments0();
+
+    protected abstract void updateCustomEnchantmentLore0(ItemStack stack);
+
+    protected abstract void setRepairCost0(AnvilInventory inv, int lvl);
+
+    protected abstract int combineEnchantmentsSafe0(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice);
+
+    protected abstract boolean registerCustomEnchantment0(CustomEnchantment enchantment);
+
+    protected abstract boolean unregisterCustomEnchantment0(CustomEnchantment enchantment);
+
+    protected abstract int getItemEnchantability0(ItemStack stack);
+
+    protected abstract EnchantmentRarity getEnchantRarity0(Enchantment enchantment);
 }
