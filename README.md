@@ -66,25 +66,35 @@ program like this:
 
 All in all, your command could look like this:
 
-```
+```shell
 java -jar ulib-core-X.X.X.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
 ```
 
 or this:
 
-```
+```shell
 java -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
+```
+
+**Note:** If you're planning to use the LiteTransform/Hook system, you have to either use the launch function or specify
+ulib as the javaagent. use it's launch function. It could look like this:
+
+```shell
+java -javaagent:ulib-core-X.X.X-lib.jar java -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
 ```
 
 ## About Java 9+
 
-If you are using Java 9 or higher and the standalone implementation, **uLib will fail to load any dependencies/libraries
-dynamically**. This is due to the restrictions made from Java 9 onwards.
+If you are using Java 9 or higher and the standalone implementation, **uLib will fail to dynamically load any
+dependencies/libraries**. This is due to the restrictions made from Java 9 onwards.
 
 If you still need these functionalities (e.g. the `Dependencies` class), please use uLib's launch function. This will
 allow uLib to work with a so called Java-Agent to still load dependencies/libraries dynamically after the JVM started.
 
-**Note:** You have to load uLib with the `java -jar` command, as `java -cp` will not load uLib's Java-Agent. {: .note}
+**Note:** You have to load uLib with the `java -jar` command, as `java -cp` will not load uLib's Java-Agent.
+
+**Alternatively** you can also specify ulib as the javaagent, simply add the argument `-javaagent:path/to/ulib.jar` to
+the command line (see end of "Developing with uLib").
 
 ## Repository
 
@@ -160,28 +170,28 @@ dependencies {
 ## Build Instructions
 
 1. Clone this repository:
-   ```
+   ```shell
    git clone https://gitlab.com/software4you.eu/ulib.git
    ```
 2. Cd into the directory:
-   ```
+   ```shell
    cd ulib
    ```
 3. If you want the most recent (unstable) version, switch to the `develop` branch:
-   ```
+   ```shell
    git checkout develop
    ```
 4. Build it:
 
    Linux (bash):
 
-   ```bash
+   ```shell
    ./gradlew build shadowJar
    ```
 
    Windows (cmd):
 
-   ```
+   ```shell
    ./gradlew.bat build shadowJar
    ```
 
