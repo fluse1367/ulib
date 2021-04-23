@@ -54,7 +54,7 @@ final class Transformer implements ClassFileTransformer {
 
             if (at == HookPoint.HEAD) {
                 method.insertBefore(String.format(
-                        "Callback cb = new Callback(%s.class, null, false, $0);%n" +
+                        "Callback cb = new Callback<>(%s.class, null, false, $0);%n" +
                                 "Hooks.runHook(%d, new Object[] {$$, cb});" +
                                 "if (cb.%s()) { return%s; }",
                         hasReturnType ? "$r" : "void",
@@ -63,10 +63,10 @@ final class Transformer implements ClassFileTransformer {
                 ));
             } else {
                 method.insertAfter(String.format(
-                        "Callback cb = new Callback(%s.class, $_, %s, $0);%n" +
+                        "Callback cb = new Callback<>(%s.class, %s, %s, $0);%n" +
                                 "Hooks.runHook(%d, new Object[] {$$, cb});" +
                                 "if (cb.%s()) { return%s; }",
-                        hasReturnType ? "$r" : "void", hasReturnType,
+                        hasReturnType ? "$r" : "void", hasReturnType ? "$_" : "null", hasReturnType,
                         hookId,
                         hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
                 ));
