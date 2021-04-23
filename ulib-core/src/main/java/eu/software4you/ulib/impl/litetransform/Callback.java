@@ -1,4 +1,4 @@
-package eu.software4you.ulib.impl.litetransform.injection;
+package eu.software4you.ulib.impl.litetransform;
 
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;

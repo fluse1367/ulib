@@ -1,6 +1,5 @@
 package eu.software4you.litetransform;
 
-import eu.software4you.litetransform.injection.Injector;
 import eu.software4you.ulib.Await;
 import lombok.Getter;
 

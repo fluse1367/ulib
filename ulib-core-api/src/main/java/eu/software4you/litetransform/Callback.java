@@ -3,8 +3,8 @@ package eu.software4you.litetransform;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Callback information for an injection into a method.<br>
- * If the a return value is provided, the method will be cancelled after all injects have been processed
+ * Callback information for a hook into a method.<br>
+ * If the a return value is provided, the method will be cancelled after the took was processed
  * and the provided value will be returned.<br>
  *
  * @param <T> The return type of the method.
