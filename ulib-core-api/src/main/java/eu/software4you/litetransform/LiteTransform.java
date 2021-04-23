@@ -16,8 +16,8 @@ public abstract class LiteTransform {
      *
      * @throws NoSuchMethodError if no default constructor exists and the hook method is not static.
      */
-    public static void scan(Class<?> clazz) {
-        impl.scan0(clazz);
+    public static void autoHook(Class<?> clazz) {
+        impl.autoHook0(clazz);
     }
 
     /**
@@ -46,7 +46,7 @@ public abstract class LiteTransform {
         impl.hook0(source, obj, into, at);
     }
 
-    protected abstract void scan0(Class<?> clazz);
+    protected abstract void autoHook0(Class<?> clazz);
 
     protected abstract void hook0(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at);
 

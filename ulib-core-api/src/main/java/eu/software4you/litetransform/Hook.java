@@ -14,16 +14,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Hook {
     /**
-     * The method to be injected to.
-     */
-    String method();
-
-    /**
-     * The method descriptor as specified in the JNI documentation.
+     * The method to be hooked to. A descriptor (as specified in the JNI documentation) can be specified.
      *
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
      */
-    String descriptor();
+    String method();
 
     /**
      * The class to be injected to.

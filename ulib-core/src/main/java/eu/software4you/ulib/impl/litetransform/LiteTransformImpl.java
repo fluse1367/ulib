@@ -25,7 +25,7 @@ final class LiteTransformImpl extends LiteTransform {
 
     @SneakyThrows
     @Override
-    public void scan0(Class<?> clazz) {
+    public void autoHook0(Class<?> clazz) {
         validate();
 
         for (Method method : clazz.getDeclaredMethods()) {
@@ -44,7 +44,16 @@ final class LiteTransformImpl extends LiteTransform {
             }
 
             Hook hook = method.getAnnotation(Hook.class);
-            hook(method, obj, hook.method(), hook.descriptor(),
+
+            String methodName = hook.method();
+            String desc = "";
+            if (methodName.contains("(")) {
+                int index = methodName.indexOf("(");
+                desc = methodName.substring(index);
+                methodName = methodName.substring(0, index);
+            }
+
+            hook(method, obj, methodName, desc,
                     hook.clazz(), hook.at());
         }
     }

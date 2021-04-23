@@ -36,14 +36,14 @@ final class Transformer implements ClassFileTransformer {
             return byteCode;
 
         try {
-            ClassPool pool = new ClassPool(true); // ClassPool.getDefault()?
+            ClassPool pool = new ClassPool(true);
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
-            CtClass ctClazz = pool.get(className);
-            CtMethod method = ctClazz.getMethod(methodName, methodDescriptor);
 
+            CtClass cc = pool.get(className);
+            CtMethod method = methodDescriptor.isEmpty() ? cc.getDeclaredMethod(methodName) : cc.getMethod(methodName, methodDescriptor);
 
-            ctClazz.removeMethod(method);
+            cc.removeMethod(method);
 
             // insert
 
@@ -75,9 +75,9 @@ final class Transformer implements ClassFileTransformer {
                 method.insertAfter(src);
             }
 
-            ctClazz.addMethod(method);
+            cc.addMethod(method);
 
-            return ctClazz.toBytecode();
+            return cc.toBytecode();
         } catch (Throwable thr) {
             thr.printStackTrace();
         }
