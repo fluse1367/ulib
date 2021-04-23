@@ -59,6 +59,8 @@ allprojects {
         coordsJetbrainsAnnotations = 'org.jetbrains:annotations:20.1.0'
         coordsLombok = 'org.projectlombok:lombok:1.18.6'
 
+        coordsJavassist = 'org.javassist:javassist:3.27.0-GA'
+
         def props = new Properties()
         props.putAll([
                 version       : version.toString(),
