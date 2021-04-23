@@ -9,7 +9,10 @@ import eu.software4you.ulib.Await;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 @Impl(LiteTransform.class)
 final class InjectorImpl implements Injector {
@@ -66,25 +69,39 @@ final class InjectorImpl implements Injector {
 
     @SneakyThrows
     private String getDescriptor(Method method) { // from https://stackoverflow.com/a/45122250/8400001
-        Field signatureField = Method.class.getDeclaredField("signature");
-        signatureField.setAccessible(true);
-        String signature = (String) signatureField.get(method);
-        if (signature != null) {
-            return signature;
-        }
-
         StringBuilder b = new StringBuilder("(");
-        for (Class<?> c : method.getParameterTypes()) {
-            signature = Array.newInstance(c, 0).toString();
-            b.append(signature, 1, signature.indexOf('@'));
-        }
-        b.append(')');
-        if (method.getReturnType() == void.class) {
-            b.append("V");
+        Arrays.stream(method.getParameterTypes()).map(this::getTypeSignature).forEach(b::append);
+        return b.append(')').append(getTypeSignature(method.getReturnType())).toString();
+    }
+
+    /**
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures</a>
+     */
+    private String getTypeSignature(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            if (clazz == boolean.class)
+                return "Z";
+            if (clazz == byte.class)
+                return "B";
+            if (clazz == char.class)
+                return "C";
+            if (clazz == short.class)
+                return "S";
+            if (clazz == int.class)
+                return "I";
+            if (clazz == long.class)
+                return "J";
+            if (clazz == float.class)
+                return "F";
+            if (clazz == double.class)
+                return "D";
+            if (clazz == void.class)
+                return "V";
+            throw new IllegalStateException(); // make compiler happy
+        } else if (clazz.isArray()) {
+            return String.format("[%s", getTypeSignature(clazz.getComponentType()));
         } else {
-            signature = Array.newInstance(method.getReturnType(), 0).toString();
-            b.append(signature, 1, signature.indexOf('@'));
+            return String.format("L%s;", clazz.getName().replace("/", "."));
         }
-        return b.toString();
     }
 }
