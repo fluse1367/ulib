@@ -18,10 +18,15 @@ public final class Hooks {
     }
 
     @SneakyThrows
-    public static void runHook(int hookId, Object[] params) {
+    public static void runHook(int hookId, Object[] params, Callback<?> cb) {
         if (!hooks.containsKey(hookId))
             return;
         val hook = hooks.get(hookId);
-        hook.getFirst().invoke(hook.getSecond(), params);
+
+        Object[] args = new Object[params.length + 1];
+        args[params.length] = cb;
+        System.arraycopy(params, 0, args, 0, params.length);
+
+        hook.getFirst().invoke(hook.getSecond(), args);
     }
 }

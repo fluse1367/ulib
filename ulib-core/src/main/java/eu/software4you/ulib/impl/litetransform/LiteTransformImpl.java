@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.litetransform;
 
 import eu.software4you.litetransform.Hook;
 import eu.software4you.litetransform.HookPoint;
-import eu.software4you.litetransform.Injector;
 import eu.software4you.litetransform.LiteTransform;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
@@ -15,7 +14,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 @Impl(LiteTransform.class)
-final class InjectorImpl implements Injector {
+final class LiteTransformImpl extends LiteTransform {
     @Await
     private static Agent agent;
 
@@ -26,7 +25,7 @@ final class InjectorImpl implements Injector {
 
     @SneakyThrows
     @Override
-    public void scan(Class<?> clazz) {
+    public void scan0(Class<?> clazz) {
         validate();
 
         for (Method method : clazz.getDeclaredMethods()) {
@@ -51,7 +50,7 @@ final class InjectorImpl implements Injector {
     }
 
     @Override
-    public void hook(Method source, Object obj, Method into, HookPoint at) {
+    public void hook0(Method source, Object obj, Method into, HookPoint at) {
         validate();
         hook(source, obj, into.getName(), getDescriptor(into),
                 into.getDeclaringClass().getName(), at);
@@ -59,7 +58,7 @@ final class InjectorImpl implements Injector {
 
     @SneakyThrows
     @Override
-    public void hook(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
+    public void hook0(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
         validate();
 
         agent.transform(Class.forName(className), new Transformer(source,

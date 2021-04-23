@@ -19,7 +19,9 @@ public @interface Hook {
     String method();
 
     /**
-     * The method descriptor.
+     * The method descriptor as specified in the JNI documentation.
+     *
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
      */
     String descriptor();
 

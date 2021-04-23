@@ -4,7 +4,6 @@ import eu.software4you.litetransform.HookPoint;
 import javassist.*;
 import lombok.SneakyThrows;
 
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Method;
@@ -49,34 +48,38 @@ final class Transformer implements ClassFileTransformer {
             // insert
 
             pool.importPackage("eu.software4you.ulib.impl.litetransform");
+            boolean head = at == HookPoint.HEAD;
             boolean hasReturnType = method.getReturnType() != CtClass.voidType;
+            boolean primitive = method.getReturnType().isPrimitive();
+            boolean stat = Modifier.isStatic(method.getModifiers());
             int hookId = Hooks.addHook(source, obj);
 
-            if (at == HookPoint.HEAD) {
-                method.insertBefore(String.format(
-                        "Callback cb = new Callback<>(%s.class, null, false, $0);%n" +
-                                "Hooks.runHook(%d, new Object[] {$$, cb});" +
-                                "if (cb.%s()) { return%s; }",
-                        hasReturnType ? "$r" : "void",
-                        hookId,
-                        hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
-                ));
+
+            String returnType = hasReturnType ? method.getReturnType().getName() : "void";
+            String returnValue = hasReturnType && !head ? ("(Object) " + (primitive ? "($w) " : "") + "$_") : "null";
+            boolean hasReturnValue = !head && hasReturnType;
+            String self = stat ? "null" : "$0";
+
+            String src = String.format(
+                    "Callback cb = new Callback(%s.class, %s, %s, %s);%n" +
+                            "Hooks.runHook(%d, $args, cb);" +
+                            "if (cb.%s()) { return%s; }",
+                    returnType, returnValue, hasReturnValue, self,
+                    hookId,
+                    hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
+            );
+
+            if (head) {
+                method.insertBefore(src);
             } else {
-                method.insertAfter(String.format(
-                        "Callback cb = new Callback<>(%s.class, %s, %s, $0);%n" +
-                                "Hooks.runHook(%d, new Object[] {$$, cb});" +
-                                "if (cb.%s()) { return%s; }",
-                        hasReturnType ? "$r" : "void", hasReturnType ? "$_" : "null", hasReturnType,
-                        hookId,
-                        hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
-                ));
+                method.insertAfter(src);
             }
 
             ctClazz.addMethod(method);
 
             return ctClazz.toBytecode();
-        } catch (NotFoundException | CannotCompileException | IOException e) {
-            e.printStackTrace();
+        } catch (Throwable thr) {
+            thr.printStackTrace();
         }
 
         return byteCode;
