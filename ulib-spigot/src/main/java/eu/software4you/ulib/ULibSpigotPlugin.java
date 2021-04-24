@@ -33,7 +33,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
                 '.', 'c', 'r', 'y', 'p', 't', 'o', 'm', 'o', 'r', 'i', 'n',
                 '.', 'x', 's', 'e', 'r', 'i', 'e', 's',
                 '.', 'X', 'M', 'a', 't', 'e', 'r', 'i', 'a', 'l'};
-        Properties.getInstance().ADDITIONAL_LIBS.put("com.github.cryptomorin:XSeries:7.5.5",
+        Properties.getInstance().ADDITIONAL_LIBS.put("{{maven.xseries}}",
                 new Pair<>(new String(clazz), Repository.MAVEN_CENTRAL));
         ULib.init();
     }
