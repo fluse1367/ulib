@@ -1,6 +1,7 @@
 package eu.software4you.utils;
 
 import eu.software4you.ulib.Await;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -15,7 +16,7 @@ public abstract class JarLoader {
      *
      * @param file the jar file to load
      */
-    public static void load(File file) {
+    public static void load(@NotNull File file) {
         impl.load0(file);
     }
 
@@ -24,7 +25,7 @@ public abstract class JarLoader {
      *
      * @param url the {@link URL} to load
      */
-    public static void load(URL url) {
+    public static void load(@NotNull URL url) {
         impl.load0(url);
     }
 
@@ -34,7 +35,7 @@ public abstract class JarLoader {
      * @param url         the {@link URL} to load
      * @param classLoader the {@link URLClassLoader} to load the jar file with
      */
-    public static void load(URL url, URLClassLoader classLoader) {
+    public static void load(@NotNull URL url, @NotNull URLClassLoader classLoader) {
         impl.load0(url, classLoader);
     }
 

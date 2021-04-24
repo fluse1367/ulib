@@ -1,5 +1,8 @@
 package eu.software4you.utils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +16,8 @@ public class ChecksumUtils {
     /**
      * Generates the checksum of a {@link File}
      */
-    public static String getFileChecksum(MessageDigest digest, File file) throws IOException {
+    @NotNull
+    public static String getFileChecksum(@NotNull MessageDigest digest, @NotNull File file) throws IOException {
         //Get file input stream for reading the file content
         return getFileChecksum(digest, new FileInputStream(file));
     }
@@ -21,7 +25,8 @@ public class ChecksumUtils {
     /**
      * Generates the checksum of an {@link InputStream}
      */
-    public static String getFileChecksum(MessageDigest digest, InputStream in) throws IOException {
+    @NotNull
+    public static String getFileChecksum(@NotNull MessageDigest digest, @NotNull InputStream in) throws IOException {
 
         //Create byte array to read data in chunks
         byte[] byteArray = new byte[1024];
@@ -52,14 +57,16 @@ public class ChecksumUtils {
     /**
      * Generates the SHA-256 checksum of the own {@link File} from its {@link Class}
      */
-    public static String getChecksum(Class<?> clazz) {
+    @Nullable
+    public static String getChecksum(@NotNull Class<?> clazz) {
         return getChecksum(clazz, "SHA-256");
     }
 
     /**
      * Generates the checksum of the own {@link File} from its {@link Class}
      */
-    public static String getChecksum(Class<?> clazz, String digest) {
+    @Nullable
+    public static String getChecksum(@NotNull Class<?> clazz, @NotNull String digest) {
         String checksum = null;
         try {
             MessageDigest dig = MessageDigest.getInstance(digest);

@@ -2,6 +2,8 @@ package eu.software4you.litetransform;
 
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.Await;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
@@ -15,7 +17,7 @@ public abstract class HookInjector {
     /**
      * Searches a class for any static hooks and tries to inject them.
      */
-    public static void hookStatic(Class<?> clazz) {
+    public static void hookStatic(@NotNull Class<?> clazz) {
         impl.hookStatic0(clazz);
     }
 
@@ -32,7 +34,7 @@ public abstract class HookInjector {
      * @param inst       the object (class) to search in
      * @param hookStatic if static hooks should also be injected
      */
-    public static void hook(Object inst, boolean hookStatic) {
+    public static void hook(@NotNull Object inst, boolean hookStatic) {
         impl.hook0(inst, hookStatic);
     }
 
@@ -56,7 +58,7 @@ public abstract class HookInjector {
      * @param className        the fully qualified class name of the declaring class
      * @param at               the hook point
      */
-    public static void directHook(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
+    public static void directHook(@NotNull Method source, @Nullable Object obj, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull String className, @NotNull HookPoint at) {
         impl.directHook0(source, obj, methodName, methodDescriptor, className, at);
     }
 
@@ -68,7 +70,7 @@ public abstract class HookInjector {
      * @param into   the method to be injected in
      * @param at     the point where to inject
      */
-    public static void directHook(Method source, Object obj, Method into, HookPoint at) {
+    public static void directHook(@NotNull Method source, @Nullable Object obj, @NotNull Method into, @NotNull HookPoint at) {
         impl.directHook0(source, obj, into, at);
     }
 

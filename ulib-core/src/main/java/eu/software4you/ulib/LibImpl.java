@@ -4,6 +4,8 @@ import eu.software4you.aether.Dependencies;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -101,75 +103,79 @@ final class LibImpl implements Lib {
     }
 
     @Override
-    public Logger getLogger() {
+    public @NotNull Logger getLogger() {
         return logger;
     }
 
     @Override
+    @NotNull
     public RunMode getMode() {
         return runMode;
     }
 
     @Override
+    @NotNull
     public String getVersion() {
         return version;
     }
 
     @Override
+    @NotNull
     public String getName() {
         return name;
     }
 
     @Override
+    @NotNull
     public String getNameOnly() {
         return nameOnly;
     }
 
     @Override
+    @NotNull
     public File getDataDir() {
         return properties.DATA_DIR;
     }
 
     @Override
+    @NotNull
     public File getLibsM2Dir() {
         return properties.LIBS_M2_DIR;
     }
 
     @Override
+    @NotNull
     public File getLibsUnsafeDir() {
         return properties.LIBS_UNSAFE_DIR;
     }
 
     @Override
-    public void debug(String debug) {
+    public void debug(@NotNull String debug) {
         logger.fine(debug);
     }
 
     @Override
-    public void info(String info) {
+    public void info(@NotNull String info) {
         logger.info(info);
     }
 
     @Override
-    public void warn(String warn) {
+    public void warn(@NotNull String warn) {
         logger.warning(warn);
     }
 
     @Override
-    public void error(String error) {
+    public void error(@NotNull String error) {
         logger.severe(error);
     }
 
     @Override
-    public void exception(Throwable throwable) {
-        exception(throwable, null);
+    public void exception(@NotNull Throwable throwable) {
+        logger.log(Level.SEVERE, "An unexpected exception occurred!", throwable);
     }
 
     @Override
-    public void exception(Throwable throwable, String msg) {
-        if (msg != null && !msg.isEmpty())
-            logger.log(Level.SEVERE, msg, throwable);
-        else
-            logger.log(Level.SEVERE, "An unexpected exception occurred!", throwable);
+    public void exception(@NotNull Throwable throwable, @Nullable String msg) {
+        logger.log(Level.SEVERE, msg, throwable);
     }
 }

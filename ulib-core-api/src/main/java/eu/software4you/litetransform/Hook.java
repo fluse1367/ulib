@@ -1,5 +1,7 @@
 package eu.software4you.litetransform;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,15 +20,18 @@ public @interface Hook {
      *
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
      */
+    @NotNull
     String method();
 
     /**
      * The class to be injected to.
      */
+    @NotNull
     String clazz();
 
     /**
      * Specifies where in the method to inject.
      */
+    @NotNull
     HookPoint at() default HookPoint.HEAD;
 }

@@ -10,6 +10,12 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> The return type of the method.
  */
 public interface Callback<T> {
+
+
+    /**
+     * Returns the object instance of the hooked method, or {@code null} if the hooked method is static.
+     */
+    @Nullable
     Object self();
 
     /**

@@ -1,5 +1,7 @@
 package eu.software4you.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.net.ssl.*;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -9,7 +11,7 @@ public class SSLUtils {
     /**
      * Loads keystore and truststore into the runtime
      */
-    public static void setSSLFactories(InputStream keyStream, String keyStorePassword, InputStream trustStream) throws Exception {
+    public static void setSSLFactories(@NotNull InputStream keyStream, @NotNull String keyStorePassword, @NotNull InputStream trustStream) throws Exception {
         // Get keyStore
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 

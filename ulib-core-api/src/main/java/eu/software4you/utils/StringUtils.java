@@ -1,5 +1,7 @@
 package eu.software4you.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,16 +13,20 @@ public class StringUtils {
      * @param length of {@link String} to be generated
      * @return {@link String}
      */
+    @NotNull
     public static String randomString(int length) {
         return randomString(length, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ000111222333444555666777888999");
     }
 
     /**
+     * Generates a random {@link String} from a provided charset.
+     *
      * @param length of {@link String}
      * @param chars  characters to be used for generation
      * @return {@link String}
      */
-    public static String randomString(int length, String chars) {
+    @NotNull
+    public static String randomString(int length, @NotNull String chars) {
         ThreadLocalRandom r = ThreadLocalRandom.current();
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < length; i++)
@@ -35,7 +41,7 @@ public class StringUtils {
      * @param array  the {@link String[]} array
      * @return {@link Boolean}
      */
-    public static boolean containsAllOfArray(String string, String... array) {
+    public static boolean containsAllOfArray(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (!string.contains(s))
                 return false;
@@ -43,9 +49,9 @@ public class StringUtils {
     }
 
     /**
-     * Like {@link #containsAllOfArray(String, String...)} but, it ignores the case of the letters
+     * Like {@link #containsAllOfArray(String, String...)} but it ignores the case of the letters
      */
-    public static boolean containsAllOfArrayIgnoreCase(String string, String... array) {
+    public static boolean containsAllOfArrayIgnoreCase(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (!string.toLowerCase().contains(s.toLowerCase()))
                 return false;
@@ -59,7 +65,7 @@ public class StringUtils {
      * @param array  the {@link String[]} array
      * @return {@link Boolean}
      */
-    public static boolean containsOneOfArray(String string, String... array) {
+    public static boolean containsOneOfArray(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (string.contains(s))
                 return true;
@@ -67,9 +73,9 @@ public class StringUtils {
     }
 
     /**
-     * Like {@link #containsOneOfArray(String, String...)} but, it ignores the case of the letters
+     * Like {@link #containsOneOfArray(String, String...)} but it ignores the case of the letters
      */
-    public static boolean containsOneOfArrayIgnoreCase(String string, String... array) {
+    public static boolean containsOneOfArrayIgnoreCase(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (string.toLowerCase().contains(s.toLowerCase()))
                 return true;
@@ -83,7 +89,7 @@ public class StringUtils {
      * @param array  the {@link String[]} array
      * @return {@link Boolean}
      */
-    public static boolean equalsAllOfWholeArray(String string, String... array) {
+    public static boolean equalsAllOfWholeArray(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (!string.equals(s))
                 return false;
@@ -91,9 +97,9 @@ public class StringUtils {
     }
 
     /**
-     * Like {@link #equalsAllOfWholeArray(String, String...)} but, it ignores the case of the letters
+     * Like {@link #equalsAllOfWholeArray(String, String...)} but it ignores the case of the letters
      */
-    public static boolean equalsAllOfWholeArrayIgnoreCase(String string, String... array) {
+    public static boolean equalsAllOfWholeArrayIgnoreCase(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (!string.equalsIgnoreCase(s))
                 return false;
@@ -107,7 +113,7 @@ public class StringUtils {
      * @param array  the {@link String[]} array
      * @return {@link Boolean}
      */
-    public static boolean equalsOneOfWholeArray(String string, String... array) {
+    public static boolean equalsOneOfWholeArray(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (string.equals(s))
                 return true;
@@ -115,9 +121,9 @@ public class StringUtils {
     }
 
     /**
-     * Like {@link #equalsOneOfWholeArray(String, String...)} but, it ignores the case of the letters
+     * Like {@link #equalsOneOfWholeArray(String, String...)} but it ignores the case of the letters
      */
-    public static boolean equalsOneOfWholeArrayIgnoreCase(String string, String... array) {
+    public static boolean equalsOneOfWholeArrayIgnoreCase(@NotNull String string, @NotNull String... array) {
         for (String s : array)
             if (string.equalsIgnoreCase(s))
                 return true;
