@@ -66,8 +66,8 @@ public class MathUtils {
         return new Coordinate2D(newX, newY);
     }
 
-    public static boolean isBetween(int end1, int end2, int looking) {
-        return end2 > end1 ? looking > end1 && looking < end2 : looking > end2 && looking < end1;
+    public static boolean isBetween(int a, int needle, int b) {
+        return b > a ? needle > a && needle < b : needle > b && needle < a;
     }
 
     /**

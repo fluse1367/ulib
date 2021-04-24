@@ -2,7 +2,6 @@ package eu.software4you.spigot.multiversion;
 
 
 import eu.software4you.spigot.multiversion.protocol.Protocol;
-import eu.software4you.reflect.UniClass;
 import eu.software4you.utils.ClassUtils;
 
 public class MultiversionManager {
@@ -35,19 +34,11 @@ public class MultiversionManager {
         return ClassUtils.forName(netMinecraftServerPrefix() + ex);
     }
 
-    public static UniClass netMinecraftServerUni(String ex) {
-        return new UniClass(netMinecraftServer(ex));
-    }
-
     public static String orgBukkitCraftbukkitPrefix() {
         return "org.bukkit.craftbukkit." + version.name() + ".";
     }
 
     public static Class<?> orgBukkitCraftbukkit(String ex) {
         return ClassUtils.forName(orgBukkitCraftbukkitPrefix() + ex);
-    }
-
-    public static UniClass orgBukkitCraftbukkitUni(String ex) {
-        return new UniClass(orgBukkitCraftbukkit(ex));
     }
 }
