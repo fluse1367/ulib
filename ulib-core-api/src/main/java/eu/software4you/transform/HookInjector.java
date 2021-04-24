@@ -44,7 +44,7 @@ public abstract class HookInjector {
      *
      * @param inst the object (class) to search in
      */
-    public static void hook(Object inst) {
+    public static void hook(@NotNull Object inst) {
         hook(inst, false);
     }
 
