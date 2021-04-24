@@ -5,7 +5,6 @@ dependencies {
     shade files(project(':ulib-core-api').configurations.shade)
 
     compile coordsJavassist
-    shade coordsJavassist
 
     // annotation
     annotationProcessor coordsLombok

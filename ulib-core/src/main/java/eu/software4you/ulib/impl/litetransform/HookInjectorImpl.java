@@ -60,6 +60,7 @@ final class HookInjectorImpl extends HookInjector {
 
     @SneakyThrows
     private void transform(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
+        TransformerDepend.$();
         agent.transform(Class.forName(className), new Transformer(source,
                 Modifier.isStatic(source.getModifiers()) ? null : obj,
                 className, methodName, methodDescriptor, at));
