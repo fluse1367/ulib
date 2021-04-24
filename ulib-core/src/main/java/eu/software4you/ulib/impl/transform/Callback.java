@@ -1,9 +1,9 @@
-package eu.software4you.ulib.impl.litetransform;
+package eu.software4you.ulib.impl.transform;
 
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-public class Callback<T> implements eu.software4you.litetransform.Callback<T> {
+public class Callback<T> implements eu.software4you.transform.Callback<T> {
 
     private final Class<T> returnType;
     private final Object self;

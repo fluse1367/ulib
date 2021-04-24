@@ -1,4 +1,4 @@
-package eu.software4you.litetransform;
+package eu.software4you.transform;
 
 /**
  * Represents the location of a method where an injection is acceptable.

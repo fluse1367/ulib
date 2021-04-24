@@ -1,6 +1,6 @@
-package eu.software4you.ulib.impl.litetransform;
+package eu.software4you.ulib.impl.transform;
 
-import eu.software4you.litetransform.HookPoint;
+import eu.software4you.transform.HookPoint;
 import javassist.*;
 import lombok.SneakyThrows;
 

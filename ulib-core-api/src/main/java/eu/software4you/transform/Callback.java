@@ -1,4 +1,4 @@
-package eu.software4you.litetransform;
+package eu.software4you.transform;
 
 import org.jetbrains.annotations.Nullable;
 

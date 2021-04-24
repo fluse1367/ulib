@@ -1,4 +1,4 @@
 /**
  * Simple (re-)transformation tools.
  */
-package eu.software4you.litetransform;
+package eu.software4you.transform;

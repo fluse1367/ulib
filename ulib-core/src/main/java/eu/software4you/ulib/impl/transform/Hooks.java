@@ -1,4 +1,4 @@
-package eu.software4you.ulib.impl.litetransform;
+package eu.software4you.ulib.impl.transform;
 
 import eu.software4you.common.collection.Pair;
 import lombok.SneakyThrows;

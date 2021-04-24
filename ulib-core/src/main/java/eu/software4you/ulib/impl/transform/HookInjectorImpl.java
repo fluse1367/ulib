@@ -1,9 +1,9 @@
-package eu.software4you.ulib.impl.litetransform;
+package eu.software4you.ulib.impl.transform;
 
 import eu.software4you.common.collection.Pair;
-import eu.software4you.litetransform.Hook;
-import eu.software4you.litetransform.HookInjector;
-import eu.software4you.litetransform.HookPoint;
+import eu.software4you.transform.Hook;
+import eu.software4you.transform.HookInjector;
+import eu.software4you.transform.HookPoint;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.inject.Impl;
