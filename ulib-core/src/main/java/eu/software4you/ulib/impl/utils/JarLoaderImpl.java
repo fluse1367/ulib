@@ -38,9 +38,7 @@ final class JarLoaderImpl extends JarLoader {
         if (ucl != null)
             return false;
         // we're in java 9
-        if (!Agent.available()) {
-            throw new IllegalStateException("Please bootstrap the application via the uLib launcher.");
-        }
+        Agent.verifyAvailable();
         return true;
     }
 

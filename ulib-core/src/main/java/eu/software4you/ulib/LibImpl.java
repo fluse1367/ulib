@@ -14,13 +14,16 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class LibImpl implements Lib {
+final class LibImpl implements Lib {
     static {
         long started = System.currentTimeMillis();
         val lib = new LibImpl();
         ULib.impl = lib;
 
         lib.info("Loading ...");
+
+        // Agent self attach if necessary
+        Agent.selfAttach();
 
         // load/register implementations
         try {
