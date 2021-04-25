@@ -76,32 +76,26 @@ or this:
 java -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
 ```
 
-**Note:** If you're planning to use the LiteTransform/Hook system, you have to either use the launch function or specify
-ulib as the javaagent.
+**Note:** If you're planning to use the Transform/Hook system, you have to allow uLib to load its javaagent.
 
-## About Java 9+ & Javaagent
+## About Java 9+ / Javaagent
 
-If you are using Java 9 or higher and the standalone implementation, **uLib will fail to dynamically load any
+If you are using Java 9 or higher and the standalone implementation, **uLib might fail to dynamically load any
 dependencies/libraries**. This is due to the restrictions made from Java 9 onwards.
 
-If you still need these functionalities (e.g. the `Dependencies` class), please use uLib's launch function. This will
-allow uLib to work with a so called Java-Agent to still load dependencies/libraries dynamically after the JVM started.
+If you still need these functionalities (e.g. the `Dependencies` class), you need to allow uLib to load its so-called
+Javaagent.
 
-**Note:** You have to load uLib with the `java -jar` command, as `java -cp` will not load uLib's Java-Agent.
-
-**Alternatively** you can also specify ulib as the javaagent, simply add the argument `-javaagent:path/to/ulib.jar` to
-the command line.
-
-```shell
-java -javaagent:ulib-core-X.X.X-lib.jar -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
-```
-
-ULib can also load the agent by itself. In order to allow this in Java 9 (and higher) you need to set the system
-property `jdk.attach.allowAttachSelf` to `true` **within the command line**:
+In order to allow this **on Java 9** (and higher) you need to set the system property `jdk.attach.allowAttachSelf`
+to `true` **within the command line**:
 
 ```shell
 java -Djdk.attach.allowAttachSelf=true -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
 ```
+
+In order for uLib to load the javaagent **on Java 8** though, it needs to load the tools.jar file, that is unfortunately
+not available in the regular Java 8 runtime. However, to solve this problem simply make sure the respective JDK is
+installed, uLib will try to load the file from there.
 
 ## Repository
 

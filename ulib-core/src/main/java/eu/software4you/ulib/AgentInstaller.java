@@ -5,11 +5,11 @@ import com.sun.tools.attach.VirtualMachine;
 import lombok.SneakyThrows;
 import lombok.val;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -31,10 +31,36 @@ final class AgentInstaller {
     }
 
     private boolean load() {
-        if (JavaVersion.isJava9OrLater() && !System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
-            logger.warning("Cannot load agent: self attach is not permitted");
-            logger.warning("Please set the system property 'jdk.attach.allowAttachSelf' to 'true' (-Djdk.attach.allowAttachSelf=true)");
-            return false;
+        if (JavaVersion.isJava9OrLater()) {
+            if (!System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
+                logger.warning("Cannot load agent: self attach is not permitted");
+                logger.warning("Please set the system property 'jdk.attach.allowAttachSelf' to 'true' (-Djdk.attach.allowAttachSelf=true)");
+                return false;
+            }
+        } else {
+            // we're in java 8, load tools.jar
+            try {
+                logger.fine("Locating tools.jar");
+                File tools = new File(System.getProperty("java.home"), "/../lib/tools.jar");
+                if (!tools.exists()) {
+                    throw new FileNotFoundException("tools.jar not found: " + tools.getAbsolutePath());
+                }
+
+                logger.fine("Loading " + tools);
+
+                ClassLoader cl = getClass().getClassLoader();
+                if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
+                    URLClassLoader ucl = (URLClassLoader) cl;
+                    Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                    addUrl.setAccessible(true);
+                    addUrl.invoke(ucl, tools.toURI().toURL());
+                } else {
+                    throw new IllegalStateException("cannot access a url class loader");
+                }
+            } catch (Throwable thr) {
+                logger.log(Level.WARNING, "Could not load agent: cannot load tools.jar but it is required in java 8", thr);
+                return false;
+            }
         }
 
         try {
