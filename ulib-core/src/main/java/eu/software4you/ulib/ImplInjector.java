@@ -10,14 +10,17 @@ import lombok.SneakyThrows;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.logging.Logger;
 
 public final class ImplInjector {
+
+    static Logger logger;
 
     static void autoInject(Class<?> impl) {
         // check for @Impl
         if (impl.isAnnotationPresent(Impl.class)) {
             if (!Modifier.isFinal(impl.getModifiers())) { // reject not final implementations
-                ULib.get().getLogger().warning(String.format("Implementation %s invalid: not final", impl));
+                logger.warning(String.format("Implementation %s invalid: not final", impl));
                 return;
             }
             Impl im = impl.getDeclaredAnnotation(Impl.class);
@@ -45,7 +48,7 @@ public final class ImplInjector {
 
                 return;
             }
-            ULib.get().getLogger().finer(String.format("Injecting %s into %s", impl, into));
+            logger.finer(String.format("Injecting %s into %s", impl, into));
 
             // direct implementation with default constructor
             Constructor<?> constructor = impl.getDeclaredConstructor();
@@ -64,7 +67,7 @@ public final class ImplInjector {
             if (!constructor.isAnnotationPresent(ImplConst.class)) {
                 continue;
             }
-            ULib.get().getLogger().finer(String.format("Injecting %s as constructing function into %s", impl, into));
+            logger.finer(String.format("Injecting %s as constructing function into %s", impl, into));
             constructor.setAccessible(true);
 
             ConstructingFunction<?> fun = new ConstructingFunction<Object>() {
@@ -96,9 +99,7 @@ public final class ImplInjector {
             throw new InjectionException(instance, into, String.format("caller (%s) has insufficient permission", caller));
         }
 
-        if (caller != Agent.class) {
-            ULib.get().getLogger().finer(String.format("%s: Injecting %s into %s", caller, inst, into));
-        }
+        logger.finer(String.format("%s: Injecting %s into %s", caller, inst, into));
 
         for (Field field : into.getDeclaredFields()) {
             if (!field.isAnnotationPresent(Await.class)
@@ -112,5 +113,4 @@ public final class ImplInjector {
 
         throw new InjectionException(instance, into, "missing injection point");
     }
-
 }

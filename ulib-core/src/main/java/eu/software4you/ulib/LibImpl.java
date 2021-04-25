@@ -24,8 +24,9 @@ final class LibImpl implements Lib {
 
         lib.info("Loading ...");
 
-        // Agent self attach if necessary
-        Agent.selfAttach();
+        ImplInjector.logger = lib.getLogger();
+
+        AgentInstaller.install(lib.getLogger());
 
         // load/register implementations
         try {

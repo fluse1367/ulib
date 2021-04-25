@@ -54,7 +54,7 @@ final class JarLoaderImpl extends JarLoader {
     @Override
     protected void load0(File file) {
         if (jre9LoaderAvailable()) {
-            agent.add(new JarFile(file));
+            agent.appendJar(new JarFile(file));
             return;
         }
 

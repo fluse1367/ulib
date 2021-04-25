@@ -12,11 +12,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Premain-Class': 'eu.software4you.ulib.Agent'
-        attributes 'Agent-Class': 'eu.software4you.ulib.Agent'
-        attributes 'Launcher-Agent-Class': 'eu.software4you.ulib.Agent'
-        attributes 'Can-Redefine-Classes': true
-        attributes 'Can-Retransform-Classes': true
         attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
     }
 }

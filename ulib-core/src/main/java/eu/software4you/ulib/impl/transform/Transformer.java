@@ -47,7 +47,7 @@ final class Transformer implements ClassFileTransformer {
 
             // insert
 
-            pool.importPackage("eu.software4you.ulib.impl.litetransform");
+            pool.importPackage("eu.software4you.ulib.impl.transform");
             boolean head = at == HookPoint.HEAD;
             boolean hasReturnType = method.getReturnType() != CtClass.voidType;
             boolean primitive = method.getReturnType().isPrimitive();
