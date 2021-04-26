@@ -29,6 +29,20 @@ public abstract class HookInjector {
     }
 
     /**
+     * Searches a class for any active static hooks and removes them.
+     */
+    public static void unhookStatic(@NotNull Class<?> clazz) {
+        impl.unhookStatic0(clazz);
+    }
+
+    /**
+     * Searches the calling class for any active static hooks and removes them.
+     */
+    public static void unhookStatic() {
+        unhookStatic(ReflectUtil.getCallerClass());
+    }
+
+    /**
      * Searches an object for any hooks and tries to inject them.
      *
      * @param inst       the object (class) to search in
@@ -49,36 +63,90 @@ public abstract class HookInjector {
     }
 
     /**
-     * Hooks a method directly into a specific class. Useful for dynamic injection.
+     * Searches an object for any hooks and removes them.
      *
-     * @param source           the method to hook
-     * @param obj              the instance object, ignored on static methods
-     * @param methodName       the name of the target method
-     * @param methodDescriptor the signature of the target method
-     * @param className        the fully qualified class name of the declaring class
-     * @param at               the hook point
+     * @param inst         the object (class) to search in
+     * @param unhookStatic if static hooks should also be removed
      */
-    public static void directHook(@NotNull Method source, @Nullable Object obj, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull String className, @NotNull HookPoint at) {
-        impl.directHook0(source, obj, methodName, methodDescriptor, className, at);
+    public static void unhook(@NotNull Object inst, boolean unhookStatic) {
+        impl.unhook0(inst, unhookStatic);
     }
 
     /**
-     * Hooks a source method into another. Useful for dynamic injection.
+     * Searches an object for any non-static hooks and removes them.
+     * Equivalent to {@code hook(inst, false)}.
      *
-     * @param source the method to hook
-     * @param obj    the instance object, ignored on static methods
-     * @param into   the method to be injected in
-     * @param at     the point where to inject
+     * @param inst the object (class) to search in
      */
-    public static void directHook(@NotNull Method source, @Nullable Object obj, @NotNull Method into, @NotNull HookPoint at) {
-        impl.directHook0(source, obj, into, at);
+    public static void unhook(@NotNull Object inst) {
+        unhook(inst, false);
+    }
+
+    /**
+     * Hooks a method directly into another method. Useful for dynamic injection.
+     *
+     * @param source     the hook method
+     * @param sourceInst the instance object, ignored on static methods
+     * @param into       the method to hook
+     * @param at         the point where to hook
+     */
+    public static void directHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull Method into, @NotNull HookPoint at) {
+        impl.directHook0(source, sourceInst, into, at);
+    }
+
+    /**
+     * Hooks a method directly into another method. Useful for dynamic injection.
+     *
+     * @param source           the hook method
+     * @param sourceInst       the instance object, ignored on static methods
+     * @param className        the fully qualified class name of the class to hook
+     * @param methodName       the name of the method to hook
+     * @param methodDescriptor the JNI method descriptor of the method to hook
+     * @param at               the point where to hook
+     */
+    public static void directHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
+        impl.directHook0(source, sourceInst, className, methodName, methodDescriptor, at);
+    }
+
+    /**
+     * Removes a hook.
+     *
+     * @param source     the hook method
+     * @param sourceInst the instance object, ignored on static methods
+     * @param into       the hooked method
+     * @param at         the point from where to remove the hook
+     */
+    public static void directUnHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull Method into, @NotNull HookPoint at) {
+        impl.directUnhook0(source, sourceInst, into, at);
+    }
+
+    /**
+     * Removes a hook.
+     *
+     * @param source           the hook method
+     * @param sourceInst       the instance object, ignored on static methods
+     * @param className        the fully qualified class name of the hooked class
+     * @param methodName       the name of the hooked method
+     * @param methodDescriptor the JNI method descriptor of the hooked method
+     * @param at               the point from where to remove the hook
+     */
+    public static void directUnhook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
+        impl.directUnhook0(source, sourceInst, className, methodName, methodDescriptor, at);
     }
 
     protected abstract void hookStatic0(Class<?> clazz);
 
+    protected abstract void unhookStatic0(Class<?> clazz);
+
     protected abstract void hook0(Object inst, boolean hookStatic);
 
-    protected abstract void directHook0(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at);
+    protected abstract void unhook0(Object inst, boolean unhookStatic);
 
-    protected abstract void directHook0(Method source, Object obj, Method into, HookPoint at);
+    protected abstract void directHook0(Method source, Object sourceInst, Method into, HookPoint at);
+
+    protected abstract void directHook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at);
+
+    protected abstract void directUnhook0(Method source, Object sourceInst, Method into, HookPoint at);
+
+    protected abstract void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at);
 }

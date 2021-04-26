@@ -1,6 +1,5 @@
 package eu.software4you.ulib.impl.transform;
 
-import eu.software4you.common.collection.Pair;
 import eu.software4you.transform.Hook;
 import eu.software4you.transform.HookInjector;
 import eu.software4you.transform.HookPoint;
@@ -12,22 +11,33 @@ import lombok.val;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Impl(HookInjector.class)
 final class HookInjectorImpl extends HookInjector {
     @Await
     private static Agent agent;
 
+    private final Map<String, List<String>> injected = new ConcurrentHashMap<>();
+
     @Override
-    public void hookStatic0(Class<?> clazz) {
+    protected void hookStatic0(Class<?> clazz) {
         Agent.verifyAvailable();
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Hook.class) || !Modifier.isStatic(method.getModifiers()))
                 continue;
-            transform(method.getAnnotation(Hook.class), method, null);
+            inject(method.getAnnotation(Hook.class), method, null);
         }
+    }
+
+    @Override
+    protected void unhookStatic0(Class<?> clazz) {
+        Hooks.delHooks(clazz).forEach((className, li) ->
+                li.forEach(desc -> unref(className, desc)));
     }
 
     @Override
@@ -37,81 +47,93 @@ final class HookInjectorImpl extends HookInjector {
         for (Method method : inst.getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Hook.class) || (!hookStatic && Modifier.isStatic(method.getModifiers())))
                 continue;
-            transform(method.getAnnotation(Hook.class), method, inst);
+            inject(method.getAnnotation(Hook.class), method, inst);
         }
     }
 
     @Override
-    public void directHook0(Method source, Object obj, Method into, HookPoint at) {
-        directHook0(source, obj, into.getName(), getDescriptor(into),
+    protected void unhook0(Object inst, boolean unhookStatic) {
+        Hooks.delHooks(inst).forEach((className, li) ->
+                li.forEach(desc -> unref(className, desc)));
+        if (unhookStatic) {
+            unhookStatic0(inst.getClass());
+        }
+    }
+
+    @Override
+    protected void directHook0(Method source, Object obj, Method into, HookPoint at) {
+        directHook0(source, obj, into.getName(), Util.getDescriptor(into),
                 into.getDeclaringClass().getName(), at);
     }
 
     @Override
-    public void directHook0(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
+    protected void directHook0(Method source, Object obj, String className, String methodName, String methodDescriptor, HookPoint at) {
         Agent.verifyAvailable();
-        transform(source, obj, methodName, methodDescriptor, className, at);
+        inject(source, obj, className, methodName, methodDescriptor, at);
     }
 
-    private void transform(Hook hook, Method method, Object obj) {
-        val p = resolveMethod(hook);
-        transform(method, obj, p.getFirst(), p.getSecond(), hook.clazz(), hook.at());
+    @Override
+    protected void directUnhook0(Method source, Object sourceInst, Method into, HookPoint at) {
+        Hooks.delHook(source, sourceInst, Util.fullDescriptor(into), at);
+        unref(into.getDeclaringClass().getName(), into.getName() + Util.getDescriptor(into));
+    }
+
+    @Override
+    protected void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
+        Hooks.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at);
+        unref(className, methodName + Util.resolveDescriptor(className, methodName, methodDescriptor));
+    }
+
+    private void unref(String className, String desc) {
+        if (!injected.containsKey(className)) {
+            return;
+        }
+        val li = injected.get(className);
+        li.remove(desc);
+        if (li.isEmpty())
+            injected.remove(className);
+    }
+
+    private void inject(Hook hook, Method source, Object obj) {
+        val p = Util.resolveMethod(hook);
+
+        String className = hook.clazz();
+        if (className.isEmpty()) {
+            Class<?> declaring = source.getDeclaringClass();
+            if (!declaring.isAnnotationPresent(eu.software4you.transform.Hooks.class)) {
+                throw new IllegalArgumentException("Empty fully qualified class name without @Hooks annotation being present.");
+            }
+            className = declaring.getAnnotation(eu.software4you.transform.Hooks.class).value();
+        }
+
+        inject(source, obj, className, p.getFirst(), p.getSecond(), hook.at());
     }
 
     @SneakyThrows
-    private void transform(Method source, Object obj, String methodName, String methodDescriptor, String className, HookPoint at) {
-        TransformerDepend.$();
-        agent.transform(Class.forName(className), new Transformer(source,
-                Modifier.isStatic(source.getModifiers()) ? null : obj,
-                className, methodName, methodDescriptor, at));
-    }
+    private void inject(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
+        String fullDescriptor = Util.fullDescriptor(className, methodName, methodDescriptor);
 
-    private Pair<String, String> resolveMethod(Hook hook) {
-        String methodName = hook.method();
-        String desc = "";
-        if (methodName.contains("(")) {
-            int index = methodName.indexOf("(");
-            desc = methodName.substring(index);
-            methodName = methodName.substring(0, index);
-        }
+        Hooks.addHook(source, sourceInst, fullDescriptor, at);
 
-        return new Pair<>(methodName, desc);
-    }
 
-    private String getDescriptor(Method method) { // from https://stackoverflow.com/a/45122250/8400001
-        StringBuilder b = new StringBuilder("(");
-        Arrays.stream(method.getParameterTypes()).map(this::getTypeSignature).forEach(b::append);
-        return b.append(')').append(getTypeSignature(method.getReturnType())).toString();
-    }
-
-    /**
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures</a>
-     */
-    private String getTypeSignature(Class<?> clazz) {
-        if (clazz.isPrimitive()) {
-            if (clazz == boolean.class)
-                return "Z";
-            if (clazz == byte.class)
-                return "B";
-            if (clazz == char.class)
-                return "C";
-            if (clazz == short.class)
-                return "S";
-            if (clazz == int.class)
-                return "I";
-            if (clazz == long.class)
-                return "J";
-            if (clazz == float.class)
-                return "F";
-            if (clazz == double.class)
-                return "D";
-            if (clazz == void.class)
-                return "V";
-            throw new IllegalStateException(); // make compiler happy
-        } else if (clazz.isArray()) {
-            return String.format("[%s", getTypeSignature(clazz.getComponentType()));
+        String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor);
+        if (injected.containsKey(className)) {
+            if (injected.get(className).contains(desc)) {
+                return; // the target method is already injected
+            }
         } else {
-            return String.format("L%s;", clazz.getName().replace("/", "."));
+            injected.put(className, new ArrayList<>());
         }
+        val li = injected.get(className);
+
+        List<String> methods = new ArrayList<>(li);
+        methods.add(desc);
+
+        TransformerDepend.$();
+        agent.transform(Class.forName(className), new Transformer(
+                className, methods));
+
+        // add desc only after successful transformation
+        li.add(desc);
     }
 }

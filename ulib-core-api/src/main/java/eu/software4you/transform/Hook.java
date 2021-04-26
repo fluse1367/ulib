@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
  * Marks a method to be hooked into another method.<br>
  * The method must have the same parameters as the target method, plus a {@link Callback} object at the end.<br>
  * Note: the {@link Callback} object must be of the same type as the return type of the target method.
+ *
+ * @see Hooks
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -21,16 +23,16 @@ public @interface Hook {
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
      */
     @NotNull
-    String method();
+    String value();
 
     /**
-     * The class to be injected to.
+     * The fully qualified class name of the class that is to be hooked. Optional if {@link Hooks} annotation is present.
      */
     @NotNull
-    String clazz();
+    String clazz() default "";
 
     /**
-     * Specifies where in the method to inject.
+     * Specifies where in the method to hook.
      */
     @NotNull
     HookPoint at() default HookPoint.HEAD;
