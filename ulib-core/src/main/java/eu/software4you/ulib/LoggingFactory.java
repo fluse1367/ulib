@@ -11,7 +11,6 @@ class LoggingFactory {
     private final Properties properties;
     private final Logger logger;
     private final Lib instance;
-    private final String LOG_FORMAT = "[%s] %tT %s: %s\n";
 
     LoggingFactory(Properties properties, Logger logger, Lib instance) {
         this.properties = properties;
@@ -42,13 +41,13 @@ class LoggingFactory {
             FileHandler fileHandler = new FileHandler(properties.DATA_DIR.getPath() + "/ulib.%g.log",
                     67108864 /*64 MiB*/, 16);
             fileHandler.setFormatter(normalFormatter());
-            fileHandler.setLevel(Level.ALL);
+            fileHandler.setLevel(properties.LOG_LEVEL);
             logger.addHandler(fileHandler);
         } catch (IOException e) {
             System.err.println("Could not append file handler to logger. All uLib logged records will not be saved to disk.");
             e.printStackTrace();
         }
-        logger.setLevel(Level.ALL);
+        logger.setLevel(properties.LOG_LEVEL);
     }
 
     void systemInstall() {
@@ -93,6 +92,7 @@ class LoggingFactory {
     }
 
     private String simpleFormat(LogRecord record) {
+        String LOG_FORMAT = "[%s] %tT %s: %s\n";
         return String.format(LOG_FORMAT, instance.getNameOnly(),
                 new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());
     }

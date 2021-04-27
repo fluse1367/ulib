@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.lang.instrument.ClassFileTransformer;
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -25,16 +26,20 @@ public final class Agent {
         logger.fine("Agent init!");
         val props = System.getProperties();
 
-        Object objTransform = props.get("ulib.javaagent.transform");
-        if (!(objTransform instanceof BiConsumer))
-            throw new IllegalStateException("transform not a  BiConsumer: " + objTransform);
+        Object[] array = (Object[]) props.get("ulib.javaagent");
+        if (array == null || array.length != 2) {
+            throw new IllegalStateException("Invalid javaagent access array: " + Arrays.toString(array));
+        }
 
-        Object objAppendJar = props.get("ulib.javaagent.appendJar");
+        Object objTransform = array[0];
+        if (!(objTransform instanceof BiConsumer))
+            throw new IllegalStateException("transform not a BiConsumer: " + objTransform);
+
+        Object objAppendJar = array[1];
         if (!(objAppendJar instanceof Consumer))
             throw new IllegalStateException("appendJar not a Consumer: " + objAppendJar);
 
-        props.remove("ulib.javaagent.transform");
-        props.remove("ulib.javaagent.appendJar");
+        props.remove("ulib.javaagent");
 
         instance = new Agent(((BiConsumer<Class<?>, ClassFileTransformer>) objTransform), ((Consumer<JarFile>) objAppendJar));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));

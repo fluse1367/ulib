@@ -58,7 +58,9 @@ final class AgentInstaller {
                     throw new IllegalStateException("cannot access a url class loader");
                 }
             } catch (Throwable thr) {
-                logger.log(Level.WARNING, "Could not load agent: cannot load tools.jar but it is required in java 8", thr);
+                logger.warning("Could not load agent: cannot load tools.jar but it is required in java 8");
+                logger.warning(thr.getMessage());
+                logger.log(Level.FINEST, "", thr);
                 return false;
             }
         }

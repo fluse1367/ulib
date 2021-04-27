@@ -5,6 +5,7 @@ import eu.software4you.transform.HookInjector;
 import eu.software4you.transform.HookPoint;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 @Impl(HookInjector.class)
 final class HookInjectorImpl extends HookInjector {
@@ -126,13 +128,18 @@ final class HookInjectorImpl extends HookInjector {
         }
         val li = injected.get(className);
 
-        List<String> methods = new ArrayList<>(li);
+        List<String> methods = new ArrayList<>(li.size() + 1);
+        methods.addAll(li);
         methods.add(desc);
 
         TransformerDepend.$();
-        agent.transform(Class.forName(className), new Transformer(
-                className, methods));
-
+        try {
+            agent.transform(Class.forName(className), new Transformer(
+                    className, methods));
+        } catch (Throwable thr) {
+            ULib.get().getLogger().log(Level.WARNING, "Agent transformation failure (" + fullDescriptor + ")", thr);
+            return;
+        }
         // add desc only after successful transformation
         li.add(desc);
     }
