@@ -31,7 +31,7 @@ public class UnsafeDependencies {
             // if this point is reached, the test class is already loaded, which means there is no need to download the library
             Class<?> testClazz = Class.forName(testClass);
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
-            ULib.get().getLogger().fine(String.format("Class %s of library %s is already loaded in the runtime: %s",
+            ULib.logger().fine(() -> String.format("Class %s of library %s is already loaded in the runtime: %s",
                     testClass, coords, file.getName()));
             return;
         }
@@ -47,7 +47,7 @@ public class UnsafeDependencies {
             Class<?> testClazz = Class.forName(testClass);
             // if this point is reached, the test class was successfully downloaded and added to the classpath
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
-            ULib.get().getLogger().fine(String.format("Class %s of library %s successfully loaded into the runtime: %s",
+            ULib.logger().fine(() -> String.format("Class %s of library %s successfully loaded into the runtime: %s",
                     testClass, coords, file.getName()));
         } catch (Throwable thr) {
             // Class.forName(String) failed (again), library was not loaded (should never happen)

@@ -19,7 +19,7 @@ public abstract class MainUserCache {
     public static void enable() {
         if (isEnabled())
             return;
-        ULib.get().debug("Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
+        ULib.logger().finer(() -> "Enabling main user cache! Enabled by " + ReflectUtil.getCallerClassName());
 
         mainCache = impl.enable0();
     }

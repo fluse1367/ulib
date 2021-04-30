@@ -114,7 +114,7 @@ public class CustomEnchantmentHandler implements Listener {
 
         // set seed to exp seed of player
         int xpSeed = (int) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_ENTITY.getClass("CraftPlayer"),
-                e.getEnchanter(), "getHandle().eF()" // EntityHuman#eF() every version the same?
+                e.getEnchanter(), "getHandle().eF()" // EntityHuman#eF() every version the same? <-- NO
         );
         rand.setSeed(xpSeed);
 

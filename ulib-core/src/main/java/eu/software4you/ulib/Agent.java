@@ -23,7 +23,7 @@ public final class Agent {
         if (available())
             return;
 
-        logger.fine("Agent init!");
+        logger.fine(() -> "Agent init!");
         val props = System.getProperties();
 
         Object[] array = (Object[]) props.get("ulib.javaagent");
@@ -45,7 +45,7 @@ public final class Agent {
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.transform.HookInjectorImpl"));
 
-        logger.fine("Agent init done!");
+        logger.fine(() -> "Agent init done!");
     }
 
     public static boolean available() {

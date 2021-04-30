@@ -2,20 +2,21 @@ package ulib.ported.org.bukkit.configuration.file;
 
 import eu.software4you.ulib.ULib;
 import org.apache.commons.lang.Validate;
-import ulib.ported.org.bukkit.configuration.Configuration;
-import ulib.ported.org.bukkit.configuration.ConfigurationSection;
-import ulib.ported.org.bukkit.configuration.InvalidConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
+import ulib.ported.org.bukkit.configuration.Configuration;
+import ulib.ported.org.bukkit.configuration.ConfigurationSection;
+import ulib.ported.org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.
@@ -51,7 +52,7 @@ public class YamlConfiguration extends FileConfiguration {
             config.load(file);
         } catch (FileNotFoundException ex) {
         } catch (IOException | InvalidConfigurationException ex) {
-            ULib.get().exception(ex, "Cannot load " + file);
+            ULib.logger().log(Level.SEVERE, ex, () -> "Cannot load " + file);
         }
 
         return config;
@@ -77,7 +78,7 @@ public class YamlConfiguration extends FileConfiguration {
         try {
             config.load(reader);
         } catch (IOException | InvalidConfigurationException ex) {
-            ULib.get().exception(ex, "Cannot load configuration from stream");
+            ULib.logger().log(Level.WARNING, ex, () -> "Cannot load configuration from stream");
         }
 
         return config;

@@ -33,20 +33,20 @@ final class AgentInstaller {
     private boolean load() {
         if (JavaVersion.isJava9OrLater()) {
             if (!System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
-                logger.warning("Cannot load agent: self attach is not permitted");
-                logger.warning("Please set the system property 'jdk.attach.allowAttachSelf' to 'true' (-Djdk.attach.allowAttachSelf=true)");
+                logger.warning(() -> "Cannot load agent: self attach is not permitted");
+                logger.warning(() -> "Please set the system property 'jdk.attach.allowAttachSelf' to 'true' (-Djdk.attach.allowAttachSelf=true)");
                 return false;
             }
         } else {
             // we're in java 8, load tools.jar
             try {
-                logger.fine("Locating tools.jar");
+                logger.fine(() -> "Locating tools.jar");
                 File tools = new File(System.getProperty("java.home"), "/../lib/tools.jar");
                 if (!tools.exists()) {
                     throw new FileNotFoundException("tools.jar not found: " + tools.getAbsolutePath());
                 }
 
-                logger.fine("Loading " + tools);
+                logger.fine(() -> "Loading " + tools);
 
                 ClassLoader cl = getClass().getClassLoader();
                 if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
@@ -58,7 +58,7 @@ final class AgentInstaller {
                     throw new IllegalStateException("cannot access a url class loader");
                 }
             } catch (Throwable thr) {
-                logger.warning("Could not load agent: cannot load tools.jar but it is required in java 8");
+                logger.warning(() -> "Could not load agent: cannot load tools.jar but it is required in java 8");
                 logger.warning(thr.getMessage());
                 logger.log(Level.FINEST, "", thr);
                 return false;
@@ -67,25 +67,25 @@ final class AgentInstaller {
 
         try {
 
-            logger.fine("Loading agent ...");
+            logger.fine(() -> "Loading agent ...");
 
             String agentPath = extractAgent();
-            logger.fine("Agent file: " + agentPath);
+            logger.fine(() -> "Agent file: " + agentPath);
 
             String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-            logger.fine("JVM pid is: " + pid);
+            logger.fine(() -> "JVM pid is: " + pid);
 
-            logger.fine("Attach!");
+            logger.fine(() -> "Attach!");
             VirtualMachine vm = VirtualMachine.attach(pid);
 
-            logger.fine("Loading agent " + agentPath);
+            logger.fine(() -> "Loading agent " + agentPath);
             vm.loadAgent(agentPath);
         } catch (Throwable e) {
-            logger.log(Level.WARNING, "Could not load agent", e);
+            logger.log(Level.WARNING, e, () -> "Could not load agent");
             return false;
         }
 
-        logger.fine("Agent successfully loaded!");
+        logger.fine(() -> "Agent successfully loaded!");
         return true;
     }
 
@@ -93,24 +93,24 @@ final class AgentInstaller {
     private String extractAgent() {
 
         File file = new File(Properties.getInstance().DATA_DIR, "agent.jar");
-        logger.fine("Attempt to extract agent to " + file);
+        logger.fine(() -> "Attempt to extract agent to " + file);
 
 
         String ver = Agent.class.getPackage().getImplementationVersion();
 
         if (file.exists()) {
-            logger.fine("Agent already exists! Checking version.");
+            logger.fine(() -> "Agent already exists! Checking version.");
             try {
                 JarFile jar = new JarFile(file);
                 String agentVer = jar.getManifest().getMainAttributes().getValue("Implementation-Version");
-                logger.fine("Agent version: " + agentVer);
+                logger.fine(() -> "Agent version: " + agentVer);
                 if (agentVer != null && agentVer.equals(ver)) {
-                    logger.fine("Version valid, use existing agent ...");
+                    logger.fine(() -> "Version valid, use existing agent ...");
                     return file.getPath();
                 }
             } catch (Throwable ignored) {
             }
-            logger.fine("Version invalid, rewrite agent jar ...");
+            logger.fine(() -> "Version invalid, rewrite agent jar ...");
         }
 
         Manifest manifest = new Manifest(new ByteArrayInputStream(String.format(
@@ -133,14 +133,14 @@ final class AgentInstaller {
         out.flush();
         out.close();
 
-        logger.fine("Agent extracted");
+        logger.fine(() -> "Agent extracted");
 
         return file.getPath();
     }
 
     @SneakyThrows
     private byte[] readClass(Class<?> cl) {
-        logger.finest("Reading bytes of " + cl.getName());
+        logger.finest(() -> "Reading bytes of " + cl.getName());
 
         val in = cl.getResourceAsStream(String.format("/%s.class", cl.getName().replace(".", "/")));
         if (in == null) {

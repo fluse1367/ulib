@@ -1,6 +1,7 @@
 package eu.software4you.utils;
 
 import eu.software4you.ulib.ULib;
+import lombok.val;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 public class ClassUtils {
     /**
@@ -39,7 +41,7 @@ public class ClassUtils {
         try {
             return Class.forName(className);
         } catch (Throwable thr) {
-            ULib.get().exception(thr, String.format("%s could not be loaded", className));
+            ULib.logger().log(Level.SEVERE, thr, () -> String.format("%s could not be loaded", className));
         }
         return null;
     }
@@ -56,7 +58,7 @@ public class ClassUtils {
         try {
             Class<?> enumClass = Class.forName(enumName);
             if (!enumClass.isAssignableFrom(Enum.class)) {
-                ULib.get().error(String.format("%s is not an enumeration", enumClass.getSimpleName()));
+                ULib.logger().log(Level.SEVERE, () -> String.format("%s is not an enumeration", enumClass.getSimpleName()));
                 return null;
             }
             Class<? extends Enum<?>> e = (Class<? extends Enum<?>>) enumClass;
@@ -79,7 +81,7 @@ public class ClassUtils {
         try {
             return enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry);
         } catch (Throwable thr) {
-            ULib.get().exception(thr, String.format("%s could not be found in %s", enumEntry, enumClass.getName()));
+            ULib.logger().log(Level.SEVERE, thr, () -> String.format("%s could not be found in %s", enumEntry, enumClass.getName()));
         }
         return null;
     }
@@ -190,13 +192,14 @@ public class ClassUtils {
     public static Method findUnderlyingDeclaredMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {
         Class<?> current = clazz;
         do {
-            ULib.get().debug(String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), current));
+            val cl = current;
+            ULib.logger().finer(() -> String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), cl));
             try {
                 return current.getDeclaredMethod(methodName, parameterTypes);
             } catch (NoSuchMethodException ignored) {
             }
         } while ((current = current.getSuperclass()) != null);
-        ULib.get().debug(String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
+        ULib.logger().finer(() -> String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
         return null;
     }
 }

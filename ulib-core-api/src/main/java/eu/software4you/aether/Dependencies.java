@@ -82,7 +82,7 @@ public class Dependencies {
 
     @SneakyThrows
     public static void depend(String coords, Repository repository, Consumer<File> loader) {
-        ULib.get().getLogger().fine(String.format("Depending on %s from repo %s", coords, repository.getUrl()));
+        ULib.logger().fine(() -> String.format("Depending on %s from repo %s", coords, repository.getUrl()));
 
         Dependency dependency =
                 new Dependency(new DefaultArtifact(coords), "compile");

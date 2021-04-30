@@ -11,7 +11,7 @@ public class Bootstrap {
         ));
         ULib.init();
 
-        Launcher.instance = ULib.get();
+        Launcher.logger = ULib.logger();
         Launcher.launch(args);
     }
 

@@ -5,6 +5,7 @@ import eu.software4you.ulib.ULib;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public class DataSupplier implements Supplier<byte[]> {
     private final LinkedBlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
@@ -18,7 +19,7 @@ public class DataSupplier implements Supplier<byte[]> {
         try {
             queue.put(data);
         } catch (InterruptedException e) {
-            ULib.get().exception(e, "Cannot supply data in SBB");
+            ULib.logger().log(Level.SEVERE, e, () -> "Cannot supply data in SBB");
         }
     }
 
@@ -27,7 +28,7 @@ public class DataSupplier implements Supplier<byte[]> {
         try {
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            ULib.get().exception(e, "Cannot pull data from SBB");
+            ULib.logger().log(Level.SEVERE, e, () -> "Cannot pull data from SBB");
         }
         return null;
     }

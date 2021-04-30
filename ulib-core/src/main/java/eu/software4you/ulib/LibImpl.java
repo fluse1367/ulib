@@ -5,7 +5,6 @@ import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -21,8 +20,8 @@ final class LibImpl implements Lib {
         long started = System.currentTimeMillis();
         val lib = new LibImpl();
         ULib.impl = lib;
-
-        lib.info("Loading ...");
+        Logger logger = lib.getLogger();
+        logger.info(() -> "Loading ...");
 
         ImplInjector.logger = lib.getLogger();
 
@@ -41,12 +40,12 @@ final class LibImpl implements Lib {
 
                 if (name.startsWith(pack) && name.endsWith("Impl.class")) {
                     String clName = name.replace("/", ".").substring(0, name.length() - 6);
-                    lib.getLogger().finer(String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
+                    lib.getLogger().finer(() -> String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
                     val cl = Class.forName(clName);
 
                     ImplInjector.autoInject(cl);
 
-                    lib.getLogger().finer(String.format("Implementation %s loaded", cl.getName()));
+                    lib.getLogger().finer(() -> String.format("Implementation %s loaded", cl.getName()));
                 }
 
             }
@@ -61,10 +60,10 @@ final class LibImpl implements Lib {
                 Dependencies.depend(en.getKey(), v.getFirst(), v.getSecond());
             }
         } catch (Exception e) {
-            lib.exception(e, "Error while loading dependencies. You might experiencing issues.");
+            lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experiencing issues.");
         }
 
-        lib.info(String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
+        logger.info(() -> String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
                 .divide(BigDecimal.valueOf(1000), new MathContext(4, RoundingMode.HALF_UP)).toPlainString()
         ));
     }
@@ -148,35 +147,5 @@ final class LibImpl implements Lib {
     @NotNull
     public File getLibsUnsafeDir() {
         return properties.LIBS_UNSAFE_DIR;
-    }
-
-    @Override
-    public void debug(@NotNull String debug) {
-        logger.fine(debug);
-    }
-
-    @Override
-    public void info(@NotNull String info) {
-        logger.info(info);
-    }
-
-    @Override
-    public void warn(@NotNull String warn) {
-        logger.warning(warn);
-    }
-
-    @Override
-    public void error(@NotNull String error) {
-        logger.severe(error);
-    }
-
-    @Override
-    public void exception(@NotNull Throwable throwable) {
-        logger.log(Level.SEVERE, "An unexpected exception occurred!", throwable);
-    }
-
-    @Override
-    public void exception(@NotNull Throwable throwable, @Nullable String msg) {
-        logger.log(Level.SEVERE, msg, throwable);
     }
 }
