@@ -1,5 +1,7 @@
 package eu.software4you.sql;
 
+import lombok.SneakyThrows;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -148,78 +150,57 @@ public class SqlTableWrapper<V> {
      * @param keyVal the value to detect the correct entry
      * @return the fetched data
      */
+    @SneakyThrows
     public ResultSet select(String column, V keyVal) {
-        try {
-            return query("select %s from %s where %s = '%s'", column, table.name(), key, keyVal);
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        return query("select %s from %s where %s = '%s'", column, table.name(), key, keyVal);
     }
 
+    @SneakyThrows
     public Object selectObject(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getObject(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getObject(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
+    @SneakyThrows
     public String selectString(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getString(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getString(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
+    @SneakyThrows
     public boolean selectBoolean(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getBoolean(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getBoolean(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
+    @SneakyThrows
     public int selectInt(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getInt(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getInt(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
+    @SneakyThrows
     public long selectLong(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getLong(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getLong(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
+    @SneakyThrows
     public double selectDouble(String column, V keyVal) {
-        try {
-            ResultSet rs = select(column, keyVal);
-            if (rs.next())
-                return rs.getDouble(column);
-            throw new IllegalArgumentException("Nothing found with given parameters!");
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        ResultSet rs = select(column, keyVal);
+        if (rs.next())
+            return rs.getDouble(column);
+        throw new IllegalArgumentException("Nothing found with given parameters!");
     }
 
     /**
@@ -229,12 +210,9 @@ public class SqlTableWrapper<V> {
      * @param value  the value to set
      * @param keyVal the value to detect the correct entry
      */
+    @SneakyThrows
     public void update(String column, Object value, V keyVal) {
-        try {
-            execute("update %s set %s = '%s' where %s = '%s'", table.name(), column, value, key, keyVal);
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        execute("update %s set %s = '%s' where %s = '%s'", table.name(), column, value, key, keyVal);
     }
 
     /**
@@ -242,12 +220,9 @@ public class SqlTableWrapper<V> {
      *
      * @param keyVal the value to detect the correct entry
      */
+    @SneakyThrows
     public void delete(V keyVal) {
-        try {
-            execute("delete from %s where %s = '%s'", table.name(), key, keyVal);
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        execute("delete from %s where %s = '%s'", table.name(), key, keyVal);
     }
 
     /**
@@ -256,12 +231,9 @@ public class SqlTableWrapper<V> {
      * @param keyVal the value to detect the correct entry
      * @return true if it exists, otherwise false
      */
+    @SneakyThrows
     public boolean exists(V keyVal) {
-        try {
-            return query("select * from %s where %s = '%s'", table.name(), key, keyVal).next();
-        } catch (SQLException e) {
-            throw new Error(e);
-        }
+        return query("select * from %s where %s = '%s'", table.name(), key, keyVal).next();
     }
 
     /**
@@ -295,13 +267,10 @@ public class SqlTableWrapper<V> {
         sqlEngine.execute(String.format(sql, params));
     }
 
+    @SneakyThrows
     private void validateConnection() {
-        try {
-            if (!sqlEngine.isConnected())
-                sqlEngine.connect();
-        } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            throw new Error(e);
-        }
+        if (!sqlEngine.isConnected())
+            sqlEngine.connect();
     }
 
 }

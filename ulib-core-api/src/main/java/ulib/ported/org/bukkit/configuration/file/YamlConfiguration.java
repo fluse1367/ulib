@@ -1,7 +1,6 @@
 package ulib.ported.org.bukkit.configuration.file;
 
 import eu.software4you.ulib.ULib;
-import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -16,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 /**
@@ -44,7 +44,7 @@ public class YamlConfiguration extends FileConfiguration {
      */
     @NotNull
     public static YamlConfiguration loadConfiguration(@NotNull File file) {
-        Validate.notNull(file, "File cannot be null");
+        Objects.requireNonNull(file, "File cannot be null");
 
         YamlConfiguration config = new YamlConfiguration();
 
@@ -71,7 +71,7 @@ public class YamlConfiguration extends FileConfiguration {
      */
     @NotNull
     public static YamlConfiguration loadConfiguration(@NotNull Reader reader) {
-        Validate.notNull(reader, "Stream cannot be null");
+        Objects.requireNonNull(reader, "Stream cannot be null");
 
         YamlConfiguration config = new YamlConfiguration();
 
@@ -103,7 +103,7 @@ public class YamlConfiguration extends FileConfiguration {
 
     @Override
     public void loadFromString(@NotNull String contents) throws InvalidConfigurationException {
-        Validate.notNull(contents, "Contents cannot be null");
+        Objects.requireNonNull(contents, "Contents cannot be null");
 
         Map<?, ?> input;
         try {

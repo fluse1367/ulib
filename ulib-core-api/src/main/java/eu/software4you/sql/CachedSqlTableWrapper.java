@@ -1,8 +1,9 @@
 package eu.software4you.sql;
 
+import lombok.SneakyThrows;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -15,18 +16,15 @@ public class CachedSqlTableWrapper<V> extends SqlTableWrapper<V> {
     /**
      * @see SqlTableWrapper#SqlTableWrapper(SqlEngine, SqlTable, String)
      */
+    @SneakyThrows
     public CachedSqlTableWrapper(SqlEngine engine, SqlTable table, String key) {
         super(engine, table, key);
 
         List<String> columnNames = new ArrayList<>();
-        try {
-            ResultSet rs = query("select * from %s", table.name());
-            ResultSetMetaData meta = rs.getMetaData();
-            for (int i = 1; i <= meta.getColumnCount(); i++) {
-                columnNames.add(meta.getColumnName(i));
-            }
-        } catch (SQLException e) {
-            throw new Error(e);
+        ResultSet rs = query("select * from %s", table.name());
+        ResultSetMetaData meta = rs.getMetaData();
+        for (int i = 1; i <= meta.getColumnCount(); i++) {
+            columnNames.add(meta.getColumnName(i));
         }
         this.columnNames = Collections.unmodifiableList(columnNames);
     }
@@ -123,23 +121,19 @@ public class CachedSqlTableWrapper<V> extends SqlTableWrapper<V> {
     /**
      * Caches the whole sql table
      */
+    @SneakyThrows
     public final void cache() {
-        try {
-            ResultSet rs = query("select * from %s", getTable().name());
+        ResultSet rs = query("select * from %s", getTable().name());
 
+        while (rs.next()) {
+            V keyVal = (V) rs.getObject(getKey());
 
-            while (rs.next()) {
-                V keyVal = (V) rs.getObject(getKey());
+            Map<String, Object> values = getColumns(keyVal);
 
-                Map<String, Object> values = getColumns(keyVal);
-
-                for (String column : columnNames) {
-                    values.put(column, rs.getObject(column));
-                }
-
+            for (String column : columnNames) {
+                values.put(column, rs.getObject(column));
             }
-        } catch (SQLException e) {
-            throw new Error(e);
+
         }
     }
 
@@ -148,20 +142,16 @@ public class CachedSqlTableWrapper<V> extends SqlTableWrapper<V> {
      *
      * @param keyVal the value to detect the entry
      */
+    @SneakyThrows
     public final void cache(V keyVal) {
-        try {
-            ResultSet rs = query("select * from %s where %s = '%s'", getTable().name(), getKey(), keyVal);
-            if (!rs.next())
-                throw new IllegalArgumentException("Nothing found with given parameters!");
+        ResultSet rs = query("select * from %s where %s = '%s'", getTable().name(), getKey(), keyVal);
+        if (!rs.next())
+            throw new IllegalArgumentException("Nothing found with given parameters!");
 
-            Map<String, Object> values = getColumns(keyVal);
+        Map<String, Object> values = getColumns(keyVal);
 
-            for (String column : columnNames) {
-                values.put(column, rs.getObject(column));
-            }
-
-        } catch (SQLException e) {
-            throw new Error(e);
+        for (String column : columnNames) {
+            values.put(column, rs.getObject(column));
         }
     }
 

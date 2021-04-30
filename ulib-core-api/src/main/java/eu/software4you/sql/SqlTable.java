@@ -158,7 +158,7 @@ public class SqlTable {
     public void setPrimaryKey(String key) {
         Key k = getDefaultKeys().get(key);
         if (k == null)
-            throw new Error("Key not found");
+            throw new IllegalArgumentException("Key not found");
         setPrimaryKey(k);
     }
 

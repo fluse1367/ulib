@@ -1,5 +1,7 @@
 package eu.software4you.utils;
 
+import lombok.SneakyThrows;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,17 +43,14 @@ public class FileUtils {
         createNewFile(new File(newFile));
     }
 
+    @SneakyThrows
     public static void createNewFile(File file) {
         if (file.exists())
             return;
         if (file.getParentFile() != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs())
-            throw new Error("Parent directories could not be created");
-        try {
-            if (!file.createNewFile())
-                throw new Error("File could not be created");
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+            throw new RuntimeException("Parent directories could not be created");
+        if (!file.createNewFile())
+            throw new RuntimeException("File could not be created");
     }
 
     public static boolean remove(File file) {

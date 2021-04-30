@@ -4,6 +4,7 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.http.HttpUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -18,12 +19,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
 
 @Impl(HttpUtil.class)
 final class HttpUtilImpl extends HttpUtil {
@@ -133,32 +131,22 @@ final class HttpUtilImpl extends HttpUtil {
         return execute(client, (HttpUriRequest) request);
     }
 
+    @SneakyThrows
     private HttpResponse execute(HttpClient client, HttpUriRequest request) {
-        try {
-            request.addHeader("Host", request.getURI().getHost());
-            return ((HttpClient) client).execute(request);
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+        request.addHeader("Host", request.getURI().getHost());
+        return client.execute(request);
     }
 
+    @SneakyThrows
     private InputStream content(HttpEntity entity) {
-        if (entity == null)
-            throw new Error("No content");
-        try {
-            return entity.getContent();
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+        Objects.requireNonNull(entity, "No content");
+        return entity.getContent();
     }
 
+    @SneakyThrows
     private String toString(InputStream stream) {
-        try {
-            String str = IOUtils.toString(stream);
-            stream.close();
-            return str;
-        } catch (IOException e) {
-            throw new Error(e);
-        }
+        String str = IOUtils.toString(stream, Charset.defaultCharset());
+        stream.close();
+        return str;
     }
 }

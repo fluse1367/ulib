@@ -6,7 +6,7 @@ public class Initiatable {
 
     protected final void initiate() {
         if (initiated)
-            throw new IllegalAccessError("Already initiated!");
+            throw new IllegalStateException("Already initiated!");
         initiated = true;
     }
 }

@@ -145,7 +145,6 @@ public abstract class ReflectUtil {
      *              and 0 the {@link Class} this method is being called from
      * @return the calling {@link Class}
      * @throws IllegalArgumentException if {@code depth is negative} or invalid
-     * @throws Error                    if {@link Class} name of the n-th calling class could not be resolved. <b>This should NEVER happen.</b>
      */
     public static Class<?> getCallerClass(int depth) {
         return impl.getCallerClass0(depth);

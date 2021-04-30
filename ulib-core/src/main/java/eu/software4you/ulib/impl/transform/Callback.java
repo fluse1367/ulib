@@ -39,7 +39,7 @@ public class Callback<T> implements eu.software4you.transform.Callback<T> {
     @Override
     public T setReturnValue(@Nullable T value) {
         if (returnType == void.class)
-            throw new IllegalAccessError("Return type void cannot have a return value");
+            throw new IllegalArgumentException("Return type void cannot have a return value");
         hasReturnValue = true;
         return this.returnValue = value;
     }
