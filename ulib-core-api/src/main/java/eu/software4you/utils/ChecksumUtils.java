@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public class ChecksumUtils {
 
@@ -75,6 +77,41 @@ public class ChecksumUtils {
             e.printStackTrace();
         }
         return checksum;
+    }
+
+
+    /**
+     * Computes a CRC32 checksum from an input stream. This method closes the stream.
+     *
+     * @param in the stream to compute the checksum from
+     * @return the checksum
+     * @throws IOException inherited from {@link InputStream#read()} and {@link InputStream#close()}
+     * @see InputStream#read()
+     * @see InputStream#close()
+     */
+    public static long getCRC32(@NotNull InputStream in) throws IOException {
+        Checksum sum = new CRC32();
+
+        byte[] buff = new byte[1024];
+        int len;
+        while ((len = in.read(buff)) != -1) {
+            sum.update(buff, 0, len);
+        }
+        in.close();
+
+        return sum.getValue();
+    }
+
+    /**
+     * Computes a CRC32 checksum from a byte array.
+     *
+     * @param arr the array to compute the checksum from
+     * @return the checksum
+     */
+    public static long getCRC32(byte[] arr) {
+        Checksum sum = new CRC32();
+        sum.update(arr, 0, arr.length);
+        return sum.getValue();
     }
 
 }
