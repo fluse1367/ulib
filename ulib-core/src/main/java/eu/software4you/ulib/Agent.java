@@ -18,12 +18,12 @@ public final class Agent {
     private final BiConsumer<Class<?>, ClassFileTransformer> transform;
     private final Consumer<JarFile> appendJar;
 
-    @SneakyThrows
     static void init(Logger logger) {
         if (available())
             return;
 
-        logger.fine(() -> "Agent init!");
+        logger.finer(() -> "Agent pre init");
+
         val props = System.getProperties();
 
         Object[] array = (Object[]) props.get("ulib.javaagent");
@@ -41,7 +41,19 @@ public final class Agent {
 
         props.remove("ulib.javaagent");
 
-        instance = new Agent(((BiConsumer<Class<?>, ClassFileTransformer>) objTransform), ((Consumer<JarFile>) objAppendJar));
+        init(logger,
+                (BiConsumer<Class<?>, ClassFileTransformer>) objTransform,
+                ((Consumer<JarFile>) objAppendJar));
+    }
+
+    @SneakyThrows
+    static void init(Logger logger, BiConsumer<Class<?>, ClassFileTransformer> transform, Consumer<JarFile> appendJar) {
+        if (available())
+            return;
+
+        logger.fine(() -> "Agent init!");
+
+        instance = new Agent(transform, appendJar);
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.transform.HookInjectorImpl"));
 

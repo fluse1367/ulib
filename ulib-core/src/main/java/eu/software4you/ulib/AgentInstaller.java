@@ -2,6 +2,7 @@ package eu.software4you.ulib;
 
 import com.google.gson.internal.JavaVersion;
 import com.sun.tools.attach.VirtualMachine;
+import eu.software4you.ulib.agentex.Loader;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -10,6 +11,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -19,6 +23,8 @@ import java.util.zip.ZipEntry;
 
 final class AgentInstaller {
     private final Logger logger;
+    private String pid;
+    private String agentPath;
 
     private AgentInstaller(Logger logger) {
         this.logger = logger;
@@ -31,55 +37,31 @@ final class AgentInstaller {
     }
 
     private boolean load() {
-        if (JavaVersion.isJava9OrLater()) {
-            if (!System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
-                logger.warning(() -> "Cannot load agent: self attach is not permitted");
-                logger.warning(() -> "Please set the system property 'jdk.attach.allowAttachSelf' to 'true' (-Djdk.attach.allowAttachSelf=true)");
-                return false;
-            }
-        } else {
-            // we're in java 8, load tools.jar
-            try {
-                logger.fine(() -> "Locating tools.jar");
-                File tools = new File(System.getProperty("java.home"), "/../lib/tools.jar");
-                if (!tools.exists()) {
-                    throw new FileNotFoundException("tools.jar not found: " + tools.getAbsolutePath());
-                }
-
-                logger.fine(() -> "Loading " + tools);
-
-                ClassLoader cl = getClass().getClassLoader();
-                if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
-                    URLClassLoader ucl = (URLClassLoader) cl;
-                    Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                    addUrl.setAccessible(true);
-                    addUrl.invoke(ucl, tools.toURI().toURL());
-                } else {
-                    throw new IllegalStateException("cannot access a url class loader");
-                }
-            } catch (Throwable thr) {
-                logger.warning(() -> "Could not load agent: cannot load tools.jar but it is required in java 8");
-                logger.warning(thr.getMessage());
-                logger.log(Level.FINEST, "", thr);
-                return false;
-            }
-        }
+        boolean self = !JavaVersion.isJava9OrLater()
+                || System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true");
 
         try {
+            if (self && toolsLoadingRequired() && !loadTools()) { // load tools beforehand
+                return false;
+            }
 
-            logger.fine(() -> "Loading agent ...");
+            logger.finer("Extracting agent ...");
 
-            String agentPath = extractAgent();
+            agentPath = extractAgent();
             logger.fine(() -> "Agent file: " + agentPath);
 
-            String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-            logger.fine(() -> "JVM pid is: " + pid);
+            pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 
-            logger.fine(() -> "Attach!");
-            VirtualMachine vm = VirtualMachine.attach(pid);
+            if (self) {
+                logger.finer("Self attach!");
+                attachSelf();
+            } else {
+                logger.finer("External attach!");
+                if (!attachEx()) {
+                    return false;
+                }
+            }
 
-            logger.fine(() -> "Loading agent " + agentPath);
-            vm.loadAgent(agentPath);
         } catch (Throwable e) {
             logger.log(Level.WARNING, e, () -> "Could not load agent");
             return false;
@@ -87,6 +69,58 @@ final class AgentInstaller {
 
         logger.fine(() -> "Agent successfully loaded!");
         return true;
+    }
+
+    @SneakyThrows
+    private boolean attachEx() {
+        String javaBin = String.format("%s%sbin%2$sjava", System.getProperty("java.home"), File.separator);
+
+
+        if (!new File(javaBin).exists()) {
+            if (!new File(javaBin += ".exe").exists()) {
+                logger.log(Level.SEVERE, () -> "Unable to find java executable!");
+                return false;
+            }
+        }
+
+        String bin = javaBin;
+        logger.finer(() -> "Java executable: " + bin);
+
+        StringBuilder cp = new StringBuilder(AgentInstaller.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+        if (toolsLoadingRequired()) {
+            cp.append(":").append(toolsFile().getPath());
+        }
+
+        List<String> cmd = Arrays.asList(javaBin, "-cp", cp.toString(), Loader.class.getName(), /* main args */ pid, agentPath);
+
+        logger.finer(() -> "Starting process: " + Arrays.toString(cmd.toArray()));
+
+        val p = new ProcessBuilder(cmd)
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                .redirectError(ProcessBuilder.Redirect.INHERIT)
+                .start();
+        if (!p.waitFor(10, TimeUnit.SECONDS)) {
+            p.destroyForcibly();
+            logger.warning("External Agent not terminated within 10 seconds!");
+            return false;
+        } else if (p.exitValue() != 0) {
+            logger.warning("External Agent failed: " + p.exitValue());
+            return false;
+        }
+        return true;
+    }
+
+    @SneakyThrows
+    private void attachSelf() {
+        logger.fine(() -> "Loading agent: " + agentPath);
+
+        logger.fine(() -> "JVM pid is: " + pid);
+
+        logger.fine(() -> "Attach!");
+        VirtualMachine vm = VirtualMachine.attach(pid);
+
+        logger.fine(() -> "Loading agent " + agentPath);
+        vm.loadAgent(agentPath);
     }
 
     @SneakyThrows
@@ -158,5 +192,48 @@ final class AgentInstaller {
         in.close();
 
         return out.toByteArray();
+    }
+
+    private boolean toolsLoadingRequired() {
+        try {
+            Class.forName("com.sun.tools.attach.VirtualMachine");
+        } catch (ClassNotFoundException e) {
+            return true;
+        }
+        return false;
+    }
+
+    @SneakyThrows
+    private File toolsFile() {
+        File tools = new File(System.getProperty("java.home"), "/../lib/tools.jar");
+        if (!tools.exists()) {
+            throw new FileNotFoundException("tools.jar not found: " + tools.getAbsolutePath());
+        }
+        return tools;
+    }
+
+    private boolean loadTools() {
+        try {
+            logger.fine(() -> "Locating tools.jar");
+            File tools = toolsFile();
+
+            logger.fine(() -> "Loading " + tools);
+
+            ClassLoader cl = getClass().getClassLoader();
+            if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
+                URLClassLoader ucl = (URLClassLoader) cl;
+                Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                addUrl.setAccessible(true);
+                addUrl.invoke(ucl, tools.toURI().toURL());
+            } else {
+                throw new IllegalStateException("cannot access a url class loader");
+            }
+        } catch (Throwable thr) {
+            logger.warning(() -> "Could not load agent: cannot load tools.jar but it is required in java 8");
+            logger.warning(thr.getMessage());
+            logger.log(Level.FINEST, thr, () -> "");
+            return false;
+        }
+        return true;
     }
 }
