@@ -41,35 +41,47 @@ final class Transformer implements ClassFileTransformer {
             CtClass cc = pool.get(className);
             logger.finest(cc::toString);
 
-            for (String desc : methods) {
+            for (final String desc : methods) {
                 logger.finer(() -> "Searching for " + desc);
 
                 val pair = Util.resolveMethod(desc);
                 String methodName = pair.getFirst();
                 String methodDescriptor = pair.getSecond();
 
-                CtMethod method;
+                boolean constr = methodName.equals("<init>");
+
+                CtConstructor constructor = null;
+                CtMethod method = null;
+                CtBehavior ctb;
                 try {
                     logger.finest(() -> String.format("Class: %s Method: %s Descriptor: %s", cc.getName(), methodName, methodDescriptor));
 
-                    method = methodDescriptor.isEmpty() ? cc.getDeclaredMethod(methodName) : cc.getMethod(methodName, methodDescriptor);
+                    if (constr) {
+                        ctb = constructor = methodDescriptor.isEmpty() ? cc.getDeclaredConstructors()[0] : cc.getConstructor(methodDescriptor);
+                    } else {
+                        ctb = method = methodDescriptor.isEmpty() ? cc.getDeclaredMethod(methodName) : cc.getMethod(methodName, methodDescriptor);
+                    }
                 } catch (NotFoundException e) {
                     logger.log(Level.WARNING, () -> "Hook injection failed: " + desc + " not found");
                     continue;
                 }
 
-                String fullDesc = Util.fullDescriptor(method);
+                String fullDesc = String.format("%s.%s", clName, desc);
                 logger.fine(() -> "Visiting " + fullDesc);
 
                 // inject hook call
 
-                cc.removeMethod(method);
+                if (constr) {
+                    cc.removeConstructor(constructor);
+                } else {
+                    cc.removeMethod(method);
+                }
 
 
-                boolean hasReturnType = method.getReturnType() != CtClass.voidType;
-                boolean primitive = method.getReturnType().isPrimitive();
+                boolean hasReturnType = !constr && method.getReturnType() != CtClass.voidType;
+                boolean primitive = !constr && method.getReturnType().isPrimitive();
                 String returnType = hasReturnType ? method.getReturnType().getName() : "void";
-                String self = Modifier.isStatic(method.getModifiers()) ? "null" : "$0";
+                String self = !constr && Modifier.isStatic(method.getModifiers()) ? "null" : "$0";
 
                 for (HookPoint hookPoint : HookPoint.values()) {
                     logger.finer(() -> "Injecting hook call into " + fullDesc + " at " + hookPoint.name());
@@ -92,17 +104,25 @@ final class Transformer implements ClassFileTransformer {
 
                     switch (hookPoint) {
                         case HEAD:
-                            method.insertBefore(src);
+                            if (constr) {
+                                constructor.insertBeforeBody(src);
+                            } else {
+                                method.insertBefore(src);
+                            }
                             break;
                         case RETURN:
-                            method.insertAfter(src);
+                            ctb.insertAfter(src);
                             break;
                     }
 
                     logger.finer(() -> "Injection done!");
                 }
 
-                cc.addMethod(method);
+                if (constr) {
+                    cc.addConstructor(constructor);
+                } else {
+                    cc.addMethod(method);
+                }
             }
 
             logger.fine(() -> "Transformation done!");

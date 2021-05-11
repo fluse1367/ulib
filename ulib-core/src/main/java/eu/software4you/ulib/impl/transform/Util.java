@@ -5,6 +5,7 @@ import eu.software4you.transform.Hook;
 import javassist.CtMethod;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -28,6 +29,10 @@ final class Util {
     static String resolveDescriptor(String className, String methodName, String methodDescriptor) {
         if (methodDescriptor.isEmpty()) {
             Class<?> cl = Class.forName(className);
+            if (methodName.equals("<init>")) {
+                return getDescriptor(cl.getDeclaredConstructors()[0]);
+            }
+
             Method method = null;
             for (Method dm : cl.getDeclaredMethods()) {
                 if (dm.getName().equals(methodName)) {
@@ -46,6 +51,12 @@ final class Util {
         StringBuilder b = new StringBuilder("(");
         Arrays.stream(method.getParameterTypes()).map(Util::getTypeSignature).forEach(b::append);
         return b.append(')').append(getTypeSignature(method.getReturnType())).toString();
+    }
+
+    static String getDescriptor(Constructor<?> constructor) {
+        StringBuilder b = new StringBuilder("(");
+        Arrays.stream(constructor.getParameterTypes()).map(Util::getTypeSignature).forEach(b::append);
+        return b.append(")V").toString();
     }
 
     /**
