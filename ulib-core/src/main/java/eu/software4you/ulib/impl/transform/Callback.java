@@ -56,4 +56,8 @@ public class Callback<T> implements eu.software4you.transform.Callback<T> {
             throw new IllegalStateException("Cannot cancel with no return value");
         canceled = true;
     }
+
+    boolean isReturning() {
+        return canceled || hasReturnValue;
+    }
 }

@@ -16,13 +16,11 @@ final class Transformer implements ClassFileTransformer {
     private final String className;
     private final List<String> methods; // methodName methodDescriptor
     private final Logger logger;
-    private final ClassLoader loader;
 
-    Transformer(String className, List<String> methods, Logger logger, ClassLoader loader) {
+    Transformer(String className, List<String> methods, Logger logger) {
         this.className = className;
         this.methods = methods;
         this.logger = logger;
-        this.loader = loader;
 
         this.logger.finest(() -> this + " init");
     }
@@ -36,11 +34,9 @@ final class Transformer implements ClassFileTransformer {
 
         try {
             ClassPool pool = new ClassPool(true);
-            pool.appendClassPath(new LoaderClassPath(this.loader));
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
-            pool.importPackage("eu.software4you.ulib.impl.transform");
-
+            pool.importPackage("eu.software4you.libex.function");
 
             CtClass cc = pool.get(className);
             logger.finest(cc::toString);
@@ -75,24 +71,35 @@ final class Transformer implements ClassFileTransformer {
                 String returnType = hasReturnType ? method.getReturnType().getName() : "void";
                 String self = Modifier.isStatic(method.getModifiers()) ? "null" : "$0";
 
-                for (HookPoint at : HookPoint.values()) {
-                    logger.finer(() -> "Injecting hook call into " + fullDesc + " at " + at.name());
+                for (HookPoint hookPoint : HookPoint.values()) {
+                    logger.finer(() -> "Injecting hook call into " + fullDesc + " at " + hookPoint.name());
 
-                    boolean head = at == HookPoint.HEAD;
+                    boolean head = hookPoint == HookPoint.HEAD;
 
                     String returnValue = hasReturnType && !head ? ("(Object) " + (primitive ? "($w) " : "") + "$_") : "null";
                     boolean hasReturnValue = !head && hasReturnType;
 
-                    String src = String.format(
+                    int at = hookPoint.ordinal();
+                    String src = String.format("{\n" +
+                                    "  Callb cb = new Callb(%s.class, %s, %s, %s, \"%s\", %d, $args);\n" +
+                                    "  if (cb.isReturning()) return%s;\n" +
+                                    "}",
+                            /*Hook call*/ returnType, returnValue, hasReturnValue, self, /*hookId*/ fullDesc, at,
+                            /*return*/ hasReturnType ? " ($r) cb.getReturnValue()" : ""
+                    );
+
+                    logger.finest(() -> "Compiling:\n\t" + src.replace("\n", "\n\t"));
+
+                    /*String src = String.format(
                             "{ Callback cb = new Callback(%s.class, %s, %s, %s);%n" +
                                     "Hooks.runHooks(\"%s\", %s, $args, cb);" +
                                     "if (cb.%s()) return%s; }",
                             returnType, returnValue, hasReturnValue, self,
                             fullDesc, HookPoint.class.getName() + "." + at.name(),
                             hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
-                    );
+                    );*/
 
-                    switch (at) {
+                    switch (hookPoint) {
                         case HEAD:
                             method.insertBefore(src);
                             break;

@@ -18,7 +18,6 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -134,13 +133,12 @@ final class AgentInstaller {
         logger.fine(() -> "Attempt to extract agent to " + file);
 
 
-        String ver = Agent.class.getPackage().getImplementationVersion();
+        String ver = AgentInstaller.class.getPackage().getImplementationVersion();
 
         if (file.exists()) {
             logger.fine(() -> "Agent already exists! Checking version.");
             try {
-                JarFile jar = new JarFile(file);
-                String agentVer = jar.getManifest().getMainAttributes().getValue("Implementation-Version");
+                String agentVer = AgentUtil.getVer(file);
                 logger.fine(() -> "Agent version: " + agentVer);
                 if (agentVer != null && agentVer.equals(ver)) {
                     logger.fine(() -> "Version valid, use existing agent ...");

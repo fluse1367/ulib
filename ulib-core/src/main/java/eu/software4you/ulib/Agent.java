@@ -1,10 +1,13 @@
 package eu.software4you.ulib;
 
+import eu.software4you.utils.IOUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
@@ -41,6 +44,7 @@ public final class Agent {
 
         props.remove("ulib.javaagent");
 
+        //noinspection unchecked
         init(logger,
                 (BiConsumer<Class<?>, ClassFileTransformer>) objTransform,
                 ((Consumer<JarFile>) objAppendJar));
@@ -54,10 +58,47 @@ public final class Agent {
         logger.fine(() -> "Agent init!");
 
         instance = new Agent(transform, appendJar);
+        instance.loadUlibEx(logger);
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.transform.HookInjectorImpl"));
 
         logger.fine(() -> "Agent init done!");
+    }
+
+    @SneakyThrows
+    private void loadUlibEx(Logger logger) {
+        logger.fine("Loading libex");
+
+        // extract ulibex
+        File libex = new File(Properties.getInstance().DATA_DIR, "libex.jar");
+        logger.fine(() -> "Attempt to extract libex to " + libex);
+
+        boolean extract = true;
+        if (libex.exists()) {
+            logger.fine(() -> "Libex already exists! Checking version.");
+
+            String ver = Agent.class.getPackage().getImplementationVersion();
+            String exVer = AgentUtil.getVer(libex);
+
+            logger.fine(() -> "Libex version: " + exVer);
+
+            if (ver.equals(exVer)) {
+                logger.fine(() -> "Version valid, using existing libex");
+                extract = false;
+            } else {
+                logger.fine(() -> "Version invalid, rewriting libex");
+            }
+        }
+
+        if (extract) {
+            logger.fine(() -> "Extracting libex to " + libex);
+            //noinspection ConstantConditions
+            IOUtil.write(Agent.class.getResourceAsStream("/libex"), new FileOutputStream(libex));
+        }
+
+        logger.fine(() -> "Loading " + libex);
+        // load ulibex
+        appendJar.accept(new JarFile(libex));
     }
 
     public static boolean available() {

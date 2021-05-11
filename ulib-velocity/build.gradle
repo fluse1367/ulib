@@ -25,9 +25,16 @@ void itSubs(Jar task) {
 
 // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
 shadowJar {
+    def ex = project(':ulib-libex')
+    dependsOn ex.tasks.jar
+
     dependsOn tasks.relocateShadowJar
     configurations = [project(':ulib-core').configurations.shade]
     itSubs(shadowJar)
+
+    from("${ex.buildDir.path}/libs/") {
+        include "libex"
+    }
 
     archiveClassifier.set('plugin')
     dependencies {

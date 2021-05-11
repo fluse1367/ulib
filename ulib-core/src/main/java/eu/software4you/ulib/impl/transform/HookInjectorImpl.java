@@ -1,5 +1,8 @@
 package eu.software4you.ulib.impl.transform;
 
+import eu.software4you.libex.function.BoolFunc;
+import eu.software4you.libex.function.Callb;
+import eu.software4you.libex.function.Func;
 import eu.software4you.transform.Hook;
 import eu.software4you.transform.HookInjector;
 import eu.software4you.transform.HookPoint;
@@ -22,6 +25,19 @@ import java.util.logging.Level;
 final class HookInjectorImpl extends HookInjector {
     @Await
     private static Agent agent;
+
+    public HookInjectorImpl() {
+        Callb.put(
+                /* [0] Hook runner */
+                Hooks::runHooks,
+
+                /* [1] Callback#isReturning() */
+                (BoolFunc<Callback<?>>) Callback::isReturning,
+
+                /* [2] Callback#getReturnValue() */
+                (Func<Callback<?>, ?>) Callback::getReturnValue
+        );
+    }
 
     private final Map<String, List<String>> injected = new ConcurrentHashMap<>();
 
@@ -76,13 +92,13 @@ final class HookInjectorImpl extends HookInjector {
 
     @Override
     protected void directUnhook0(Method source, Object sourceInst, Method into, HookPoint at) {
-        Hooks.delHook(source, sourceInst, Util.fullDescriptor(into), at);
+        Hooks.delHook(source, sourceInst, Util.fullDescriptor(into), at.ordinal());
         unref(into.getDeclaringClass().getName(), into.getName() + Util.getDescriptor(into));
     }
 
     @Override
     protected void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
-        Hooks.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at);
+        Hooks.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at.ordinal());
         unref(className, methodName + Util.resolveDescriptor(className, methodName, methodDescriptor));
     }
 
@@ -115,7 +131,7 @@ final class HookInjectorImpl extends HookInjector {
     private void inject(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
         String fullDescriptor = Util.fullDescriptor(className, methodName, methodDescriptor);
 
-        Hooks.addHook(source, sourceInst, fullDescriptor, at);
+        Hooks.addHook(source, sourceInst, fullDescriptor, at.ordinal());
 
 
         String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor);
@@ -135,7 +151,7 @@ final class HookInjectorImpl extends HookInjector {
         TransformerDepend.$();
         try {
             agent.transform(Class.forName(className), new Transformer(
-                    className, methods, ULib.logger(), getClass().getClassLoader()));
+                    className, methods, ULib.logger()));
         } catch (Throwable thr) {
             ULib.logger().log(Level.WARNING, thr, () -> "Agent transformation failure (" + fullDescriptor + ")");
             return;

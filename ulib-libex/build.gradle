@@ -1,0 +1,14 @@
+// external library module, that is being loaded by the system class loader (via the agent)
+//      to prevent class loader conflicts when injecting code
+
+dependencies {
+    compileOnly coordsJetbrainsAnnotations
+    compileOnly coordsLombok
+
+    // annotation
+    annotationProcessor coordsLombok
+}
+
+jar {
+    archiveName "libex"
+}

@@ -1,18 +1,17 @@
 package eu.software4you.ulib.impl.transform;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.transform.HookPoint;
 import lombok.SneakyThrows;
 import lombok.val;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Hooks {
-    private static final Map<String, Map<HookPoint, List<Pair<Object, Method>>>> hooks = new ConcurrentHashMap<>();
+    private static final Map<String, Map<Integer, List<Entry<Object, Method>>>> hooks = new ConcurrentHashMap<>();
 
-    synchronized static void addHook(Method source, Object sourceInst, String fullDescriptor, HookPoint at) {
+    synchronized static void addHook(Method source, Object sourceInst, String fullDescriptor, int at) {
 
         if (!hooks.containsKey(fullDescriptor)) {
             hooks.put(fullDescriptor, new ConcurrentHashMap<>());
@@ -24,7 +23,7 @@ public final class Hooks {
         }
 
         val methods = map.get(at);
-        methods.add(new Pair<>(sourceInst, source));
+        methods.add(new AbstractMap.SimpleEntry<>(sourceInst, source));
     }
 
     /**
@@ -36,7 +35,7 @@ public final class Hooks {
     static Map<String, List<String>> delHooks(Object sourceInst) {
         hooks.forEach((hookId, hookPoints) -> {
             hookPoints.forEach((hookPoint, methods) -> methods.removeIf(pair ->
-                    pair.getFirst() == sourceInst));
+                    pair.getKey() == sourceInst));
             hookPoints.values().removeIf(List::isEmpty); // gc
         });
         return gcHooks();
@@ -51,7 +50,7 @@ public final class Hooks {
     static Map<String, List<String>> delHooks(Class<?> clazz) {
         hooks.forEach((hookId, hookPoints) -> {
             hookPoints.forEach((hookPoint, methods) -> methods.removeIf(pair ->
-                    pair.getSecond().getDeclaringClass() == clazz));
+                    pair.getValue().getDeclaringClass() == clazz));
             hookPoints.values().removeIf(List::isEmpty); // gc
         });
         return gcHooks();
@@ -87,13 +86,13 @@ public final class Hooks {
         return removed;
     }
 
-    static void delHook(Method source, Object sourceInst, String fullDescriptor, HookPoint at) {
+    static void delHook(Method source, Object sourceInst, String fullDescriptor, int at) {
         if (!hooks.containsKey(fullDescriptor))
             return;
         val hookPoints = hooks.get(fullDescriptor);
         if (hookPoints.containsKey(at)) {
             val li = hookPoints.get(at);
-            li.removeIf(pair -> pair.getFirst() == sourceInst && pair.getSecond() == source);
+            li.removeIf(pair -> pair.getKey() == sourceInst && pair.getValue() == source);
             if (li.isEmpty()) {
                 hookPoints.remove(at); // gc
                 if (hookPoints.isEmpty()) {
@@ -103,24 +102,27 @@ public final class Hooks {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @SneakyThrows
-    public static void runHooks(String hookId, HookPoint at, Object[] params, Callback<?> cb) {
+    public static Callback<?> runHooks(Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, String hookId, int at, Object[] params) {
+        Callback<?> cb = new Callback(returnType, returnValue, hasReturnValue, self);
         if (!hooks.containsKey(hookId))
-            return;
+            return cb;
+
+        val map = hooks.get(hookId);
+        if (!map.containsKey(at))
+            return cb;
 
         Object[] args = new Object[params.length + 1];
         args[params.length] = cb;
         System.arraycopy(params, 0, args, 0, params.length);
 
-        val map = hooks.get(hookId);
-        if (!map.containsKey(at))
-            return;
-
-        for (Pair<Object, Method> hook : map.get(at)) {
-            hook.getSecond().invoke(hook.getFirst(), args);
+        for (Entry<Object, Method> hook : map.get(at)) {
+            hook.getValue().invoke(hook.getKey(), args);
             if (cb.isCanceled())
                 break; // cancel all future hook processing
         }
 
+        return cb;
     }
 }
