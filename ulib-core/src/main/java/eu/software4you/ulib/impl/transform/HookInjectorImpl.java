@@ -135,7 +135,7 @@ final class HookInjectorImpl extends HookInjector {
         TransformerDepend.$();
         try {
             agent.transform(Class.forName(className), new Transformer(
-                    className, methods, ULib.logger()));
+                    className, methods, ULib.logger(), getClass().getClassLoader()));
         } catch (Throwable thr) {
             ULib.logger().log(Level.WARNING, thr, () -> "Agent transformation failure (" + fullDescriptor + ")");
             return;

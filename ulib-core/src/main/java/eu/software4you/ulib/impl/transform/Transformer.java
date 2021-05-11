@@ -16,11 +16,13 @@ final class Transformer implements ClassFileTransformer {
     private final String className;
     private final List<String> methods; // methodName methodDescriptor
     private final Logger logger;
+    private final ClassLoader loader;
 
-    Transformer(String className, List<String> methods, Logger logger) {
+    Transformer(String className, List<String> methods, Logger logger, ClassLoader loader) {
         this.className = className;
         this.methods = methods;
         this.logger = logger;
+        this.loader = loader;
 
         this.logger.finest(() -> this + " init");
     }
@@ -34,6 +36,7 @@ final class Transformer implements ClassFileTransformer {
 
         try {
             ClassPool pool = new ClassPool(true);
+            pool.appendClassPath(new LoaderClassPath(this.loader));
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
             pool.importPackage("eu.software4you.ulib.impl.transform");
@@ -51,6 +54,8 @@ final class Transformer implements ClassFileTransformer {
 
                 CtMethod method;
                 try {
+                    logger.finest(() -> String.format("Class: %s Method: %s Descriptor: %s", cc.getName(), methodName, methodDescriptor));
+
                     method = methodDescriptor.isEmpty() ? cc.getDeclaredMethod(methodName) : cc.getMethod(methodName, methodDescriptor);
                 } catch (NotFoundException e) {
                     logger.log(Level.WARNING, () -> "Hook injection failed: " + desc + " not found");

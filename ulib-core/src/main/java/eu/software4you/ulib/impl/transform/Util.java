@@ -10,15 +10,18 @@ import java.util.Arrays;
 
 final class Util {
     static String fullDescriptor(CtMethod method) {
-        return fullDescriptor(method.getDeclaringClass().getName(), method.getName(), method.getMethodInfo().getDescriptor());
+        return fullDescriptor(method.getDeclaringClass().getName(),
+                method.getName(), method.getMethodInfo().getDescriptor());
     }
 
     static String fullDescriptor(Method method) {
-        return fullDescriptor(method.getDeclaringClass().getName(), method.getName(), getDescriptor(method));
+        return fullDescriptor(method.getDeclaringClass().getName(),
+                method.getName(), getDescriptor(method));
     }
 
     static String fullDescriptor(String className, String methodName, String methodDescriptor) {
-        return String.format("%s.%s%s", className, methodName, resolveDescriptor(className, methodName, methodDescriptor));
+        return String.format("%s.%s%s", className.replace(".", "/"),
+                methodName, resolveDescriptor(className, methodName, methodDescriptor));
     }
 
     @SneakyThrows
@@ -72,7 +75,7 @@ final class Util {
         } else if (clazz.isArray()) {
             return String.format("[%s", getTypeSignature(clazz.getComponentType()));
         } else {
-            return String.format("L%s;", clazz.getName().replace("/", "."));
+            return String.format("L%s;", clazz.getName().replace(".", "/"));
         }
     }
 
