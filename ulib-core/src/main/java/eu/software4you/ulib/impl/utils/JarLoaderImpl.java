@@ -58,7 +58,15 @@ final class JarLoaderImpl extends JarLoader {
             return;
         }
 
-        load(file.toURI().toURL());
+        try {
+            load(file.toURI().toURL());
+        } catch (Throwable thr) {
+            thr.printStackTrace();
+            // try javaagent loading
+            if (Agent.available()) {
+                agent.appendJar(new JarFile(file));
+            }
+        }
     }
 
     @Override
