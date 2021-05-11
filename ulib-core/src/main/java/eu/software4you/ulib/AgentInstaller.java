@@ -3,10 +3,14 @@ package eu.software4you.ulib;
 import com.google.gson.internal.JavaVersion;
 import com.sun.tools.attach.VirtualMachine;
 import eu.software4you.ulib.agentex.Loader;
+import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 import lombok.val;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -181,17 +185,7 @@ final class AgentInstaller {
             throw new IllegalStateException("Cannot read class " + cl.getName());
         }
 
-        val out = new ByteArrayOutputStream();
-
-        byte[] buff = new byte[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            out.write(buff, 0, len);
-        }
-        out.flush();
-        in.close();
-
-        return out.toByteArray();
+        return IOUtil.read(in);
     }
 
     private boolean toolsLoadingRequired() {

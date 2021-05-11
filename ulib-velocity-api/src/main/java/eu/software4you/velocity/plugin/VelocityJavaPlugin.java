@@ -8,6 +8,7 @@ import eu.software4you.configuration.ConfigurationWrapper;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.minecraft.plugin.Layout;
 import eu.software4you.utils.FileUtils;
+import eu.software4you.utils.IOUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,7 +16,10 @@ import net.kyori.adventure.audience.Audience;
 import org.slf4j.Logger;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -120,14 +124,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
+                IOUtil.write(in, new FileOutputStream(outFile));
             } else {
                 logger.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }

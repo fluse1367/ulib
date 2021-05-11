@@ -2,13 +2,17 @@ package eu.software4you.bungeecord.plugin;
 
 import eu.software4you.configuration.ConfigurationWrapper;
 import eu.software4you.ulib.minecraft.plugin.Layout;
+import eu.software4you.utils.IOUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -92,14 +96,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
+                IOUtil.write(in, new FileOutputStream(outFile));
             } else {
                 getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
