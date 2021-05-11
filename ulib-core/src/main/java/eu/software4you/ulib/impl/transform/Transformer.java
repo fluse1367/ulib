@@ -90,15 +90,6 @@ final class Transformer implements ClassFileTransformer {
 
                     logger.finest(() -> "Compiling:\n\t" + src.replace("\n", "\n\t"));
 
-                    /*String src = String.format(
-                            "{ Callback cb = new Callback(%s.class, %s, %s, %s);%n" +
-                                    "Hooks.runHooks(\"%s\", %s, $args, cb);" +
-                                    "if (cb.%s()) return%s; }",
-                            returnType, returnValue, hasReturnValue, self,
-                            fullDesc, HookPoint.class.getName() + "." + at.name(),
-                            hasReturnType ? "hasReturnValue" : "isCanceled", hasReturnType ? " ($r) cb.getReturnValue()" : ""
-                    );*/
-
                     switch (hookPoint) {
                         case HEAD:
                             method.insertBefore(src);
