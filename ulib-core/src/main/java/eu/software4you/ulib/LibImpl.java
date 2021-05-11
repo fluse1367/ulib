@@ -60,7 +60,7 @@ final class LibImpl implements Lib {
                 Dependencies.depend(en.getKey(), v.getFirst(), v.getSecond());
             }
         } catch (Exception e) {
-            lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experiencing issues.");
+            lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experience issues.");
         }
 
         logger.info(() -> String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
