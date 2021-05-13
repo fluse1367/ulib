@@ -107,36 +107,15 @@ public abstract class ReflectUtil {
     }
 
     /**
-     * Determines the n-th calling {@link Class} name of the current stack trace
-     *
-     * @param depth the index of the calling stack trace element, where 1 is the current calling {@link Class} name
-     *              and 0 the {@link Class} name of the class this method is being called from
-     * @return the calling {@link Class} name
-     * @throws IllegalArgumentException if {@code depth} is negative or invalid
-     */
-    public static String getCallerClassName(int depth) {
-        return impl.getCallerClassName0(depth);
-    }
-
-    /**
      * Determines the {@link Class} the current method is being called from
      *
      * @return the calling {@link Class}
      * @see #getCallerClass(int)
      */
     public static Class<?> getCallerClass() {
-        return getCallerClass(1);
+        return getCallerClass(2);
     }
 
-    /**
-     * Determines the {@link Class} name the current method is being called from
-     *
-     * @return the calling {@link Class} name
-     * @see #getCallerClassName(int)
-     */
-    public static String getCallerClassName() {
-        return getCallerClassName(1);
-    }
 
     /**
      * Determines the n-th calling {@link Class} of the current stack trace, where 1 is the current calling {@link Class}
@@ -144,17 +123,13 @@ public abstract class ReflectUtil {
      * @param depth the index of the calling stack trace element, where 1 is the current calling {@link Class}
      *              and 0 the {@link Class} this method is being called from
      * @return the calling {@link Class}
-     * @throws IllegalArgumentException if {@code depth is negative} or invalid
+     * @throws IllegalArgumentException if {@code depth} is invalid
      */
     public static Class<?> getCallerClass(int depth) {
-        return impl.getCallerClass0(depth);
+        return impl.getCallerClass0(++depth);
     }
 
     protected abstract Object call0(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>[] parameters);
 
-    protected abstract String getCallerClassName0(int depth);
-
     protected abstract Class<?> getCallerClass0(int depth);
-
-
 }

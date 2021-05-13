@@ -5,7 +5,6 @@ import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.ClassUtils;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.apache.commons.lang.ArrayUtils;
 
 import java.lang.reflect.Field;
@@ -13,62 +12,19 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @Impl(ReflectUtil.class)
 public final class ReflectUtilImpl extends ReflectUtil {
 
-    public static String retrieveCallerClassName(int depth) {
-        if (depth < 0)
-            throw new IllegalArgumentException("Negative depth");
-        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        int j = 0;
-        for (int i = 1; i < stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(ReflectUtil.class.getName())
-                    && !ste.getClassName().equals(ReflectUtilImpl.class.getName())
-                    && ste.getClassName().indexOf("java.lang.Thread") != 0) {
-                if (j >= depth)
-                    return ste.getClassName();
-                j++;
-            }
-        }
-        throw new IllegalArgumentException("Invalid depth");
-    }
-
-    @SneakyThrows
-    public static Class<?> retrieveCallerClass(int depth) {
-        return Class.forName(retrieveCallerClassName(depth));
-    }
+    private static final SecurityManager sec = new SecurityManager();
 
     @Override
     @SneakyThrows
     protected final Object call0(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>[] parameters) {
         String[] callParts = call.split(Pattern.quote("."));
 
-        Consumer<Class<?>> checker;
-
-        val caller = getCallerClass0(0);
-        val callerSrc = caller.getProtectionDomain().getCodeSource();
-        val ulibSrc = ReflectUtilImpl.class.getProtectionDomain().getCodeSource();
-        if (callerSrc == ulibSrc) {
-            // internal reflective access, permitting
-            checker = cl -> {
-            };
-        } else {
-            checker = accessing -> {
-                val accessingSrc = accessing.getProtectionDomain().getCodeSource();
-                if (accessingSrc == ulibSrc) {
-                    // block reflective access to uLib
-                    throw new SecurityException(String.format("%s tried to access %s", caller, accessing));
-                }
-            };
-        }
-
         for (int i = 0; i < callParts.length; i++) {
-
-            checker.accept(clazz);
 
             Object returned;
             Class<?> returnType;
@@ -136,13 +92,36 @@ public final class ReflectUtilImpl extends ReflectUtil {
         return null;
     }
 
-    @Override
-    protected String getCallerClassName0(int depth) {
-        return retrieveCallerClassName(depth);
+    public static Class<?> retrieveCallerClass(int depth) {
+        if (depth < 0)
+            throw new IllegalArgumentException("Depth < 0 (" + depth + ")");
+
+        Class<?>[] stack = sec.getClassContext();
+
+        /*
+        -2: [0] SecurityManager#getClassContext
+        -1: [1] #printStackContext
+         0: [2] caller
+        ...
+         */
+
+        int i = depth + 2;
+        if (i >= stack.length)
+            throw new IllegalArgumentException("Depth ( " + depth + ") > Stack (" + (stack.length - 3) + ")");
+
+        return stack[i];
     }
 
     @Override
     protected Class<?> getCallerClass0(int depth) {
-        return retrieveCallerClass(depth);
+        return retrieveCallerClass(++depth);
+    }
+
+    private static class SecurityManager extends java.lang.SecurityManager {
+        @SuppressWarnings("rawtypes")
+        @Override
+        public Class[] getClassContext() {
+            return super.getClassContext();
+        }
     }
 }
