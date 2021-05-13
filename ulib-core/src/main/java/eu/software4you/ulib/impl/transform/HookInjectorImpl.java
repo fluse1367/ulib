@@ -3,6 +3,7 @@ package eu.software4you.ulib.impl.transform;
 import eu.software4you.libex.function.BoolFunc;
 import eu.software4you.libex.function.Callb;
 import eu.software4you.libex.function.Func;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.transform.Hook;
 import eu.software4you.transform.HookInjector;
 import eu.software4you.transform.HookPoint;
@@ -35,7 +36,10 @@ final class HookInjectorImpl extends HookInjector {
                 (BoolFunc<Callback<?>>) Callback::isReturning,
 
                 /* [2] Callback#getReturnValue() */
-                (Func<Callback<?>, ?>) Callback::getReturnValue
+                (Func<Callback<?>, ?>) Callback::getReturnValue,
+
+                /* [3] caller class determination */
+                () -> ReflectUtil.getCallerClass(4)
         );
     }
 

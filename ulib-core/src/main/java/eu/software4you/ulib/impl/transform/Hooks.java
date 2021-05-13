@@ -104,8 +104,8 @@ public final class Hooks {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @SneakyThrows
-    public static Callback<?> runHooks(Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, String hookId, int at, Object[] params) {
-        Callback<?> cb = new Callback(returnType, returnValue, hasReturnValue, self);
+    public static Callback<?> runHooks(Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, Class<?> caller, String hookId, int at, Object[] params) {
+        Callback<?> cb = new Callback(returnType, returnValue, hasReturnValue, self, caller);
         if (!hooks.containsKey(hookId))
             return cb;
 

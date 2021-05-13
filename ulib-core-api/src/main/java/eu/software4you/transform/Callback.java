@@ -1,5 +1,6 @@
 package eu.software4you.transform;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,6 +18,14 @@ public interface Callback<T> {
      */
     @Nullable
     Object self();
+
+    /**
+     * Returns the calling class of the hooked method.
+     *
+     * @return the calling class
+     */
+    @NotNull
+    Class<?> callerClass();
 
     /**
      * Returns if the callback has a return value stored.<br>
