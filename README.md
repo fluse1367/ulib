@@ -73,16 +73,14 @@ program like this:
 All in all, your command could look like this:
 
 ```shell
-java -jar ulib-core-X.X.X.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
+java -jar ulib-core-VERSION-lib.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
 ```
 
 or this:
 
 ```shell
-java -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
+java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
 ```
-
-**Note:** If you're planning to use the Transform/Hook system, you have to allow uLib to load its javaagent.
 
 ## About Java 9+ / Javaagent
 
@@ -96,7 +94,7 @@ In order to allow this **on Java 9** (and higher) you need to set the system pro
 to `true` **within the command line**:
 
 ```shell
-java -Djdk.attach.allowAttachSelf=true -cp ulib-core-X.X.X.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
+java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
 ```
 
 In order for uLib to load the javaagent **on Java 8** though, it needs to load the tools.jar file, that is unfortunately
@@ -116,20 +114,20 @@ installed, uLib will try to load the file from there.
 
 ```groovy
 repositories {
-    ...
+    /* ... */
     maven {
         url 'https://repo.software4you.eu/'
         // or url 'https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/'
     }
-    ...
+    /* ... */
 }
 dependencies {
-    ...
-    compile 'eu.software4you.ulib:ulib-core:VERSION'
+    /* ... */
+    compile 'eu.software4you.ulib:ulib-core-api:VERSION'
     compile 'eu.software4you.ulib:ulib-spigot-api:VERSION'
     compile 'eu.software4you.ulib:ulib-bungeecord-api:VERSION'
     compile 'eu.software4you.ulib:ulib-velocity-api:VERSION'
-    ...
+    /* ... */
 }
 ```
 
@@ -139,21 +137,21 @@ dependencies {
 ```xml
 
 <project>
-    ...
+    <!-- ... -->
     <repositories>
-        ...
+        <!-- ... -->
         <repository>
             <id>software4you-repo</id>
             <url>https://repo.software4you.eu/</url>
             <!-- or <url>https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/</url> -->
         </repository>
-        ...
+        <!-- ... -->
     </repositories>
     <dependencies>
-        ...
+        <!-- ... -->
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-core</artifactId>
+            <artifactId>ulib-core-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
@@ -174,9 +172,9 @@ dependencies {
             <artifactId>ulib-velocity-api</artifactId>
             <version>VERSION</version>
         </dependency>
-        ...
+        <!-- ... -->
     </dependencies>
-    ...
+    <!-- ... -->
 </project>
 ```
 
