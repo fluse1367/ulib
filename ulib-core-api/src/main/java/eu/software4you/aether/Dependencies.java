@@ -45,7 +45,7 @@ public class Dependencies {
     private static RepositorySystemSession _newSession(RepositorySystem system) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository(ULib.get().getLibsM2Dir());
+        LocalRepository localRepo = new LocalRepository(ULib.get().getLibrariesDir());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
         return session;

@@ -64,7 +64,7 @@ public class UnsafeDependencies {
     public void depend(String coords) {
         logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
 
-        File root = ULib.get().getLibsUnsafeDir();
+        File root = ULib.get().getLibrariesUnsafeDir();
 
         String[] parts = coords.split(":");
 

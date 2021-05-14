@@ -139,13 +139,13 @@ final class LibImpl implements Lib {
 
     @Override
     @NotNull
-    public File getLibsM2Dir() {
-        return properties.LIBS_M2_DIR;
+    public File getLibrariesDir() {
+        return properties.LIBS_DIR;
     }
 
     @Override
     @NotNull
-    public File getLibsUnsafeDir() {
+    public File getLibrariesUnsafeDir() {
         return properties.LIBS_UNSAFE_DIR;
     }
 }

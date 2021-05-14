@@ -13,7 +13,6 @@ class Properties {
 
     final File DATA_DIR;
     final File LIBS_DIR;
-    final File LIBS_M2_DIR;
     final File LIBS_UNSAFE_DIR;
     final boolean QUIET;
     final boolean NO_SPLASH;
@@ -33,13 +32,10 @@ class Properties {
         DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
 
         String libsDir = System.getProperty("ulib.directory.libraries");
-        LIBS_DIR = libsDir != null ? new File(libsDir) : new File(DATA_DIR, "libs");
+        LIBS_DIR = libsDir != null ? new File(libsDir) : new File(DATA_DIR, "libraries");
 
-        String libsM2Dir = System.getProperty("ulib.directory.libraries.m2");
-        LIBS_M2_DIR = libsM2Dir != null ? new File(libsM2Dir) : new File(LIBS_DIR, "m2");
-
-        String libsUnsafeDir = System.getProperty("ulib.directory.libraries.unsafe");
-        LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(LIBS_DIR, "unsafe");
+        String libsUnsafeDir = System.getProperty("ulib.directory.libraries_unsafe");
+        LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(DATA_DIR, "libraries_unsafe");
 
         QUIET = System.getProperty("ulib.quiet", "false").equalsIgnoreCase("true");
 

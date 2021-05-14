@@ -45,17 +45,17 @@ public interface Lib {
 
     /**
      * Returns the local maven repository directory.<br>
-     * Usually this is ".ulib/m2"
+     * Usually this is ".ulib/libraries"
      */
     @NotNull
-    File getLibsM2Dir();
+    File getLibrariesDir();
 
     /**
      * Returns the local unsafe repository directory.
-     * Usually this is ".ulib/unsafe"
+     * Usually this is ".ulib/libraries_unsafe"
      */
     @NotNull
-    File getLibsUnsafeDir();
+    File getLibrariesUnsafeDir();
 
     /**
      * Returns the main logger instance of the library.
