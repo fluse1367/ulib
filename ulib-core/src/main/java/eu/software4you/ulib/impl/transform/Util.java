@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.transform;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.transform.Hook;
-import javassist.CtMethod;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;
@@ -10,11 +9,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 final class Util {
-    static String fullDescriptor(CtMethod method) {
-        return fullDescriptor(method.getDeclaringClass().getName(),
-                method.getName(), method.getMethodInfo().getDescriptor());
-    }
-
     static String fullDescriptor(Method method) {
         return fullDescriptor(method.getDeclaringClass().getName(),
                 method.getName(), getDescriptor(method));
