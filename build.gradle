@@ -49,7 +49,11 @@ allprojects {
             }
         }
 
-        deployRepoUrl = 'https://gitlab.com/api/v4/projects/19415500/packages/maven'
+        def release = project.hasProperty('release')
+
+        deployRepoUrl = "https://gitlab.com/api/v4/projects/${release ? /*ulib*/ '19415500' : /*ulib-snapshots*/ '26647460'}/packages/maven"
+        deployRepoCredentialMethod = "${release ? 'Job' : 'Deploy'}-Token"
+        deployRepoCredentialValue = System.getenv("CI_${release ? /*releases*/ 'JOB' : /*snapshots*/ 'SNAPSHOT_REPOSITORY_DEPLOY'}_TOKEN")
 
         coordsPaper = 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
         coordsWaterfall = 'io.github.waterfallmc:waterfall-api:1.16-R0.4-SNAPSHOT'

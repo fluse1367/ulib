@@ -36,8 +36,8 @@ publishing {
         maven {
             url deployRepoUrl
             credentials(HttpHeaderCredentials) {
-                name = "Job-Token"
-                value = System.getenv("CI_JOB_TOKEN")
+                name = deployRepoCredentialMethod
+                value = deployRepoCredentialValue
             }
             authentication {
                 header(HttpHeaderAuthentication)
