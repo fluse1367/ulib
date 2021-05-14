@@ -65,6 +65,7 @@ dependencies {
 
 // publishing
 javadoc {
+    title "ulib-core ${jar.archiveVersion.get()} API"
     failOnError false
 }
 

@@ -11,6 +11,7 @@ dependencies {
 
 // publishing
 javadoc {
+    title "ulib-spigot ${jar.archiveVersion.get()} API"
     def projects = ['minecraft-api', 'core-api']
     for (String sub : projects) {
         def proj = project(':ulib-' + sub)
