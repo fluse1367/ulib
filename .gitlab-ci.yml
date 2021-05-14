@@ -15,9 +15,24 @@ snapshot:
   stage: build_publish
   script:
     - 'gradle shadowJar publish -g .gradlehome'
-  artifacts:
+  artifacts: &artifacts
     paths:
-      - ulib-*/build/libs/*.jar
+      # core
+      - ulib-core/build/libs/*-lib.jar
+      - ulib-core-api/build/libs/*-javadoc.jar
+      - ulib-core-api/build/libs/*-sources.jar
+      # spigot
+      - ulib-spigot/build/libs/*-plugin.jar
+      - ulib-spigot-api/build/libs/*-javadoc.jar
+      - ulib-spigot-api/build/libs/*-sources.jar
+      # bungeecord
+      - ulib-bungeecord/build/libs/*-plugin.jar
+      - ulib-bungeecord-api/build/libs/*-javadoc.jar
+      - ulib-bungeecord-api/build/libs/*-sources.jar
+      # velocity
+      - ulib-velocity/build/libs/*-plugin.jar
+      - ulib-velocity-api/build/libs/*-javadoc.jar
+      - ulib-velocity-api/build/libs/*-sources.jar
   only:
     - develop
 
@@ -25,9 +40,7 @@ release:
   stage: build_publish
   script:
     - 'gradle shadowJar publish -g .gradlehome -Prelease'
-  artifacts:
-    paths:
-      - ulib-*/build/libs/*.jar
+  artifacts: *artifacts
   only:
     - web
   except:
