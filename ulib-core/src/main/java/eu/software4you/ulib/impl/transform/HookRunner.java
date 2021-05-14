@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class Hooks {
+final class HookRunner {
     private static final Map<String, Map<Integer, List<Entry<Object, Method>>>> hooks = new ConcurrentHashMap<>();
 
     synchronized static void addHook(Method source, Object sourceInst, String fullDescriptor, int at) {
@@ -104,7 +104,7 @@ public final class Hooks {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @SneakyThrows
-    public static Callback<?> runHooks(Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, Class<?> caller, String hookId, int at, Object[] params) {
+    static Callback<?> runHooks(Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, Class<?> caller, String hookId, int at, Object[] params) {
         Callback<?> cb = new Callback(returnType, returnValue, hasReturnValue, self, caller);
         if (!hooks.containsKey(hookId))
             return cb;

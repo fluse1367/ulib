@@ -30,7 +30,7 @@ final class HookInjectorImpl extends HookInjector {
     public HookInjectorImpl() {
         Callb.put(
                 /* [0] Hook runner */
-                Hooks::runHooks,
+                HookRunner::runHooks,
 
                 /* [1] Callback#isReturning() */
                 (BoolFunc<Callback<?>>) Callback::isReturning,
@@ -58,7 +58,7 @@ final class HookInjectorImpl extends HookInjector {
 
     @Override
     protected void unhookStatic0(Class<?> clazz) {
-        Hooks.delHooks(clazz).forEach((className, li) ->
+        HookRunner.delHooks(clazz).forEach((className, li) ->
                 li.forEach(desc -> unref(className, desc)));
     }
 
@@ -75,7 +75,7 @@ final class HookInjectorImpl extends HookInjector {
 
     @Override
     protected void unhook0(Object inst, boolean unhookStatic) {
-        Hooks.delHooks(inst).forEach((className, li) ->
+        HookRunner.delHooks(inst).forEach((className, li) ->
                 li.forEach(desc -> unref(className, desc)));
         if (unhookStatic) {
             unhookStatic0(inst.getClass());
@@ -96,13 +96,13 @@ final class HookInjectorImpl extends HookInjector {
 
     @Override
     protected void directUnhook0(Method source, Object sourceInst, Method into, HookPoint at) {
-        Hooks.delHook(source, sourceInst, Util.fullDescriptor(into), at.ordinal());
+        HookRunner.delHook(source, sourceInst, Util.fullDescriptor(into), at.ordinal());
         unref(into.getDeclaringClass().getName(), into.getName() + Util.getDescriptor(into));
     }
 
     @Override
     protected void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
-        Hooks.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at.ordinal());
+        HookRunner.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at.ordinal());
         unref(className, methodName + Util.resolveDescriptor(className, methodName, methodDescriptor));
     }
 
@@ -135,7 +135,7 @@ final class HookInjectorImpl extends HookInjector {
     private void inject(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
         String fullDescriptor = Util.fullDescriptor(className, methodName, methodDescriptor);
 
-        Hooks.addHook(source, sourceInst, fullDescriptor, at.ordinal());
+        HookRunner.addHook(source, sourceInst, fullDescriptor, at.ordinal());
 
 
         String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor);
