@@ -40,6 +40,10 @@ public final class ColumnBuilder<T> {
         return new ColumnBuilder<>(null, name, dataType);
     }
 
+    public static ColumnBuilder<?> of(DataType dataType, String name) {
+        return new ColumnBuilder<>(dataType.getClazz(), name, dataType);
+    }
+
     /**
      * Prohibits {@code NULL} column values.
      *

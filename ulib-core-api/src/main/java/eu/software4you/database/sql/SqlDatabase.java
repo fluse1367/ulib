@@ -81,4 +81,16 @@ public interface SqlDatabase extends Database {
      */
     @NotNull
     Table addTable(String name, Column<?> column, Column<?>... columns);
+
+    /**
+     * Adds a new table to this wrapper.
+     *
+     * @param name     the name
+     * @param builder  the 1st column
+     * @param builders other columns
+     * @return the table
+     * @see ColumnBuilder
+     */
+    @NotNull
+    Table addTable(String name, ColumnBuilder<?> builder, ColumnBuilder<?>... builders);
 }
