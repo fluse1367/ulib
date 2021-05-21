@@ -1,21 +1,86 @@
 package eu.software4you.database.sql.query;
 
-public interface Condition<D> {
-    Condition<D> not();
+import eu.software4you.database.sql.Column;
 
-    D isEqualTo(Object what);
+/**
+ * Represents a condition that is to be completed.
+ *
+ * @param <R> the return value at completion
+ */
+public interface Condition<R> {
+    /**
+     * Negates the condition.
+     *
+     * @return this
+     */
+    Condition<R> not();
 
-    D isGreaterThan(Object than);
+    /**
+     * Tests for equality.
+     *
+     * @param what the value
+     * @return R
+     */
+    R isEqualTo(Object what);
 
-    D isGreaterOrEquals(Object than);
+    /**
+     * Tests if a value is greater than another value.
+     *
+     * @param than another value
+     * @return R
+     */
+    R isGreaterThan(Object than);
 
-    D isLessThan(Object than);
+    /**
+     * Tests if a value is greater than or equals another value.
+     *
+     * @param than another value
+     * @return R
+     */
+    R isGreaterOrEquals(Object than);
 
-    D isLessOrEquals(Object than);
+    /**
+     * Tests if a value is less than another value.
+     *
+     * @param than another value
+     * @return R
+     */
+    R isLessThan(Object than);
 
-    D isBetween(Object a, Object b);
+    /**
+     * Tests if a value is less than or equals another value.
+     *
+     * @param than another value
+     * @return R
+     */
+    R isLessOrEquals(Object than);
 
-    D isLike(String pattern);
+    /**
+     * Tests if a value is between two other values.
+     *
+     * @param a the first value
+     * @param b the second value
+     * @return R
+     */
+    R isBetween(Object a, Object b);
 
-    D isIn(Object val, Object... vals);
+    /**
+     * Tests if a value matches a specific pattern.
+     *
+     * @param pattern the pattern
+     * @return R
+     */
+    R isLike(String pattern);
+
+    /**
+     * Short for multiple or conditions.
+     *
+     * @param val  the value to test
+     * @param vals additional values
+     * @return R
+     * @see Where#or(String)
+     * @see Where#or(Column)
+     * @see Where#orRaw(String)
+     */
+    R isIn(Object val, Object... vals);
 }

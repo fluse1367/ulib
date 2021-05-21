@@ -1,17 +1,15 @@
 package eu.software4you.ulib.impl.database.sql;
 
+import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.DataType;
-import eu.software4you.database.sql.SqlDatabase;
-import eu.software4you.database.sql.query.Query;
-import eu.software4you.database.sql.query.SetQuery;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -34,7 +32,7 @@ final class Table implements eu.software4you.database.sql.Table {
 
     @SneakyThrows
     @Override
-    public void create() {
+    public boolean create() {
         StringJoiner sj = new StringJoiner(", ");
         StringBuilder sb = new StringBuilder();
 
@@ -47,7 +45,7 @@ final class Table implements eu.software4you.database.sql.Table {
                 for (Object o : col.getAcceptable()) {
                     j.add(o.toString());
                 }
-                sb.append(j.toString());
+                sb.append(j);
             } else if (col.getSize() >= 0) {
                 sb.append(String.format("(%d)", col.getSize()));
             }
@@ -76,13 +74,13 @@ final class Table implements eu.software4you.database.sql.Table {
 
         String sql = String.format("create table `%s` (%s);", name, sj.toString());
 
-        this.sql.prepareStatement(sql).executeUpdate();
+        return this.sql.prepareStatement(sql).executeUpdate() > 0;
     }
 
     @SneakyThrows
     @Override
-    public void drop() {
-        sql.prepareStatement(String.format("drop table `%s`;", name)).executeUpdate();
+    public boolean drop() {
+        return sql.prepareStatement(String.format("drop table `%s`;", name)).executeUpdate() > 0;
     }
 
     @SneakyThrows
@@ -92,17 +90,61 @@ final class Table implements eu.software4you.database.sql.Table {
     }
 
     @Override
-    public Query select(String what, String... select) {
-        throw new NotImplementedException();
+    public @NotNull Query select(@NotNull String what, String... select) {
+        return sel("select", what, select);
     }
 
     @Override
-    public Query selectDistinct(String what, String... select) {
-        throw new NotImplementedException();
+    public @NotNull Query selectDistinct(@NotNull String what, @NotNull String @NotNull ... select) {
+        return sel("select distinct", what, select);
+    }
+
+    private Query sel(String operand, String what, String[] whats) {
+        return new Query(sql, this, String.format("%s `%s` from", operand,
+                String.join("`, `", concat(what, whats))));
     }
 
     @Override
-    public SetQuery update() {
-        throw new NotImplementedException();
+    public @NotNull SetQuery update() {
+        return new SetQuery(sql, this, "update");
+    }
+
+    private <T> T[] concat(T a, T[] arr) {
+        T[] strs = Arrays.copyOf(arr, arr.length + 1);
+        strs[0] = a;
+        System.arraycopy(arr, 0, strs, 1, arr.length);
+        return strs;
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean insert(Object value, Object... values) {
+        values = concat(value, values);
+
+        StringJoiner vals = new StringJoiner("`, `", "`", "`");
+        vals.setEmptyValue("");
+        for (Object o : values) {
+            vals.add(o.toString());
+        }
+        String query = String.format("insert into `%s` values (%s)", name, vals);
+        return sql.prepareStatement(query).executeUpdate() > 0;
+    }
+
+    @SafeVarargs
+    @SneakyThrows
+    @Override
+    public final boolean insert(Pair<String, Object> value, Pair<String, Object>... values) {
+        StringJoiner cols = new StringJoiner("`, `", "`", "`");
+        cols.setEmptyValue("");
+        StringJoiner vals = new StringJoiner("`, `", "`", "`");
+        vals.setEmptyValue("");
+
+        for (Pair<String, Object> pair : concat(value, values)) {
+            cols.add(pair.getFirst());
+            vals.add(pair.getSecond().toString());
+        }
+
+        String query = String.format("insert into `%s` (%s) values (%s)", name, cols, vals);
+        return sql.prepareStatement(query).executeUpdate() > 0;
     }
 }

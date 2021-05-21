@@ -4,6 +4,8 @@ import lombok.Getter;
 
 /**
  * Representation of all Sql data types.
+ *
+ * @see <a href="https://www.w3schools.com/mysql/mysql_datatypes.asp">https://www.w3schools.com/mysql/mysql_datatypes.asp</a>
  */
 public enum DataType {
     /* Text Types */
@@ -86,6 +88,65 @@ public enum DataType {
 
     /* Numeric Types */
 
+    /**
+     * A bit-value type. The number of bits per value is specified in size. The size parameter can hold a value from 1 to 64. The default value for size is 1.
+     */
+    BIT(1, 64L),
+
+    /**
+     * A very small integer. Signed range is from -128 to 127. Unsigned range is from 0 to 255. The size parameter specifies the maximum display width (which is 255).
+     */
+    TINYINT(255L),
+
+    /**
+     * A boolean (stored as number; zero is considered as false, nonzero values are considered as true).
+     */
+    BOOL(1L),
+
+    /**
+     * Equal to {@link #BOOL}
+     */
+    BOOLEAN(1L),
+
+    /**
+     * A small integer. Signed range is from -32,768 to 32,767. Unsigned range is from 0 to 65,535. The size parameter specifies the maximum display width (which is 255).
+     */
+    SMALLINT(255L),
+
+    /**
+     * A medium integer. Signed range is from -8,388,608 to 8,388,607. Unsigned range is from 0 to 16,777,215. The size parameter specifies the maximum display width (which is 255).
+     */
+    MEDIUMINT(255L),
+
+    /**
+     * A medium integer. Signed range is from -2,147,483,648 to 2,147,483,647. Unsigned range is from 0 to 4,294,967,295. The size parameter specifies the maximum display width (which is 255).
+     */
+    INT(255L),
+
+    /**
+     * Equal to {@link #INT}
+     */
+    INTEGER(255L),
+
+    /**
+     * A large integer. Signed range is from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807. Unsigned range is from 0 to 18,446,744,073,709,551,615. The size parameter specifies the maximum display width (which is 255).
+     */
+    BIGINT(255L),
+
+    /**
+     * A floating point number. MySQL uses the size to determine whether to use FLOAT or DOUBLE for the resulting data type. If the size is from 0 to 24, the data type becomes {@code FLOAT}. If it is from 25 to 53, the data type becomes {@code DOUBLE}
+     */
+    FLOAT(53L),
+
+    /**
+     * A normal-size floating point number. The total number of digits is specified in size.
+     */
+    DOUBLE(53L),
+
+    /**
+     * An exact fixed-point number. The total number of digits is specified in size. The maximum number for size is 65. The default value for size is 10.
+     */
+    DECIMAL(10, 65L),
 
 
     /* Date/Time Types */;

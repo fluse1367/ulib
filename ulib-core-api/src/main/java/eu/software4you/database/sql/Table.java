@@ -1,6 +1,7 @@
 package eu.software4you.database.sql;
 
 import eu.software4you.common.Nameable;
+import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.query.Query;
 import eu.software4you.database.sql.query.SetQuery;
 import org.jetbrains.annotations.NotNull;
@@ -33,13 +34,17 @@ public interface Table extends Nameable {
 
     /**
      * Attempts to create this table in the database.
+     *
+     * @return {@code true}, if the operation was successful
      */
-    void create();
+    boolean create();
 
     /**
      * Attempts to delete this table from the database.
+     *
+     * @return {@code true}, if the operation was successful
      */
-    void drop();
+    boolean drop();
 
     /**
      * Checks if this table exists within the database.
@@ -49,21 +54,49 @@ public interface Table extends Nameable {
     boolean exists();
 
     /**
-     * @deprecated not implemented
+     * Selects data from the database.
+     *
+     * @param what     the column to select
+     * @param whatElse additional columns to select
+     * @return the query builder
      */
-    @Deprecated
-    Query select(String what, String... select);
+    @NotNull Query select(@NotNull String what, @NotNull String... whatElse);
 
     /**
-     * @deprecated not implemented
+     * Selects only different values from the database.
+     *
+     * @param what     the column to select
+     * @param whatElse additional columns to select
+     * @return the query builder
      */
-    @Deprecated
-    Query selectDistinct(String what, String... select);
+    @NotNull Query selectDistinct(@NotNull String what, @NotNull String... whatElse);
 
     /**
-     * @deprecated not implemented
+     * Updates the table.
+     *
+     * @return the query builder
      */
-    @Deprecated
-    SetQuery update();
+    @NotNull SetQuery update();
+
+    /**
+     * Inserts values into the database.<br>
+     * The values have to correspond with the columns of the table in the same order.
+     *
+     * @param value  the value to insert
+     * @param values additional values to insert
+     * @return {@code true}, if the operation was successful
+     */
+    boolean insert(Object value, Object... values);
+
+    /**
+     * Inserts values into the database.
+     *
+     * @param value  {@link Pair#getFirst()}: the the column in which to insert, {@link Pair#getSecond()}: the value to insert
+     * @param values additional values to insert
+     * @return {@code true}, if the operation was successful
+     */
+    // @SafeVarargs
+    @SuppressWarnings("unchecked")
+    boolean insert(Pair<String, Object> value, Pair<String, Object>... values);
 
 }
