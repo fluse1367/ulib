@@ -17,7 +17,7 @@ import java.util.List;
  * Can build {@link ItemStack}s fast and easy with one line.
  */
 public class ItemBuilder {
-    private final ItemStack stack;
+    private ItemStack stack;
     private final ItemMeta meta;
 
     private ItemBuilder(ItemStack stack, ItemMeta meta) {
@@ -42,21 +42,11 @@ public class ItemBuilder {
     }
 
     /**
-     * Builds the {@link ItemStack}
-     *
-     * @return the built {@link ItemStack}
-     */
-    public ItemStack build() {
-        stack.setItemMeta(meta.clone());
-        return stack.clone();
-    }
-
-    /**
      * Gets specific item metadata
      *
      * @param metaClass A compatible meta class (see <code>org.bukkit.inventory.meta</code> package)
      * @param <T>       The meta type
-     * @return the specific item metadata
+     * @return the specific item metadata, or {@code null} if meta is not an instance of provided type
      */
     public <T extends ItemMeta> T getMeta(Class<T> metaClass) {
         try {
@@ -219,8 +209,17 @@ public class ItemBuilder {
      * @see NBTEditor#set(Object, Object, Object...)
      */
     public ItemBuilder nbtTag(Object value, Object... keys) {
-        return new ItemBuilder(NBTEditor.set(stack, value, keys), meta);
+        this.stack = NBTEditor.set(stack, value, keys);
+        return this;
     }
 
-
+    /**
+     * Builds the {@link ItemStack}
+     *
+     * @return the built {@link ItemStack}
+     */
+    public ItemStack build() {
+        stack.setItemMeta(meta.clone());
+        return stack.clone();
+    }
 }
