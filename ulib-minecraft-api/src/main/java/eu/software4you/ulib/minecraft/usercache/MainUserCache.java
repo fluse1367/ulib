@@ -6,15 +6,27 @@ import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;
 
 
+/**
+ * A central user cache. Needs to be enabled first.<br>
+ * Automatically caches/updates usernames/UUIDs.
+ */
 public abstract class MainUserCache {
     @Await
     private static MainUserCache impl;
     private static UserCache mainCache;
 
+    /**
+     * Checks if the main user cache is enabled.
+     *
+     * @return {@code true}, if it is enabled
+     */
     public static boolean isEnabled() {
         return mainCache != null;
     }
 
+    /**
+     * Enables the main user cache.
+     */
     @SneakyThrows
     public static void enable() {
         if (isEnabled())
@@ -24,6 +36,13 @@ public abstract class MainUserCache {
         mainCache = impl.enable0();
     }
 
+    /**
+     * Obtains the main user cache instance.
+     *
+     * @return the main user cache, or {@code null}, if it is not enabled
+     * @see #enable()
+     * @see #isEnabled()
+     */
     public static UserCache get() {
         return mainCache;
     }

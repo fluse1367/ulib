@@ -6,9 +6,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 public interface ExtendedPlugin extends Plugin, PluginBase<Listener, BukkitTask, CommandSender> {
     @Override
+    @NotNull
     SpigotLayout getLayout();
 
     /**

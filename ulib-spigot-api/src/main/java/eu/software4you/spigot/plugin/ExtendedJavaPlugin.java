@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public ConfigurationWrapper getConf() {
+    public @NotNull ConfigurationWrapper getConf() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
@@ -49,7 +50,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public SpigotLayout getLayout() {
+    public @NotNull SpigotLayout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;

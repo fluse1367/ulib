@@ -5,6 +5,11 @@ import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
 
+/**
+ * An enhanced version of the config wrapper to provide direct sending of e.g. messages to users.
+ *
+ * @param <T> the message receiver type
+ */
 public abstract class Layout<T> extends ConfigurationWrapper {
     public Layout(ConfigurationSection section) {
         super(section);

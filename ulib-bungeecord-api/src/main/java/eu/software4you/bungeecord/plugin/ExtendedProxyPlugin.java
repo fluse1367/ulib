@@ -7,6 +7,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
+import org.jetbrains.annotations.NotNull;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public ConfigurationWrapper getConf() {
+    public @NotNull ConfigurationWrapper getConf() {
         if (configWrapper.section() == null)
             reloadConfig();
         return configWrapper;
@@ -51,7 +52,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public Layout<CommandSender> getLayout() {
+    public @NotNull Layout<CommandSender> getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;
