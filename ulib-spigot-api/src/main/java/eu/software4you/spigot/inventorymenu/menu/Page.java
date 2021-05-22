@@ -8,6 +8,8 @@ import java.util.Map;
 
 /**
  * Represents a single page of a {@link Menu} and thus an {@link Inventory}.
+ *
+ * @see eu.software4you.spigot.inventorymenu.builder.PageBuilder
  */
 public interface Page extends PageHandleable {
     /**

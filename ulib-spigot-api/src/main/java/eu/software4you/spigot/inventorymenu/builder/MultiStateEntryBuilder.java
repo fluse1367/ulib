@@ -1,4 +1,4 @@
-package eu.software4you.spigot.inventorymenu.factory;
+package eu.software4you.spigot.inventorymenu.builder;
 
 import eu.software4you.spigot.inventorymenu.entry.MultiStateEntry;
 import org.bukkit.entity.Player;
@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+/**
+ * A builder for a {@link MultiStateEntry}.
+ *
+ * @param <T> the state type
+ */
 public class MultiStateEntryBuilder<T> extends EntryBuilder {
     private final Map<T, ItemStack> representations = new HashMap<>();
     private final Map<T, BiConsumer<Player, ClickType>> handlers = new HashMap<>();
@@ -19,6 +24,9 @@ public class MultiStateEntryBuilder<T> extends EntryBuilder {
         this.defaultState = defaultState;
     }
 
+    /**
+     * @see MultiStateEntry#setRepresentation(Object, ItemStack)
+     */
     public MultiStateEntryBuilder<T> representation(T state, ItemStack representation) {
         if (defaultState.equals(state))
             throw new IllegalArgumentException("Cannot modify default state representation afterwards. Use the constructor to set it.");
@@ -26,6 +34,9 @@ public class MultiStateEntryBuilder<T> extends EntryBuilder {
         return this;
     }
 
+    /**
+     * @see MultiStateEntry#setClickHandler(Object, BiConsumer)
+     */
     public MultiStateEntryBuilder<T> onClick(T state, BiConsumer<Player, ClickType> handler) {
         if (state == defaultState)
             super.onClick(handler);
@@ -34,15 +45,21 @@ public class MultiStateEntryBuilder<T> extends EntryBuilder {
         return this;
     }
 
-    @Override
-    public MultiStateEntryBuilder<T> clickPermission(String clickPermission) {
-        super.clickPermission(clickPermission);
-        return this;
-    }
-
+    /**
+     * @see MultiStateEntry#setClickHandler(BiConsumer)
+     */
     @Override
     public MultiStateEntryBuilder<T> onClick(BiConsumer<Player, ClickType> handler) {
         super.onClick(handler);
+        return this;
+    }
+
+    /**
+     * @see MultiStateEntry#setClickPermission(String)
+     */
+    @Override
+    public MultiStateEntryBuilder<T> clickPermission(String clickPermission) {
+        super.clickPermission(clickPermission);
         return this;
     }
 

@@ -8,6 +8,8 @@ import java.util.function.BiConsumer;
 
 /**
  * Represents a simple entry within a {@link eu.software4you.spigot.inventorymenu.menu.Page} displayed with an {@link ItemStack}.
+ *
+ * @see eu.software4you.spigot.inventorymenu.builder.EntryBuilder
  */
 public interface Entry {
     /**

@@ -1,4 +1,4 @@
-package eu.software4you.spigot.inventorymenu.factory;
+package eu.software4you.spigot.inventorymenu.builder;
 
 import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;

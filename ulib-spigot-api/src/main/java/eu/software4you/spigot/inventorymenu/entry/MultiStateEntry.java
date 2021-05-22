@@ -50,8 +50,9 @@ public interface MultiStateEntry<T> extends Entry {
     ItemStack getRepresentation(T state);
 
     /**
-     * Sets the representing item stack associated with the state.
+     * Sets the representing item stack for a specific state.
      *
+     * @param state          the state to set the item for
      * @param representation the item stack
      */
     void setRepresentation(T state, ItemStack representation);
@@ -77,6 +78,7 @@ public interface MultiStateEntry<T> extends Entry {
      * Sets the handler that will be called on a successful click from a player at a certain state.
      * If no handler is set for a state the general handler will be called.
      *
+     * @param state   the state to set the handler for
      * @param handler the handler that will be called, or null to remove the handler
      */
     void setClickHandler(T state, BiConsumer<Player, ClickType> handler);
@@ -84,6 +86,7 @@ public interface MultiStateEntry<T> extends Entry {
     /**
      * Gets the handler that will be called on a successful click from a player at a certain state.
      *
+     * @param state the state to set the handler for
      * @return the handler that will be called on a successful click from a player at a certain state
      */
     BiConsumer<Player, ClickType> getClickHandler(T state);

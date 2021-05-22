@@ -1,9 +1,9 @@
 package eu.software4you.ulib.impl.spigot.inventorymenu.factory;
 
+import eu.software4you.spigot.inventorymenu.builder.EntryFactory;
 import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.MultiStateEntry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;
-import eu.software4you.spigot.inventorymenu.factory.EntryFactory;
 import eu.software4you.ulib.inject.Impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -11,8 +11,8 @@ import java.util.Map;
  * Represents a {@link Menu}, with multiple pages.
  * Each page get own page switch buttons, if needed.
  *
- * @see eu.software4you.spigot.inventorymenu.factory.MultiPageMenuBuilder
- * @see eu.software4you.spigot.inventorymenu.factory.PageBuilder
+ * @see eu.software4you.spigot.inventorymenu.builder.MultiPageMenuBuilder
+ * @see eu.software4you.spigot.inventorymenu.builder.PageBuilder
  */
 public interface MultiPageMenu extends Menu {
     /**
