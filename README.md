@@ -26,8 +26,9 @@ Paper/Waterfall provides better performance, and an expanded API which allows uL
 features.<br>
 uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
 needed to implement some features on Spigot.<br>
-Consider using [Yatopia](https://yatopiamc.org/), [Paper](https://papermc.io/),
-or [Tuinity](https://github.com/Spottedleaf/Tuinity) and [Velocity](https://velocitypowered.com/)
+Consider using [Purpur](https://purpur.pl3x.net/), [Airplane](https://airplane.gg/)
+, [Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io/),
+and [Velocity](https://velocitypowered.com/)
 or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
 Also, note the [license of this project](./LICENSE). Use this library at your own risk! The developer(s) / contributors

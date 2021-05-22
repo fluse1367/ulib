@@ -77,7 +77,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
 
             if (!PAPER) {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
-                        " Consider switching to paper, tuinity or yatopia, they provide better performance, bug fixes and more features." +
+                        " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
                         " See https://papermc.io/ for more information.");
                 // register no-paper workarounds
                 registerEvents(new CustomEnchantmentHandler.NoPaper());
