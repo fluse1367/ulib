@@ -19,7 +19,7 @@ public interface SqlDatabase extends Database {
      * Retrieves the current connection to the database.
      *
      * @return the connection
-     * @throws IllegalStateException when no connection was established yet.
+     * @throws IllegalStateException if no connection was established yet
      */
     @NotNull
     Connection getConnection() throws IllegalStateException;
@@ -29,7 +29,7 @@ public interface SqlDatabase extends Database {
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders
      * @return a new default PreparedStatement object containing the pre-compiled SQL statement
-     * @throws IllegalStateException when no connection was established yet.
+     * @throws IllegalStateException if no connection was established yet
      * @see Connection#prepareStatement(String)
      */
     @SneakyThrows
@@ -44,7 +44,7 @@ public interface SqlDatabase extends Database {
      * @param sql an SQL statement that may contain one or more '?' parameter placeholders.
      *            Typically this statement is specified using JDBC call escape syntax.
      * @return a new default PreparedStatement object containing the pre-compiled SQL statement
-     * @throws IllegalStateException when no connection was established yet.
+     * @throws IllegalStateException if no connection was established yet
      * @see Connection#prepareStatement(String)
      */
     @SneakyThrows
