@@ -1,9 +1,8 @@
 package eu.software4you.spigot.plugin;
 
 import eu.software4you.configuration.ConfigurationWrapper;
-import eu.software4you.ulib.minecraft.plugin.Layout;
+import eu.software4you.spigot.inventorymenu.MenuManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -17,9 +16,10 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
-    private final Layout<CommandSender> layout = new SpigotLayout(null);
+    private final SpigotLayout layout = new SpigotLayout(null);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
     private String layoutFileName = DEFAULT_LAYOUT_FILE_NAME;
+    private MenuManager mainMenuManager;
 
     public ExtendedJavaPlugin() {
         super();
@@ -49,7 +49,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public Layout<CommandSender> getLayout() {
+    public SpigotLayout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;
@@ -140,5 +140,12 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     @Override
     public void unregisterAllEvents() {
         HandlerList.unregisterAll(this);
+    }
+
+    @Override
+    public MenuManager getMainMenuManager() {
+        if (mainMenuManager == null)
+            mainMenuManager = getNewMenuManager();
+        return mainMenuManager;
     }
 }

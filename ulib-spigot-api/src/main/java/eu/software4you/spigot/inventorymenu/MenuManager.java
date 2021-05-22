@@ -32,6 +32,12 @@ public abstract class MenuManager {
     protected Listener handler;
     private boolean listening = false;
 
+    /**
+     * Creates a new menu manager.
+     *
+     * @param plugin the plugin which requests the manager
+     * @return the newly created menu manager
+     */
     public static MenuManager of(Plugin plugin) {
         return constructor.apply(plugin);
     }
