@@ -4,15 +4,10 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.spigot.inventorymenu.MenuManager;
 import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;
-import eu.software4you.spigot.inventorymenu.event.MenuCloseEvent;
-import eu.software4you.spigot.inventorymenu.event.MenuOpenEvent;
-import eu.software4you.spigot.inventorymenu.event.MenuSwitchPageEvent;
 import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;
-import eu.software4you.spigot.inventorymenu.menu.Menu;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;
 import eu.software4you.spigot.inventorymenu.menu.PageHandleable;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -68,8 +63,6 @@ public class MenuManagerListener implements Runnable, Listener {
                 PageSwitchHandler handler = menu.getPageSwitchHandler();
                 if (handler != null)
                     handler.handle(p, page, pageIndex, nextPage, nextIndex);
-                Bukkit.getPluginManager().callEvent(new MenuSwitchPageEvent(p, menu,
-                        page, pageIndex, nextPage, nextIndex));
                 return;
             }
         }
@@ -102,12 +95,8 @@ public class MenuManagerListener implements Runnable, Listener {
         MultiPageMenu mpm = getMultiPageMenu(opened);
         if (mpm != null && !noTriggerOpenClose.contains(new Pair<>(p, mpm))) {
             handleOpen(mpm, p);
-            Bukkit.getPluginManager().callEvent(new MenuOpenEvent(p, mpm));
         }
         handleOpen(opened, p);
-        if (opened instanceof Menu) {
-            Bukkit.getPluginManager().callEvent(new MenuOpenEvent(p, (Menu) opened));
-        }
     }
 
     @EventHandler
@@ -119,12 +108,8 @@ public class MenuManagerListener implements Runnable, Listener {
         MultiPageMenu mpm = getMultiPageMenu(closed);
         if (mpm != null && !noTriggerOpenClose.contains(new Pair<>(p, mpm))) {
             handleClose(mpm, p);
-            Bukkit.getPluginManager().callEvent(new MenuCloseEvent(p, mpm));
         }
         handleClose(closed, p);
-        if (closed instanceof Menu) {
-            Bukkit.getPluginManager().callEvent(new MenuCloseEvent(p, (Menu) closed));
-        }
     }
 
     private MultiPageMenu getMultiPageMenu(Page page) {
