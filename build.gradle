@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 defaultTasks 'clean', 'build', 'jar'
+apply plugin: 'java'
 
 // shadowing - start
 buildscript {
@@ -12,6 +13,43 @@ buildscript {
     }
 }
 // shadowing - end
+
+// docs build - start
+task docsWebpage {
+    subprojects {
+        if (project.name.endsWith('-api')) {
+            dependsOn "${project.name}:javadoc"
+        }
+    }
+
+    doLast {
+        delete 'public'
+
+        mkdir 'public'
+        copy {
+            from 'docs'
+            into 'public'
+        }
+
+        subprojects {
+            if(!project.name.endsWith('-api')) return
+
+            def name = project.name
+            name = name.substring(name.indexOf("-") + 1, name.lastIndexOf("-"))
+
+            copy {
+                from "${buildDir}/docs/javadoc"
+                into "${rootDir}/public/$name"
+            }
+
+        }
+    }
+}
+
+clean {
+    delete "${rootDir}/public"
+}
+// docs build - end
 
 allprojects {
 

@@ -25,7 +25,7 @@ void itSubs(Jar task) {
 
         task.dependsOn "$proj:build"
 
-        def buildDir = project(proj).buildDir.path
+        def buildDir = project(proj).buildDir
         task.from("$buildDir/classes/java/main") { include '**' }
         task.from("$buildDir/resources/main") { include '**' }
     }
@@ -41,7 +41,7 @@ shadowJar {
     configurations = [project.configurations.shade]
     itSubs(shadowJar)
 
-    from("${ex.buildDir.path}/libs/") {
+    from("${ex.buildDir}/libs/") {
         include "libex"
     }
 

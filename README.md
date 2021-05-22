@@ -176,19 +176,24 @@ dependencies {
 
 ## Build Instructions
 
-1. Clone this repository:
+1. **<u>Clone this repository</u>**
    ```shell
    git clone https://gitlab.com/software4you.eu/ulib.git
    ```
-2. Cd into the directory:
+2. **`cd` <u>into the directory</u>**
    ```shell
    cd ulib
    ```
-3. If you want the most recent (unstable) version, switch to the `develop` branch:
+3. <details><summary><b><u>Switch to the</u> <code>develop</code> <u>branch</u></b> (Optional)</summary>
+   You only need to do this if you want the most recent (unstable) changes.
+
    ```shell
    git checkout develop
    ```
-4. Build it:
+   </details>
+
+
+4. **<u>Build it</u>**
 
    Linux (bash):
 
@@ -224,6 +229,28 @@ dependencies {
     - `ulib-spigot-VERSION-plugin.jar`
 
     </details>
+
+
+5. <details><summary><b><u>Build the javadocs webpage</u></b> (Optional)</summary>
+
+   Building the javadocs webpage is probably more interesting for developers who are using the development
+   snapshots  (`develop` branch) of ulib, because the javadocs of them won't get published.
+
+   Linux (bash):
+
+    ```shell
+    ./gradlew docsWebpage
+    ```
+
+   Windows (cmd):
+
+    ```shell
+    ./gradlew.bat docsWebpage
+    ```
+
+   You'll find the webpage in the directory `public`.
+
+</details>
 
 ## Attributions
 
