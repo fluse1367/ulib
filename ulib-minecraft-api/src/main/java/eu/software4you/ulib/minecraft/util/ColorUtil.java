@@ -49,7 +49,7 @@ public class ColorUtil {
     }
 
     /**
-     * Replaces all formatting & color codes from a string with the actual formatting/color ({@code §}).
+     * Replaces all formatting &amp; color codes from a string with the actual formatting/color ({@code §}).
      *
      * @param input the string
      * @return the processed string
@@ -89,7 +89,7 @@ public class ColorUtil {
     }
 
     /**
-     * Replaces all formatting & color from a string with the respective code ({@code &}).
+     * Replaces all formatting &amp; color from a string with the respective code ({@code &}).
      *
      * @param input the string
      * @return the processed string
@@ -129,7 +129,7 @@ public class ColorUtil {
     }
 
     /**
-     * Removes all formatting & color from a string.
+     * Removes all formatting &amp; color from a string.
      *
      * @param input the string
      * @return the processed string
