@@ -1,6 +1,7 @@
 package eu.software4you.ulib.impl.database.sql;
 
 import eu.software4you.database.sql.Column;
+import eu.software4you.database.sql.ColumnBuilder;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -170,5 +171,14 @@ public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
         cols.add(column);
         cols.addAll(Arrays.asList(columns));
         return addTable(name, cols.toArray(new Column[0]));
+    }
+
+    @Override
+    public @NotNull Table addTable(@NotNull String name, @NotNull ColumnBuilder<?> builder, ColumnBuilder<?>... builders) {
+        List<Column<?>> columns = new ArrayList<>(builders.length);
+        for (ColumnBuilder<?> cb : builders) {
+            columns.add(cb.build());
+        }
+        return addTable(name, builder.build(), columns.toArray(new Column[0]));
     }
 }
