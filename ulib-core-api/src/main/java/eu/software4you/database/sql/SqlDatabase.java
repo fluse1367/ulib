@@ -34,7 +34,7 @@ public interface SqlDatabase extends Database {
      */
     @SneakyThrows
     @NotNull
-    default PreparedStatement prepareStatement(String sql) throws IllegalStateException {
+    default PreparedStatement prepareStatement(@NotNull String sql) throws IllegalStateException {
         return getConnection().prepareStatement(sql);
     }
 
@@ -49,7 +49,7 @@ public interface SqlDatabase extends Database {
      */
     @SneakyThrows
     @NotNull
-    default CallableStatement prepareCall(String sql) throws IllegalStateException {
+    default CallableStatement prepareCall(@NotNull String sql) throws IllegalStateException {
         return getConnection().prepareCall(sql);
     }
 
@@ -68,7 +68,7 @@ public interface SqlDatabase extends Database {
      * @return the table instance, or {@code null} if not found
      */
     @Nullable
-    Table getTable(String name);
+    Table getTable(@NotNull String name);
 
     /**
      * Adds a new table to this wrapper.
@@ -80,7 +80,7 @@ public interface SqlDatabase extends Database {
      * @see ColumnBuilder
      */
     @NotNull
-    Table addTable(String name, Column<?> column, Column<?>... columns);
+    Table addTable(@NotNull String name, @NotNull Column<?> column, @NotNull Column<?>... columns);
 
     /**
      * Adds a new table to this wrapper.
@@ -92,5 +92,5 @@ public interface SqlDatabase extends Database {
      * @see ColumnBuilder
      */
     @NotNull
-    Table addTable(String name, ColumnBuilder<?> builder, ColumnBuilder<?>... builders);
+    Table addTable(@NotNull String name, @NotNull ColumnBuilder<?> builder, @NotNull ColumnBuilder<?>... builders);
 }

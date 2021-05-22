@@ -17,7 +17,7 @@ public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
     private final String url;
     private final Properties info;
 
-    private final Map<String, eu.software4you.database.sql.Table> tables = new LinkedHashMap<>();
+    private final Map<String, Table> tables = new LinkedHashMap<>();
     private Connection connection;
 
     public SqlDatabase(Connection connection) {
@@ -151,11 +151,11 @@ public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
     }
 
     @Override
-    public @Nullable eu.software4you.database.sql.Table getTable(String name) {
+    public @Nullable Table getTable(@NotNull String name) {
         return tables.get(name);
     }
 
-    private eu.software4you.database.sql.Table addTable(String name, Column<?>... columns) {
+    private Table addTable(String name, Column<?>... columns) {
         if (tables.containsKey(name))
             throw new IllegalStateException(String.format("Table %s already added", name));
         val table = new Table(this, name, Arrays.stream(columns).collect(Collectors.toMap(
@@ -166,7 +166,7 @@ public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
     }
 
     @Override
-    public @NotNull eu.software4you.database.sql.Table addTable(String name, Column<?> column, Column<?>... columns) {
+    public @NotNull Table addTable(@NotNull String name, @NotNull Column<?> column, Column<?>... columns) {
         List<Column<?>> cols = new ArrayList<>();
         cols.add(column);
         cols.addAll(Arrays.asList(columns));
