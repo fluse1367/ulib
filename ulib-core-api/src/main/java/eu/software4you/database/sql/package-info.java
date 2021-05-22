@@ -6,6 +6,6 @@
  *     <li>{@link java.sql.SQLException}</li>
  * </ul>
  *
- * @see <a href="https://projectlombok.org/features/SneakyThrows">https://projectlombok.org/features/SneakyThrows</a>
+ * @see <a href="https://projectlombok.org/features/SneakyThrows" target="_blank">https://projectlombok.org/features/SneakyThrows</a>
  */
 package eu.software4you.database.sql;

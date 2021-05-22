@@ -20,7 +20,7 @@ public @interface Hook {
     /**
      * The method to be hooked into. A descriptor (as specified in the JNI documentation) can be specified.
      *
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html" target="_blank">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
      */
     @NotNull
     String value();

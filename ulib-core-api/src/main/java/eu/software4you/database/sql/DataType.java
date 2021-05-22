@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * Representation of all Sql data types.
  *
- * @see <a href="https://www.w3schools.com/mysql/mysql_datatypes.asp">https://www.w3schools.com/mysql/mysql_datatypes.asp</a>
+ * @see <a href="https://www.w3schools.com/mysql/mysql_datatypes.asp" target="_blank">https://www.w3schools.com/mysql/mysql_datatypes.asp</a>
  */
 public enum DataType {
     /* Text Types */
