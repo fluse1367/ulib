@@ -81,7 +81,7 @@ public abstract class MenuManager {
      * Gets the respective page to an {@link Inventory}.
      *
      * @param inventory the inventory that the page displays
-     * @return the page, or null of nothing found
+     * @return the page, or {@code null} of nothing found
      */
     public Page getPage(Inventory inventory) {
         for (Menu m : menus) {
@@ -105,7 +105,7 @@ public abstract class MenuManager {
      * Gets the respective menu to an {@link Page}
      *
      * @param page the page that the menu displays
-     * @return the menu, or null of nothing found
+     * @return the menu, or {@code null} of nothing found
      */
     public Menu getMenu(Page page) {
         if (page instanceof SinglePageMenu)
@@ -127,7 +127,7 @@ public abstract class MenuManager {
      * Gets the respective menu to an {@link Inventory}
      *
      * @param inventory the inventory that the menu displays
-     * @return the menu, or null of nothing found
+     * @return the menu, or {@code null} of nothing found
      */
     public Menu getMenu(Inventory inventory) {
         return getMenu(getPage(inventory));
@@ -137,7 +137,7 @@ public abstract class MenuManager {
      * Tries to find a page within a {@link MultiPageMenu}.
      *
      * @param page the page to search for
-     * @return the respective {@link MultiPageMenu} and the page index, or null of nothing found
+     * @return the respective {@link MultiPageMenu} and the page index, or {@code null} of nothing found
      */
     public Pair<MultiPageMenu, Integer> tryPage(Page page) {
         for (Menu m : menus) {

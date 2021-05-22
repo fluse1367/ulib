@@ -36,7 +36,7 @@ public interface Entry {
     /**
      * Sets the permission a player needs in order to click this entry.
      *
-     * @param permission the permission to set, null or an empty string if no permission is required
+     * @param permission the permission to set, {@code null} or an empty string if no permission is required
      */
     void setClickPermission(String permission);
 

@@ -72,7 +72,7 @@ public class SqlEngine {
      *                                or if the class has no nullary constructor;
      *                                or if the instantiation fails for some other reason.
      * @throws SQLException           if a database access error occurs or the url
-     *                                is null
+     *                                is {@code null}
      */
     public void connect() throws SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         connect(false);
@@ -90,7 +90,7 @@ public class SqlEngine {
      *                                or if the class has no nullary constructor;
      *                                or if the instantiation fails for some other reason.
      * @throws SQLException           if a database access error occurs or the url
-     *                                is null
+     *                                is {@code null}
      */
     public void connect(boolean createDefaultTables) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         createConnection();
@@ -228,7 +228,7 @@ public class SqlEngine {
      * Gets the table from the default tables with the specified name
      *
      * @param name the name of the table
-     * @return the table with the specified name or null, if it does not exist
+     * @return the table with the specified name or {@code null}, if it does not exist
      */
     public SqlTable getDefaultTable(String name) {
         return defaultTables.get(name);

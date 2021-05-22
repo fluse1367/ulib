@@ -477,7 +477,7 @@ public final class NBTEditor {
      * @param value
      * The value to set
      * @param keys
-     * The keys to set, String for NBTCompound, int or null for an NBTTagList
+     * The keys to set, String for NBTCompound, int or {@code null} for an NBTTagList
      * @return
      * A new ItemStack with the updated NBT tags
      */
@@ -615,7 +615,7 @@ public final class NBTEditor {
      * @param value
      * The value to set
      * @param keys
-     * The keys to set, String for NBTCompound, int or null for an NBTTagList
+     * The keys to set, String for NBTCompound, int or {@code null} for an NBTTagList
      */
     private static void setEntityTag( Entity entity, Object value, Object... keys ) {
         if ( entity == null ) {
@@ -729,7 +729,7 @@ public final class NBTEditor {
      * @param value
      * The value to set
      * @param keys
-     * The keys to set, String for NBTCompound, int or null for an NBTTagList
+     * The keys to set, String for NBTCompound, int or {@code null} for an NBTTagList
      */
     private static void setBlockTag( Block block, Object value, Object... keys ) {
         try {
@@ -821,7 +821,7 @@ public final class NBTEditor {
      * @param keys
      * Keys in descending order
      * @return
-     * An NBTCompound, or null if none is stored at the provided location
+     * An NBTCompound, or {@code null} if none is stored at the provided location
      */
     public static NBTCompound getNBTCompound( Object object, Object... keys ) {
         if ( object instanceof ItemStack ) {
@@ -857,7 +857,7 @@ public final class NBTEditor {
      * @param keys
      * Keys in descending order
      * @return
-     * A string, or null if none is stored at the provided location
+     * A string, or {@code null} if none is stored at the provided location
      */
     public static String getString( Object object, Object... keys ) {
         Object result = getValue( object, keys );
@@ -976,7 +976,7 @@ public final class NBTEditor {
      * @param keys
      * Keys in descending order
      * @return
-     * A byte array, or null if none is stored at the provided location
+     * A byte array, or {@code null} if none is stored at the provided location
      */
     public static byte[] getByteArray( Object object, Object... keys ) {
         Object result = getValue( object, keys );
@@ -991,7 +991,7 @@ public final class NBTEditor {
      * @param keys
      * Keys in descending order
      * @return
-     * An int array, or null if none is stored at the provided location
+     * An int array, or {@code null} if none is stored at the provided location
      */
     public static int[] getIntArray( Object object, Object... keys ) {
         Object result = getValue( object, keys );

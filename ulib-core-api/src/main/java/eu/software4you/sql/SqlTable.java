@@ -130,7 +130,7 @@ public class SqlTable {
      * Gets the default values for the keys
      *
      * @return Object array of default values.
-     * If no default value given, null wil be inserted
+     * If no default value given, {@code null} wil be inserted
      */
     public Object[] getDefaultValues() {
         Object[] obj = new Object[this.defaultKeys.size()];

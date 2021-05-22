@@ -1,10 +1,10 @@
 package ulib.ported.org.bukkit.configuration.file;
 
-import ulib.ported.org.bukkit.configuration.MemoryConfiguration;
-import ulib.ported.org.bukkit.configuration.MemoryConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ulib.ported.org.bukkit.configuration.Configuration;
+import ulib.ported.org.bukkit.configuration.MemoryConfiguration;
+import ulib.ported.org.bukkit.configuration.MemoryConfigurationOptions;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -47,8 +47,8 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      * <p>
-     * Null is a valid value which will indicate that no header is to be
-     * applied. The default value is null.
+     * {@code Null} is a valid value which will indicate that no header is to be
+     * applied. The default value is {@code null}.
      *
      * @return Header
      */
@@ -66,7 +66,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      * <p>
-     * Null is a valid value which will indicate that no header is to be
+     * {@code Null} is a valid value which will indicate that no header is to be
      * applied.
      *
      * @param value New header
@@ -89,7 +89,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If no default is set on the configuration, or the default is not of
      * type FileConfiguration, or that config has no header ({@link #header()}
-     * returns null) then the header specified in this configuration will be
+     * returns {@code null}) then the header specified in this configuration will be
      * used.
      * <p>
      * Defaults to true.
@@ -111,7 +111,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If no default is set on the configuration, or the default is not of
      * type FileConfiguration, or that config has no header ({@link #header()}
-     * returns null) then the header specified in this configuration will be
+     * returns {@code null}) then the header specified in this configuration will be
      * used.
      * <p>
      * Defaults to true.

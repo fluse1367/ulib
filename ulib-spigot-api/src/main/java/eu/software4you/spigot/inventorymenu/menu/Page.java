@@ -39,7 +39,7 @@ public interface Page extends PageHandleable {
      * Sets an entry of this page.
      *
      * @param slot  the index of the {@link Inventory} slot
-     * @param entry the entry to set, or null to clear the slot
+     * @param entry the entry to set, or {@code null} to clear the slot
      * @throws IllegalArgumentException if the slot is reserved for a page switch button
      * @throws IllegalStateException    if the entry belongs to another page
      */

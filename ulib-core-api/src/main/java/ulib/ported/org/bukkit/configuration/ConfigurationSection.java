@@ -1,11 +1,12 @@
 package ulib.ported.org.bukkit.configuration;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ulib.ported.org.bukkit.configuration.serialization.ConfigurationSerializable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import ulib.ported.org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a section of a {@link Configuration}
@@ -53,8 +54,8 @@ public interface ConfigurationSection {
      *
      * @param path Path to check for existence.
      * @return True if this section contains the requested path, either via
-     *     default or being set.
-     * @throws IllegalArgumentException Thrown when path is null.
+     * default or being set.
+     * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
     public boolean contains(@NotNull String path);
 
@@ -73,7 +74,7 @@ public interface ConfigurationSection {
      * specified path exists.
      * @return True if this section contains the requested path, or if a default
      * value exist and the boolean parameter for this method is true.
-     * @throws IllegalArgumentException Thrown when path is null.
+     * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
     public boolean contains(@NotNull String path, boolean ignoreDefault);
 
@@ -87,7 +88,7 @@ public interface ConfigurationSection {
      * @param path Path to check for existence.
      * @return True if this section contains the requested path, regardless of
      *     having a default.
-     * @throws IllegalArgumentException Thrown when path is null.
+     * @throws IllegalArgumentException Thrown when path is {@code null}.
      */
     public boolean isSet(@NotNull String path);
 
@@ -99,7 +100,7 @@ public interface ConfigurationSection {
      * string.
      * <p>
      * If the section is no longer contained within its root for any reason,
-     * such as being replaced with a different value, this may return null.
+     * such as being replaced with a different value, this may return {@code null}.
      * <p>
      * To retrieve the single name of this section, that is, the final part of
      * the path returned by this method, you may use {@link #getName()}.
@@ -129,7 +130,7 @@ public interface ConfigurationSection {
      * object.
      * <p>
      * If the section is no longer contained within its root for any reason,
-     * such as being replaced with a different value, this may return null.
+     * such as being replaced with a different value, this may return {@code null}.
      *
      * @return Root configuration containing this section.
      */
@@ -140,10 +141,10 @@ public interface ConfigurationSection {
      * Gets the parent {@link ConfigurationSection} that directly contains
      * this {@link ConfigurationSection}.
      * <p>
-     * For any {@link Configuration} themselves, this will return null.
+     * For any {@link Configuration} themselves, this will return {@code null}.
      * <p>
      * If the section is no longer contained within its parent for any reason,
-     * such as being replaced with a different value, this may return null.
+     * such as being replaced with a different value, this may return {@code null}.
      *
      * @return Parent section containing this section.
      */
@@ -155,7 +156,7 @@ public interface ConfigurationSection {
      * <p>
      * If the Object does not exist but a default value has been specified,
      * this will return the default value. If the Object does not exist and no
-     * default value was specified, this will return null.
+     * default value was specified, this will return {@code null}.
      *
      * @param path Path of the Object to get.
      * @return Requested Object.
@@ -181,7 +182,7 @@ public interface ConfigurationSection {
     /**
      * Sets the specified path to the given value.
      * <p>
-     * If value is null, the entry will be removed. Any existing entry will be
+     * If value is {@code null}, the entry will be removed. Any existing entry will be
      * replaced, regardless of what the new value is.
      * <p>
      * Some implementations may have limitations on what you may store. See
@@ -228,7 +229,7 @@ public interface ConfigurationSection {
      * <p>
      * If the String does not exist but a default value has been specified,
      * this will return the default value. If the String does not exist and no
-     * default value was specified, this will return null.
+     * default value was specified, this will return {@code null}.
      *
      * @param path Path of the String to get.
      * @return Requested String.
@@ -430,7 +431,7 @@ public interface ConfigurationSection {
      * <p>
      * If the List does not exist but a default value has been specified, this
      * will return the default value. If the List does not exist and no
-     * default value was specified, this will return null.
+     * default value was specified, this will return {@code null}.
      *
      * @param path Path of the List to get.
      * @return Requested List.
@@ -633,7 +634,7 @@ public interface ConfigurationSection {
      *
      * If the Object does not exist but a default value has been specified, this
      * will return the default value. If the Object does not exist and no
-     * default value was specified, this will return null.
+     * default value was specified, this will return {@code null}.
      *
      * <b>Note:</b> For example #getObject(path, String.class) is <b>not</b>
      * equivalent to {@link #getString(String) #getString(path)} because
@@ -681,7 +682,7 @@ public interface ConfigurationSection {
      *
      * If the Object does not exist but a default value has been specified, this
      * will return the default value. If the Object does not exist and no
-     * default value was specified, this will return null.
+     * default value was specified, this will return {@code null}.
      *
      * @param <T> the type of {@link ConfigurationSerializable}
      * @param path the path to the object.
@@ -715,7 +716,7 @@ public interface ConfigurationSection {
      * If the ConfigurationSection does not exist but a default value has been
      * specified, this will return the default value. If the
      * ConfigurationSection does not exist and no default value was specified,
-     * this will return null.
+     * this will return {@code null}.
      *
      * @param path Path of the ConfigurationSection to get.
      * @return Requested ConfigurationSection.
@@ -743,7 +744,7 @@ public interface ConfigurationSection {
      * <p>
      * If the root contains no defaults, or the defaults doesn't contain a
      * value for this path, or the value at this path is not a {@link
-     * ConfigurationSection} then this will return null.
+     * ConfigurationSection} then this will return {@code null}.
      *
      * @return Equivalent section in root configuration
      */
@@ -757,16 +758,16 @@ public interface ConfigurationSection {
      * collection, then a new {@link MemoryConfiguration} will be created to
      * hold the new default value.
      * <p>
-     * If value is null, the value will be removed from the default
+     * If value is {@code null}, the value will be removed from the default
      * Configuration source.
      * <p>
-     * If the value as returned by {@link #getDefaultSection()} is null, then
+     * If the value as returned by {@link #getDefaultSection()} is {@code null}, then
      * this will create a new section at the path, replacing anything that may
      * have existed there previously.
      *
      * @param path Path of the value to set.
      * @param value Value to set the default to.
-     * @throws IllegalArgumentException Thrown if path is null.
+     * @throws IllegalArgumentException Thrown if path is {@code null}.
      */
     public void addDefault(@NotNull String path, @Nullable Object value);
 }

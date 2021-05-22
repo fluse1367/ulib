@@ -43,10 +43,10 @@ public class MemorySection implements ConfigurationSection {
      * Creates an empty MemorySection with the specified parent and path.
      *
      * @param parent Parent section that contains this own section.
-     * @param path Path that you may access this section from via the root
-     *     {@link Configuration}.
-     * @throws IllegalArgumentException Thrown is parent or path is null, or
-     *     if parent contains no root Configuration.
+     * @param path   Path that you may access this section from via the root
+     *               {@link Configuration}.
+     * @throws IllegalArgumentException Thrown is parent or path is {@code null}, or
+     *                                  if parent contains no root Configuration.
      */
     protected MemorySection(@NotNull ConfigurationSection parent, @NotNull String path) {
         Objects.requireNonNull(parent, "Parent cannot be null");

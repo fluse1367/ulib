@@ -34,7 +34,7 @@ public class ClassUtils {
      * Tries to load a certain class.
      *
      * @param className the fully qualified name of the desired class.
-     * @return the {@code Class} object for the class with the specified name, or if the class does not exist null.
+     * @return the {@code Class} object for the class with the specified name, or if the class does not exist {@code null}.
      */
     @Nullable
     public static Class<?> forName(@NotNull String className) {
@@ -51,7 +51,7 @@ public class ClassUtils {
      *
      * @param enumName  the fully qualified name of the desired enum.
      * @param enumEntry the fully qualified name of the desired entry.
-     * @return the {@code Class} object for the class with the specified name, or if the class does not exist null.
+     * @return the {@code Class} object for the class with the specified name, or if the class does not exist {@code null}.
      */
     @Nullable
     public static Object getEnumEntry(@NotNull String enumName, @NotNull String enumEntry) {
@@ -74,7 +74,7 @@ public class ClassUtils {
      *
      * @param enumClass the class of enum
      * @param enumEntry the fully qualified name of the desired entry.
-     * @return the {@code Class} object for the class with the specified name, or if the class does not exist null.
+     * @return the {@code Class} object for the class with the specified name, or if the class does not exist {@code null}.
      */
     @Nullable
     public static Object getEnumEntry(@NotNull Class<? extends Enum<?>> enumClass, @NotNull String enumEntry) {
@@ -91,7 +91,7 @@ public class ClassUtils {
      *
      * @param clazz     the class to search in
      * @param fieldName the name of the field to find
-     * @return (1) The field (2) null, if nothing found
+     * @return (1) The field (2) {@code null}, if nothing found
      */
     @Nullable
     public static Field findUnderlyingField(@NotNull Class<?> clazz, @NotNull String fieldName) {
@@ -110,7 +110,7 @@ public class ClassUtils {
      *
      * @param clazz     the class to search in
      * @param fieldName the name of the field to find
-     * @return (1) The field (2) null, if nothing found
+     * @return (1) The field (2) {@code null}, if nothing found
      */
     @Nullable
     public static Field findUnderlyingDeclaredField(@NotNull Class<?> clazz, @NotNull String fieldName) {
@@ -167,7 +167,7 @@ public class ClassUtils {
      *
      * @param clazz      the class to search in
      * @param methodName the name of the method to find
-     * @return (1) The method (2) null, if nothing found
+     * @return (1) The method (2) {@code null}, if nothing found
      */
     @Nullable
     public static Method findUnderlyingMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {
@@ -186,7 +186,7 @@ public class ClassUtils {
      *
      * @param clazz      the class to search in
      * @param methodName the name of the method to find
-     * @return (1) The method (2) null, if nothing found
+     * @return (1) The method (2) {@code null}, if nothing found
      */
     @Nullable
     public static Method findUnderlyingDeclaredMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {

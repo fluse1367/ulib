@@ -25,7 +25,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
-     * @throws IllegalArgumentException Thrown if defaults is null
+     * @throws IllegalArgumentException Thrown if defaults is {@code null}
      */
     public MemoryConfiguration(@Nullable Configuration defaults) {
         this.defaults = defaults;

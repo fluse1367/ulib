@@ -77,7 +77,7 @@ public abstract class ReflectUtil {
      * In this case this method will return the value the field was set to.
      *
      * @param clazz      the class the call should go from
-     * @param invoker    the object the call is invoked from, if null the call will begin from a static field or method
+     * @param invoker    the object the call is invoked from, if {@code null} the call will begin from a static field or method
      * @param call       the call itself
      * @param forced     if private elements should be called and fields with the {@link Modifier#FINAL} modifier should be set anyway
      * @param parameters the parameters used for the methods to call, or for a field to set;

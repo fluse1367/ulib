@@ -26,7 +26,7 @@ public interface MultiPageMenu extends Menu {
      * Gets a page.
      *
      * @param index the page index
-     * @return the page, or null if page does not exist
+     * @return the page, or {@code null} if page does not exist
      */
     Page getPage(int index);
 

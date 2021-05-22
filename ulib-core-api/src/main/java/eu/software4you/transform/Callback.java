@@ -45,7 +45,7 @@ public interface Callback<T> {
 
     /**
      * Sets the return value.<br>
-     * Note: null is also a valid return value, so setting it does not clear the return value.
+     * Note: {@code null} is also a valid return value, so setting it does not clear the return value.
      * Use {@link #clearReturnValue()} for this.
      *
      * @param value the value to set

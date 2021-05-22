@@ -35,7 +35,7 @@ public class ConfigurationSerialization {
      * ConfigurationSerializable.
      * <p>
      * If a new instance could not be made, an example being the class not
-     * fully implementing the interface, null will be returned.
+     * fully implementing the interface, {@code null} will be returned.
      *
      * @param args  Arguments for deserialization
      * @param clazz Class to deserialize into
@@ -55,7 +55,7 @@ public class ConfigurationSerialization {
      * ConfigurationSerializable.
      * <p>
      * If a new instance could not be made, an example being the class not
-     * fully implementing the interface, null will be returned.
+     * fully implementing the interface, {@code null} will be returned.
      *
      * @param args Arguments for deserialization
      * @return New instance of the specified class
@@ -139,7 +139,7 @@ public class ConfigurationSerialization {
      * its alias
      *
      * @param alias Alias of the serializable
-     * @return Registered class, or null if not found
+     * @return Registered class, or {@code null} if not found
      */
     @Nullable
     public static Class<? extends ConfigurationSerializable> getClassByAlias(@NotNull String alias) {

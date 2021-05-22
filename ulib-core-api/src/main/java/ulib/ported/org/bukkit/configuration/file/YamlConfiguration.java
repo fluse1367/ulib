@@ -40,7 +40,7 @@ public class YamlConfiguration extends FileConfiguration {
      *
      * @param file Input file
      * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if file is null
+     * @throws IllegalArgumentException Thrown if file is {@code null}
      */
     @NotNull
     public static YamlConfiguration loadConfiguration(@NotNull File file) {
@@ -67,7 +67,7 @@ public class YamlConfiguration extends FileConfiguration {
      *
      * @param reader input
      * @return resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
+     * @throws IllegalArgumentException Thrown if stream is {@code null}
      */
     @NotNull
     public static YamlConfiguration loadConfiguration(@NotNull Reader reader) {

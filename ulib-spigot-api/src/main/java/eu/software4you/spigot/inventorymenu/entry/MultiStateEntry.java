@@ -79,7 +79,7 @@ public interface MultiStateEntry<T> extends Entry {
      * If no handler is set for a state the general handler will be called.
      *
      * @param state   the state to set the handler for
-     * @param handler the handler that will be called, or null to remove the handler
+     * @param handler the handler that will be called, or {@code null} to remove the handler
      */
     void setClickHandler(T state, BiConsumer<Player, ClickType> handler);
 
