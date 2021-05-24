@@ -87,7 +87,7 @@ final class Table implements eu.software4you.database.sql.Table {
     public boolean exists() {
         String query = sql instanceof MySQLDatabase ?
                 /*mysql*/ "select count(*) from `information_schema`.`tables` where `table_schema` = database() AND `table_name` = '%s'"
-                /*sqlite*/ : "select count(*) from sqlite_master where type = 'table' and name = '%s'";
+                /*sqlite*/ : "select count(*) from `sqlite_master` where `type` = 'table' and `name` = '%s'";
         val res = sql.prepareStatement(String.format(query, name)).executeQuery();
         if (res.next()) {
             return res.getInt("count(*)") > 0;
@@ -106,8 +106,8 @@ final class Table implements eu.software4you.database.sql.Table {
     }
 
     private Query sel(String operand, String what, String[] whats) {
-        return new Query(sql, this, String.format("%s `%s` from", operand,
-                String.join("`, `", concat(what, whats))));
+        return new Query(sql, this, String.format("%s %s from", operand,
+                String.join(", ", concat(what, whats))));
     }
 
     @Override
@@ -147,7 +147,7 @@ final class Table implements eu.software4you.database.sql.Table {
     public final boolean insert(Pair<String, Object> v, Pair<String, Object>... vs) {
         val values = concat(v, vs);
 
-        StringJoiner columnsStr = new StringJoiner("`, `", "(`", "`)");
+        StringJoiner columnsStr = new StringJoiner(", ", "(", ")");
         columnsStr.setEmptyValue("()");
         StringJoiner valuesStr = new StringJoiner(", ", "(", ")");
         valuesStr.setEmptyValue("()");

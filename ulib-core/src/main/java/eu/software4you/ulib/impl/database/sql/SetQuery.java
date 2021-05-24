@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.StringJoiner;
 
 final class SetQuery extends Query implements eu.software4you.database.sql.query.SetQuery {
-    private final Object objectParam = new Object();
     private final List<Pair<String, Object>> sets = new ArrayList<>();
 
     SetQuery(SqlDatabase sql, Table table, String what) {
@@ -34,17 +33,13 @@ final class SetQuery extends Query implements eu.software4you.database.sql.query
 
     @Override
     public SetQuery setP(String column) {
-        sets.add(new Pair<>(column, objectParam));
+        sets.add(new Pair<>(column, "?"));
         return this;
     }
 
     private void append() {
         StringJoiner sj = new StringJoiner(", ", "set ", "");
-        sets.forEach(pair -> {
-            Object val = pair.getSecond();
-            sj.add(String.format("`%s` = " + (val == objectParam ? "?" : "`%s`"),
-                    pair.getFirst(), val));
-        });
+        sets.forEach(pair -> sj.add(String.format("%s = %s", pair.getFirst(), pair.getSecond())));
         query.append(sj);
     }
 

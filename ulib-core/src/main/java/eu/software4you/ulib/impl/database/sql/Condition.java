@@ -18,19 +18,13 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
         this.constructor = constructor;
     }
 
-    private R op(String operation, String operand) {
+    private R op(String operation, Object operand) {
         this.condition = String.format("%s %s", operation, operand);
         return constructor.apply(this);
     }
 
-    private R op(String operation, Object operand) {
-        this.condition = String.format("%s `%s`", operation, operand);
-        return constructor.apply(this);
-    }
-
     private R opP(String operation) {
-        this.condition = operation + " ?";
-        return constructor.apply(this);
+        return op(operation, "?");
     }
 
     @Override
@@ -91,7 +85,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
 
     @Override
     public R isBetween(Object a, Object b) {
-        return op("BETWEEN", String.format("`%s` AND `%s`", a, b));
+        return op("BETWEEN", String.format("%s AND %s", a, b));
     }
 
     @Override
@@ -101,7 +95,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
 
     @Override
     public R isLike(String pattern) {
-        return op("LIKE", (Object) pattern);
+        return op("LIKE", pattern);
     }
 
     @Override
@@ -111,7 +105,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
 
     @Override
     public R isIn(Object val, Object... vals) {
-        StringJoiner sj = new StringJoiner("`, `", "(`", "`)");
+        StringJoiner sj = new StringJoiner(", ", "(", ")");
         sj.setEmptyValue("");
         for (Object v : vals) {
             sj.add(v.toString());
