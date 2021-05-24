@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class SetQuery extends Query implements eu.software4you.database.sql.query.SetQuery {
+final class SetQuery extends Query implements eu.software4you.database.sql.query.SetQuery {
     private final List<Pair<String, Object>> sets = new ArrayList<>();
 
-    public SetQuery(SqlDatabase sql, Table table, String what) {
+    SetQuery(SqlDatabase sql, Table table, String what) {
         super(sql, table, what);
     }
 

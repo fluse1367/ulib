@@ -4,15 +4,19 @@ import eu.software4you.database.sql.Column;
 
 final class Where extends QueryEndpoint implements eu.software4you.database.sql.query.Where {
 
-    public Where(Condition<eu.software4you.database.sql.query.Where> condition, String operand) {
+    Where(Condition<eu.software4you.database.sql.query.Where> condition) {
+        this(condition, "where");
+    }
+
+    Where(Condition<eu.software4you.database.sql.query.Where> condition, String operand) {
         super(condition.sql, condition.query);
         query.append(String.format("%s %s`%s` %s",
                 operand, condition.not ? "not " : "", condition.source, condition.condition));
     }
 
-    public Where(SqlDatabase sql, StringBuilder query, String operand, String condition) {
+    Where(SqlDatabase sql, StringBuilder query, String condition) {
         super(sql, query);
-        append(operand, condition);
+        append("where", condition);
     }
 
     private void append(String operand, String condition) {

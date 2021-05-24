@@ -2,10 +2,15 @@ package eu.software4you.ulib.impl.database.sql;
 
 import eu.software4you.database.sql.Column;
 
-class Query extends QueryEndpoint implements eu.software4you.database.sql.query.Query {
+final class QueryStart implements eu.software4you.database.sql.query.QueryStart {
+    private final SqlDatabase sql;
+    private final Table table;
+    private final StringBuilder query;
 
-    Query(SqlDatabase sql, Table table, String operand) {
-        super(sql, new StringBuilder(String.format("%s `%s`", operand, table.getName())));
+    QueryStart(SqlDatabase sql, Table table, String operand) {
+        this.sql = sql;
+        this.table = table;
+        this.query = new StringBuilder(String.format("%s `%s`", operand, table.getName()));
     }
 
     @Override
@@ -20,6 +25,6 @@ class Query extends QueryEndpoint implements eu.software4you.database.sql.query.
 
     @Override
     public Where whereRaw(String condition) {
-        return new Where(sql, query, condition);
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package eu.software4you.database.sql;
 import eu.software4you.common.Nameable;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.query.Query;
+import eu.software4you.database.sql.query.QueryStart;
 import eu.software4you.database.sql.query.SetQuery;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +55,7 @@ public interface Table extends Nameable {
     boolean exists();
 
     /**
-     * Selects data from the database.
+     * Selects data from the table.
      *
      * @param what     the column to select
      * @param whatElse additional columns to select
@@ -63,7 +64,7 @@ public interface Table extends Nameable {
     @NotNull Query select(@NotNull String what, @NotNull String... whatElse);
 
     /**
-     * Selects only different values from the database.
+     * Selects only different values from the table.
      *
      * @param what     the column to select
      * @param whatElse additional columns to select
@@ -79,7 +80,7 @@ public interface Table extends Nameable {
     @NotNull SetQuery update();
 
     /**
-     * Inserts values into the database.<br>
+     * Inserts values into the table.<br>
      * The values have to correspond with the columns of the table in the same order.
      *
      * @param value  the value to insert
@@ -89,7 +90,7 @@ public interface Table extends Nameable {
     boolean insert(Object value, Object... values);
 
     /**
-     * Inserts values into the database.
+     * Inserts values into the table.
      *
      * @param value  {@link Pair#getFirst()}: the the column in which to insert, {@link Pair#getSecond()}: the value to insert
      * @param values additional values to insert
@@ -98,5 +99,19 @@ public interface Table extends Nameable {
     // @SafeVarargs
     @SuppressWarnings("unchecked")
     boolean insert(Pair<String, Object> value, Pair<String, Object>... values);
+
+    /**
+     * Deletes rows from the table.
+     *
+     * @return the query builder
+     */
+    QueryStart delete();
+
+    /**
+     * Deletes all data inside the table.
+     *
+     * @return {@code true}, if the operation was successful
+     */
+    boolean truncate();
 
 }

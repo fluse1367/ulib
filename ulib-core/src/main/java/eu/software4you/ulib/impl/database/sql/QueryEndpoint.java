@@ -5,13 +5,13 @@ import lombok.SneakyThrows;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint {
+class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint {
     protected final SqlDatabase sql;
     protected final StringBuilder query;
 
     private boolean limit = false;
 
-    public QueryEndpoint(SqlDatabase sql, StringBuilder query) {
+    QueryEndpoint(SqlDatabase sql, StringBuilder query) {
         this.sql = sql;
         this.query = query;
     }

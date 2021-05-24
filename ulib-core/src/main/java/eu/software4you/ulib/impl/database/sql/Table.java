@@ -3,6 +3,7 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.DataType;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.StringJoiner;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 final class Table implements eu.software4you.database.sql.Table {
     private final SqlDatabase sql;
     @Getter
@@ -146,5 +147,16 @@ final class Table implements eu.software4you.database.sql.Table {
 
         String query = String.format("insert into `%s` (%s) values (%s)", name, cols, vals);
         return sql.prepareStatement(query).executeUpdate() > 0;
+    }
+
+    @Override
+    public QueryStart delete() {
+        return new QueryStart(sql, this, "delete from");
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean truncate() {
+        return sql.prepareStatement(String.format("truncate table `%s`", name)).executeUpdate() > 0;
     }
 }

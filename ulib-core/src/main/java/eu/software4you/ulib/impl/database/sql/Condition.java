@@ -11,7 +11,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     protected boolean not = false;
     protected String condition;
 
-    public Condition(SqlDatabase sql, StringBuilder query, String source, Function<Condition<R>, R> constructor) {
+    Condition(SqlDatabase sql, StringBuilder query, String source, Function<Condition<R>, R> constructor) {
         this.sql = sql;
         this.query = query;
         this.source = source;
