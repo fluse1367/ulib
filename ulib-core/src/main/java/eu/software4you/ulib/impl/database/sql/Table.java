@@ -3,10 +3,7 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.DataType;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,34 +116,45 @@ final class Table implements eu.software4you.database.sql.Table {
 
     @SneakyThrows
     @Override
-    public boolean insert(Object value, Object... values) {
-        values = concat(value, values);
+    public boolean insert(Object v, Object... vs) {
+        val values = concat(v, vs);
 
-        StringJoiner vals = new StringJoiner("`, `", "`", "`");
-        vals.setEmptyValue("");
+        StringJoiner vals = new StringJoiner(", ", "(", ")");
+        vals.setEmptyValue("()");
         for (Object o : values) {
-            vals.add(o.toString());
+            vals.add("?");
         }
-        String query = String.format("insert into `%s` values (%s)", name, vals);
-        return sql.prepareStatement(query).executeUpdate() > 0;
+        String query = String.format("insert into `%s` values %s", name, vals);
+
+        val st = sql.prepareStatement(query);
+        for (int i = 0; i < values.length; i++) {
+            st.setObject(i + 1, values[i]);
+        }
+        return st.executeUpdate() > 0;
     }
 
     @SafeVarargs
     @SneakyThrows
     @Override
-    public final boolean insert(Pair<String, Object> value, Pair<String, Object>... values) {
-        StringJoiner cols = new StringJoiner("`, `", "`", "`");
-        cols.setEmptyValue("");
-        StringJoiner vals = new StringJoiner("`, `", "`", "`");
-        vals.setEmptyValue("");
+    public final boolean insert(Pair<String, Object> v, Pair<String, Object>... vs) {
+        val values = concat(v, vs);
 
-        for (Pair<String, Object> pair : concat(value, values)) {
-            cols.add(pair.getFirst());
-            vals.add(pair.getSecond().toString());
+        StringJoiner columnsStr = new StringJoiner("`, `", "(`", "`)");
+        columnsStr.setEmptyValue("()");
+        StringJoiner valuesStr = new StringJoiner(", ", "(", ")");
+        valuesStr.setEmptyValue("()");
+
+        for (Pair<String, Object> pair : values) {
+            columnsStr.add(pair.getFirst());
+            valuesStr.add("?");
         }
 
-        String query = String.format("insert into `%s` (%s) values (%s)", name, cols, vals);
-        return sql.prepareStatement(query).executeUpdate() > 0;
+        String query = String.format("insert into `%s` %s values %s", name, columnsStr, valuesStr);
+        val st = sql.prepareStatement(query);
+        for (int i = 0; i < values.length; i++) {
+            st.setObject(i + 1, values[i].getSecond());
+        }
+        return st.executeUpdate() > 0;
     }
 
     @Override
