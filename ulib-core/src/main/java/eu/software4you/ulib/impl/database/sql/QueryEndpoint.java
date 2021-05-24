@@ -31,7 +31,7 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
 
     @Override
     public PreparedStatement build() {
-        return sql.prepareStatement(query.toString());
+        return sql.prepareStatement(buildRawQuery());
     }
 
     @SneakyThrows
@@ -51,5 +51,10 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
             this.limit = true;
         }
         return this;
+    }
+
+    @Override
+    public String buildRawQuery() {
+        return query.toString();
     }
 }
