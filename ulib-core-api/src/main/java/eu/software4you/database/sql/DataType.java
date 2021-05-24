@@ -60,7 +60,7 @@ public enum DataType {
     /**
      * A <b>B</b>inary <b>L</b>arge <b>OB</b>ject with a maximum capacity of 16,777,215 bytes.
      */
-    MEDIUMBLOB(byte[].class, 16, 777215L),
+    MEDIUMBLOB(byte[].class, 777215L),
 
     /**
      * A {@link String} with a maximum capacity of 4,294,967,295 characters.
