@@ -28,6 +28,11 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
         return constructor.apply(this);
     }
 
+    private R opP(String operation) {
+        this.condition = operation + " ?";
+        return constructor.apply(this);
+    }
+
     @Override
     public Condition<R> not() {
         this.not = true;
@@ -40,8 +45,18 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     }
 
     @Override
+    public R isEqualToP() {
+        return opP("=");
+    }
+
+    @Override
     public R isGreaterThan(Object than) {
         return op(">", than);
+    }
+
+    @Override
+    public R isGreaterThanP() {
+        return opP(">");
     }
 
     @Override
@@ -50,8 +65,18 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     }
 
     @Override
+    public R isGreaterOrEqualsP() {
+        return opP(">=");
+    }
+
+    @Override
     public R isLessThan(Object than) {
         return op("<", than);
+    }
+
+    @Override
+    public R isLessThanP() {
+        return opP("<");
     }
 
     @Override
@@ -60,8 +85,18 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     }
 
     @Override
+    public R isLessOrEqualsP() {
+        return opP("<=");
+    }
+
+    @Override
     public R isBetween(Object a, Object b) {
         return op("BETWEEN", String.format("`%s` AND `%s`", a, b));
+    }
+
+    @Override
+    public R isBetweenP() {
+        return op("BETWEEN", "? AND ?");
     }
 
     @Override
@@ -70,11 +105,26 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     }
 
     @Override
+    public R isLikeP() {
+        return opP("LIKE");
+    }
+
+    @Override
     public R isIn(Object val, Object... vals) {
         StringJoiner sj = new StringJoiner("`, `", "(`", "`)");
         sj.setEmptyValue("");
         for (Object v : vals) {
             sj.add(v.toString());
+        }
+        return op("IN", sj.toString());
+    }
+
+    @Override
+    public R isInP(int amount) {
+        StringJoiner sj = new StringJoiner(", ", "(", ")");
+        sj.setEmptyValue("");
+        for (int i = 0; i < amount; i++) {
+            sj.add("?");
         }
         return op("IN", sj.toString());
     }
