@@ -1,5 +1,7 @@
 package eu.software4you.database.sql.query;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -11,20 +13,22 @@ public interface QueryEndpoint {
     /**
      * Builds and executes the query. Expects return data from the database.
      *
-     * @param parameters unused
+     * @param parameters the query parameters
      * @return what the database returned
      * @see PreparedStatement#executeQuery()
+     * @see PreparedStatement#setObject(int, Object)
      */
-    ResultSet query(Object... parameters);
+    ResultSet query(@NotNull Object... parameters);
 
     /**
      * Builds and executes the query.
      *
-     * @param parameters unused
+     * @param parameters the query parameters
      * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
      * @see PreparedStatement#executeUpdate()
+     * @see PreparedStatement#setObject(int, Object)
      */
-    int update(Object... parameters);
+    int update(@NotNull Object... parameters);
 
     /**
      * Builds the query.
@@ -32,6 +36,15 @@ public interface QueryEndpoint {
      * @return the built query
      */
     PreparedStatement build();
+
+    /**
+     * Builds the query with parameters.
+     *
+     * @param parameters the parameters
+     * @return the built query
+     * @see PreparedStatement#setObject(int, Object)
+     */
+    PreparedStatement build(@NotNull Object... parameters);
 
     /**
      * Limits the result set to a specific amount of rows.<br>
