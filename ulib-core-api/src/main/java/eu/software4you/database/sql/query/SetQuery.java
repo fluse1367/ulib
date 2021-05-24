@@ -7,6 +7,14 @@ import eu.software4you.database.sql.Column;
  */
 public interface SetQuery extends Query {
     /**
+     * Can be used as value to indicate a parameter instead of the actual value.
+     *
+     * @see QueryEndpoint#build(Object...)
+     * @see java.sql.PreparedStatement#setObject(int, Object)
+     */
+    String VALUE_PARAMETER = "?";
+
+    /**
      * Sets a column to a specific value.
      *
      * @param column the column to set
