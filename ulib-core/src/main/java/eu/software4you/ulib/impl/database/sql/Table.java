@@ -3,6 +3,7 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.DataType;
+import eu.software4you.database.sql.MySQLDatabase;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +71,7 @@ final class Table implements eu.software4you.database.sql.Table {
             sb.setLength(0);
         }
 
-        String sql = String.format("create table `%s` (%s);", name, sj.toString());
+        String sql = String.format("create table `%s` (%s);", name, sj);
 
         return this.sql.prepareStatement(sql).executeUpdate() > 0;
     }
@@ -84,7 +85,14 @@ final class Table implements eu.software4you.database.sql.Table {
     @SneakyThrows
     @Override
     public boolean exists() {
-        return sql.prepareStatement(String.format("describe `%s`;", name)).executeQuery().next();
+        String query = sql instanceof MySQLDatabase ?
+                /*mysql*/ "select count(*) from `information_schema`.`tables` where `table_schema` = database() AND `table_name` = '%s'"
+                /*sqlite*/ : "select count(*) from sqlite_master where type = 'table' and name = '%s'";
+        val res = sql.prepareStatement(String.format(query, name)).executeQuery();
+        if (res.next()) {
+            return res.getInt("count(*)") > 0;
+        }
+        return false;
     }
 
     @Override
