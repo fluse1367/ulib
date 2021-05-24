@@ -38,7 +38,7 @@ final class SetQuery extends Query implements eu.software4you.database.sql.query
     }
 
     private void append() {
-        StringJoiner sj = new StringJoiner(", ", "set ", "");
+        StringJoiner sj = new StringJoiner(", ", " set ", "");
         sets.forEach(pair -> sj.add(String.format("%s = %s", pair.getFirst(), pair.getSecond())));
         query.append(sj);
     }

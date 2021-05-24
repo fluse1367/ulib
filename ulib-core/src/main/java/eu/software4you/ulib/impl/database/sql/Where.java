@@ -10,7 +10,7 @@ final class Where extends QueryEndpoint implements eu.software4you.database.sql.
 
     Where(Condition<eu.software4you.database.sql.query.Where> condition, String operand) {
         super(condition.sql, condition.query);
-        query.append(String.format("%s %s`%s` %s",
+        query.append(String.format(" %s %s`%s` %s",
                 operand, condition.not ? "not " : "", condition.source, condition.condition));
     }
 
