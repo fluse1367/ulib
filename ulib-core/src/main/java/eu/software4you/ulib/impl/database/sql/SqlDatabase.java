@@ -12,7 +12,7 @@ import java.sql.DriverManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
+public abstract class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
 
     private final String url;
     private final Properties info;
@@ -158,12 +158,14 @@ public class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
     private Table addTable(String name, Column<?>... columns) {
         if (tables.containsKey(name))
             throw new IllegalStateException(String.format("Table %s already added", name));
-        val table = new Table(this, name, Arrays.stream(columns).collect(Collectors.toMap(
+        val table = createTable(name, Arrays.stream(columns).collect(Collectors.toMap(
                 Column::getName, col -> col
         )));
         tables.put(name, table);
         return table;
     }
+
+    protected abstract Table createTable(String name, Map<String, Column<?>> columns);
 
     @Override
     public @NotNull Table addTable(@NotNull String name, @NotNull Column<?> column, Column<?>... columns) {

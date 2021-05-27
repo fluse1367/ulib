@@ -1,4 +1,4 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.query;
 
 import eu.software4you.database.sql.Column;
 import org.jetbrains.annotations.NotNull;

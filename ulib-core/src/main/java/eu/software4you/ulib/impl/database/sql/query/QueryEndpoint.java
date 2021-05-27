@@ -1,4 +1,4 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.query;
 
 import lombok.SneakyThrows;
 import lombok.val;

@@ -1,12 +1,15 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.query;
 
 import eu.software4you.database.sql.Column;
+import eu.software4you.ulib.impl.database.sql.SqlDatabase;
+import eu.software4you.ulib.impl.database.sql.Table;
 import org.jetbrains.annotations.NotNull;
 
-class Query extends QueryEndpoint implements eu.software4you.database.sql.query.Query {
+public final class QueryStart implements eu.software4you.database.sql.query.QueryStart {
+    private final Metadata meta;
 
-    Query(SqlDatabase sql, Table table, String operand) {
-        super(new Metadata(sql, new StringBuilder(String.format("%s `%s`", operand, table.getName()))));
+    public QueryStart(SqlDatabase sql, Table table, String operand) {
+        this.meta = new Metadata(sql, new StringBuilder(String.format("%s `%s`", operand, table.getName())));
     }
 
     @Override

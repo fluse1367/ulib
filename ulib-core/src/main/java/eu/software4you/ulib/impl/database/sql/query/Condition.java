@@ -1,10 +1,12 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.query;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.StringJoiner;
 import java.util.function.Function;
+
+import static eu.software4you.utils.ArrayUtils.concat;
 
 final class Condition<R> implements eu.software4you.database.sql.query.Condition<R> {
     protected final Metadata meta;
@@ -152,7 +154,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
     public R isIn(@NotNull Object val, Object... vals) {
         StringJoiner sj = new StringJoiner(", ", "(", ")");
         sj.setEmptyValue("");
-        for (Object v : Table.concat(val, vals)) {
+        for (Object v : concat(val, vals)) {
             sj.add(v.toString());
         }
         return op("IN", sj.toString());
@@ -170,7 +172,7 @@ final class Condition<R> implements eu.software4you.database.sql.query.Condition
 
     @Override
     public R isInP(@NotNull Object val, Object... vals) {
-        for (Object v : Table.concat(val, vals)) {
+        for (Object v : concat(val, vals)) {
             meta.opObj(v);
         }
         return isInP(1 + vals.length);

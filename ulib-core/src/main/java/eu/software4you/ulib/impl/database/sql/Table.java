@@ -3,20 +3,23 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.DataType;
-import eu.software4you.database.sql.MySQLDatabase;
+import eu.software4you.ulib.impl.database.sql.query.Query;
+import eu.software4you.ulib.impl.database.sql.query.QueryStart;
+import eu.software4you.ulib.impl.database.sql.query.SetQuery;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.StringJoiner;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-final class Table implements eu.software4you.database.sql.Table {
-    private final SqlDatabase sql;
+import static eu.software4you.utils.ArrayUtils.concat;
+
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class Table implements eu.software4you.database.sql.Table {
+    protected final SqlDatabase sql;
     @Getter
-    private final String name;
+    protected final String name;
     private final Map<String, Column<?>> columns;
 
     @Override
@@ -82,19 +85,6 @@ final class Table implements eu.software4you.database.sql.Table {
         return sql.prepareStatement(String.format("drop table `%s`;", name)).executeUpdate() > 0;
     }
 
-    @SneakyThrows
-    @Override
-    public boolean exists() {
-        String query = sql instanceof MySQLDatabase ?
-                /*mysql*/ "select count(*) from `information_schema`.`tables` where `table_schema` = database() AND `table_name` = '%s'"
-                /*sqlite*/ : "select count(*) from `sqlite_master` where `type` = 'table' and `name` = '%s'";
-        val res = sql.prepareStatement(String.format(query, name)).executeQuery();
-        if (res.next()) {
-            return res.getInt("count(*)") > 0;
-        }
-        return false;
-    }
-
     @Override
     public @NotNull Query select(@NotNull String what, String... select) {
         return sel("select", what, select);
@@ -113,13 +103,6 @@ final class Table implements eu.software4you.database.sql.Table {
     @Override
     public @NotNull SetQuery update() {
         return new SetQuery(sql, this, "update");
-    }
-
-    static <T> T[] concat(T a, T[] arr) {
-        T[] strs = Arrays.copyOf(arr, arr.length + 1);
-        strs[0] = a;
-        System.arraycopy(arr, 0, strs, 1, arr.length);
-        return strs;
     }
 
     @SneakyThrows

@@ -1,13 +1,13 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.sqlite;
 
 import eu.software4you.aether.Dependencies;
 
-class SQLiteDatabaseDepend {
+public class SQLiteDatabaseDepend {
     static {
         Dependencies.depend("{{maven.sqlite}}", "org.sqlite.JDBC");
     }
 
-    static void $() {
+    public static void $() {
         // only used for easy class loading
     }
 }

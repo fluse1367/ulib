@@ -1,13 +1,13 @@
-package eu.software4you.ulib.impl.database.sql;
+package eu.software4you.ulib.impl.database.sql.mysql;
 
 import eu.software4you.aether.Dependencies;
 
-class MySQLDatabaseDepend {
+public class MySQLDatabaseDepend {
     static {
         Dependencies.depend("{{maven.mysql}}", "com.mysql.cj.jdbc.Driver");
     }
 
-    static void $() {
+    public static void $() {
         // only used for easy class loading
     }
 }
