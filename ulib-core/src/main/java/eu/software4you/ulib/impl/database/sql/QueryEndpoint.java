@@ -29,7 +29,7 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
 
     @Override
     public PreparedStatement build() {
-        return meta.sql.prepareStatement(buildRawQuery());
+        return meta.applyOps(meta.sql.prepareStatement(buildRawQuery()));
     }
 
     @SneakyThrows
@@ -37,7 +37,7 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
     public PreparedStatement build(Object... parameters) {
         val st = build();
 
-        val alreadySet = meta.applyOps(st);
+        val alreadySet = meta.set();
 
         for (int i = 0, param = 1; i < parameters.length; param++) {
             if (alreadySet.contains(param))

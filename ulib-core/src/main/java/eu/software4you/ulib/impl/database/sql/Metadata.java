@@ -15,6 +15,7 @@ class Metadata {
     protected final StringBuilder query;
     private final Map<Integer, BiConsumer<Integer, PreparedStatement>> operations;
     private int offset = 0;
+    private Set<Integer> setParameters;
 
     Metadata(SqlDatabase sql, StringBuilder query) {
         this.sql = sql;
@@ -41,8 +42,7 @@ class Metadata {
         op((i, st) -> setObject(st, i, obj));
     }
 
-    protected Set<Integer> applyOps(PreparedStatement st) {
-
+    protected PreparedStatement applyOps(PreparedStatement st) {
         Set<Integer> set = new HashSet<>();
         for (Map.Entry<Integer, BiConsumer<Integer, PreparedStatement>> en : operations.entrySet()) {
             val off = en.getKey();
@@ -53,10 +53,16 @@ class Metadata {
             set.add(param);
         }
 
-        return set;
+        this.setParameters = set;
+
+        return st;
     }
 
     protected void skipParam() {
         offset++;
+    }
+
+    public Set<Integer> set() {
+        return setParameters;
     }
 }

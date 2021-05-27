@@ -31,7 +31,7 @@ public interface QueryEndpoint {
     int update(Object... parameters);
 
     /**
-     * Builds the query.
+     * Builds the query with potentially added parameters.
      *
      * @return the built query
      */
