@@ -62,10 +62,11 @@ public abstract class Table implements eu.software4you.database.sql.Table {
             }
             if (col.getDefaultValue() != null) {
                 Object def = col.getDefaultValue();
-                if (def instanceof Number) {
-                    sb.append(" default ").append(def);
+                sb.append(" default ");
+                if (def instanceof Number || def instanceof Boolean) {
+                    sb.append(def);
                 } else {
-                    sb.append(String.format(" default '%s'", def));
+                    sb.append(String.format("'%s'", def));
                 }
             }
 
