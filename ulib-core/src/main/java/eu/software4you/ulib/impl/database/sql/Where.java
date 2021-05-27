@@ -1,6 +1,7 @@
 package eu.software4you.ulib.impl.database.sql;
 
 import eu.software4you.database.sql.Column;
+import org.jetbrains.annotations.NotNull;
 
 final class Where extends QueryEndpoint implements eu.software4you.database.sql.query.Where {
 
@@ -25,33 +26,33 @@ final class Where extends QueryEndpoint implements eu.software4you.database.sql.
 
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> and(Column<?> column) {
+    public Condition<eu.software4you.database.sql.query.Where> and(@NotNull Column<?> column) {
         return and(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> and(String column) {
+    public Condition<eu.software4you.database.sql.query.Where> and(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " and"));
     }
 
     @Override
-    public Where andRaw(String condition) {
+    public Where andRaw(@NotNull String condition) {
         append("and", condition);
         return this;
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> or(Column<?> column) {
+    public Condition<eu.software4you.database.sql.query.Where> or(@NotNull Column<?> column) {
         return or(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> or(String column) {
+    public Condition<eu.software4you.database.sql.query.Where> or(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " or"));
     }
 
     @Override
-    public Where orRaw(String condition) {
+    public Where orRaw(@NotNull String condition) {
         append("or", condition);
         return this;
     }

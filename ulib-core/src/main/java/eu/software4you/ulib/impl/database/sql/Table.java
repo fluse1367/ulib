@@ -25,7 +25,7 @@ final class Table implements eu.software4you.database.sql.Table {
     }
 
     @Override
-    public @Nullable Column<?> getColumn(String name) {
+    public @Nullable Column<?> getColumn(@NotNull String name) {
         return columns.get(name);
     }
 
@@ -124,7 +124,7 @@ final class Table implements eu.software4you.database.sql.Table {
 
     @SneakyThrows
     @Override
-    public boolean insert(Object v, Object... vs) {
+    public boolean insert(@NotNull Object v, Object... vs) {
         val values = concat(v, vs);
 
         StringJoiner vals = new StringJoiner(", ", "(", ")");
@@ -144,7 +144,7 @@ final class Table implements eu.software4you.database.sql.Table {
     @SafeVarargs
     @SneakyThrows
     @Override
-    public final boolean insert(Pair<String, Object> v, Pair<String, Object>... vs) {
+    public final boolean insert(@NotNull Pair<String, Object> v, Pair<String, Object>... vs) {
         val values = concat(v, vs);
 
         StringJoiner columnsStr = new StringJoiner(", ", "(", ")");

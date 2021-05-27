@@ -28,7 +28,7 @@ public abstract class Databases {
      * @throws IllegalArgumentException when no suitable wrapper for the used protocol is found.
      */
     @NotNull
-    public static SqlDatabase wrap(Connection connection) throws IllegalArgumentException {
+    public static SqlDatabase wrap(@NotNull Connection connection) throws IllegalArgumentException {
         return impl.wrap0(connection);
     }
 
@@ -40,7 +40,7 @@ public abstract class Databases {
      * @throws IllegalArgumentException when no suitable wrapper for the used protocol is found.
      */
     @NotNull
-    public static Database prepare(String url) {
+    public static Database prepare(@NotNull String url) {
         return prepare(url, new Properties());
     }
 
@@ -53,7 +53,7 @@ public abstract class Databases {
      * @throws IllegalArgumentException when no suitable wrapper for the used protocol is found.
      */
     @NotNull
-    public static Database prepare(String url, Properties info) {
+    public static Database prepare(@NotNull String url, @NotNull Properties info) {
         return impl.prepare0(url, info);
     }
 
@@ -65,7 +65,7 @@ public abstract class Databases {
      * @see DriverManager#getConnection(String)
      */
     @NotNull
-    public static SQLiteDatabase prepare(File file) {
+    public static SQLiteDatabase prepare(@NotNull File file) {
         return impl.prepare0(file);
     }
 
@@ -83,7 +83,7 @@ public abstract class Databases {
      * @see URLEncoder#encode(String, String)
      */
     @NotNull
-    public static MySQLDatabase prepare(String host, int port, String database, String user, String password, String... parameters) {
+    public static MySQLDatabase prepare(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
         return impl.prepare0(host, port, database, user, password, parameters);
     }
 
@@ -97,7 +97,7 @@ public abstract class Databases {
      * @see DriverManager#getConnection(String, Properties)
      */
     @NotNull
-    public static Database connect(String url, Properties info) throws IllegalArgumentException {
+    public static Database connect(@NotNull String url, @NotNull Properties info) throws IllegalArgumentException {
         val db = prepare(url, info);
         db.connect();
         return db;
@@ -111,7 +111,7 @@ public abstract class Databases {
      * @see DriverManager#getConnection(String)
      */
     @NotNull
-    public static SQLiteDatabase connect(File file) {
+    public static SQLiteDatabase connect(@NotNull File file) {
         val db = prepare(file);
         db.connect();
         return db;
@@ -131,7 +131,7 @@ public abstract class Databases {
      * @see URLEncoder#encode(String, String)
      */
     @NotNull
-    public static MySQLDatabase connect(String host, int port, String database, String user, String password, String... parameters) {
+    public static MySQLDatabase connect(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
         val db = prepare(host, port, database, user, password, parameters);
         db.connect();
         return db;

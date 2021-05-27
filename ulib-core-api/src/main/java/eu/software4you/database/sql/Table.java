@@ -28,7 +28,7 @@ public interface Table extends Nameable {
      * @return the column instance, or {@code null} if not found
      */
     @Nullable
-    Column<?> getColumn(String name);
+    Column<?> getColumn(@NotNull String name);
 
     @Override
     @NotNull String getName();
@@ -61,7 +61,7 @@ public interface Table extends Nameable {
      * @param whatElse additional columns to select
      * @return the query builder
      */
-    @NotNull Query select(@NotNull String what, @NotNull String... whatElse);
+    @NotNull Query select(@NotNull String what, String... whatElse);
 
     /**
      * Selects only different values from the table.
@@ -70,7 +70,7 @@ public interface Table extends Nameable {
      * @param whatElse additional columns to select
      * @return the query builder
      */
-    @NotNull Query selectDistinct(@NotNull String what, @NotNull String... whatElse);
+    @NotNull Query selectDistinct(@NotNull String what, String... whatElse);
 
     /**
      * Updates the table.
@@ -87,7 +87,7 @@ public interface Table extends Nameable {
      * @param values additional values to insert
      * @return {@code true}, if the operation was successful
      */
-    boolean insert(Object value, Object... values);
+    boolean insert(@NotNull Object value, Object... values);
 
     /**
      * Inserts values into the table.
@@ -98,7 +98,7 @@ public interface Table extends Nameable {
      */
     // @SafeVarargs
     @SuppressWarnings("unchecked")
-    boolean insert(Pair<String, Object> value, Pair<String, Object>... values);
+    boolean insert(@NotNull Pair<String, Object> value, Pair<String, Object>... values);
 
     /**
      * Deletes rows from the table.

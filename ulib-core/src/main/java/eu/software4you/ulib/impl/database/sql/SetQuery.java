@@ -58,19 +58,19 @@ final class SetQuery extends Query implements eu.software4you.database.sql.query
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> where(Column<?> column) {
+    public Condition<eu.software4you.database.sql.query.Where> where(@NotNull Column<?> column) {
         append();
         return super.where(column);
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> where(String column) {
+    public Condition<eu.software4you.database.sql.query.Where> where(@NotNull String column) {
         append();
         return super.where(column);
     }
 
     @Override
-    public Where whereRaw(String condition) {
+    public Where whereRaw(@NotNull String condition) {
         append();
         return super.whereRaw(condition);
     }
