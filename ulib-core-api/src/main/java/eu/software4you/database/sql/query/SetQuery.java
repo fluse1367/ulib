@@ -1,6 +1,8 @@
 package eu.software4you.database.sql.query;
 
 import eu.software4you.database.sql.Column;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The start of a query, that attempts to set values.
@@ -13,15 +15,29 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
-    SetQuery set(Column<?> column, Object to);
+    SetQuery set(@NotNull Column<?> column, @NotNull Object to);
 
     /**
-     * Sets a column to a specific value that is handed over later as parameter.
+     * Sets a column to a specific value using a parameterized sql query.
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
      *
      * @param column the column to set
      * @return this
+     * @see QueryEndpoint#build(Object...)
+     * @see QueryEndpoint#query(Object...)
+     * @see QueryEndpoint#update(Object...)
+     * @see QueryEndpoint#update(Object...)
      */
-    SetQuery setP(Column<?> column);
+    SetQuery setP(@NotNull Column<?> column);
+
+    /**
+     * Sets a column to a specific value using a parameterized sql query.
+     *
+     * @param column the column to set
+     * @param to     the value
+     * @return this
+     */
+    SetQuery setP(@NotNull Column<?> column, @Nullable Object to);
 
     /**
      * Sets a column to a specific value.
@@ -30,13 +46,26 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
-    SetQuery set(String column, Object to);
+    SetQuery set(@NotNull String column, @NotNull Object to);
 
     /**
-     * Sets a column to a specific value that is handed over later as parameter.
+     * Sets a column to a specific value using a parameterized sql query.
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
      *
      * @param column the column to set
      * @return this
+     * @see QueryEndpoint#build(Object...)
+     * @see QueryEndpoint#query(Object...)
+     * @see QueryEndpoint#update(Object...)
      */
-    SetQuery setP(String column);
+    SetQuery setP(@NotNull String column);
+
+    /**
+     * Sets a column to a specific value using a parameterized sql query.
+     *
+     * @param column the column to set
+     * @param to     the value
+     * @return this
+     */
+    SetQuery setP(@NotNull String column, @Nullable Object to);
 }

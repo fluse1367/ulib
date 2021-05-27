@@ -115,7 +115,7 @@ final class Table implements eu.software4you.database.sql.Table {
         return new SetQuery(sql, this, "update");
     }
 
-    private <T> T[] concat(T a, T[] arr) {
+    static <T> T[] concat(T a, T[] arr) {
         T[] strs = Arrays.copyOf(arr, arr.length + 1);
         strs[0] = a;
         System.arraycopy(arr, 0, strs, 1, arr.length);

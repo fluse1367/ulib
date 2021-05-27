@@ -3,14 +3,10 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.database.sql.Column;
 
 final class QueryStart implements eu.software4you.database.sql.query.QueryStart {
-    private final SqlDatabase sql;
-    private final Table table;
-    private final StringBuilder query;
+    private final Metadata meta;
 
     QueryStart(SqlDatabase sql, Table table, String operand) {
-        this.sql = sql;
-        this.table = table;
-        this.query = new StringBuilder(String.format("%s `%s`", operand, table.getName()));
+        this.meta = new Metadata(sql, new StringBuilder(String.format("%s `%s`", operand, table.getName())));
     }
 
     @Override
@@ -20,11 +16,11 @@ final class QueryStart implements eu.software4you.database.sql.query.QueryStart 
 
     @Override
     public Condition<eu.software4you.database.sql.query.Where> where(String column) {
-        return new Condition<>(sql, query, column, Where::new);
+        return new Condition<>(meta, column, Where::new);
     }
 
     @Override
     public Where whereRaw(String condition) {
-        return null;
+        return new Where(meta, condition);
     }
 }

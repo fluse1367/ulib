@@ -7,14 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint {
-    protected final SqlDatabase sql;
-    protected final StringBuilder query;
+    protected final Metadata meta;
 
     private boolean limit = false;
 
-    QueryEndpoint(SqlDatabase sql, StringBuilder query) {
-        this.sql = sql;
-        this.query = query;
+    QueryEndpoint(Metadata meta) {
+        this.meta = meta;
     }
 
     @SneakyThrows
@@ -31,15 +29,22 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
 
     @Override
     public PreparedStatement build() {
-        return sql.prepareStatement(buildRawQuery());
+        return meta.sql.prepareStatement(buildRawQuery());
     }
 
     @SneakyThrows
     @Override
     public PreparedStatement build(Object... parameters) {
         val st = build();
-        for (int i = 0; i < parameters.length; i++) {
-            st.setObject(i + 1, parameters[i]);
+
+        val alreadySet = meta.applyOps(st);
+
+        for (int i = 0, param = 1; i < parameters.length; param++) {
+            if (alreadySet.contains(param))
+                continue;
+
+            st.setObject(param, parameters[i]);
+            i++;
         }
         return st;
     }
@@ -47,7 +52,7 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
     @Override
     public QueryEndpoint limit(long limit) {
         if (!this.limit && limit >= 0) {
-            query.append(String.format(" LIMIT %d", limit));
+            meta.query.append(String.format(" LIMIT %d", limit));
             this.limit = true;
         }
         return this;
@@ -55,6 +60,6 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
 
     @Override
     public String buildRawQuery() {
-        return query.toString();
+        return meta.query.toString();
     }
 }

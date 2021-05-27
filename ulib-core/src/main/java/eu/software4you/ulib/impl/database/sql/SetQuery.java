@@ -2,6 +2,7 @@ package eu.software4you.ulib.impl.database.sql;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.database.sql.Column;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -16,31 +17,44 @@ final class SetQuery extends Query implements eu.software4you.database.sql.query
     }
 
     @Override
-    public SetQuery set(Column<?> column, Object to) {
-        return set(column.getName(), to);
-    }
-
-    @Override
-    public SetQuery setP(Column<?> column) {
+    public SetQuery setP(@NotNull Column<?> column) {
         return setP(column.getName());
     }
 
     @Override
-    public SetQuery set(String column, Object to) {
-        sets.add(new Pair<>(column, to));
+    public SetQuery setP(@NotNull String column) {
+        meta.skipParam();
+        sets.add(new Pair<>(column, "?"));
         return this;
     }
 
     @Override
-    public SetQuery setP(String column) {
+    public SetQuery setP(@NotNull Column<?> column, Object to) {
+        return setP(column.getName(), to);
+    }
+
+    @Override
+    public SetQuery setP(@NotNull String column, Object to) {
+        meta.opObj(to);
         sets.add(new Pair<>(column, "?"));
+        return this;
+    }
+
+    @Override
+    public SetQuery set(@NotNull Column<?> column, @NotNull Object to) {
+        return set(column.getName(), to);
+    }
+
+    @Override
+    public SetQuery set(@NotNull String column, @NotNull Object to) {
+        sets.add(new Pair<>(column, to));
         return this;
     }
 
     private void append() {
         StringJoiner sj = new StringJoiner(", ", " set ", "");
         sets.forEach(pair -> sj.add(String.format("%s = %s", pair.getFirst(), pair.getSecond())));
-        query.append(sj);
+        meta.query.append(sj);
     }
 
     @Override
