@@ -19,19 +19,19 @@ on older server versions. You will not receive any support, when using another s
 is built for.
 
 If you want to use older server versions, consider a cross-version compatibility tool, like
-[ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448/),
-[ViaRewind](https://www.spigotmc.org/resources/viarewind.52109/) or
-[ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201/).
+[ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448),
+[ViaRewind](https://www.spigotmc.org/resources/viarewind.52109) or
+[ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201).
 
-When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io/)
+When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io)
 and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.   
 Paper/Waterfall provide better performance, and an expanded API which allows uLib to implement more and better
 features.   
 uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
 needed to implement some features on Spigot.   
-Consider using [Purpur](https://purpur.pl3x.net/), [Airplane](https://airplane.gg/),
-[Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io/),
-and [Velocity](https://velocitypowered.com/)
+Consider using [Purpur](https://purpur.pl3x.net), [Airplane](https://airplane.gg),
+[Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io),
+and [Velocity](https://velocitypowered.com)
 or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
 Also, note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The developer(s) /
@@ -285,41 +285,47 @@ The following 3rd-party software is included within this project:
 The following 3rd-party software is not included within the source code of this project, but within the shadowed
 ("ready-for-use") build artifacts:
 
-- [Apache Commons](https://commons.apache.org/) (Copyright (c)
+- [Apache Commons](https://commons.apache.org) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
-    - IO ([click](https://github.com/apache/commons-io)) version 2.8
-    - Configuration ([click](https://github.com/apache/commons-configuration/)) version 2.4
-    - Lang ([click](https://github.com/apache/commons-lang/)) version 3.8.1
-    - BeanUtils ([click](https://github.com/apache/commons-beanutils/)) version 1.9.3
-    - Codec ([click](https://github.com/apache/commons-codec/)) version 1.11
-- HttpComponents HttpClient ([click](https://github.com/apache/httpcomponents-client)) Copyright (c)
+    - IO ([click](https://github.com/apache/commons-io/tree/rel/commons-io-2.8.0) version 2.8
+    - Configuration ([click](https://github.com/apache/commons-configuration/tree/CONFIGURATION_2_4)) version 2.4
+    - Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) version 3.8.1
+    - BeanUtils ([click](https://github.com/apache/commons-beanutils/tree/BEANUTILS_1_9_3)) version 1.9.3
+    - Codec ([click](https://github.com/apache/commons-codec/tree/commons-codec-1.11)) version 1.11
+- HttpComponents HttpClient ([click](https://github.com/apache/httpcomponents-client/tree/rel/v4.5.10)) Copyright (c)
   2020 [The Apache Software Foundation](https://github.com/apache), licensed under
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) version 4.5.10
-- [Maven Artifact Resolver](https://github.com/apache/maven-resolver) (Copyright (c)
+- [Maven Artifact Resolver](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
-    - Provider ([click](https://github.com/apache/maven/tree/master/maven-resolver-provider)) version 3.8.1
-    - Connector Basic ([click](https://github.com/apache/maven-resolver/tree/master/maven-resolver-connector-basic))
+    - Provider ([click](https://github.com/apache/maven/tree/maven-3.8.1/maven-resolver-provider)) version 3.8.1
+    - Connector
+      Basic ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-connector-basic))
       version 1.6.2
-    - Transport HTTP ([click](https://github.com/apache/maven-resolver/tree/master/maven-resolver-transport-http)):
+    - Transport
+      HTTP ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-transport-http)):
       version 1.6.2
-- Guava ([click](https://github.com/google/guava)) Copyright (c) 2018 [Google](https://github.com/google), licensed
-  under the [Apache License 2.0](https://github.com/google/guava/blob/master/COPYING), version 27.0.1
-- Gson ([click](https://github.com/google/gson)) Copyright (c) 2019 [Google](https://github.com/google), licensed under
-  the [Apache License 2.0](https://github.com/google/gson/blob/master/LICENSE), version 27.0.1
-- SnakeYAML ([click](https://github.com/asomov/snakeyaml)) Copyright (c) 2018 [Andrey Somov](https://github.com/asomov),
-  licensed under the [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/master/LICENSE.txt), version 1.23
-- Jansi ([click](https://github.com/fusesource/jansi)) Copyright (c) 2019 [FuseSource](https://github.com/fusesource),
-  licensed under the [Apache License 2.0](https://github.com/fusesource/jansi/blob/master/license.txt), version 1.18
-- Jackson Core ([click](https://github.com/FasterXML/jackson-core)) Copyright (c)
+- Guava ([click](https://github.com/google/guava/tree/v27.0.1)) Copyright (c) 2018 [Google](https://github.com/google),
+  licensed under the [Apache License 2.0](https://github.com/google/guava/blob/v27.0.1/COPYING), version 27.0.1
+- Gson ([click](https://github.com/google/gson/tree/gson-parent-2.8.6)) Copyright (c)
+  2019 [Google](https://github.com/google), licensed under
+  the [Apache License 2.0](https://github.com/google/gson/blob/gson-parent-2.8.6/LICENSE), version 2.8.6
+- SnakeYAML ([click](https://github.com/asomov/snakeyaml/tree/e8feed726e6298e7b7377c82936cd62e2662108a)) Copyright (c)
+  2018 [Andrey Somov](https://github.com/asomov), licensed under the
+  [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/e8feed726e6298e7b7377c82936cd62e2662108a/LICENSE.txt),
+  version 1.23
+- Jansi ([click](https://github.com/fusesource/jansi/tree/jansi-project-1.18)) Copyright (c)
+  2019 [FuseSource](https://github.com/fusesource), licensed under
+  the [Apache License 2.0](https://github.com/fusesource/jansi/blob/jansi-project-1.18/license.txt), version 1.18
+- Jackson Core ([click](https://github.com/FasterXML/jackson-core/tree/jackson-core-2.9.8)) Copyright (c)
   2018 [FasterXML](https://github.com/FasterXML), licensed under
   the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
-- Jackson Databind ([click](https://github.com/FasterXML/jackson-databind)) Copyright (c)
+- Jackson Databind ([click](https://github.com/FasterXML/jackson-databind/tree/jackson-databind-2.9.8)) Copyright (c)
   2018 [FasterXML](https://github.com/FasterXML), licensed under
-  the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
-- Javassist ([click](https://github.com/jboss-javassist/javassist)) Copyright (c)
+  the [Apache License 2.0](https://github.com/FasterXML/jackson-databind/blob/2.13/LICENSE), version 2.9.8
+- Javassist ([click](https://github.com/jboss-javassist/javassist/tree/rel_3_27_0_ga)) Copyright (c)
   2020 [Shigeru Chiba](https://github.com/jboss-javassist), custom license
-  (click [here](https://github.com/jboss-javassist/javassist/blob/master/License.html)), version 3.27.0-GA
+  (click [here](https://github.com/jboss-javassist/javassist/blob/rel_3_27_0_ga/License.html)), version 3.27.0-GA
 
 ---
