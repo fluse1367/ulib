@@ -32,10 +32,10 @@ public class UnsafeDependencies {
     }
 
     @SneakyThrows
-    static void classTest(String testClass, String coords, Runnable toRun) {
+    static void classTest(String testClass, ClassLoader cl, String coords, Runnable toRun) {
         if (ClassUtils.isClass(testClass)) {
             // if this point is reached, the test class is already loaded, which means there is no need to download the library
-            Class<?> testClazz = Class.forName(testClass);
+            Class<?> testClazz = Class.forName(testClass, true, cl);
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.logger().fine(() -> String.format("Class %s of library %s is already loaded in the runtime: %s",
                     testClass, coords, file.getName()));
@@ -50,7 +50,7 @@ public class UnsafeDependencies {
         }
         try {
             // check if testClass is accessible (should be at this point)
-            Class<?> testClazz = Class.forName(testClass);
+            Class<?> testClazz = Class.forName(testClass, true, cl);
             // if this point is reached, the test class was successfully downloaded and added to the classpath
             File file = new File(testClazz.getProtectionDomain().getCodeSource().getLocation().toURI());
             ULib.logger().fine(() -> String.format("Class %s of library %s successfully loaded into the runtime: %s",
@@ -76,7 +76,7 @@ public class UnsafeDependencies {
 
     public void depend(String coords, String testClass, ClassLoader cl, boolean fallback) {
         logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
-        classTest(testClass, coords, () -> depend(coords, cl, fallback));
+        classTest(testClass, cl, coords, () -> depend(coords, cl, fallback));
     }
 
 

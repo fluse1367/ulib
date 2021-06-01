@@ -22,7 +22,7 @@ final class Util {
     @SneakyThrows
     static String resolveDescriptor(String className, String methodName, String methodDescriptor) {
         if (methodDescriptor.isEmpty()) {
-            Class<?> cl = Class.forName(className);
+            Class<?> cl = Class.forName(className, false, /*TODO*/Util.class.getClassLoader());
             if (methodName.equals("<init>")) {
                 return getDescriptor(cl.getDeclaredConstructors()[0]);
             }

@@ -1,5 +1,6 @@
 package eu.software4you.utils;
 
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
 import lombok.val;
 import org.apache.commons.lang.ArrayUtils;
@@ -23,7 +24,7 @@ public class ClassUtils {
      */
     public static boolean isClass(@NotNull String className) {
         try {
-            Class.forName(className);
+            Class.forName(className, false, ReflectUtil.getCallerClass().getClassLoader());
             return true;
         } catch (Throwable thr) {
             return false;
@@ -39,7 +40,7 @@ public class ClassUtils {
     @Nullable
     public static Class<?> forName(@NotNull String className) {
         try {
-            return Class.forName(className);
+            return Class.forName(className, true, ReflectUtil.getCallerClass().getClassLoader());
         } catch (Throwable thr) {
             ULib.logger().log(Level.SEVERE, thr, () -> String.format("%s could not be loaded", className));
         }
@@ -56,7 +57,7 @@ public class ClassUtils {
     @Nullable
     public static Object getEnumEntry(@NotNull String enumName, @NotNull String enumEntry) {
         try {
-            Class<?> enumClass = Class.forName(enumName);
+            Class<?> enumClass = Class.forName(enumName, true, ReflectUtil.getCallerClass().getClassLoader());
             if (!enumClass.isAssignableFrom(Enum.class)) {
                 ULib.logger().log(Level.SEVERE, () -> String.format("%s is not an enumeration", enumClass.getSimpleName()));
                 return null;

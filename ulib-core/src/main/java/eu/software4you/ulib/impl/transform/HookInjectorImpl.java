@@ -153,7 +153,8 @@ final class HookInjectorImpl extends HookInjector {
         methods.add(desc);
 
         try {
-            agent.transform(Class.forName(className), new Transformer(
+            val cl = Class.forName(className, false, source.getDeclaringClass().getClassLoader());
+            agent.transform(cl, new Transformer(
                     className, methods, ULib.logger()));
         } catch (Throwable thr) {
             ULib.logger().log(Level.WARNING, thr, () -> "Agent transformation failure (" + fullDescriptor + ")");

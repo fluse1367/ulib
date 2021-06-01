@@ -20,7 +20,8 @@ public abstract class ReflectUtil {
     @SneakyThrows
     @Deprecated
     public static Object callGuess(String clazz, Object invoker, String call, Object... parameters) {
-        return callGuess(Class.forName(clazz), invoker, call, parameters);
+        return callGuess(Class.forName(clazz, true, getCallerClass().getClassLoader()),
+                invoker, call, parameters);
     }
 
     /**
@@ -39,7 +40,8 @@ public abstract class ReflectUtil {
     @SneakyThrows
     @Deprecated
     public static Object forceCallGuess(String clazz, Object invoker, String call, Object... parameters) {
-        return forceCallGuess(Class.forName(clazz), invoker, call, parameters);
+        return forceCallGuess(Class.forName(clazz, true, getCallerClass().getClassLoader()),
+                invoker, call, parameters);
     }
 
     /**
@@ -58,7 +60,8 @@ public abstract class ReflectUtil {
     @SneakyThrows
     @SafeVarargs
     public static Object call(String clazz, Object invoker, String call, List<Parameter<?>>... parameters) {
-        return call(Class.forName(clazz), invoker, call, parameters);
+        return call(Class.forName(clazz, true, getCallerClass().getClassLoader()),
+                invoker, call, parameters);
     }
 
     /**
@@ -95,7 +98,8 @@ public abstract class ReflectUtil {
     @SneakyThrows
     @SafeVarargs
     public static Object forceCall(String clazz, Object invoker, String call, List<Parameter<?>>... parameters) {
-        return forceCall(Class.forName(clazz), invoker, call, parameters);
+        return forceCall(Class.forName(clazz, true, getCallerClass().getClassLoader()),
+                invoker, call, parameters);
     }
 
     /**
