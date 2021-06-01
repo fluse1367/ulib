@@ -4,9 +4,6 @@ dependencies {
     compileOnly coordsWaterfall*/
 
     compile files(project(':ulib-core-api').configurations.compileOnly) // shadowing
-
-    // annotation
-    annotationProcessor coordsLombok
 }
 
 // publishing

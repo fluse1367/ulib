@@ -4,9 +4,6 @@ dependencies {
     compileOnly coordsPaper
 
     compileOnly coordsXSeries
-
-    // annotation
-    annotationProcessor coordsLombok
 }
 
 //shadowing

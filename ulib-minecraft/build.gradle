@@ -1,7 +1,4 @@
 dependencies {
     compile project(':ulib-minecraft-api')
     compile project(':ulib-core')
-
-    // annotation
-    annotationProcessor coordsLombok
 }

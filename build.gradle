@@ -1,7 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import org.apache.tools.ant.filters.ReplaceTokens
 
 defaultTasks 'clean', 'build', 'jar'
-apply plugin: 'java'
+apply plugin: 'java-library'
 
 // shadowing - start
 buildscript {
@@ -32,7 +33,7 @@ task docsWebpage {
         }
 
         subprojects {
-            if(!project.name.endsWith('-api')) return
+            if (!project.name.endsWith('-api')) return
 
             def name = project.name
             name = name.substring(name.indexOf("-") + 1, name.lastIndexOf("-"))
@@ -118,7 +119,7 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
     compileJava {
@@ -129,9 +130,6 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -140,8 +138,8 @@ subprojects {
     jar {
         manifest {
             attributes 'Implementation-Title': project.name
-            attributes 'Implementation-Version': version + "-" + gitCommitHash()
-            attributes 'Specification-Version': version
+            attributes 'Implementation-Version': "${archiveVersion.get()}-${gitCommitHash()}"
+            attributes 'Specification-Version': archiveVersion.get()
             attributes 'Implementation-Vendor': 'Software4You.eu'
             attributes 'Built-By': System.getProperty("user.name")
             attributes 'Build-Jdk': System.getProperty("java.version")
@@ -151,6 +149,15 @@ subprojects {
 
     configurations {
         shade
+    }
+
+    // default dependencies
+    dependencies {
+        compileOnly coordsJetbrainsAnnotations
+        compileOnly coordsLombok
+
+        // annotation
+        annotationProcessor coordsLombok
     }
 
     // replace tokens - start
@@ -167,14 +174,17 @@ subprojects {
     }
     // replace tokens - end
 
-    if (!(project.name == 'ulib-core' || project.name == 'ulib-spigot' || project.name == 'ulib-bungeecord' || project.name == 'ulib-velocity')) return
-    // shadowing - start
-    apply plugin: 'com.github.johnrengelman.shadow' // shadowing
+    // shadowing
+    if (project.name == 'ulib-core'
+            || project.name == 'ulib-spigot'
+            || project.name == 'ulib-bungeecord'
+            || project.name == 'ulib-velocity') {
+        apply plugin: 'com.github.johnrengelman.shadow' // shadowing
 
-    // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
-    task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
-        target = tasks.shadowJar
-        prefix = "ulib.ported"
+        // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
+        task relocateShadowJar(type: ConfigureShadowRelocation) {
+            target = tasks.shadowJar
+            prefix = "ulib.ported"
+        }
     }
-    // shadowing - end
 }

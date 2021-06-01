@@ -4,9 +4,6 @@ dependencies {
 
     compileOnly coordsXSeries
     shade coordsXSeries
-
-    // annotation
-    annotationProcessor coordsLombok
 }
 
 // publishing

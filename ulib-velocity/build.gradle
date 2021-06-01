@@ -4,8 +4,6 @@ dependencies {
 
     compileOnly coordsVelocity
     annotationProcessor coordsVelocity
-
-    annotationProcessor coordsLombok
 }
 
 //shadowing

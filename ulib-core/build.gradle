@@ -6,9 +6,6 @@ dependencies {
     shade files(project(':ulib-core-api').configurations.shade)
 
     compile coordsJavassist
-
-    // annotation
-    annotationProcessor coordsLombok
 }
 
 jar {

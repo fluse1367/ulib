@@ -2,9 +2,6 @@ dependencies {
     compile project(':ulib-bungeecord-api')
     compile project(':ulib-minecraft')
     compileOnly coordsWaterfall
-
-    // annotation
-    annotationProcessor coordsLombok
 }
 
 //shadowing
