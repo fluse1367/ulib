@@ -3,7 +3,6 @@ dependencies {
     compileOnly coordsPaper
 
     compileOnly coordsXSeries
-    shade coordsXSeries
 }
 
 // publishing

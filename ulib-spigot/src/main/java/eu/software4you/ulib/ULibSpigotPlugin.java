@@ -37,13 +37,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
         }
         PAPER = paper;
 
-        // trick the shade plugin
-        char[] clazz = {'c', 'o', 'm',
-                '.', 'c', 'r', 'y', 'p', 't', 'o', 'm', 'o', 'r', 'i', 'n',
-                '.', 'x', 's', 'e', 'r', 'i', 'e', 's',
-                '.', 'X', 'M', 'a', 't', 'e', 'r', 'i', 'a', 'l'};
-        Properties.getInstance().ADDITIONAL_LIBS.put("{{maven.xseries}}",
-                new Pair<>(new String(clazz), "central"));
+        Properties.getInstance().ADDITIONAL_LIBS.add(new Pair<>("{{maven.xseries}}", "central"));
         ULib.init();
 
         System.setProperty(PROP_KEY, "cinit");

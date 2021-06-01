@@ -3,8 +3,8 @@ package eu.software4you.ulib;
 import eu.software4you.common.collection.Pair;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 class Properties {
@@ -17,7 +17,7 @@ class Properties {
     final boolean NO_SPLASH;
     final Level LOG_LEVEL;
     final String BRAND;
-    final Map<String, Pair<String, String>> ADDITIONAL_LIBS = new HashMap<>();
+    final List<Pair<String, String>> ADDITIONAL_LIBS = new ArrayList<>();
 
     private Properties() {
         BRAND = "\n" +

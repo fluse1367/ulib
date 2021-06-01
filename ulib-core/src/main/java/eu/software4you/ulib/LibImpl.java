@@ -56,9 +56,8 @@ final class LibImpl implements Lib {
 
         // load dependencies
         try {
-            for (val en : lib.properties.ADDITIONAL_LIBS.entrySet()) {
-                val v = en.getValue();
-                Dependencies.depend(en.getKey(), v.getFirst(), Repositories.of(v.getSecond()));
+            for (val en : lib.properties.ADDITIONAL_LIBS) {
+                Dependencies.depend(en.getFirst(), Repositories.of(en.getSecond()));
             }
         } catch (Exception e) {
             lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experience issues.");
