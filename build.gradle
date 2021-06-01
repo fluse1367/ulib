@@ -106,10 +106,12 @@ allprojects {
 
         def props = new Properties()
         props.putAll([
-                version          : version.toString(),
-                'maven.mysql'    : 'mysql:mysql-connector-java:8.0.23',
-                'maven.sqlite'   : 'org.xerial:sqlite-jdbc:3.25.2',
-                'maven.xseries'  : coordsXSeries,
+                version         : version.toString(),
+                'maven.mysql'   : 'mysql:mysql-connector-java:8.0.23',
+                'maven.sqlite'  : 'org.xerial:sqlite-jdbc:3.25.2',
+                'maven.xseries' : coordsXSeries,
+                'maven.mail-api': 'javax.mail:javax.mail-api:1.6.2',
+                'maven.smtp'    : 'com.sun.mail:smtp:1.6.3',
         ])
 
         replacementTokens = props

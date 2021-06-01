@@ -1,6 +1,7 @@
 package eu.software4you.smtp;
 
 import com.sun.mail.smtp.SMTPTransport;
+import eu.software4you.dependencies.Dependencies;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -15,6 +16,11 @@ import java.util.Properties;
  */
 @Deprecated
 public class Mail {
+    static {
+        Dependencies.depend("{{maven.mail-api}}");
+        Dependencies.depend("{{maven.smtp}}");
+    }
+
     private String host;
     private boolean auth = true;
     private String sender = null;

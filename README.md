@@ -252,7 +252,9 @@ dependencies {
 
 </details>
 
-## Attributions
+# Included Software
+
+The following 3rd-party software is included within this project:
 
 - NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/4884d2f95f2e648de6db12c0a1dcaaae2d866cef))
   Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
@@ -268,3 +270,43 @@ dependencies {
   Copyright (c) 2016 [DarkBlade12](https://github.com/DarkBlade12), custom license (see
   [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/BukkitReflectionUtils.java)
   and [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/ParticleEffect.java))
+
+The following 3rd-party software is not included within the source code of this project, but within the shadowed ("
+ready-for-use") build artifacts:
+
+- [Apache Commons](https://commons.apache.org/) (Copyright (c)
+  2021 [The Apache Software Foundation](https://github.com/apache), licensed under
+  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
+    - IO ([click](https://github.com/apache/commons-io)) version 2.8
+    - Configuration ([click](https://github.com/apache/commons-configuration/)) version 2.4
+    - Lang ([click](https://github.com/apache/commons-lang/)) version 3.8.1 & 2.6
+    - BeanUtils ([click](https://github.com/apache/commons-beanutils/)) version 1.9.3
+    - Codec ([click](https://github.com/apache/commons-codec/)) version 1.11
+- HttpComponents HttpClient ([click](https://github.com/apache/httpcomponents-client)) Copyright (c)
+  2020 [The Apache Software Foundation](https://github.com/apache), licensed under
+  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) version 4.5.10
+- [Maven Artifact Resolver](https://github.com/apache/maven-resolver) (Copyright (c)
+  2021 [The Apache Software Foundation](https://github.com/apache), licensed under
+  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
+    - Provider ([click](https://github.com/apache/maven/tree/master/maven-resolver-provider)) version 3.8.1
+    - Connector Basic ([click](https://github.com/apache/maven-resolver/tree/master/maven-resolver-connector-basic))
+      version 1.6.2
+    - Transport HTTP ([click](https://github.com/apache/maven-resolver/tree/master/maven-resolver-transport-http)):
+      version 1.6.2
+- Guava ([click](https://github.com/google/guava)) Copyright (c) 2018 [Google](https://github.com/google), licensed
+  under the [Apache License 2.0](https://github.com/google/guava/blob/master/COPYING), version 27.0.1
+- Gson ([click](https://github.com/google/gson)) Copyright (c) 2019 [Google](https://github.com/google), licensed under
+  the [Apache License 2.0](https://github.com/google/gson/blob/master/LICENSE), version 27.0.1
+- SnakeYAML ([click](https://github.com/asomov/snakeyaml)) Copyright (c) 2018 [Andrey Somov](https://github.com/asomov),
+  licensed under the [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/master/LICENSE.txt), version 1.23
+- Jansi ([click](https://github.com/fusesource/jansi)) Copyright (c) 2019 [FuseSource](https://github.com/fusesource),
+  licensed under the [Apache License 2.0](https://github.com/fusesource/jansi/blob/master/license.txt), version 1.18
+- Jackson Core ([click](https://github.com/FasterXML/jackson-core)) Copyright (c)
+  2018 [FasterXML](https://github.com/FasterXML), licensed under
+  the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
+- Jackson Databind ([click](https://github.com/FasterXML/jackson-databind)) Copyright (c)
+  2018 [FasterXML](https://github.com/FasterXML), licensed under
+  the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
+- Javassist ([click](https://github.com/jboss-javassist/javassist)) Copyright (c)
+  2020 [Shigeru Chiba](https://github.com/jboss-javassist), custom license
+  (click [here](https://github.com/jboss-javassist/javassist/blob/master/License.html)), version 3.27.0-GA 
