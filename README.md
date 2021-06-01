@@ -282,8 +282,8 @@ The following 3rd-party software is included within this project:
   [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/BukkitReflectionUtils.java)
   and [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/ParticleEffect.java))
 
-The following 3rd-party software is not included within the source code of this project, but within the shadowed ("
-ready-for-use") build artifacts:
+The following 3rd-party software is not included within the source code of this project, but within the shadowed
+("ready-for-use") build artifacts:
 
 - [Apache Commons](https://commons.apache.org/) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
