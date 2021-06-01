@@ -7,14 +7,12 @@ dependencies {
 
     /* compile + shade */
     // !!! When changing anything that is being shaded, UPDATE THE LICENSE AND COPYRIGHT NOTICE IN 'README.md' !!!
-    for (String dependency : [coordsJavassist,
-                              // maven resolver api
-                              'org.apache.maven:maven-resolver-provider:3.8.1',
-                              'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2',
-                              'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2']) {
-        compileOnly dependency
-        shade dependency
-    }
+    //noinspection GroovyAssignabilityCheck
+    compileShade([coordsJavassist,
+                  // maven resolver api
+                  'org.apache.maven:maven-resolver-provider:3.8.1',
+                  'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2',
+                  'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'])
 }
 
 jar {
@@ -24,35 +22,9 @@ jar {
 }
 
 //shadowing
-void itSubs(Jar task) {
-    def projects = ['core-api']
-    for (String sub : projects) {
-        def proj = ':ulib-' + sub
-
-        task.dependsOn "$proj:build"
-
-        def buildDir = project(proj).buildDir
-        task.from("$buildDir/classes/java/main") { include '**' }
-        task.from("$buildDir/resources/main") { include '**' }
-    }
-
-}
-
-// https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
 shadowJar {
-    def ex = project(':ulib-libex')
-    dependsOn ex.tasks.jar
-
-    dependsOn tasks.relocateShadowJar
     configurations = [project.configurations.shade]
-    itSubs(shadowJar)
-
-    from("${ex.buildDir}/libs/") {
-        include "libex"
-    }
-
+    //noinspection GroovyAssignabilityCheck
+    shadowJarIncludeFrom(['core-api'])
     archiveClassifier.set('lib')
-    dependencies {
-        exclude(dependency(coordsLombok))
-    }
 }

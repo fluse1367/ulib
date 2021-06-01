@@ -161,6 +161,35 @@ subprojects {
         annotationProcessor coordsLombok
     }
 
+    ext {
+        /**
+         * Adds a list of dependencies as compileOnly and shade dependency.
+         */
+        compileShade = { depList ->
+            dependencies {
+                for (String dependency : depList) {
+                    // exclusion
+                    if (dependency.startsWith('!(') && dependency.contains("):") && dependency.split(':').length == 4) {
+                        int i;
+                        String excl = dependency.substring(2, i = dependency.indexOf("):"))
+                        dependency = dependency.substring(i + 2);
+
+                        compileOnly(dependency) {
+                            exclude group: excl
+                        }
+                        shade(dependency) {
+                            exclude group: excl
+                        }
+                        continue
+                    }
+
+                    compileOnly dependency
+                    shade dependency
+                }
+            }
+        }
+    }
+
     // replace tokens - start
     task processSources(type: Sync) {
         from sourceSets.main.java.srcDirs
@@ -182,10 +211,40 @@ subprojects {
             || project.name == 'ulib-velocity') {
         apply plugin: 'com.github.johnrengelman.shadow' // shadowing
 
+        ext {
+            shadowJarIncludeFrom = { projects ->
+                for (String sub : projects) {
+                    def proj = ':ulib-' + sub
+                    def buildDir = project(proj).buildDir
+
+                    shadowJar {
+                        dependsOn "$proj:build"
+                        from("$buildDir/classes/java/main") { include '**' }
+                        from("$buildDir/resources/main") { include '**' }
+                    }
+                }
+            }
+        }
+
         // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
         task relocateShadowJar(type: ConfigureShadowRelocation) {
             target = tasks.shadowJar
             prefix = "ulib.ported"
+        }
+
+        // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
+        shadowJar {
+            def ex = project(':ulib-libex')
+            dependsOn ':ulib-libex:jar'
+            dependsOn tasks.relocateShadowJar
+
+            from("${ex.buildDir}/libs/") {
+                include "libex"
+            }
+
+            dependencies {
+                exclude(dependency(coordsLombok))
+            }
         }
     }
 }

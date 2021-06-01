@@ -1,24 +1,22 @@
 dependencies {
     /* compile + shade */
     // !!! When changing anything that is being shaded, UPDATE THE LICENSE AND COPYRIGHT NOTICE IN 'README.md' !!!
-    for (String dependency : [// apache commons
-                              'commons-io:commons-io:2.8.0',
-                              'org.apache.commons:commons-configuration2:2.4',
-                              'org.apache.commons:commons-lang3:3.8.1',
-                              'commons-beanutils:commons-beanutils:1.9.3',
-                              'commons-codec:commons-codec:1.11',
-                              // apache httpclient
-                              'org.apache.httpcomponents:httpclient:4.5.10',
-                              // google guava/gson
-                              'com.google.guava:guava:27.0.1-jre',
-                              'com.google.code.gson:gson:2.8.6',
-                              // (snake)yaml
-                              'org.yaml:snakeyaml:1.23',
-                              // jansi (CLI/terminal support)
-                              'org.fusesource.jansi:jansi:1.18']) {
-        compileOnly dependency
-        shade dependency
-    }
+    //noinspection GroovyAssignabilityCheck
+    compileShade([// apache commons
+                  'commons-io:commons-io:2.8.0',
+                  'org.apache.commons:commons-configuration2:2.4',
+                  'org.apache.commons:commons-lang3:3.8.1',
+                  'commons-beanutils:commons-beanutils:1.9.3',
+                  'commons-codec:commons-codec:1.11',
+                  // apache httpclient
+                  'org.apache.httpcomponents:httpclient:4.5.10',
+                  // google guava/gson
+                  'com.google.guava:guava:27.0.1-jre',
+                  'com.google.code.gson:gson:2.8.6',
+                  // (snake)yaml
+                  'org.yaml:snakeyaml:1.23',
+                  // jansi (CLI/terminal support)
+                  'org.fusesource.jansi:jansi:1.18'])
 
     /* shade */
     shade 'com.fasterxml.jackson.core:jackson-core:2.9.8'
