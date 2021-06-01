@@ -5,7 +5,7 @@ import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.ClassUtils;
 import lombok.SneakyThrows;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

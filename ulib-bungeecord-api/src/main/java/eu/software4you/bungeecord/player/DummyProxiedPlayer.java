@@ -9,7 +9,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.score.Scoreboard;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -44,74 +44,74 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public String getDisplayName() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void setDisplayName(String s) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(ChatMessageType chatMessageType, BaseComponent... baseComponents) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(ChatMessageType chatMessageType, BaseComponent baseComponent) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(UUID sender, BaseComponent... message) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(UUID sender, BaseComponent message) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void connect(ServerInfo serverInfo) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void connect(ServerInfo serverInfo, ServerConnectEvent.Reason reason) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void connect(ServerInfo serverInfo, Callback<Boolean> callback) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     public void connect(ServerInfo serverInfo, Callback<Boolean> callback, boolean b) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     public void connect(ServerInfo serverInfo, Callback<Boolean> callback, boolean b, int i) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void connect(ServerInfo serverInfo, Callback<Boolean> callback, ServerConnectEvent.Reason reason) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     public void connect(ServerInfo serverInfo, Callback<Boolean> callback, boolean b, ServerConnectEvent.Reason reason, int i) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void connect(ServerConnectRequest serverConnectRequest) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public Server getServer() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -121,32 +121,32 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public void sendData(String s, byte[] bytes) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public PendingConnection getPendingConnection() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void chat(String s) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public ServerInfo getReconnectServer() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void setReconnectServer(ServerInfo serverInfo) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public Locale getLocale() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -156,7 +156,7 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public ChatMode getChatMode() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -166,32 +166,32 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public SkinConfiguration getSkinParts() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public MainHand getMainHand() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void setTabHeader(BaseComponent baseComponent, BaseComponent baseComponent1) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void setTabHeader(BaseComponent[] baseComponents, BaseComponent[] baseComponents1) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void resetTabHeader() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendTitle(Title title) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -201,12 +201,12 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public Map<String, String> getModList() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public Scoreboard getScoreboard() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -216,37 +216,37 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public void sendMessage(String s) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessages(String... strings) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(BaseComponent... baseComponents) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void sendMessage(BaseComponent baseComponent) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public Collection<String> getGroups() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void addGroups(String... strings) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void removeGroups(String... strings) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -256,12 +256,12 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public void setPermission(String s, boolean b) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public Collection<String> getPermissions() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -271,27 +271,27 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public InetSocketAddress getAddress() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public SocketAddress getSocketAddress() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void disconnect(String s) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void disconnect(BaseComponent... baseComponents) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
     public void disconnect(BaseComponent baseComponent) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 
     @Override
@@ -301,6 +301,6 @@ public class DummyProxiedPlayer implements ProxiedPlayer {
 
     @Override
     public Unsafe unsafe() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("dummy");
     }
 }

@@ -3,7 +3,7 @@ package eu.software4you.utils;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
 import lombok.val;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

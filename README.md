@@ -279,7 +279,7 @@ ready-for-use") build artifacts:
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
     - IO ([click](https://github.com/apache/commons-io)) version 2.8
     - Configuration ([click](https://github.com/apache/commons-configuration/)) version 2.4
-    - Lang ([click](https://github.com/apache/commons-lang/)) version 3.8.1 & 2.6
+    - Lang ([click](https://github.com/apache/commons-lang/)) version 3.8.1
     - BeanUtils ([click](https://github.com/apache/commons-beanutils/)) version 1.9.3
     - Codec ([click](https://github.com/apache/commons-codec/)) version 1.11
 - HttpComponents HttpClient ([click](https://github.com/apache/httpcomponents-client)) Copyright (c)

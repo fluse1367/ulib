@@ -1,6 +1,6 @@
 package eu.software4you.configuration;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import ulib.ported.org.bukkit.configuration.Configuration;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
