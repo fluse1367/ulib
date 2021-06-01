@@ -13,6 +13,7 @@ dependencies {
                   'org.apache.maven:maven-resolver-provider:3.8.1',
                   'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2',
                   'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'])
+    shade 'org.slf4j:slf4j-simple:1.7.30'
 }
 
 jar {

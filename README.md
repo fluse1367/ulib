@@ -317,6 +317,9 @@ The following 3rd-party software is not included within the source code of this 
 - Gson ([click](https://github.com/google/gson/tree/gson-parent-2.8.6)) Copyright (c)
   2019 [Google](https://github.com/google), licensed under
   the [Apache License 2.0](https://github.com/google/gson/blob/gson-parent-2.8.6/LICENSE), version 2.8.6
+- SLF4J-Simple ([click](https://github.com/qos-ch/slf4j/tree/v_1.7.30)) Copyright (c)
+  2019 [QOS](https://github.com/qos-ch), licensed under the
+  [MIT license](https://github.com/qos-ch/slf4j/blob/v_1.7.30/LICENSE.txt), version 1.7.30
 - SnakeYAML ([click](https://github.com/asomov/snakeyaml/tree/e8feed726e6298e7b7377c82936cd62e2662108a)) Copyright (c)
   2018 [Andrey Somov](https://github.com/asomov), licensed under the
   [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/e8feed726e6298e7b7377c82936cd62e2662108a/LICENSE.txt),
