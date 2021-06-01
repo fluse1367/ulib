@@ -2,6 +2,9 @@
 
 This library is designed to ease process of developing standalone applications, Velocity, BungeeCord and Spigot plugins.
 
+Copyright (c) 2021 [fluse1367](https://gitlab.com/fluse1367) / [software4you.eu](https://gitlab.com/software4you.eu)   
+See "Included Software" (at the bottom) for copyright and license notice of included software.
+
 | [![Gitlab release pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master?label=Release%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=master) | [![Gitlab snapshot pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/develop?label=Snapshot%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=develop) |
 | ---: | ---: |
 | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) |
@@ -21,88 +24,31 @@ If you want to use older server versions, consider a cross-version compatibility
 [ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201/).
 
 When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io/)
-and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.<br>
-Paper/Waterfall provides better performance, and an expanded API which allows uLib to implement more and better
-features.<br>
+and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.   
+Paper/Waterfall provide better performance, and an expanded API which allows uLib to implement more and better
+features.   
 uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
-needed to implement some features on Spigot.<br>
-Consider using [Purpur](https://purpur.pl3x.net/), [Airplane](https://airplane.gg/)
-, [Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io/),
+needed to implement some features on Spigot.   
+Consider using [Purpur](https://purpur.pl3x.net/), [Airplane](https://airplane.gg/),
+[Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io/),
 and [Velocity](https://velocitypowered.com/)
 or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
-Also, note the [license of this project](./LICENSE). Use this library at your own risk! The developer(s) / contributors
-of this project do not take any responsibility/liability in any way.
+Also, note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The developer(s) /
+contributors of this project do not take any responsibility/liability in any way.
 
-## First Startup
+### First Startup
 
-When launching uLib for the first time (or if you removed the `.ulib` folder), it will download a few of
-dependencies/libraries, this only takes a couple of seconds. The total download size is about 8MB.
+When launching uLib for the first time (or if the `libraries` folder was removed), it will download a few of
+dependencies/libraries, this only takes a couple of seconds.
 
-Any following start takes about 0.3s.
+---
 
-## Developing with uLib
-
-Before you do anything with uLib, get sure the main class is loaded.
-
-When using the one of the Plugins implementations, you don't have to take care of loading uLib. Only put it in the
-respective plugins folder, but don't forget to declare uLib as dependency!
-
-When using standalone implementation you have to load the main class by yourself. There are several ways how to do this.
-
-If you put uLib into your classpath, you can just call `ULib.init();`. Just make sure calling this **before** you do
-something with uLib.
-
-Another way is to use the launch function. For this, run uLib with java directly. Supply either the
-argument `--launch /path/to/jar/file` (uLib will lookup the main class in the manifest file)
-or `--main path.to.MainClass` (here the jar file with this class have to be already in the classpath).
-
-With both options you can also specify arguments that should be passed to the main class, use `:::` as argument
-separator:
-
-`--args "--arg:::arg2"`<br>
-
-Your arguments will be passed to your program like this:
-
-(arg0) `--arg`, (arg1) `arg2`
-
-By don't using `:::` (e.g. `--args "--arg arg2"`), your given argument will include a space bar and be passed to your
-program like this:
-
-(arg0) `--arg arg2`
-
-All in all, your command could look like this:
-
-```shell
-java -jar ulib-core-VERSION-lib.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
-```
-
-or this:
-
-```shell
-java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
-```
-
-## About Java 9+ / Javaagent
-
-If you are using Java 9 or higher and the standalone implementation, **uLib might fail to dynamically load any
-dependencies/libraries**. This is due to the restrictions made from Java 9 onwards.
-
-If you still need these functionalities (e.g. the `Dependencies` class), you need to allow uLib to load its so-called
-Javaagent.
-
-In order to allow this **on Java 9** (and higher) you need to set the system property `jdk.attach.allowAttachSelf`
-to `true` **within the command line**:
-
-```shell
-java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
-```
-
-In order for uLib to load the javaagent **on Java 8** though, it needs to load the tools.jar file, that is unfortunately
-not available in the regular Java 8 runtime. However, to solve this problem simply make sure the respective JDK is
-installed, uLib will try to load the file from there.
+# Developing with uLib
 
 ## Repository
+
+See the versions table to find out the most recent versions.
 
 <details><summary>Gradle</summary>
 
@@ -174,17 +120,81 @@ dependencies {
 
 </details>
 
-## Build Instructions
+## Main Entry Class
 
-1. **<u>Clone this repository</u>**
+Before you do anything with uLib, get sure the main class is loaded.
+
+When using the one of the Plugins implementations, you don't have to take care of loading uLib. Only put it in the
+respective `plugins` folder, but don't forget to declare uLib as dependency!
+
+When using the standalone implementation, you have to load the main class by yourself. There are several ways how to do
+this.
+
+If you put uLib into your classpath, you can just call `ULib.init();`. Just make sure calling this **before** you do
+something with uLib.
+
+Another way is to use the launch function. For this, run uLib with java directly. Supply either the
+argument `--launch /path/to/jar/file` (uLib will lookup the main class in the manifest file)
+or `--main path.to.MainClass` (here the jar file with this class have to be already in the classpath).
+
+With both options you can also specify arguments that should be passed to the main class, use `:::` as argument
+separator:
+
+`--args "--arg:::arg2"`
+
+Your arguments will be passed to your program like this:
+
+(arg0) `--arg`, (arg1) `arg2`
+
+By don't using `:::` (e.g. `--args "--arg arg2"`), your given argument will include a space bar and be passed to your
+program like this:
+
+(arg0) `--arg arg2`
+
+All in all, your command could look like this:
+
+```shell
+java -jar ulib-core-VERSION-lib.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
+```
+
+or this:
+
+```shell
+java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
+```
+
+## About Java 9+ / Javaagent
+
+If you are using Java 9 or higher and the standalone implementation, **uLib might fail to dynamically load any
+dependencies/libraries**. This is due to the restrictions made from Java 9 onwards.
+
+If you still need these functionalities (e.g. the `Dependencies` class), you need to allow uLib to load its so-called
+Javaagent.
+
+In order to allow this **on Java 9** (and higher) you need to set the system property `jdk.attach.allowAttachSelf`
+to `true` **within the command line**:
+
+```shell
+java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
+```
+
+In order for uLib to load the javaagent **on Java 8** though, it needs to load the tools.jar file, that is unfortunately
+not available in the regular Java 8 runtime. However, to solve this problem simply make sure the respective JDK is
+installed, uLib will try to load the file from there.
+
+---
+
+# Build Instructions
+
+1. **Clone this repository**
    ```shell
    git clone https://gitlab.com/software4you.eu/ulib.git
    ```
-2. **`cd` <u>into the directory</u>**
+2. **`cd` into the directory**
    ```shell
    cd ulib
    ```
-3. <details><summary><b><u>Switch to the</u> <code>develop</code> <u>branch</u></b> (Optional)</summary>
+3. <details><summary><b>Switch to the <code>develop</code> branch</b> (Optional)</summary>
    You only need to do this if you want the most recent (unstable) changes.
 
    ```shell
@@ -193,7 +203,7 @@ dependencies {
    </details>
 
 
-4. **<u>Build it</u>**
+4. **Build it**
 
    Linux (bash):
 
@@ -207,8 +217,7 @@ dependencies {
    ./gradlew.bat build shadowJar
    ```
 
-    <details>
-        <summary markdown="span">Details</summary>
+    <details><summary>Details</summary>
 
    -> `build` builds the apis and unready jar files:
 
@@ -231,7 +240,7 @@ dependencies {
     </details>
 
 
-5. <details><summary><b><u>Build the javadocs webpage</u></b> (Optional)</summary>
+5. <details><summary><b>Build the javadocs webpage</b> (Optional)</summary>
 
    Building the javadocs webpage is probably more interesting for developers who are using the development
    snapshots  (`develop` branch) of ulib, because the javadocs of them won't get published.
@@ -251,6 +260,8 @@ dependencies {
    You'll find the webpage in the directory `public`.
 
 </details>
+
+---
 
 # Included Software
 
@@ -309,4 +320,6 @@ ready-for-use") build artifacts:
   the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
 - Javassist ([click](https://github.com/jboss-javassist/javassist)) Copyright (c)
   2020 [Shigeru Chiba](https://github.com/jboss-javassist), custom license
-  (click [here](https://github.com/jboss-javassist/javassist/blob/master/License.html)), version 3.27.0-GA 
+  (click [here](https://github.com/jboss-javassist/javassist/blob/master/License.html)), version 3.27.0-GA
+
+---
