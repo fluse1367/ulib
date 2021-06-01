@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.utils.JarLoader;
+import eu.software4you.dependencies.DependencyLoader;
 import joptsimple.*;
 import lombok.SneakyThrows;
 
@@ -88,7 +88,7 @@ class Launcher {
             logger.warning(() -> String.format("Launching %s ...", launchFile.getName()));
 
             try {
-                JarLoader.load(launchFile);
+                DependencyLoader.load(launchFile);
             } catch (Exception e) {
                 logger.log(Level.SEVERE, e, () -> String.format("Could not load %s", launchFile.getName()));
                 return;

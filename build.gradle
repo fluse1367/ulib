@@ -110,7 +110,6 @@ allprojects {
                 'maven.mysql'    : 'mysql:mysql-connector-java:8.0.23',
                 'maven.sqlite'   : 'org.xerial:sqlite-jdbc:3.25.2',
                 'maven.xseries'  : coordsXSeries,
-                'maven.javassist': coordsJavassist,
         ])
 
         replacementTokens = props

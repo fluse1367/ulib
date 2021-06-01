@@ -1,8 +1,7 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
-import eu.software4you.spigot.PlugMan;
+import eu.software4you.dependencies.DependencyLoader;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.ulib.impl.spigot.enchantment.CustomEnchantmentHandler;
@@ -11,14 +10,24 @@ import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.messaging.Messenger;
 
-public class ULibSpigotPlugin extends ExtendedJavaPlugin {
+public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
     public static final boolean PAPER;
-    private static final String PROP_KEY = "eu.software4you.minecraft.ulib_spigot";
+    private static final String PROP_KEY = "ulib.plugin_status";
     private static ULibSpigotPlugin instance = null;
 
     static {
+        // check for already existing instance
+        if (System.getProperties().containsKey(PROP_KEY)) {
+            System.err.println("[uLib] A previous uLib instance was detected. uLib does not support being reloaded." +
+                    " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
+            throw new IllegalStateException("Reloading not supported");
+        }
+
         boolean paper;
         try {
             Class.forName("com.destroystokyo.paper.Title");
@@ -34,8 +43,10 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
                 '.', 'x', 's', 'e', 'r', 'i', 'e', 's',
                 '.', 'X', 'M', 'a', 't', 'e', 'r', 'i', 'a', 'l'};
         Properties.getInstance().ADDITIONAL_LIBS.put("{{maven.xseries}}",
-                new Pair<>(new String(clazz), Repository.MAVEN_CENTRAL));
+                new Pair<>(new String(clazz), "central"));
         ULib.init();
+
+        System.setProperty(PROP_KEY, "cinit");
     }
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
@@ -46,19 +57,9 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        if (System.getProperties().containsKey(PROP_KEY)) {
-            getLogger().severe("A previous uLib instance that has not been fully removed was detected." +
-                    " This could lead to unexpected behaviour!" +
-                    " It is recommended to fully stop the server instead of doing a reload," +
-                    " or reload specific plugins with a plugin-manager.");
-        }
-    }
-
-    @Override
     public void onEnable() {
         try {
-            instance = this;
+            registerEvents(instance = this);
 
 
             proxyServerBridgeImpl = ProxyServerBridgeImpl.init(this);
@@ -115,17 +116,12 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin {
     @Override
     protected void finalize() throws Throwable {
         System.getProperties().remove(PROP_KEY);
+        super.finalize();
     }
 
-    private boolean reinitiate() {
-        if (!PlugMan.reload(this)) {
-            try {
-                Bukkit.reload();
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return true;
+    @EventHandler
+    public void handle(PluginDisableEvent e) {
+        DependencyLoader.free(e.getPlugin().getClass().getClassLoader());
     }
 
 

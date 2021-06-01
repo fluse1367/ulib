@@ -32,28 +32,6 @@ dependencies {
     compileOnly 'org.fusesource.jansi:jansi:1.18'
     shade 'org.fusesource.jansi:jansi:1.18'
 
-    // aether; see https://wiki.eclipse.org/Aether
-    compileOnly 'org.eclipse.aether:aether-api:1.1.0'
-    shade 'org.eclipse.aether:aether-api:1.1.0'
-    compileOnly 'org.eclipse.aether:aether-util:1.1.0'
-    shade 'org.eclipse.aether:aether-util:1.1.0'
-    compileOnly 'org.eclipse.aether:aether-impl:1.1.0'
-    shade 'org.eclipse.aether:aether-impl:1.1.0'
-    compileOnly 'org.eclipse.aether:aether-connector-basic:1.1.0'
-    shade 'org.eclipse.aether:aether-connector-basic:1.1.0'
-    compileOnly 'org.eclipse.aether:aether-transport-file:1.1.0'
-    shade 'org.eclipse.aether:aether-transport-file:1.1.0'
-    compileOnly('org.eclipse.aether:aether-transport-http:1.1.0') {
-        exclude group: 'org.slf4j'
-    }
-    shade('org.eclipse.aether:aether-transport-http:1.1.0') {
-        exclude group: 'org.slf4j'
-    }
-    shade 'org.eclipse.aether:aether-transport-wagon:1.1.0'
-    compileOnly 'org.apache.maven:maven-aether-provider:3.3.9'
-    shade 'org.apache.maven:maven-aether-provider:3.3.9'
-    shade 'org.apache.maven.wagon:wagon-ssh:3.3.4'
-
     compile files("${System.properties['java.home']}/../lib/tools.jar")
 }
 

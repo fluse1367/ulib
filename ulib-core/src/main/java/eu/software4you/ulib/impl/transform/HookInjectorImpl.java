@@ -84,8 +84,8 @@ final class HookInjectorImpl extends HookInjector {
 
     @Override
     protected void directHook0(Method source, Object obj, Method into, HookPoint at) {
-        directHook0(source, obj, into.getName(), Util.getDescriptor(into),
-                into.getDeclaringClass().getName(), at);
+        directHook0(source, obj, into.getDeclaringClass().getName(), into.getName(),
+                Util.getDescriptor(into), at);
     }
 
     @Override
@@ -152,7 +152,6 @@ final class HookInjectorImpl extends HookInjector {
         methods.addAll(li);
         methods.add(desc);
 
-        TransformerDepend.$();
         try {
             agent.transform(Class.forName(className), new Transformer(
                     className, methods, ULib.logger()));

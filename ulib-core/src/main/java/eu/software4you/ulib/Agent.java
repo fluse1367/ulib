@@ -59,7 +59,7 @@ public final class Agent {
 
         instance = new Agent(transform, appendJar);
         instance.loadUlibEx(logger);
-        ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.utils.JarLoaderImpl"));
+        ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.dependencies.DependencyLoaderImpl"));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.transform.HookInjectorImpl"));
 
         logger.fine(() -> "Agent init done!");

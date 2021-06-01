@@ -1,20 +1,22 @@
-package eu.software4you.aether;
+package eu.software4you.dependencies;
 
 import eu.software4you.http.HttpUtil;
+import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.ClassUtils;
-import eu.software4you.utils.JarLoader;
+import eu.software4you.utils.IOUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
+import lombok.val;
 import org.apache.http.client.HttpClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
+/**
+ * Maven artifact (down)loading without further resolving.
+ */
 @RequiredArgsConstructor
 public class UnsafeDependencies {
     private final Logger logger;
@@ -23,6 +25,10 @@ public class UnsafeDependencies {
 
     public UnsafeDependencies(Logger logger, String agent) {
         this(logger, HttpUtil.buildBasicClient(agent), "https://repo1.maven.org/maven2/");
+    }
+
+    public UnsafeDependencies(Logger logger, String agent, String url) {
+        this(logger, HttpUtil.buildBasicClient(agent), url);
     }
 
     @SneakyThrows
@@ -55,13 +61,39 @@ public class UnsafeDependencies {
         }
     }
 
+
     public void depend(String coords, String testClass) {
+        depend(coords, testClass, ReflectUtil.getCallerClass().getClassLoader());
+    }
+
+    public void depend(String coords, String testClass, boolean fallback) {
+        depend(coords, testClass, ReflectUtil.getCallerClass().getClassLoader(), fallback);
+    }
+
+    public void depend(String coords, String testClass, ClassLoader cl) {
+        depend(coords, testClass, cl, false);
+    }
+
+    public void depend(String coords, String testClass, ClassLoader cl, boolean fallback) {
         logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
-        classTest(testClass, coords, () -> depend(coords));
+        classTest(testClass, coords, () -> depend(coords, cl, fallback));
+    }
+
+
+    public void depend(String coords) {
+        depend(coords, ReflectUtil.getCallerClass().getClassLoader());
+    }
+
+    public void depend(String coords, boolean fallback) {
+        depend(coords, ReflectUtil.getCallerClass().getClassLoader(), fallback);
+    }
+
+    public void depend(String coords, ClassLoader cl) {
+        depend(coords, cl, false);
     }
 
     @SneakyThrows
-    public void depend(String coords) {
+    public void depend(String coords, ClassLoader cl, boolean fallback) {
         logger.fine(String.format("Depending on %s from '%s' repo without further dependency resolving", coords, url));
 
         File root = ULib.get().getLibrariesUnsafeDir();
@@ -80,13 +112,13 @@ public class UnsafeDependencies {
         if (!dest.exists()) {
             dest.getParentFile().mkdirs();
 
-            ReadableByteChannel in = Channels.newChannel(HttpUtil.getContent(httpClient, url + request));
-            FileOutputStream out = new FileOutputStream(dest);
-            out.getChannel().transferFrom(in, 0, Long.MAX_VALUE);
-            IOUtils.close(out, in);
+            try (val in = HttpUtil.getContent(httpClient, url + request);
+                 val out = new FileOutputStream(dest)) {
+                IOUtil.write(in, out);
+            }
         }
 
-        JarLoader.load(dest);
+        DependencyLoader.load(dest, cl, fallback);
     }
 
 }

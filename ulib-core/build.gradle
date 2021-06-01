@@ -5,7 +5,16 @@ dependencies {
     compile files(project(':ulib-core-api').configurations.compileOnly)
     shade files(project(':ulib-core-api').configurations.shade)
 
+    // maven dependencies API
+    compileOnly 'org.apache.maven:maven-resolver-provider:3.8.1'
+    shade 'org.apache.maven:maven-resolver-provider:3.8.1'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2'
+    shade 'org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2'
+    compileOnly 'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'
+    shade 'org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'
+
     compile coordsJavassist
+    shade coordsJavassist
 }
 
 jar {

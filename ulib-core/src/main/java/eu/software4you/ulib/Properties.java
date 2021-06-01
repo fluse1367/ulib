@@ -1,6 +1,5 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.Repository;
 import eu.software4you.common.collection.Pair;
 
 import java.io.File;
@@ -18,7 +17,7 @@ class Properties {
     final boolean NO_SPLASH;
     final Level LOG_LEVEL;
     final String BRAND;
-    final Map<String, Pair<String, Repository>> ADDITIONAL_LIBS = new HashMap<>();
+    final Map<String, Pair<String, String>> ADDITIONAL_LIBS = new HashMap<>();
 
     private Properties() {
         BRAND = "\n" +

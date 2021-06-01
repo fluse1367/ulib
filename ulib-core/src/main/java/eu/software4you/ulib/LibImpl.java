@@ -1,6 +1,7 @@
 package eu.software4you.ulib;
 
-import eu.software4you.aether.Dependencies;
+import eu.software4you.dependencies.Dependencies;
+import eu.software4you.dependencies.Repositories;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
 import lombok.val;
@@ -57,7 +58,7 @@ final class LibImpl implements Lib {
         try {
             for (val en : lib.properties.ADDITIONAL_LIBS.entrySet()) {
                 val v = en.getValue();
-                Dependencies.depend(en.getKey(), v.getFirst(), v.getSecond());
+                Dependencies.depend(en.getKey(), v.getFirst(), Repositories.of(v.getSecond()));
             }
         } catch (Exception e) {
             lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experience issues.");
