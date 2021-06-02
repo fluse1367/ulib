@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-final class Injector {
+final class DependencyInjector {
     private final ClassLoaderHook hook;
     private final List<Class<?>> hookedFindClass = new ArrayList<>();
     private final List<Class<?>> hookedLoadClass = new ArrayList<>();
@@ -23,11 +23,11 @@ final class Injector {
     boolean acceptable(ClassLoader cl) {
         // no check for root CL bc it's abstract
         return cl != ClassLoader.getSystemClassLoader()
-                && !(cl instanceof ExposedClassLoader);
+                && !(cl instanceof DependencyClassLoader);
     }
 
     // hooks into a classloader
-    void into(Class<? extends ClassLoader> clazz) {
+    void inject(Class<? extends ClassLoader> clazz) {
         hookFindClass(clazz);
         hookLoadClass(clazz);
     }
@@ -68,7 +68,7 @@ final class Injector {
         Class<?> superclass;
 
         do {
-            if (cl == ClassLoader.class || cl == scl || cl == ExposedClassLoader.class) // do not hook into root CL, system CL or ECL
+            if (cl == ClassLoader.class || cl == scl || cl == DependencyClassLoader.class) // do not hook into root CL, system CL or DCL
                 continue;
 
             Method m;
@@ -83,7 +83,7 @@ final class Injector {
                 return Optional.empty();
             }
             reg.add(cl);
-            ULib.logger().finer(() -> String.format("Flagging %s for ECL injection", m));
+            ULib.logger().finer(() -> String.format("Flagging %s for dependency injection", m));
             return Optional.of(m);
         } while ((superclass = cl.getSuperclass()) != null // verify we still have a superclass
                 // verify we're still within a (sub)class of CL

@@ -22,7 +22,7 @@ final class DependencyLoaderImpl extends DependencyLoader {
     private static Agent agent;
 
     private final ClassLoaderHook hook = new ClassLoaderHook();
-    private final Injector injector = new Injector(hook);
+    private final DependencyInjector injector = new DependencyInjector(hook);
 
     private DependencyLoaderImpl() {
     }
@@ -82,7 +82,7 @@ final class DependencyLoaderImpl extends DependencyLoader {
                 return;
 
             // hook into cl
-            injector.into(cl.getClass());
+            injector.inject(cl.getClass());
 
             // register file to CL
             hook.register(cl, file);

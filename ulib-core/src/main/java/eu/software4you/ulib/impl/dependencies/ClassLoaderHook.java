@@ -15,10 +15,10 @@ import java.util.jar.JarFile;
 public final class ClassLoaderHook {
 
     // The register contains the acceptable classes and the respective class loader.
-    private final Map<ClassLoader, Pair<Collection<String>, ExposedClassLoader>> register = new HashMap<>();
+    private final Map<ClassLoader, Pair<Collection<String>, DependencyClassLoader>> register = new HashMap<>();
 
     // registers a file to a classloader
-    // inits an ecl instance if necessary
+    // inits an dependency class loader instance if necessary
     @SneakyThrows
     void register(ClassLoader cl, File file) {
         ULib.logger().finer(() -> String.format("Registering %s with %s", file, cl));
@@ -26,7 +26,7 @@ public final class ClassLoaderHook {
         if (!register.containsKey(cl)) {
             // not known yet, init
             val classes = collectClasses(file);
-            val loader = new ExposedClassLoader(new URL[]{file.toURI().toURL()});
+            val loader = new DependencyClassLoader(new URL[]{file.toURI().toURL()});
 
             register.put(cl, new Pair<>(classes, loader));
             return;
@@ -65,15 +65,15 @@ public final class ClassLoaderHook {
         return classes;
     }
 
-    // shortcut to receive the ecl instance
-    private ExposedClassLoader loader(Object clInstance, String clName) {
-        if (!(clInstance instanceof ClassLoader) || !register.containsKey(clInstance))
+    // shortcut to receive the dcl instance
+    private DependencyClassLoader loader(Object classLoader, String className) {
+        if (!(classLoader instanceof ClassLoader) || !register.containsKey(classLoader))
             return null;
 
-        val pair = register.get(clInstance);
+        val pair = register.get(classLoader);
         val register = pair.getFirst();
 
-        if (!register.contains(clName))
+        if (!register.contains(className))
             return null;
 
         return pair.getSecond();

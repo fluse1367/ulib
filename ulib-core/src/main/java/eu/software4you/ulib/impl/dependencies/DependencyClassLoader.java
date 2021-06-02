@@ -7,17 +7,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 // URLClassLoader with widened access
-final class ExposedClassLoader extends URLClassLoader {
+final class DependencyClassLoader extends URLClassLoader {
     static {
         ClassLoader.registerAsParallelCapable();
     }
 
-    public ExposedClassLoader(URL[] urls) {
+    public DependencyClassLoader(URL[] urls) {
         super(urls);
-    }
-
-    public ExposedClassLoader() {
-        this(new URL[0]);
     }
 
     @Override
