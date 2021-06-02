@@ -20,9 +20,25 @@ public class ItemBuilder {
     private ItemStack stack;
     private final ItemMeta meta;
 
+    /**
+     * Wraps an already existing item.
+     *
+     * @param stack the item to wrap
+     */
+    public ItemBuilder(ItemStack stack) {
+        this.stack = stack.clone();
+        this.meta = stack.getItemMeta();
+    }
+
+    /**
+     * Wraps an already existing item and meta.
+     *
+     * @param stack the item to wrap
+     * @param meta  the meta to wrap
+     */
     private ItemBuilder(ItemStack stack, ItemMeta meta) {
-        this.stack = stack;
-        this.meta = meta;
+        this.stack = stack.clone();
+        this.meta = meta.clone();
     }
 
     /**
@@ -38,7 +54,7 @@ public class ItemBuilder {
      */
     public ItemBuilder(Material material, int amount) {
         this.stack = new ItemStack(material, amount);
-        this.meta = stack.getItemMeta();
+        this.meta = this.stack.getItemMeta();
     }
 
     /**
@@ -67,7 +83,7 @@ public class ItemBuilder {
      * Sets the amount of an item.
      *
      * @param amount the amount to set
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemStack#setAmount(int)
      */
     public ItemBuilder amount(int amount) {
@@ -84,7 +100,7 @@ public class ItemBuilder {
      * Sets a lore to the item
      *
      * @param lore the lines of the lore
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#setLore(List)
      */
     public ItemBuilder lore(List<String> lore) {
@@ -96,7 +112,7 @@ public class ItemBuilder {
      * Sets a lore to the item
      *
      * @param lines the lines of the lore
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#setLore(List)
      */
     public ItemBuilder lore(String... lines) {
@@ -108,7 +124,7 @@ public class ItemBuilder {
      * Sets the display name of the item.
      *
      * @param name the name of the item to display
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#setDisplayName(String)
      */
     public ItemBuilder name(String name) {
@@ -124,7 +140,7 @@ public class ItemBuilder {
     /**
      * Makes the item unbreakable.
      *
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      */
     public ItemBuilder unbreakable() {
         return unbreakable(true);
@@ -134,7 +150,7 @@ public class ItemBuilder {
      * Specifies if the item is unbreakable.
      *
      * @param unbreakable true if the item should be unbreakable, false if not
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#setUnbreakable(boolean)
      */
     public ItemBuilder unbreakable(boolean unbreakable) {
@@ -146,7 +162,7 @@ public class ItemBuilder {
      * Sets the attribute modifiers of the item.
      *
      * @param attributeModifiers the attributes with their modifiers
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#setAttributeModifiers(Multimap)
      */
     public ItemBuilder modifiers(Multimap<Attribute, AttributeModifier> attributeModifiers) {
@@ -159,7 +175,7 @@ public class ItemBuilder {
      *
      * @param attribute the attribute
      * @param modifier  the modifier
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#addAttributeModifier(Attribute, AttributeModifier)
      */
     public ItemBuilder modifier(Attribute attribute, AttributeModifier modifier) {
@@ -171,7 +187,7 @@ public class ItemBuilder {
      * Adds flags to the item.
      *
      * @param flags the flags to add
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#addItemFlags(ItemFlag...)
      */
     public ItemBuilder itemFlags(ItemFlag... flags) {
@@ -184,7 +200,7 @@ public class ItemBuilder {
      *
      * @param ench  the enchantment
      * @param level the level
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see ItemMeta#addEnchant(Enchantment, int, boolean)
      */
     public ItemBuilder enchantment(Enchantment ench, int level) {
@@ -196,7 +212,7 @@ public class ItemBuilder {
      * Sets the damage of the item, if it's capable of taking damage.
      *
      * @param damage the damage to set
-     * @return the own {@link ItemBuilder} instance
+     * @return this
      * @see Damageable#setDamage(int)
      */
     public ItemBuilder damage(int damage) {
