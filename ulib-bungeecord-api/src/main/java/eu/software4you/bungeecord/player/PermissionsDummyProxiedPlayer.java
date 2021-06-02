@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
+/**
+ * A dummy player with permission check functionality intended for use if the actual player is current offline.
+ */
 public class PermissionsDummyProxiedPlayer extends DummyProxiedPlayer {
     private final ProxyServer bungee;
     private final Collection<String> groups = new CaseInsensitiveSet();

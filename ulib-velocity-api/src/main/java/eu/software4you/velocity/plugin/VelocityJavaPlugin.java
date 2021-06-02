@@ -22,6 +22,27 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementation of {@link VelocityPlugin}.
+ * <p>
+ * Because velocity does not work with plugin interfaces it is necessary to manually implement this class and call the constructor:
+ * <pre>{@code
+ * // ...
+ * @Plugin(id = "plugin_id")
+ * public class YourVelocityPlugin extends VelocityJavaPlugin {
+ *     // ...
+ *     @Inject
+ *     public YourVelocityPlugin(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataPath) {
+ *         // plugin id, proxy server, logger, data dir
+ *         super("plugin_id", proxyServer, logger, dataPath.toFile());
+ *     }
+ *     // ...
+ * }
+ * // ...
+ * }</pre>
+ * <b>It is crucial to pass the exact <u>same</u> plugin id to the superclass constructor.</b>
+ * </p>
+ */
 @RequiredArgsConstructor
 public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
@@ -29,12 +50,16 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
     @Getter
+    @NotNull
     private final String id;
     @Getter
+    @NotNull
     private final ProxyServer proxyServer;
     @Getter
+    @NotNull
     private final Logger logger;
     @Getter
+    @NotNull
     private final File dataFolder;
     @Getter
     private final File file = FileUtils.getClassFile(getClass());
@@ -48,7 +73,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return getPlugin().getDescription().getName().orElse(null);
     }
 
@@ -155,7 +180,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @SneakyThrows
     @Override
     public void cancelAllTasks() {
-        ((Multimap<Object, ScheduledTask>) ReflectUtil.forceCall("com.velocitypowered.proxy.scheduler.VelocityScheduler",
+        ((Multimap<Object, ScheduledTask>) ReflectUtil.forceCall(getProxyServer().getScheduler().getClass(),
                 proxyServer.getScheduler(), "tasksByPlugin")).get(this).forEach(ScheduledTask::cancel);
     }
 

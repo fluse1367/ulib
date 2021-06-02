@@ -1,8 +1,8 @@
 package eu.software4you.ulib.minecraft.plugin;
 
 import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.ulib.minecraft.plugin.controllers.ASyncSchedulerController;
 import eu.software4you.ulib.minecraft.plugin.controllers.EventController;
-import eu.software4you.ulib.minecraft.plugin.controllers.SchedulerController;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -11,11 +11,11 @@ import java.util.Locale;
 /**
  * The base for plugins.
  *
- * @param <L> Listener type
- * @param <R> Scheduler return type
- * @param <E> Layout receiver
+ * @param <L> listener type
+ * @param <R> scheduler task object return type
+ * @param <E> layout receiver type
  */
-public interface PluginBase<L, R, E> extends EventController<L>, SchedulerController<R> {
+public interface PluginBase<L, R, E> extends EventController<L>, ASyncSchedulerController<R> {
     String LAYOUT_BASE_NAME = "layout";
     String LAYOUT_FILE_EXTENSION = "yml";
     String DEFAULT_LAYOUT_FILE_NAME = String.format("%s.%s", LAYOUT_BASE_NAME, LAYOUT_FILE_EXTENSION);
@@ -25,6 +25,7 @@ public interface PluginBase<L, R, E> extends EventController<L>, SchedulerContro
      *
      * @return the name of the plugin.
      */
+    @NotNull
     String getName();
 
     /**
@@ -38,7 +39,8 @@ public interface PluginBase<L, R, E> extends EventController<L>, SchedulerContro
      *
      * @return the config wrapper
      */
-    @NotNull ConfigurationWrapper getConf();
+    @NotNull
+    ConfigurationWrapper getConf();
 
     /**
      * Reloads the config wrapper.<br>
@@ -57,7 +59,8 @@ public interface PluginBase<L, R, E> extends EventController<L>, SchedulerContro
      *
      * @return the layout instance
      */
-    @NotNull Layout<E> getLayout();
+    @NotNull
+    Layout<E> getLayout();
 
     /**
      * Reloads the layout.
@@ -81,5 +84,6 @@ public interface PluginBase<L, R, E> extends EventController<L>, SchedulerContro
      *
      * @return the data folder of the plugin
      */
+    @NotNull
     File getDataFolder();
 }

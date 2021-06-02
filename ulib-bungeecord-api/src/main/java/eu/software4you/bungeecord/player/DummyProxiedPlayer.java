@@ -18,6 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A dummy player intended for use if the actual player is current offline.
+ */
 public class DummyProxiedPlayer implements ProxiedPlayer {
     private final UUID uniqueId;
     private final String name;

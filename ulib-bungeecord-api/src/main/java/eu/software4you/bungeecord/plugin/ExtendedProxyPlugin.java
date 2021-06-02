@@ -16,6 +16,18 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+/**
+ * Implementation of {@link ExtendedPlugin}.
+ * <p>
+ * You can use it by simply extending your plugin class with this class <i>instead</i> of {@link net.md_5.bungee.api.plugin.Plugin}:
+ * <pre>{@code
+ * // ...
+ * public class YourBungeeCordPlugin extends ExtendedProxyPlugin {
+ *     // ...
+ * }
+ * }</pre>
+ * </p>
+ */
 public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final static String layoutBaseName = "layout";
     private final static String layoutFileExtension = "yml";

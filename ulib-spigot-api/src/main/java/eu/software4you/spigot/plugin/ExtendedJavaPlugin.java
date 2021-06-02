@@ -16,6 +16,18 @@ import java.io.File;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementation of {@link ExtendedPlugin}.
+ * <p>
+ * You can use it by simply extending your plugin class with this class <i>instead</i> of {@link JavaPlugin}:
+ * <pre>{@code
+ * // ...
+ * public class YourSpigotPlugin extends ExtendedJavaPlugin {
+ *     // ...
+ * }
+ * }</pre>
+ * </p>
+ */
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
     private final Layout layout = new Layout(null);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
