@@ -3,6 +3,7 @@ package eu.software4you.velocity.plugin;
 import eu.software4you.ulib.minecraft.plugin.Layout;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
 public class VelocityLayout extends Layout<Audience> {
@@ -16,7 +17,7 @@ public class VelocityLayout extends Layout<Audience> {
     }
 
     @Override
-    protected void sendMessage(Audience receiver, String message) {
+    protected void sendMessage(@NotNull Audience receiver, String message) {
         receiver.sendMessage(Component.text(message));
     }
 }
