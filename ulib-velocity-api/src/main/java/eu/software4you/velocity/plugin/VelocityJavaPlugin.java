@@ -6,13 +6,11 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import eu.software4you.configuration.ConfigurationWrapper;
 import eu.software4you.reflect.ReflectUtil;
-import eu.software4you.ulib.minecraft.plugin.Layout;
 import eu.software4you.utils.FileUtils;
 import eu.software4you.utils.IOUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
@@ -41,7 +39,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @Getter
     private final File file = FileUtils.getClassFile(getClass());
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final Layout<Audience> layout = new VelocityLayout(null);
+    private final Layout layout = new Layout(null);
     private String layoutFileName = defaultLayoutFileName;
 
     private PluginContainer getPlugin() {
@@ -80,7 +78,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public @NotNull Layout<Audience> getLayout() {
+    public @NotNull Layout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;

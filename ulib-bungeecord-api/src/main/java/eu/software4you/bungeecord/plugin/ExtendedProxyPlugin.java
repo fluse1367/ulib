@@ -1,9 +1,7 @@
 package eu.software4you.bungeecord.plugin;
 
 import eu.software4you.configuration.ConfigurationWrapper;
-import eu.software4you.ulib.minecraft.plugin.Layout;
 import eu.software4you.utils.IOUtil;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
@@ -23,7 +21,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final Layout<CommandSender> layout = new BungeecordLayout(null);
+    private final Layout layout = new Layout(null);
     private String layoutFileName = defaultLayoutFileName;
 
     @Override
@@ -52,7 +50,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public @NotNull Layout<CommandSender> getLayout() {
+    public @NotNull Layout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;

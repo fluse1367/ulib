@@ -1,19 +1,21 @@
 package eu.software4you.velocity.plugin;
 
-import eu.software4you.ulib.minecraft.plugin.Layout;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
-public class VelocityLayout extends Layout<Audience> {
-    VelocityLayout(ConfigurationSection section) {
+/**
+ * Velocity implementation of {@link eu.software4you.ulib.minecraft.plugin.Layout} with {@link Audience} as receiver.
+ */
+public class Layout extends eu.software4you.ulib.minecraft.plugin.Layout<Audience> {
+    Layout(ConfigurationSection section) {
         super(section);
     }
 
     @Override
-    protected Layout<Audience> create(ConfigurationSection section) {
-        return new VelocityLayout(section);
+    protected Layout create(ConfigurationSection section) {
+        return new Layout(section);
     }
 
     @Override

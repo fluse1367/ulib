@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ExtendedPlugin extends Plugin, PluginBase<Listener, BukkitTask, CommandSender> {
     @Override
     @NotNull
-    SpigotLayout getLayout();
+    Layout getLayout();
 
     /**
      * Gets the main menu manager. Creates a new one if needed.

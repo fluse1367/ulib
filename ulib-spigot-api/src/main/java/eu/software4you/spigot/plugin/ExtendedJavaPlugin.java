@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
-    private final SpigotLayout layout = new SpigotLayout(null);
+    private final Layout layout = new Layout(null);
     private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
     private String layoutFileName = DEFAULT_LAYOUT_FILE_NAME;
     private MenuManager mainMenuManager;
@@ -50,7 +50,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public @NotNull SpigotLayout getLayout() {
+    public @NotNull Layout getLayout() {
         if (layout.section() == null)
             reloadLayout();
         return layout;

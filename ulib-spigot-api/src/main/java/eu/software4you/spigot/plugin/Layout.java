@@ -1,6 +1,5 @@
 package eu.software4you.spigot.plugin;
 
-import eu.software4you.ulib.minecraft.plugin.Layout;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ulib.ported.org.bukkit.configuration.ConfigurationSection;
@@ -9,16 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Spigot implementation of {@link Layout} with {@link CommandSender} as receiver.
+ * Spigot implementation of {@link eu.software4you.ulib.minecraft.plugin.Layout} with {@link CommandSender} as receiver.
  */
-public class SpigotLayout extends Layout<CommandSender> {
-    public SpigotLayout(ConfigurationSection section) {
+public class Layout extends eu.software4you.ulib.minecraft.plugin.Layout<CommandSender> {
+    public Layout(ConfigurationSection section) {
         super(section);
     }
 
     @Override
-    protected SpigotLayout create(ConfigurationSection section) {
-        return new SpigotLayout(section);
+    protected Layout create(ConfigurationSection section) {
+        return new Layout(section);
     }
 
     @Override
