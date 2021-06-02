@@ -12,13 +12,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Can build {@link ItemStack}s fast and easy with one line.
  */
 public class ItemBuilder {
     private ItemStack stack;
-    private final ItemMeta meta;
+    private ItemMeta meta;
 
     /**
      * Wraps an already existing item.
@@ -77,6 +78,30 @@ public class ItemBuilder {
      */
     public ItemMeta getMeta() {
         return meta;
+    }
+
+    /**
+     * Applies a function to the item meta.
+     *
+     * @param mod the function
+     * @return this
+     */
+    public ItemBuilder meta(Consumer<ItemMeta> mod) {
+        mod.accept(meta);
+        return this;
+    }
+
+    /**
+     * Applies a function to a specific item meta.
+     *
+     * @param metaClass A compatible meta class (see {@link org.bukkit.inventory.meta} package)
+     * @param <T>       The meta type
+     * @param mod       the function
+     * @return this
+     */
+    public <T extends ItemMeta> ItemBuilder meta(Class<T> metaClass, Consumer<T> mod) {
+        mod.accept(getMeta(metaClass));
+        return this;
     }
 
     /**
@@ -225,7 +250,9 @@ public class ItemBuilder {
      * @see NBTEditor#set(Object, Object, Object...)
      */
     public ItemBuilder nbtTag(Object value, Object... keys) {
-        this.stack = NBTEditor.set(stack, value, keys);
+        stack.setItemMeta(meta.clone());
+        stack = NBTEditor.set(stack, value, keys);
+        meta = stack.getItemMeta();
         return this;
     }
 
