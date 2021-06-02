@@ -9,6 +9,11 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * To use this class, you have to put the
+ * <a href="https://github.com/apache/httpcomponents-client/">Apache HttpComponents HttpClient</a> into the classpath
+ * (this is another "make the compiler happy" situation).
+ */
 public abstract class HttpUtil {
     @Await
     private static HttpUtil impl;

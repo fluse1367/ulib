@@ -8,7 +8,7 @@ dependencies {
                   'org.apache.commons:commons-lang3:3.8.1',
                   'commons-beanutils:commons-beanutils:1.9.3',
                   'commons-codec:commons-codec:1.11',
-                  // apache httpclient
+                  // apache httpclient; update version in eu.software4you.http.HttpUtil (core-api) when updating this
                   'org.apache.httpcomponents:httpclient:4.5.10',
                   // google guava/gson
                   'com.google.guava:guava:27.0.1-jre',
