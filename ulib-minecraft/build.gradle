@@ -1,4 +1,4 @@
 dependencies {
-    compile project(':ulib-minecraft-api')
-    compile project(':ulib-core')
+    api project(':ulib-minecraft-api')
+    api project(':ulib-core')
 }

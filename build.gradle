@@ -154,8 +154,8 @@ subprojects {
 
     // default dependencies
     dependencies {
-        compileOnly coordsJetbrainsAnnotations
-        compileOnly coordsLombok
+        implementation coordsJetbrainsAnnotations
+        implementation coordsLombok
 
         // annotation
         annotationProcessor coordsLombok
@@ -174,7 +174,7 @@ subprojects {
                         String excl = dependency.substring(2, i = dependency.indexOf("):"))
                         dependency = dependency.substring(i + 2);
 
-                        compileOnly(dependency) {
+                        implementation(dependency) {
                             exclude group: excl
                         }
                         shade(dependency) {
@@ -183,7 +183,7 @@ subprojects {
                         continue
                     }
 
-                    compileOnly dependency
+                    implementation dependency
                     shade dependency
                 }
             }
@@ -247,4 +247,60 @@ subprojects {
             }
         }
     }
+    // shadowing end
+
+    // publishing
+    if (project.name.endsWith("-api")) {
+        javadoc {
+            title "${project.name.substring(0, project.name.lastIndexOf('-api'))} ${jar.archiveVersion.get()} API"
+            if (project.name != 'ulib-core-api') {
+                def projects = ['minecraft-api', 'core-api']
+                for (String sub : projects) {
+                    def proj = project(':ulib-' + sub)
+                    source(proj.projectDir.getPath() + "/src/main/java")
+                    //classpath = files(classpath.files, proj.configurations.compileClasspath.collect())
+                }
+            }
+            failOnError false
+        }
+
+        java {
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }
+
+        publishing {
+            publications {
+                library(MavenPublication) {
+                    from components.java
+                    // exclude runtime dependencies from pom
+                    pom.withXml {
+                        asNode().dependencies.'*'.findAll() {
+                            it.scope.text() == 'runtime'
+                        }.each() {
+                            it.parent().remove(it)
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    url deployRepoUrl
+                    credentials(HttpHeaderCredentials) {
+                        name = deployRepoCredentialMethod
+                        value = deployRepoCredentialValue
+                    }
+                    authentication {
+                        header(HttpHeaderAuthentication)
+                    }
+                }
+            }
+        }
+    }
+    // publishing end
 }

@@ -1,8 +1,8 @@
 dependencies {
-    compile project(':ulib-velocity-api')
-    compile project(':ulib-minecraft')
+    api project(':ulib-velocity-api')
+    api project(':ulib-minecraft')
 
-    compileOnly coordsVelocity
+    implementation coordsVelocity
     annotationProcessor coordsVelocity
 }
 

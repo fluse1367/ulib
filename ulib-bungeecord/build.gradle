@@ -1,7 +1,7 @@
 dependencies {
-    compile project(':ulib-bungeecord-api')
-    compile project(':ulib-minecraft')
-    compileOnly coordsWaterfall
+    api project(':ulib-bungeecord-api')
+    api project(':ulib-minecraft')
+    implementation coordsWaterfall
 }
 
 //shadowing

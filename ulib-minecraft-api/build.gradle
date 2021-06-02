@@ -1,38 +1,7 @@
 dependencies {
-    compile project(':ulib-core-api')
+    api project(':ulib-core-api')
     /*compileOnly coordsPaper
     compileOnly coordsWaterfall*/
 
-    compile files(project(':ulib-core-api').configurations.compileOnly) // shadowing
-}
-
-// publishing
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url deployRepoUrl
-            credentials(HttpHeaderCredentials) {
-                name = deployRepoCredentialMethod
-                value = deployRepoCredentialValue
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+    api files(project(':ulib-core-api').configurations.compileClasspath)
 }

@@ -1,9 +1,9 @@
 dependencies {
-    compile project(':ulib-spigot-api')
-    compile project(':ulib-minecraft')
-    compileOnly coordsPaper
+    api project(':ulib-spigot-api')
+    api project(':ulib-minecraft')
+    implementation coordsPaper
 
-    compileOnly coordsXSeries
+    implementation coordsXSeries
 }
 
 //shadowing

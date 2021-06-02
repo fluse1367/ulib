@@ -2,5 +2,5 @@
 //      to prevent class loader conflicts when injecting code
 
 jar {
-    archiveName "libex"
+    archiveFileName.set "libex"
 }

@@ -1,48 +1,6 @@
 dependencies {
-    compile project(':ulib-minecraft-api')
-    compileOnly coordsPaper
+    api project(':ulib-minecraft-api')
+    implementation coordsPaper
 
-    compileOnly coordsXSeries
-}
-
-// publishing
-javadoc {
-    title "ulib-spigot ${jar.archiveVersion.get()} API"
-    def projects = ['minecraft-api', 'core-api']
-    for (String sub : projects) {
-        def proj = project(':ulib-' + sub)
-        source(proj.projectDir.getPath() + "/src/main/java")
-        classpath = files(classpath.files, proj.configurations.compile.collect(), proj.configurations.compileOnly.collect())
-    }
-    failOnError false
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url deployRepoUrl
-            credentials(HttpHeaderCredentials) {
-                name = deployRepoCredentialMethod
-                value = deployRepoCredentialValue
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+    implementation coordsXSeries
 }

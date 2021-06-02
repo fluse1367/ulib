@@ -23,44 +23,8 @@ dependencies {
     shade 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     /* compile */
-    compileOnly 'com.sun.mail:smtp:1.6.3'
-    compileOnly 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+    implementation 'com.sun.mail:smtp:1.6.3'
+    implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
 
-    compile files("${System.properties['java.home']}/../lib/tools.jar")
-}
-
-// publishing
-javadoc {
-    title "ulib-core ${jar.archiveVersion.get()} API"
-    failOnError false
-}
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url deployRepoUrl
-            credentials(HttpHeaderCredentials) {
-                name = deployRepoCredentialMethod
-                value = deployRepoCredentialValue
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+    api files("${System.properties['java.home']}/../lib/tools.jar")
 }
