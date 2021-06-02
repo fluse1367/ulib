@@ -1,7 +1,7 @@
 package eu.software4you.dependencies;
 
 /**
- * Instance of a maven repository.
+ * Represents a maven repository.
  */
 public interface Repository {
 
