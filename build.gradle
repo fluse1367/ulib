@@ -7,10 +7,10 @@ apply plugin: 'java-library'
 // shadowing - start
 buildscript {
     repositories {
-        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
     }
 }
 // shadowing - end
