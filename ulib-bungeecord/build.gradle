@@ -1,6 +1,8 @@
 dependencies {
     api project(':ulib-bungeecord-api')
     api project(':ulib-minecraft')
+
+
     implementation coordsWaterfall
 }
 
@@ -8,6 +10,5 @@ dependencies {
 shadowJar {
     configurations = [project(':ulib-core').configurations.shade]
     //noinspection GroovyAssignabilityCheck
-    shadowJarIncludeFrom(['core', 'core-api', 'minecraft', 'minecraft-api', 'bungeecord-api'])
-    archiveClassifier.set('plugin')
+    shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'bungeecord-api'])
 }

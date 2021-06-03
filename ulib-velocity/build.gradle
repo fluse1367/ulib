@@ -10,6 +10,5 @@ dependencies {
 shadowJar {
     configurations = [project(':ulib-core').configurations.shade]
     //noinspection GroovyAssignabilityCheck
-    shadowJarIncludeFrom(['core', 'core-api', 'minecraft', 'minecraft-api', 'velocity-api'])
-    archiveClassifier.set('plugin')
+    shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'velocity-api'])
 }

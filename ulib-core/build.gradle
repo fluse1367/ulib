@@ -27,5 +27,4 @@ shadowJar {
     configurations = [project.configurations.shade]
     //noinspection GroovyAssignabilityCheck
     shadowJarIncludeFrom(['core-api'])
-    archiveClassifier.set('lib')
 }

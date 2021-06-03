@@ -163,7 +163,7 @@ subprojects {
 
     ext {
         /**
-         * Adds a list of dependencies as compileOnly and shade dependency.
+         * Adds a list of dependencies as implementation and shade dependency.
          */
         compileShade = { depList ->
             dependencies {
@@ -234,17 +234,18 @@ subprojects {
 
         // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
         shadowJar {
-            def ex = project(':ulib-libex')
-            dependsOn ':ulib-libex:jar'
             dependsOn tasks.relocateShadowJar
+            dependsOn ':ulib-libex:jar'
 
-            from("${ex.buildDir}/libs/") {
+            from("${project(':ulib-libex').buildDir}/libs/") {
                 include "libex"
             }
 
             dependencies {
                 exclude(dependency(coordsLombok))
             }
+
+            archiveClassifier.set(project.name == 'ulib-core' ? 'lib' : 'plugin')
         }
     }
     // shadowing end

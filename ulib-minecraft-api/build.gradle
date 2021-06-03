@@ -1,7 +1,4 @@
 dependencies {
     api project(':ulib-core-api')
-    /*compileOnly coordsPaper
-    compileOnly coordsWaterfall*/
-
     api files(project(':ulib-core-api').configurations.compileClasspath)
 }
