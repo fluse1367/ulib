@@ -1,25 +1,18 @@
 package eu.software4you.ulib;
 
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.function.Supplier;
 
 public class Loader<V> {
     private final Callable<V> call;
     private boolean running;
-    private Future<V> fut;
+    private FutureTask<V> fut;
 
     public Loader(final Supplier<V> loadTask) {
-        this.call = () -> {
-            running = true;
-            val v = loadTask.get();
-            running = false;
-            return v;
-        };
+        this.call = loadTask::get;
         set();
     }
 
@@ -40,6 +33,13 @@ public class Loader<V> {
 
     @SneakyThrows
     public V get() {
+        if (!fut.isDone() && !running) {
+            synchronized (this) {
+                running = true;
+                fut.run();
+                running = false;
+            }
+        }
         return fut.get();
     }
 
