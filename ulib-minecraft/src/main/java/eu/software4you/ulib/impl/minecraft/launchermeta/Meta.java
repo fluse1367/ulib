@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 final class Meta implements VersionsMeta {
+    private final String release, snapshot;
     private final Map<String, Loader<Version>> versions;
 
     Meta(JsonObject json) {
@@ -31,22 +32,22 @@ final class Meta implements VersionsMeta {
         });
         this.versions = Collections.unmodifiableMap(versions);
 
-        // cache latest and snapshot
+        // cache latest release and snapshot
         val latest = json.getAsJsonObject("latest");
-        get(latest.get("release").getAsString());
-        get(latest.get("snapshot").getAsString());
+        get(release = latest.get("release").getAsString());
+        get(snapshot = latest.get("snapshot").getAsString());
     }
 
     @Override
     public @NotNull VersionManifest getRelease() {
         //noinspection ConstantConditions
-        return get("release");
+        return get(release);
     }
 
     @Override
     public @NotNull VersionManifest getSnapshot() {
         //noinspection ConstantConditions
-        return get("snapshot");
+        return get(snapshot);
     }
 
     @Override
