@@ -1,6 +1,8 @@
 package eu.software4you.common.collection;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -13,6 +15,8 @@ import lombok.ToString;
  * @param <S> the second type which you want to defined
  * @param <T> the third type which you want to defined
  */
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 public class Triple<F, S, T> {
@@ -46,29 +50,4 @@ public class Triple<F, S, T> {
 
     public Triple() {
     }
-
-    public F getFirst() {
-        return this.first;
-    }
-
-    public void setFirst(F first) {
-        this.first = first;
-    }
-
-    public S getSecond() {
-        return this.second;
-    }
-
-    public void setSecond(S second) {
-        this.second = second;
-    }
-
-    public T getThird() {
-        return this.third;
-    }
-
-    public void setThird(T third) {
-        this.third = third;
-    }
-
 }

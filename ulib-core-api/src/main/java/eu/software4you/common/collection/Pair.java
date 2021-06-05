@@ -1,6 +1,8 @@
 package eu.software4you.common.collection;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -12,6 +14,8 @@ import lombok.ToString;
  * @param <F> the first type, which you want to defined
  * @param <S> the second type which you want to defined
  */
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 public class Pair<F, S> {
@@ -37,21 +41,4 @@ public class Pair<F, S> {
 
     public Pair() {
     }
-
-    public F getFirst() {
-        return this.first;
-    }
-
-    public void setFirst(F first) {
-        this.first = first;
-    }
-
-    public S getSecond() {
-        return this.second;
-    }
-
-    public void setSecond(S second) {
-        this.second = second;
-    }
-
 }
