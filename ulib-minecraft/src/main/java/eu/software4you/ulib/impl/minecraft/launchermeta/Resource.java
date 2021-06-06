@@ -1,23 +1,21 @@
 package eu.software4you.ulib.impl.minecraft.launchermeta;
 
 import com.google.gson.JsonObject;
-import eu.software4you.http.HttpUtil;
+import eu.software4you.http.CachedResource;
 import eu.software4you.ulib.minecraft.launchermeta.RemoteResource;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
-import java.net.URL;
 
 @Getter
-class Resource implements RemoteResource {
+class Resource extends CachedResource implements RemoteResource {
     private final String id;
-    private final String sha1;
     private final long size;
     @Getter(AccessLevel.NONE)
     private final String urlStr;
-    private final URL url;
 
     Resource(String id, JsonObject json) {
         this(
@@ -30,14 +28,16 @@ class Resource implements RemoteResource {
 
     @SneakyThrows
     Resource(String id, String sha1, long size, String url) {
+        super(url, sha1);
         this.id = id;
-        this.sha1 = sha1;
         this.size = size;
-        this.url = new URL(urlStr = url);
+        this.urlStr = url;
     }
 
+    @SneakyThrows
     @Override
+    @NotNull
     public InputStream download() {
-        return HttpUtil.getContent(urlStr);
+        return super.require();
     }
 }

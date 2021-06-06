@@ -2,7 +2,7 @@ package eu.software4you.ulib.impl.minecraft.launchermeta;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import eu.software4you.http.HttpUtil;
+import eu.software4you.http.CachedResource;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
@@ -28,7 +28,7 @@ final class Meta implements VersionsMeta {
             val url = ver.get("url").getAsString();
 
             versions.put(id, new Loader<>(() -> new Version(url, JsonParser.parseReader(
-                    new InputStreamReader(HttpUtil.getContent(url))).getAsJsonObject())));
+                    new InputStreamReader(new CachedResource(url, null).require())).getAsJsonObject())));
         });
         this.versions = Collections.unmodifiableMap(versions);
 

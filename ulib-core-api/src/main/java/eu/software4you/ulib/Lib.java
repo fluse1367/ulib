@@ -22,7 +22,8 @@ public interface Lib {
     String getVersion();
 
     /**
-     * Returns the operation name of the library.<br>
+     * Returns the operation name of the library.
+     * <p>
      * It is in format "name-version" (e.g. "uLib-standalone")
      */
     @NotNull
@@ -37,18 +38,28 @@ public interface Lib {
     String getNameOnly();
 
     /**
-     * Returns the data directory.<br>
+     * Returns the data directory.
+     * <p>
      * Usually this is ".ulib".
      */
     @NotNull
     File getDataDir();
 
     /**
-     * Returns the local maven repository directory.<br>
+     * Returns the local maven repository directory.
+     * <p>
      * Usually this is ".ulib/libraries"
      */
     @NotNull
     File getLibrariesDir();
+
+    /**
+     * Returns the cache directory.
+     * <p>
+     * Usually this is ".ulib/cache".
+     */
+    @NotNull
+    File getCacheDir();
 
     /**
      * Returns the local unsafe repository directory.

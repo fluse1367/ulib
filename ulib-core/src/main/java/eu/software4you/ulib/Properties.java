@@ -13,6 +13,7 @@ class Properties {
     final File DATA_DIR;
     final File LIBS_DIR;
     final File LIBS_UNSAFE_DIR;
+    final File CACHE_DIR;
     final boolean QUIET;
     final boolean NO_SPLASH;
     final Level LOG_LEVEL;
@@ -35,6 +36,9 @@ class Properties {
 
         String libsUnsafeDir = System.getProperty("ulib.directory.libraries_unsafe");
         LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(DATA_DIR, "libraries_unsafe");
+
+        String cacheDir = System.getProperty("ulib.directory.cache");
+        CACHE_DIR = cacheDir != null ? new File(cacheDir) : new File(DATA_DIR, "cache");
 
         QUIET = System.getProperty("ulib.quiet", "false").equalsIgnoreCase("true");
 
