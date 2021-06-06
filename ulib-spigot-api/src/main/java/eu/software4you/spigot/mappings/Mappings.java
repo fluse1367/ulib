@@ -2,6 +2,7 @@ package eu.software4you.spigot.mappings;
 
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;
+import eu.software4you.ulib.minecraft.launchermeta.RemoteResource;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
 import org.jetbrains.annotations.NotNull;
@@ -18,27 +19,30 @@ public abstract class Mappings {
     private static Mappings impl;
 
     /**
-     * Loads the client mappings.
+     * Loads server vanilla mappings from a specific manifest.
      *
      * @param manifest the source manifest
-     * @return the mappings, or {@code null} if the manifest does not contain mappings
+     * @return the mapping, or {@code null} if the manifest does not contain mappings
      */
     @Nullable
-    public static JarMapping loadClientMappings(@NotNull VersionManifest manifest) {
-        return impl.load(manifest, "client_mappings");
+    public static VanillaMapping loadVanillaServerMappings(@NotNull VersionManifest manifest) {
+        return impl.loadVanilla(manifest.getDownload("server_mappings"));
     }
 
     /**
-     * Loads the server mappings.
+     * Returns the server vanilla mappings for the current minecraft version.
+     * <p>
+     * Returns a cached version if possible, otherwise loads it fist.
      *
-     * @param manifest the source manifest
-     * @return the mappings, or {@code null} if the manifest does not contain mappings
+     * @return the mapping
      */
-    @Nullable
-    public static JarMapping loadServerMappings(@NotNull VersionManifest manifest) {
-        return impl.load(manifest, "server_mappings");
+    @NotNull
+    public static VanillaMapping getVanillaMapping() {
+        return impl.getCurrentVanilla();
     }
 
-    protected abstract JarMapping load(VersionManifest manifest, String what);
+    protected abstract VanillaMapping loadVanilla(RemoteResource mapping);
+
+    protected abstract VanillaMapping getCurrentVanilla();
 
 }

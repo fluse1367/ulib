@@ -45,6 +45,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
     private SqlEngine mainUserCacheEngine;
+    private String plainMcVersion;
 
     public static ULibSpigotPlugin getInstance() {
         return instance;
@@ -70,20 +71,20 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
 
             MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
 
-            if (!PAPER) {
+            if (PAPER) {
+                registerEvents(new CustomEnchantmentHandler.Paper());
+
+                plainMcVersion = getServer().getMinecraftVersion();
+
+            } else {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
                         " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
                         " See https://papermc.io/ for more information.");
                 // register no-paper workarounds
                 registerEvents(new CustomEnchantmentHandler.NoPaper());
 
-                return;
+                plainMcVersion = (String) ReflectUtil.call(getServer().getClass(), getServer(), "getServer().getVersion()");
             }
-
-
-            // only for paper from this point on
-            registerEvents(new CustomEnchantmentHandler.Paper());
-
         } catch (Exception e) {
             e.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(this);
@@ -118,5 +119,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
         DependencyLoader.free(e.getPlugin().getClass().getClassLoader());
     }
 
-
+    public String getPlainMcVersion() {
+        return plainMcVersion;
+    }
 }
