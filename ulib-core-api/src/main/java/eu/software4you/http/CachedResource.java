@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.function.Function;
 
 /**
  * A http resource that may be cached.
@@ -29,23 +30,22 @@ public class CachedResource {
     protected final File file;
 
     /**
-     * @param url  the url of the resource
-     * @param sha1 the sha1 checksum of the resource, or {@code null}
+     * @param url          the url of the resource
+     * @param sha1         the sha1 checksum of the resource, or {@code null}
+     * @param getCachePath function to retrieve the local cache location path
      */
-    public CachedResource(@NotNull URL url, @Nullable String sha1) {
-        this.url = url;
+    public CachedResource(@NotNull String url, @Nullable String sha1, @NotNull Function<URL, String> getCachePath) {
+        this.url = url(url);
         this.sha1 = sha1;
-        this.file = new File(ULib.get().getCacheDir(), String.format("http/%s%s", url.getHost(), url.getPath()));
+        this.file = new File(ULib.get().getCacheDir(), getCachePath.apply(this.url));
     }
 
     /**
      * @param url  the url of the resource
      * @param sha1 the sha1 checksum of the resource, or {@code null}
-     * @throws java.net.MalformedURLException if url is malformed
      */
-    @SuppressWarnings("JavaDoc")
     public CachedResource(@NotNull String url, @Nullable String sha1) {
-        this(url(url), sha1);
+        this(url, sha1, u -> String.format("http/%s%s", u.getHost(), u.getPath()));
     }
 
     @SneakyThrows
