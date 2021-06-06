@@ -22,15 +22,15 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    public static void write(@NotNull InputStream in, @NotNull OutputStream out) throws IOException {
-        byte[] buff = new byte[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            out.write(buff, 0, len);
+    public static void write(@NotNull InputStream is, @NotNull OutputStream os) throws IOException {
+        try (val in = is; val out = os) {
+            byte[] buff = new byte[1024];
+            int len;
+            while ((len = in.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+            out.flush();
         }
-        out.flush();
-        out.close();
-        in.close();
     }
 
     /**
