@@ -11,17 +11,19 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Impl(HttpUtil.class)
 final class HttpUtilImpl extends HttpUtil {
@@ -128,12 +130,17 @@ final class HttpUtilImpl extends HttpUtil {
             request.setHeader(ent.getContentType());
             request.setHeader(ent.getContentEncoding());
         }
-        return execute(client, (HttpUriRequest) request);
+        return execute(client, (HttpRequestBase) request);
     }
 
     @SneakyThrows
-    private HttpResponse execute(HttpClient client, HttpUriRequest request) {
+    private HttpResponse execute(HttpClient client, HttpRequestBase request) {
         request.addHeader("Host", request.getURI().getHost());
+        request.setConfig(RequestConfig.custom()
+                .setSocketTimeout((int) TimeUnit.SECONDS.toMillis(10))
+                .setConnectTimeout((int) TimeUnit.SECONDS.toMillis(10))
+                .setConnectionRequestTimeout((int) TimeUnit.SECONDS.toMillis(10))
+                .build());
         return client.execute(request);
     }
 
