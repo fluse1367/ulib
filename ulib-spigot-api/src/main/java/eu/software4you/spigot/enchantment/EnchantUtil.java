@@ -124,6 +124,10 @@ public abstract class EnchantUtil {
 
     /**
      * Registers a custom enchantment into bukkit.
+     * <p>
+     * <b>Warning:</b> Registering a custom enchantment will download the current server mappings
+     * (they're needed for some reflection operations) and store them into memory.
+     * This will, if not already happened, take a couple of seconds and also occupy a lot of memory.
      *
      * @param enchantment the enchantment to register
      * @return if the registration was successful

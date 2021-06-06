@@ -9,6 +9,7 @@ import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -33,12 +34,22 @@ import java.util.stream.Collectors;
 
 public class CustomEnchantmentHandler implements Listener {
     private final String getEnchantmentSeedMethodName;
+    private final ULibSpigotPlugin pl;
 
-    public CustomEnchantmentHandler() {
+    private CustomEnchantmentHandler(ULibSpigotPlugin pl) {
+        this.pl = pl;
         // Use Mappings API to get xpSeed
         getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
                 .get("net.minecraft.world.entity.player.Player")
                 .getMethod("getEnchantmentSeed").getObfuscatedName();
+    }
+
+    static void register() {
+        val pl = ULibSpigotPlugin.getInstance();
+        val handler = new CustomEnchantmentHandler(pl);
+
+        pl.registerEvents(handler);
+        pl.registerEvents(ULibSpigotPlugin.PAPER ? new Paper() : handler.new NoPaper());
     }
 
     // villagers can trade EVERY enchantment
@@ -149,7 +160,7 @@ public class CustomEnchantmentHandler implements Listener {
         }
 
 
-        ULibSpigotPlugin.getInstance().sync(() -> EnchantUtil.updateCustomEnchantmentLore(
+        pl.sync(() -> EnchantUtil.updateCustomEnchantmentLore(
                 ((EnchantingInventory) e.getInventory()).getItem()
         ));
     }
@@ -214,28 +225,10 @@ public class CustomEnchantmentHandler implements Listener {
         return EnchantUtil.getCustomEnchantments().contains(enchantment);
     }
 
-
-    public static class NoPaper implements Listener {
-
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        public void handle(InventoryClickEvent e) {
-            Player p = (Player) e.getWhoClicked();
-            InventoryView grindstone = p.getOpenInventory();
-            if (grindstone.getType() != InventoryType.GRINDSTONE) {
-                return;
-            }
-            ULibSpigotPlugin.getInstance().sync(() -> {
-                ItemStack result = grindstone.getItem(2);
-                if (result == null || result.getType() == Material.AIR)
-                    return;
-
-                EnchantUtil.updateCustomEnchantmentLore(result);
-            });
-        }
-
-    }
-
     public static class Paper implements Listener {
+
+        private Paper() {
+        }
 
         @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
         public void handle(PrepareResultEvent e) {
@@ -246,6 +239,29 @@ public class CustomEnchantmentHandler implements Listener {
             if (result == null)
                 return;
             EnchantUtil.updateCustomEnchantmentLore(result);
+        }
+
+    }
+
+    public class NoPaper implements Listener {
+
+        private NoPaper() {
+        }
+
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+        public void handle(InventoryClickEvent e) {
+            Player p = (Player) e.getWhoClicked();
+            InventoryView grindstone = p.getOpenInventory();
+            if (grindstone.getType() != InventoryType.GRINDSTONE) {
+                return;
+            }
+            pl.sync(() -> {
+                ItemStack result = grindstone.getItem(2);
+                if (result == null || result.getType() == Material.AIR)
+                    return;
+
+                EnchantUtil.updateCustomEnchantmentLore(result);
+            });
         }
 
     }

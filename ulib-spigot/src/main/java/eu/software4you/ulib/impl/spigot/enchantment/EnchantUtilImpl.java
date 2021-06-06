@@ -121,6 +121,11 @@ final class EnchantUtilImpl extends EnchantUtil {
         if (!customEnchantments.add(enchantment))
             return false;
 
+        // register enchantmenthandler if not registered
+        if (!ULibSpigotPlugin.getInstance().isListening(CustomEnchantmentHandler.class)) {
+            CustomEnchantmentHandler.register();
+        }
+
         return byKeyName((byKey, byName) -> {
             if (byKey.containsKey(enchantment.getKey()) || byName.containsKey(enchantment.getName())) {
                 // throw new IllegalArgumentException("Cannot set already-set enchantment");

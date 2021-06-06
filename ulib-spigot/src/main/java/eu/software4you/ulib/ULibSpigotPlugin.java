@@ -4,13 +4,13 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.dependencies.DependencyLoader;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.sql.SqlEngine;
-import eu.software4you.ulib.impl.spigot.enchantment.CustomEnchantmentHandler;
 import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.messaging.Messenger;
@@ -66,14 +66,10 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
             messenger.registerIncomingPluginChannel(this, "BungeeCord", proxyServerBridgeImpl);
 
-            registerEvents(new CustomEnchantmentHandler());
-
 
             MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
 
             if (PAPER) {
-                registerEvents(new CustomEnchantmentHandler.Paper());
-
                 plainMcVersion = getServer().getMinecraftVersion();
 
             } else {
@@ -81,7 +77,6 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
                         " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
                         " See https://papermc.io/ for more information.");
                 // register no-paper workarounds
-                registerEvents(new CustomEnchantmentHandler.NoPaper());
 
                 plainMcVersion = (String) ReflectUtil.call(getServer().getClass(), getServer(), "getServer().getVersion()");
             }
@@ -121,5 +116,11 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
 
     public String getPlainMcVersion() {
         return plainMcVersion;
+    }
+
+    public boolean isListening(Class<? extends Listener> clazz) {
+        return HandlerList.getRegisteredListeners(this).stream()
+                .map(reg -> reg.getListener().getClass())
+                .anyMatch(cl -> cl == clazz);
     }
 }
