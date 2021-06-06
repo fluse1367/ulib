@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.MULTILINE;
 
-final class VanillaMapping extends MappingRoot implements eu.software4you.spigot.mappings.VanillaMapping {
+final class VanillaMapping extends MappingRoot<String> implements eu.software4you.spigot.mappings.VanillaMapping {
     /*
      pattern to find a whole class mapping (including members)
      original regex:                    /^(\S+) -> (\S+):$\n?((?:^ {4}\S+ \S+ -> \S+$\n?)*)/gmi

@@ -11,13 +11,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-abstract class MappingRoot implements JarMapping {
+abstract class MappingRoot<T> implements JarMapping {
 
     protected final Map<String, ClassMapping> byOriginalName;
     protected final Map<String, ClassMapping> byObfuscatedName;
     private final Map<String, ObfClass> dummies = new ConcurrentHashMap<>();
 
-    MappingRoot(final String mappingData) {
+    MappingRoot(final T mappingData) {
         val mappings = generateMappings(mappingData);
         this.byOriginalName = Collections.unmodifiableMap(mappings.getFirst());
         this.byObfuscatedName = Collections.unmodifiableMap(mappings.getSecond());
@@ -26,7 +26,7 @@ abstract class MappingRoot implements JarMapping {
     /**
      * @return pair first: mappings by original name; pair second: mappings by obfuscated name
      */
-    protected abstract Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(String mappingData);
+    protected abstract Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(T mappingData);
 
     @Override
     public @NotNull Collection<eu.software4you.spigot.mappings.ClassMapping> getAll() {
