@@ -5,6 +5,7 @@ import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.spigot.enchantment.CustomEnchantment;
 import eu.software4you.spigot.enchantment.EnchantUtil;
+import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import lombok.SneakyThrows;
@@ -31,7 +32,14 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class CustomEnchantmentHandler implements Listener {
-    // TODO: enchanting table
+    private final String getEnchantmentSeedMethodName;
+
+    public CustomEnchantmentHandler() {
+        // Use Mappings API to get xpSeed
+        getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
+                .get("net.minecraft.world.entity.player.Player")
+                .getMethod("getEnchantmentSeed").getObfuscatedName();
+    }
 
     // villagers can trade EVERY enchantment
     // 1.16: except soul speed
@@ -114,7 +122,7 @@ public class CustomEnchantmentHandler implements Listener {
 
         // set seed to exp seed of player
         int xpSeed = (int) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_ENTITY.getClass("CraftPlayer"),
-                e.getEnchanter(), "getHandle().eF()" // EntityHuman#eF() every version the same? <-- NO
+                e.getEnchanter(), String.format("getHandle().%s()", getEnchantmentSeedMethodName)
         );
         rand.setSeed(xpSeed);
 
