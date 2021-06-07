@@ -26,16 +26,16 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
 
     /*
      pattern to find class member mappings (fields only)
-     regex: /^ {4}([^\r\n\t\f\v :]+) ([^<>\r\n\t\f\v ]+) -> (\S+)$/gmi
+     regex: /^ {4}([^\r\n\t\f\v :]+) ([^<>()\r\n\t\f\v ]+) -> (\S+)$/gmi
      */
-    private static final Pattern CLASS_MEMBER_FIELDS_PATTERN = Pattern.compile("^ {4}([^\\r\\n\\t\\f\\v :]+) ([^<>\\r\\n\\t\\f\\v ]+) -> (\\S+)$",
+    private static final Pattern CLASS_MEMBER_FIELDS_PATTERN = Pattern.compile("^ {4}([^\\r\\n\\t\\f\\v :]+) ([^<>()\\r\\n\\t\\f\\v ]+) -> (\\S+)$",
             MULTILINE | CASE_INSENSITIVE);
 
     /*
      pattern to find class member mappings (methods only, except <init> and <clinit>)
-     regex: /^ {4}\d+:\d+:(\S+) ([^<>\r\n\t\f\v ]+)\((\S+)*\) -> (\S+)$/gmi
+     regex: /^ {4}(?:\d+:\d+:)?(\S+) ([^<>\r\n\t\f\v ]+)\((\S+)*\) -> (\S+)$/gmi
      */
-    private static final Pattern CLASS_MEMBER_METHODS_PATTERN = Pattern.compile("^ {4}\\d+:\\d+:(\\S+) ([^<>\\r\\n\\t\\f\\v ]+)\\((\\S+)*\\) -> (\\S+)$",
+    private static final Pattern CLASS_MEMBER_METHODS_PATTERN = Pattern.compile("^ {4}(?:\\d+:\\d+:)?(\\S+) ([^<>\\r\\n\\t\\f\\v ]+)\\((\\S+)*\\) -> (\\S+)$",
             MULTILINE | CASE_INSENSITIVE);
 
     VanillaMapping(String mappingData) {
