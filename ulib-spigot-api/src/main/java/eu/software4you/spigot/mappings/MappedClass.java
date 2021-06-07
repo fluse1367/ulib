@@ -3,13 +3,13 @@ package eu.software4you.spigot.mappings;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a name-obfuscated class.
+ * Represents a name-mapped class.
  * <p>
- * Note: {@link #getName()} and {@link #getObfuscatedName()} return fully qualified class names.
+ * Note: {@link #sourceName()} and {@link #mappedName()} return fully qualified class names.
  */
-public interface ObfClass extends Obf<Class<?>> {
+public interface MappedClass extends Mapped<Class<?>> {
     /**
-     * Attempts to find the class using {@link #getObfuscatedName()}.
+     * Attempts to find the class using {@link #mappedName()}.
      * <p>
      * Does not initialize the class.
      *

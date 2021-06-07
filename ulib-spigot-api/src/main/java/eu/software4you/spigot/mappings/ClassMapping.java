@@ -6,34 +6,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * Representation of a name-obfuscated class with it's members.
+ * Representation of a name-mapped class with it's members.
  */
-public interface ClassMapping extends ObfClass {
+public interface ClassMapping extends MappedClass {
     /**
      * Returns all field mappings.
      *
      * @return all field mappings.
      */
     @NotNull
-    Collection<ObfField> getFields();
+    Collection<MappedField> fields();
 
     /**
      * Returns a specific field.
      *
-     * @param originalName the <b>un-obfuscated</b> field name
+     * @param sourceName the <b>source</b> (original) field name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ObfField getField(String originalName);
+    MappedField fieldFromSource(String sourceName);
 
     /**
      * Returns a specific field.
      *
-     * @param obfuscatedName the <b>obfuscated</b> field name
+     * @param mappedName the <b>mapped</b> field name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ObfField searchField(String obfuscatedName);
+    MappedField fieldFromMapped(String mappedName);
 
     /**
      * Returns all method mappings.
@@ -41,23 +41,23 @@ public interface ClassMapping extends ObfClass {
      * @return all method mappings.
      */
     @NotNull
-    Collection<ObfMethod> getMethods();
+    Collection<MappedMethod> methods();
 
     /**
      * Returns a specific method.
      *
-     * @param originalName the <b>un-obfuscated</b> method name
+     * @param sourceName the <b>source</b> (original) method name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ObfMethod getMethod(String originalName);
+    MappedMethod methodFromSource(String sourceName);
 
     /**
      * Returns a specific method.
      *
-     * @param obfuscatedName the <b>obfuscated</b> method name
+     * @param mappedName the <b>mapped</b> method name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ObfMethod searchMethod(String obfuscatedName);
+    MappedMethod methodFromMapped(String mappedName);
 }

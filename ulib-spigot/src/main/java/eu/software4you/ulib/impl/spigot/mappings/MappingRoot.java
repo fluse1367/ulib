@@ -13,40 +13,40 @@ import java.util.concurrent.ConcurrentHashMap;
 
 abstract class MappingRoot<T> implements JarMapping {
 
-    protected final Map<String, ClassMapping> byOriginalName;
-    protected final Map<String, ClassMapping> byObfuscatedName;
-    private final Map<String, ObfClass> dummies = new ConcurrentHashMap<>();
+    protected final Map<String, ClassMapping> bySourceName;
+    protected final Map<String, ClassMapping> byMappedName;
+    private final Map<String, MappedClass> dummies = new ConcurrentHashMap<>();
 
     MappingRoot(final T mappingData) {
         val mappings = generateMappings(mappingData);
-        this.byOriginalName = Collections.unmodifiableMap(mappings.getFirst());
-        this.byObfuscatedName = Collections.unmodifiableMap(mappings.getSecond());
+        this.bySourceName = Collections.unmodifiableMap(mappings.getFirst());
+        this.byMappedName = Collections.unmodifiableMap(mappings.getSecond());
     }
 
     /**
-     * @return pair first: mappings by original name; pair second: mappings by obfuscated name
+     * @return pair first: mappings by original name; pair second: mappings by mapped name
      */
     protected abstract Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(T mappingData);
 
     @Override
-    public @NotNull Collection<eu.software4you.spigot.mappings.ClassMapping> getAll() {
-        return Collections.unmodifiableCollection(byOriginalName.values());
+    public @NotNull Collection<eu.software4you.spigot.mappings.ClassMapping> all() {
+        return Collections.unmodifiableCollection(bySourceName.values());
     }
 
     @Override
-    public @Nullable ClassMapping get(@NotNull String originalName) {
-        return byOriginalName.get(originalName);
+    public @Nullable ClassMapping fromSource(@NotNull String originalName) {
+        return bySourceName.get(originalName);
     }
 
     @Override
-    public @Nullable ClassMapping search(@NotNull String obfuscatedName) {
-        return byObfuscatedName.get(obfuscatedName);
+    public @Nullable ClassMapping fromMapped(@NotNull String mappedName) {
+        return byMappedName.get(mappedName);
     }
 
     @NotNull
-    protected ObfClass getOrCreateDummy(String originalName) {
-        if (byOriginalName.containsKey(originalName)) {
-            return byOriginalName.get(originalName);
+    protected MappedClass getOrCreateDummy(String originalName) {
+        if (bySourceName.containsKey(originalName)) {
+            return bySourceName.get(originalName);
         }
         if (!dummies.containsKey(originalName)) {
             dummies.put(originalName, new ClassMapping(originalName, originalName,

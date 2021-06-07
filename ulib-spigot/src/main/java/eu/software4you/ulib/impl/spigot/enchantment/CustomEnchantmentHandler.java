@@ -40,8 +40,8 @@ public class CustomEnchantmentHandler implements Listener {
         this.pl = pl;
         // Use Mappings API to get xpSeed
         getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
-                .get("net.minecraft.world.entity.player.Player")
-                .getMethod("getEnchantmentSeed").getObfuscatedName();
+                .fromSource("net.minecraft.world.entity.player.Player")
+                .methodFromSource("getEnchantmentSeed").mappedName();
     }
 
     static void register() {

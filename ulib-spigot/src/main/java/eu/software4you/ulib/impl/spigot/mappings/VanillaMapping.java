@@ -82,11 +82,11 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
         return new Pair<>(byOriginalName, byObfuscatedName);
     }
 
-    private List<Triple<String, String, Function<ObfClass, Supplier<ObfField>>>> mapFields(String membersData) {
+    private List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> mapFields(String membersData) {
         // process fields
         Matcher fieldsMatcher = CLASS_MEMBER_FIELDS_PATTERN.matcher(membersData);
         // triple: name, obfName, loader
-        List<Triple<String, String, Function<ObfClass, Supplier<ObfField>>>> fields = new ArrayList<>();
+        List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
         while (fieldsMatcher.find()) {
             String type = fieldsMatcher.group(1);
             String name = fieldsMatcher.group(2);
@@ -94,7 +94,7 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
 
             ULib.logger().finer(() -> String.format("Member (field of type %s): %s -> %s", type, name, obfName));
 
-            Function<ObfClass, Supplier<ObfField>> loadTaskGenerator = parent -> () -> new ObfField(parent,
+            Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> new MappedField(parent,
                     getOrCreateDummy(type), name, obfName);
             fields.add(new Triple<>(name, obfName, loadTaskGenerator));
         }
@@ -102,11 +102,11 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
         return fields;
     }
 
-    private List<Triple<String, String, Function<ObfClass, Supplier<ObfMethod>>>> mapMethods(String membersData) {
+    private List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> mapMethods(String membersData) {
         // process methods
         Matcher methodsMatcher = CLASS_MEMBER_METHODS_PATTERN.matcher(membersData);
         // triple: name, obfName, loader
-        List<Triple<String, String, Function<ObfClass, Supplier<ObfMethod>>>> methods = new ArrayList<>();
+        List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
         while (methodsMatcher.find()) {
             String returnType = methodsMatcher.group(1);
             String name = methodsMatcher.group(2);
@@ -117,13 +117,13 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
             ULib.logger().finer(() -> String.format("Member (method of type %s, params: %s): %s -> %s",
                     returnType, Arrays.toString(parameterTypes), name, obfName));
 
-            Function<ObfClass, Supplier<ObfMethod>> loadTaskGenerator = parent -> () -> {
-                ObfClass[] paramTypes = new ObfClass[parameterTypes.length];
+            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
+                MappedClass[] paramTypes = new MappedClass[parameterTypes.length];
                 for (int i = 0; i < paramTypes.length; i++) {
                     paramTypes[i] = getOrCreateDummy(parameterTypes[i]);
                 }
 
-                return new ObfMethod(parent, getOrCreateDummy(returnType),
+                return new MappedMethod(parent, getOrCreateDummy(returnType),
                         paramTypes, name, obfName);
             };
             methods.add(new Triple<>(name, obfName, loadTaskGenerator));

@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 
 /**
- * Represents a name-obfuscated field.
+ * Represents a name-mapped field.
  */
-public interface ObfField extends Obf<Field> {
+public interface MappedField extends Mapped<Field> {
     /**
      * Returns the field's type.
      *
      * @return the field's type
      */
     @NotNull
-    ObfClass getType();
+    MappedClass type();
 }

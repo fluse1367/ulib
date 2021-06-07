@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * Mapping for a name-obfuscated jar.
+ * Mapping for a name-mapped jar.
  */
 public interface JarMapping {
 
@@ -16,23 +16,23 @@ public interface JarMapping {
      * @return all class mappings
      */
     @NotNull
-    Collection<ClassMapping> getAll();
+    Collection<ClassMapping> all();
 
     /**
      * Returns a specific class mapping.
      *
-     * @param originalName the <b>un-obfuscated</b> fully qualified class name
+     * @param sourceName the <b>source</b> (original) fully qualified class name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ClassMapping get(@NotNull String originalName);
+    ClassMapping fromSource(@NotNull String sourceName);
 
     /**
      * Returns a specific class mapping.
      *
-     * @param obfuscatedName the <b>obfuscated</b> fully qualified class name
+     * @param mappedName the <b>mapped</b> fully qualified class name
      * @return the mapping, or {@code null} if not found
      */
     @Nullable
-    ClassMapping search(@NotNull String obfuscatedName);
+    ClassMapping fromMapped(@NotNull String mappedName);
 }

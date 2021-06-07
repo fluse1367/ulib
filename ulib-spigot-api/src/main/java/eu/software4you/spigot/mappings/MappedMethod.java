@@ -11,16 +11,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * Represents a name-obfuscated method.
+ * Represents a name-mapped method.
  */
-public interface ObfMethod extends Obf<Method> {
+public interface MappedMethod extends Mapped<Method> {
     /**
      * Returns the method's return type.
      *
      * @return the method's return type.
      */
     @NotNull
-    ObfClass getReturnType();
+    MappedClass returnType();
 
     /**
      * Returns the method's parameters types.
@@ -28,7 +28,7 @@ public interface ObfMethod extends Obf<Method> {
      * @return the method's parameters types
      */
     @NotNull
-    ObfClass[] getParameterTypes();
+    MappedClass[] parameterTypes();
 
     /**
      * Generates a parameters list for this method, ready for use in {@link eu.software4you.reflect.ReflectUtil}.
@@ -41,8 +41,8 @@ public interface ObfMethod extends Obf<Method> {
      */
     default List<Parameter<?>> asParams(Object... params) {
         AtomicInteger i = new AtomicInteger(0);
-        return Arrays.stream(getParameterTypes())
-                .map(ObfClass::find)
+        return Arrays.stream(parameterTypes())
+                .map(MappedClass::find)
                 .map(cl -> {
                     Object param = params[i.getAndIncrement()];
                     Validate.isAssignableFrom(cl, param.getClass(),

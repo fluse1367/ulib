@@ -5,13 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
-final class ObfMethod extends Obf<Method> implements eu.software4you.spigot.mappings.ObfMethod {
-    private final ObfClass parent;
-    private final ObfClass returnType;
-    private final ObfClass[] parameterTypes;
+final class MappedMethod extends Mapped<Method> implements eu.software4you.spigot.mappings.MappedMethod {
+    private final MappedClass parent;
+    private final MappedClass returnType;
+    private final MappedClass[] parameterTypes;
 
-    ObfMethod(ObfClass parent, ObfClass returnType, ObfClass[] parameterTypes, String name, String obfuscatedName) {
-        super(name, obfuscatedName);
+    MappedMethod(MappedClass parent, MappedClass returnType, MappedClass[] parameterTypes, String sourceName, String mappedName) {
+        super(sourceName, mappedName);
         this.parent = parent;
         this.returnType = returnType;
         this.parameterTypes = parameterTypes;
@@ -19,13 +19,13 @@ final class ObfMethod extends Obf<Method> implements eu.software4you.spigot.mapp
 
     @NotNull
     @Override
-    public ObfClass getReturnType() {
+    public MappedClass returnType() {
         return returnType;
     }
 
     @NotNull
     @Override
-    public ObfClass[] getParameterTypes() {
+    public MappedClass[] parameterTypes() {
         return parameterTypes;
     }
 
@@ -36,6 +36,6 @@ final class ObfMethod extends Obf<Method> implements eu.software4you.spigot.mapp
         for (int i = 0; i < parameterTypes.length; i++) {
             types[i] = parameterTypes[i].find();
         }
-        return parent.find().getDeclaredMethod(getObfuscatedName(), types);
+        return parent.find().getDeclaredMethod(mappedName(), types);
     }
 }

@@ -112,25 +112,25 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
         return new Pair<>(byVanillaName, byBukkitName);
     }
 
-    private List<Triple<String, String, Function<ObfClass, Supplier<ObfField>>>> mapFields(Matcher matcher) {
+    private List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> mapFields(Matcher matcher) {
         // triple: vanillaName, bukkitName, loader
-        List<Triple<String, String, Function<ObfClass, Supplier<ObfField>>>> fields = new ArrayList<>();
+        List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
         while (matcher.find()) {
             String vanillaName = matcher.group(1);
             String bukkitName = matcher.group(2);
 
-            Function<ObfClass, Supplier<ObfField>> loadTaskGenerator = parent -> () ->
+            Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () ->
                     // type = null bc mapping does not contain field types
-                    new ObfField(parent, null, vanillaName, bukkitName);
+                    new MappedField(parent, null, vanillaName, bukkitName);
             fields.add(new Triple<>(vanillaName, bukkitName, loadTaskGenerator));
         }
 
         return fields;
     }
 
-    private List<Triple<String, String, Function<ObfClass, Supplier<ObfMethod>>>> mapMethods(Matcher matcher) {
+    private List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> mapMethods(Matcher matcher) {
         // triple: vanillaName, bukkitName, loader
-        List<Triple<String, String, Function<ObfClass, Supplier<ObfMethod>>>> methods = new ArrayList<>();
+        List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
         while (matcher.find()) {
             String vanillaName = matcher.group(1);
             String bukkitName = matcher.group(4);
@@ -140,13 +140,13 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
             String returnType = decodeSignatures(matcher.group(3)).get(0);
 
 
-            Function<ObfClass, Supplier<ObfMethod>> loadTaskGenerator = parent -> () -> {
-                ObfClass[] paramTypes = new ObfClass[parameterTypes.length];
+            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
+                MappedClass[] paramTypes = new MappedClass[parameterTypes.length];
                 for (int i = 0; i < paramTypes.length; i++) {
                     paramTypes[i] = getOrCreateDummy(parameterTypes[i]);
                 }
 
-                return new ObfMethod(parent, getOrCreateDummy(returnType),
+                return new MappedMethod(parent, getOrCreateDummy(returnType),
                         paramTypes, vanillaName, bukkitName);
             };
             methods.add(new Triple<>(vanillaName, bukkitName, loadTaskGenerator));

@@ -1,6 +1,8 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.common.collection.Triple;
+import eu.software4you.spigot.mappings.MappedField;
+import eu.software4you.spigot.mappings.MappedMethod;
 import eu.software4you.ulib.Loader;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -11,72 +13,72 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-final class ClassMapping extends ObfClass implements eu.software4you.spigot.mappings.ClassMapping {
-    private final Map<String, Loader<ObfField>> fieldsByOriginalName;
-    private final Map<String, Loader<ObfField>> fieldsByObfuscatedName;
-    private final Map<String, Loader<ObfMethod>> methodsByOriginalName;
-    private final Map<String, Loader<ObfMethod>> methodsByObfuscatedName;
+final class ClassMapping extends MappedClass implements eu.software4you.spigot.mappings.ClassMapping {
+    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsBySourceName;
+    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByMappedName;
+    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsBySourceName;
+    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsByMappedName;
 
-    ClassMapping(String name, String obfuscatedName,
+    ClassMapping(String sourceName, String mappedName,
                  // triple: name, obfName, loadTaskGenerator
-                 Collection<Triple<String, String, Function<ObfClass, Supplier<ObfField>>>> fields,
+                 Collection<Triple<String, String, Function<MappedClass, Supplier<eu.software4you.ulib.impl.spigot.mappings.MappedField>>>> fields,
                  // triple: name, obfName, loadTaskGenerator
-                 Collection<Triple<String, String, Function<ObfClass, Supplier<ObfMethod>>>> methods) {
-        super(name, obfuscatedName);
+                 Collection<Triple<String, String, Function<MappedClass, Supplier<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>>>> methods) {
+        super(sourceName, mappedName);
 
-        Map<String, Loader<ObfField>> fieldsByOriginalName = new HashMap<>();
-        Map<String, Loader<ObfField>> fieldsByObfuscatedName = new HashMap<>();
+        Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByOriginalName = new HashMap<>();
+        Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByMappedName = new HashMap<>();
         fields.forEach(t -> {
             val loader = new Loader<>(t.getThird().apply(this));
             fieldsByOriginalName.put(t.getFirst(), loader);
-            fieldsByObfuscatedName.put(t.getSecond(), loader);
+            fieldsByMappedName.put(t.getSecond(), loader);
         });
 
-        Map<String, Loader<ObfMethod>> methodsByOriginalName = new HashMap<>();
-        Map<String, Loader<ObfMethod>> methodsByObfuscatedName = new HashMap<>();
+        Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsByOriginalName = new HashMap<>();
+        Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsByMappedName = new HashMap<>();
         methods.forEach(t -> {
             val loader = new Loader<>(t.getThird().apply(this));
             methodsByOriginalName.put(t.getFirst(), loader);
-            methodsByObfuscatedName.put(t.getSecond(), loader);
+            methodsByMappedName.put(t.getSecond(), loader);
         });
 
-        this.fieldsByOriginalName = Collections.unmodifiableMap(fieldsByOriginalName);
-        this.fieldsByObfuscatedName = Collections.unmodifiableMap(fieldsByObfuscatedName);
-        this.methodsByOriginalName = Collections.unmodifiableMap(methodsByOriginalName);
-        this.methodsByObfuscatedName = Collections.unmodifiableMap(methodsByObfuscatedName);
+        this.fieldsBySourceName = Collections.unmodifiableMap(fieldsByOriginalName);
+        this.fieldsByMappedName = Collections.unmodifiableMap(fieldsByMappedName);
+        this.methodsBySourceName = Collections.unmodifiableMap(methodsByOriginalName);
+        this.methodsByMappedName = Collections.unmodifiableMap(methodsByMappedName);
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.spigot.mappings.ObfField> getFields() {
-        return Collections.unmodifiableCollection(fieldsByOriginalName.values().stream()
+    public @NotNull Collection<MappedField> fields() {
+        return Collections.unmodifiableCollection(fieldsBySourceName.values().stream()
                 .map(Loader::get)
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public @Nullable ObfField getField(String originalName) {
-        return Optional.ofNullable(fieldsByOriginalName.get(originalName)).map(Loader::get).orElse(null);
+    public @Nullable eu.software4you.ulib.impl.spigot.mappings.MappedField fieldFromSource(String originalName) {
+        return Optional.ofNullable(fieldsBySourceName.get(originalName)).map(Loader::get).orElse(null);
     }
 
     @Override
-    public @Nullable ObfField searchField(String obfuscatedName) {
-        return Optional.ofNullable(fieldsByObfuscatedName.get(obfuscatedName)).map(Loader::get).orElse(null);
+    public @Nullable eu.software4you.ulib.impl.spigot.mappings.MappedField fieldFromMapped(String mappedName) {
+        return Optional.ofNullable(fieldsByMappedName.get(mappedName)).map(Loader::get).orElse(null);
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.spigot.mappings.ObfMethod> getMethods() {
-        return Collections.unmodifiableCollection(methodsByOriginalName.values().stream()
+    public @NotNull Collection<MappedMethod> methods() {
+        return Collections.unmodifiableCollection(methodsBySourceName.values().stream()
                 .map(Loader::get)
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public @Nullable ObfMethod getMethod(String originalName) {
-        return Optional.ofNullable(methodsByOriginalName.get(originalName)).map(Loader::get).orElse(null);
+    public @Nullable eu.software4you.ulib.impl.spigot.mappings.MappedMethod methodFromSource(String originalName) {
+        return Optional.ofNullable(methodsBySourceName.get(originalName)).map(Loader::get).orElse(null);
     }
 
     @Override
-    public @Nullable ObfMethod searchMethod(String obfuscatedName) {
-        return Optional.ofNullable(methodsByObfuscatedName.get(obfuscatedName)).map(Loader::get).orElse(null);
+    public @Nullable eu.software4you.ulib.impl.spigot.mappings.MappedMethod methodFromMapped(String mappedName) {
+        return Optional.ofNullable(methodsByMappedName.get(mappedName)).map(Loader::get).orElse(null);
     }
 }
