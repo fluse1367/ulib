@@ -14,10 +14,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 final class ClassMapping extends MappedClass implements eu.software4you.spigot.mappings.ClassMapping {
-    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsBySourceName;
-    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByMappedName;
-    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsBySourceName;
-    private final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsByMappedName;
+    protected final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsBySourceName;
+    protected final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByMappedName;
+    protected final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsBySourceName;
+    protected final Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedMethod>> methodsByMappedName;
 
     ClassMapping(String sourceName, String mappedName,
                  // triple: name, obfName, loadTaskGenerator

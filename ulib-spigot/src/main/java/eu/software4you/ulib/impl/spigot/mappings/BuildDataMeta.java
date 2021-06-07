@@ -106,7 +106,7 @@ final class BuildDataMeta {
             val meta = fromJson(json, ver);
             buildData.put(ver, meta);
 
-            logger.fine(() -> String.format("meta.json: %s (%s) %s", ver, hash, meta));
+            logger.finer(meta::toString);
         });
 
         String lastHash = cachedMeta.has("lastHash") ? cachedMeta.get("lastHash").getAsString() : null;
