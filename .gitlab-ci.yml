@@ -8,6 +8,7 @@ cache:
   when: always
 
 stages:
+  - test
   - build_publish
   - docs
 
@@ -60,3 +61,5 @@ pages:
 
 include:
   - template: Security/SAST.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
