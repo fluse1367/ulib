@@ -52,7 +52,7 @@ final class HookInjectorImpl extends HookInjector {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Hook.class) || !Modifier.isStatic(method.getModifiers()))
                 continue;
-            inject(method.getAnnotation(Hook.class), method, null);
+            inject(method.getAnnotation(Hook.class), method, null, clazz.getClassLoader());
         }
     }
 
@@ -69,7 +69,7 @@ final class HookInjectorImpl extends HookInjector {
         for (Method method : inst.getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Hook.class) || (!hookStatic && Modifier.isStatic(method.getModifiers())))
                 continue;
-            inject(method.getAnnotation(Hook.class), method, inst);
+            inject(method.getAnnotation(Hook.class), method, inst, inst.getClass().getClassLoader());
         }
     }
 
@@ -85,13 +85,13 @@ final class HookInjectorImpl extends HookInjector {
     @Override
     protected void directHook0(Method source, Object obj, Method into, HookPoint at) {
         directHook0(source, obj, into.getDeclaringClass().getName(), into.getName(),
-                Util.getDescriptor(into), at);
+                Util.getDescriptor(into), at, into.getDeclaringClass().getClassLoader());
     }
 
     @Override
-    protected void directHook0(Method source, Object obj, String className, String methodName, String methodDescriptor, HookPoint at) {
+    protected void directHook0(Method source, Object obj, String className, String methodName, String methodDescriptor, HookPoint at, ClassLoader cl) {
         Agent.verifyAvailable();
-        inject(source, obj, className, methodName, methodDescriptor, at);
+        inject(source, obj, className, methodName, methodDescriptor, at, cl);
     }
 
     @Override
@@ -101,9 +101,9 @@ final class HookInjectorImpl extends HookInjector {
     }
 
     @Override
-    protected void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
-        HookRunner.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor), at.ordinal());
-        unref(className, methodName + Util.resolveDescriptor(className, methodName, methodDescriptor));
+    protected void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at, ClassLoader cl) {
+        HookRunner.delHook(source, sourceInst, Util.fullDescriptor(className, methodName, methodDescriptor, cl), at.ordinal());
+        unref(className, methodName + Util.resolveDescriptor(className, methodName, methodDescriptor, cl));
     }
 
     private void unref(String className, String desc) {
@@ -116,7 +116,7 @@ final class HookInjectorImpl extends HookInjector {
             injected.remove(className);
     }
 
-    private void inject(Hook hook, Method source, Object obj) {
+    private void inject(Hook hook, Method source, Object obj, ClassLoader cl) {
         val p = Util.resolveMethod(hook);
 
         String className = hook.clazz();
@@ -128,17 +128,17 @@ final class HookInjectorImpl extends HookInjector {
             className = declaring.getAnnotation(eu.software4you.transform.Hooks.class).value();
         }
 
-        inject(source, obj, className, p.getFirst(), p.getSecond(), hook.at());
+        inject(source, obj, className, p.getFirst(), p.getSecond(), hook.at(), cl);
     }
 
     @SneakyThrows
-    private void inject(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at) {
-        String fullDescriptor = Util.fullDescriptor(className, methodName, methodDescriptor);
+    private void inject(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at, ClassLoader loader) {
+        String fullDescriptor = Util.fullDescriptor(className, methodName, methodDescriptor, loader);
 
         HookRunner.addHook(source, sourceInst, fullDescriptor, at.ordinal());
 
 
-        String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor);
+        String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor, loader);
         if (injected.containsKey(className)) {
             if (injected.get(className).contains(desc)) {
                 return; // the target method is already injected

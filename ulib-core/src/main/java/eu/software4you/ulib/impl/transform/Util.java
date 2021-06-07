@@ -11,18 +11,18 @@ import java.util.Arrays;
 final class Util {
     static String fullDescriptor(Method method) {
         return fullDescriptor(method.getDeclaringClass().getName(),
-                method.getName(), getDescriptor(method));
+                method.getName(), getDescriptor(method), method.getDeclaringClass().getClassLoader());
     }
 
-    static String fullDescriptor(String className, String methodName, String methodDescriptor) {
+    static String fullDescriptor(String className, String methodName, String methodDescriptor, ClassLoader cl) {
         return String.format("%s.%s%s", className.replace(".", "/"),
-                methodName, resolveDescriptor(className, methodName, methodDescriptor));
+                methodName, resolveDescriptor(className, methodName, methodDescriptor, cl));
     }
 
     @SneakyThrows
-    static String resolveDescriptor(String className, String methodName, String methodDescriptor) {
+    static String resolveDescriptor(String className, String methodName, String methodDescriptor, ClassLoader classLoader) {
         if (methodDescriptor.isEmpty()) {
-            Class<?> cl = Class.forName(className, false, /*TODO*/Util.class.getClassLoader());
+            Class<?> cl = Class.forName(className, false, classLoader);
             if (methodName.equals("<init>")) {
                 return getDescriptor(cl.getDeclaredConstructors()[0]);
             }

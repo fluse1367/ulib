@@ -105,7 +105,7 @@ public abstract class HookInjector {
      * @param at               the point where to hook
      */
     public static void directHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
-        impl.directHook0(source, sourceInst, className, methodName, methodDescriptor, at);
+        impl.directHook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class HookInjector {
      * @param at               the point from where to remove the hook
      */
     public static void directUnhook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
-        impl.directUnhook0(source, sourceInst, className, methodName, methodDescriptor, at);
+        impl.directUnhook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     protected abstract void hookStatic0(Class<?> clazz);
@@ -144,9 +144,9 @@ public abstract class HookInjector {
 
     protected abstract void directHook0(Method source, Object sourceInst, Method into, HookPoint at);
 
-    protected abstract void directHook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at);
+    protected abstract void directHook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at, ClassLoader cl);
 
     protected abstract void directUnhook0(Method source, Object sourceInst, Method into, HookPoint at);
 
-    protected abstract void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at);
+    protected abstract void directUnhook0(Method source, Object sourceInst, String className, String methodName, String methodDescriptor, HookPoint at, ClassLoader cl);
 }
