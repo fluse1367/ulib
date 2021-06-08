@@ -103,8 +103,10 @@ class LoggingFactory {
     }
 
     private String simpleFormat(LogRecord record) {
-        String LOG_FORMAT = "[%s] %tT %s: %s\n";
-        return String.format(LOG_FORMAT, instance.getNameOnly(),
+        long tid = record.getThreadID();
+        String thread = tid == LibImpl.MAIN_THREAD_ID ? "main" : String.format("t-%d", tid);
+        String prefix = String.format("[%s/%s]", instance.getNameOnly(), thread);
+        return String.format("%-12s %tT %s: %s\n", prefix,
                 new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());
     }
 

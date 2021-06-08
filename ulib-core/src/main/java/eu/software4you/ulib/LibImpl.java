@@ -17,14 +17,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 final class LibImpl implements Lib {
+    final static long MAIN_THREAD_ID;
+
     static {
         long started = System.currentTimeMillis();
+        MAIN_THREAD_ID = Thread.currentThread().getId();
+
         val lib = new LibImpl();
+        System.out.println("This uLib log file will be placed in: " + lib.properties.DATA_DIR);
         ULib.impl = lib;
         Logger logger = lib.getLogger();
+        logger.info(() -> "Log level: " + lib.properties.LOG_LEVEL);
+        logger.fine(() -> String.format("Thread ID is %s", MAIN_THREAD_ID));
         logger.info(() -> "Loading ...");
-        ImplInjector.logger = logger;
 
+        ImplInjector.logger = logger;
         AgentInstaller.install(logger);
 
         // load/register implementations
@@ -89,8 +96,6 @@ final class LibImpl implements Lib {
         if (!properties.NO_SPLASH) {
             System.out.println(properties.BRAND);
             System.out.printf("uLib by software4you.eu, running %s implementation version %s%n", runMode.getName(), version);
-            System.out.println("Log level: " + properties.LOG_LEVEL);
-            System.out.println("This uLib log file will be placed in: " + properties.DATA_DIR);
         }
 
         logger = LoggingFactory.fabricate(properties, this);
