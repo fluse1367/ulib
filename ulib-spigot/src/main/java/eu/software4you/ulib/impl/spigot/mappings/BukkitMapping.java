@@ -67,6 +67,9 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
                 case 'D':
                     types.add("double");
                     break;
+                case 'V':
+                    types.add("void");
+                    break;
                 case 'L':
                     int pos2 = sigs.indexOf(";", pos);
                     String type = sigs.substring(pos + 1, pos2).replace('/', '.');
