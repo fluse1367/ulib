@@ -61,7 +61,7 @@ abstract class MappingRoot<T> implements JarMapping {
     }
 
     protected Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>> method(String returnType, String[] parameterTypes, String sourceName, String mappedName) {
-        ULib.logger().finest(() -> String.format("Member (method of type %s, params: %s): %s -> %s",
+        ULib.logger().finest(() -> String.format("Class member (method of type %s, params: %s): %s -> %s",
                 returnType, Arrays.toString(parameterTypes), sourceName, mappedName));
 
         Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {

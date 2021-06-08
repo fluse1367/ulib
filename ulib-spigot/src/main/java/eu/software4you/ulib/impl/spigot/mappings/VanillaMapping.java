@@ -100,7 +100,7 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
             String name = fieldsMatcher.group(2);
             String obfName = fieldsMatcher.group(3);
 
-            logger().finest(() -> String.format("Member (field of type %s): %s -> %s", type, name, obfName));
+            logger().finest(() -> String.format("Class member (field of type %s): %s -> %s", type, name, obfName));
 
             Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> new MappedField(parent,
                     getOrCreateDummy(type), name, obfName);

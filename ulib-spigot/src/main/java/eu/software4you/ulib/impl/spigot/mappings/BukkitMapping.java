@@ -106,7 +106,7 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
             String bukkitNameRaw = classMatcher.group(2);
             String bukkitName = nms(bukkitNameRaw).replace('/', '.');
 
-            logger().finest(() -> String.format("Class Mapping: %s -> %s", vanillaName, bukkitName));
+            logger().finest(() -> String.format("Class Mapping: %s -> %s (raw: %s)", vanillaName, bukkitName, bukkitNameRaw));
 
             val fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
             val fields = mapFields(fieldMatcher);
@@ -133,7 +133,7 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
             String vanillaName = matcher.group(1);
             String bukkitName = matcher.group(2);
 
-            logger().finest(() -> String.format("Class Member (field): %s -> %s", vanillaName, bukkitName));
+            logger().finest(() -> String.format("Class member (field): %s -> %s", vanillaName, bukkitName));
 
             Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () ->
                     // type = null bc mapping does not contain field types
