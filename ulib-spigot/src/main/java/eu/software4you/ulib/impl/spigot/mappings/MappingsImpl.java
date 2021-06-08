@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
 
 @Impl(Mappings.class)
 final class MappingsImpl extends Mappings {
@@ -26,10 +25,6 @@ final class MappingsImpl extends Mappings {
     });
     private final Loader<BukkitMapping> currentBukkit = new Loader<>(() ->
             loadBukkit(ULibSpigotPlugin.getInstance().getPlainMcVersion()));
-    private final Loader<Map<String, BuildDataMeta>> bukkitBuildData = new Loader<>(() -> {
-        ULib.logger().fine(() -> "Init Bukkit Mappings");
-        return BuildDataMeta.loadBuildData();
-    });
     private final Loader<MixedMapping> currentMixed = new Loader<>(() -> {
         String ver = ULibSpigotPlugin.getInstance().getPlainMcVersion();
         val manifest = LauncherMeta.getVersionManifest().get(ver);
@@ -61,19 +56,18 @@ final class MappingsImpl extends Mappings {
     @SneakyThrows
     @Override
     protected BukkitMapping loadBukkit(String version) {
-        val map = bukkitBuildData.get();
-        if (!map.containsKey(version))
-            return null;
         ULib.logger().fine(() -> "Loading Bukkit Mapping for " + version);
-        val data = map.get(version);
+        val data = BuildDataMeta.loadBuildData(version);
+        if (data == null)
+            return null;
 
         val res = Tasks.await(() -> {
             val clOut = new ByteArrayOutputStream();
-            IOUtil.write(data.getClassMappings().request(), clOut);
+            IOUtil.write(data.getClassMappings().require(), clOut);
             return clOut;
         }, () -> {
             val memOut = new ByteArrayOutputStream();
-            IOUtil.write(data.getMemberMappings().request(), memOut);
+            IOUtil.write(data.getMemberMappings().require(), memOut);
             return memOut;
         });
 

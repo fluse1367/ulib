@@ -1,6 +1,9 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import eu.software4you.http.CachedResource;
 import eu.software4you.http.HttpUtil;
@@ -13,9 +16,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 @Getter
 final class BuildDataMeta {
@@ -23,44 +23,39 @@ final class BuildDataMeta {
 
     private final String mcVersion;
     private final String hash;
-    private final long time;
 
     private final String cm;
     private final CachedResource classMappings;
     private final String mm;
     private final CachedResource memberMappings;
 
-    private BuildDataMeta(String ver, String hash, long time, String cm, String mm) {
+    private BuildDataMeta(String ver, String hash, String cm, String mm) {
         this.mcVersion = ver;
         this.hash = hash;
-        this.time = time;
 
         String mappingsUrl = SPIGOTMC_REST + "/raw/mappings/";
 
-        this.classMappings = new CachedResource(mappingsUrl + (this.cm = cm) + "?at=" + hash, null, this::cachePath);
-        this.memberMappings = new CachedResource(mappingsUrl + (this.mm = mm) + "?at=" + hash, null, this::cachePath);
+        this.classMappings = new CachedResource(mappingsUrl + (this.cm = cm) + "?at=" + hash, null);
+        this.memberMappings = new CachedResource(mappingsUrl + (this.mm = mm) + "?at=" + hash, null);
     }
 
-    private static BuildDataMeta fromJson(JsonObject json, String ver, String hash, long time) {
+    private static BuildDataMeta fromJson(JsonObject json, String ver, String hash) {
         String cm = json.get("classMappings").getAsString();
         String mm = json.get("memberMappings").getAsString();
 
-        return new BuildDataMeta(ver, hash, time, cm, mm);
+        return new BuildDataMeta(ver, hash, cm, mm);
     }
 
     private static BuildDataMeta fromJson(JsonObject json, String ver) {
-        String hash = json.get("hash").getAsString();
-        long time = json.get("time").getAsLong();
-        return fromJson(json, ver, hash, time);
+        return fromJson(json, ver, json.get("hash").getAsString());
     }
 
     @SneakyThrows
-    private static BuildDataMeta fromCommit(String commitHash, long time) {
+    private static BuildDataMeta fromCommit(String commitHash) {
         String url = SPIGOTMC_REST + "/raw/info.json?at=" + commitHash;
 
         ULib.logger().fine(() -> "Requesting " + url);
-        val in = new CachedResource(url, null, u ->
-                String.format("bukkitbuilddata/%s/info.json", commitHash)).require();
+        val in = HttpUtil.getContent(url);
 
         ULib.logger().finer(() -> "Loading JSON");
         JsonObject json;
@@ -72,105 +67,56 @@ final class BuildDataMeta {
         if (!json.has("minecraftVersion"))
             return null;
 
-        return fromJson(json, json.get("minecraftVersion").getAsString(), commitHash, time);
+        return fromJson(json, json.get("minecraftVersion").getAsString(), commitHash);
     }
 
     @SneakyThrows
-    static Map<String, BuildDataMeta> loadBuildData() {
+    static BuildDataMeta loadBuildData(String ver) {
         val logger = ULib.logger();
-        logger.fine(() -> "Loading bukkit build data...");
+        logger.fine(() -> "Loading bukkit build data for " + ver);
 
         // load cached meta
         JsonObject cachedMeta;
-        File metaFile = new File(ULib.get().getCacheDir(), "bukkitbuilddata/meta.json");
+        File metaFile = new File(ULib.get().getCacheDir(), "bukkitbuilddata/versions.json");
         if (metaFile.exists()) {
             cachedMeta = JsonParser.parseReader(new FileReader(metaFile)).getAsJsonObject();
         } else {
-            val dir = metaFile.getParentFile();
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
             cachedMeta = new JsonObject();
-            cachedMeta.add("versions", new JsonObject());
         }
 
-        Map<String, BuildDataMeta> buildData = new HashMap<>();
+        // load from versions.json
+        if (cachedMeta.has(ver)) {
+            val json = cachedMeta.getAsJsonObject(ver);
+            val data = fromJson(json, ver);
+            logger.finer(() -> String.format("From versions.json: %s", data));
+            return data;
+        }
 
-        // load meta.json versions
-        cachedMeta.get("versions").getAsJsonObject().entrySet().forEach(en -> {
-            String ver = en.getKey();
+        // download json data
+        BuildDataMeta buildData;
 
-            JsonObject json = en.getValue().getAsJsonObject();
-            String hash = json.get("hash").getAsString();
+        String url = String.format("https://hub.spigotmc.org/versions/%s.json", ver);
+        logger.fine(() -> String.format("Loading %s from %s", ver, url));
+        try (val reader = new InputStreamReader(new CachedResource(url, null).require())) {
+            val json = JsonParser.parseReader(reader).getAsJsonObject();
+            String commit = json.getAsJsonObject("refs").get("BuildData").getAsString();
 
-            val meta = fromJson(json, ver);
-            buildData.put(ver, meta);
-
-            logger.finer(meta::toString);
-        });
-
-        String lastHash = cachedMeta.has("lastHash") ? cachedMeta.get("lastHash").getAsString() : null;
-        String updatedLastHash = null;
-
-        // download newer commits
-        int start = 0;
-        boolean hasNextPage;
-        do {
-            String url = String.format("%s/commits/?until=master&start=%d%s", SPIGOTMC_REST, start, lastHash != null ? "&since=" + lastHash : "");
-
-            logger.fine(() -> "Commit chunk: " + url);
-
-            val in = HttpUtil.getContent(url);
-            JsonObject json;
-            try (val reader = new InputStreamReader(in)) {
-                json = JsonParser.parseReader(reader).getAsJsonObject();
+            buildData = fromCommit(commit);
+            if (buildData == null) {
+                logger.fine(() -> "Request failed");
+                return null;
             }
 
-            hasNextPage = !json.get("isLastPage").getAsBoolean();
-            val nps = json.get("nextPageStart");
-            start = nps.isJsonNull() ? -1 : nps.getAsInt();
+            logger.finer(buildData::toString);
 
-            JsonArray arr = json.getAsJsonArray("values");
-            for (JsonElement e : arr) {
-                JsonObject ee = e.getAsJsonObject();
-                String hash = ee.get("id").getAsString();
-                long time = ee.get("committerTimestamp").getAsLong();
-
-                if (updatedLastHash == null)
-                    updatedLastHash = hash;
-
-                logger.fine(() -> "Loading " + hash);
-
-                val meta = BuildDataMeta.fromCommit(hash, time);
-                if (meta == null)
-                    continue; // request failed
-
-                logger.fine(() -> "Version " + meta.getMcVersion()
-                        + " at time " + meta.getTime()
-                        + ": " + meta);
-
-                if (buildData.containsKey(meta.getMcVersion())) { // only overwrite handler meta if its older
-                    val oldMeta = buildData.get(meta.getMcVersion());
-                    logger.finer(() -> "Version already found");
-
-                    if (!(meta.getTime() > oldMeta.getTime())) {
-                        logger.finer(() -> "Skipping (not newer than already loaded one)");
-                        continue;
-                    }
-                }
-
-                buildData.put(meta.getMcVersion(), meta);
-
-                // add entry to meta.json
-                cachedMeta.get("versions").getAsJsonObject().add(meta.getMcVersion(), meta.toJson());
-            }
-
-            logger.fine(() -> "Chunk done");
-        } while (hasNextPage);
-
-        cachedMeta.addProperty("lastHash", updatedLastHash != null ? updatedLastHash : lastHash);
+            cachedMeta.add(ver, buildData.toJson());
+        }
 
         // save meta.json
+        val dir = metaFile.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -185,14 +131,9 @@ final class BuildDataMeta {
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
         json.addProperty("hash", hash);
-        json.addProperty("time", time);
         json.addProperty("classMappings", cm);
         json.addProperty("memberMappings", mm);
         return json;
-    }
-
-    private String cachePath(URL url) {
-        return String.format("bukkitbuilddata/%s/%s%s", mcVersion, url.getHost(), url.getPath());
     }
 
     @Override
@@ -200,7 +141,6 @@ final class BuildDataMeta {
         return "BuildDataMeta{" +
                 "mcVersion='" + mcVersion + '\'' +
                 ", hash='" + hash + '\'' +
-                ", time=" + time +
                 ", cm='" + cm + '\'' +
                 ", mm='" + mm + '\'' +
                 '}';

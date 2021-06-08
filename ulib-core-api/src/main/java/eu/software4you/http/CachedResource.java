@@ -112,9 +112,7 @@ public class CachedResource {
         // download to file
         val dir = file.getParentFile();
         if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                throw new RuntimeException("Cannot create " + dir + " but its necessary for caching " + file);
-            }
+            dir.mkdirs();
         }
         IOUtil.write(request(), new FileOutputStream(file));
     }
