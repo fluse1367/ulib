@@ -2,6 +2,7 @@ package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
+import eu.software4you.spigot.multiversion.Protocol;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
 
 import static eu.software4you.ulib.ULib.logger;
 
-final class BukkitMapping extends MappingRoot<Pair<String, String>> implements eu.software4you.spigot.mappings.BukkitMapping {
+final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> implements eu.software4you.spigot.mappings.BukkitMapping {
     // /^(\S++) (\S++)$/gmi
     private static final Pattern CLASS_MAPPING_PATTERN = Pattern.compile("^(\\S++) (\\S++)$",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -28,8 +29,10 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
     private static final Function<String, Pattern> METHOD_MAPPING_PATTERN = clazz ->
             Pattern.compile(String.format("^\\Q%s\\E (\\S++) \\((\\S*)\\)(\\S++) (\\S++)$", clazz));
 
-    BukkitMapping(String classData, String memberData) {
-        super(new Pair<>(classData, memberData));
+    private Protocol version;
+
+    BukkitMapping(String classData, String memberData, Protocol version) {
+        super(new Triple<>(classData, memberData, version));
     }
 
     private static List<String> decodeSignatures(String sigs) {
@@ -85,8 +88,9 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
     }
 
     @Override
-    protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Pair<String, String> mappingData) {
+    protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Triple<String, String, Protocol> mappingData) {
         logger().finer("Generating Bukkit mappings");
+        this.version = mappingData.getThird();
 
         Map<String, ClassMapping> byVanillaName = new HashMap<>();
         Map<String, ClassMapping> byBukkitName = new HashMap<>();
@@ -100,7 +104,7 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
 
             String vanillaName = classMatcher.group(1).replace('/', '.');
             String bukkitNameRaw = classMatcher.group(2);
-            String bukkitName = bukkitNameRaw.replace('/', '.');
+            String bukkitName = nms(bukkitNameRaw).replace('/', '.');
 
             logger().finest(() -> String.format("Class Mapping: %s -> %s", vanillaName, bukkitName));
 
@@ -156,5 +160,10 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
             methods.add(method(returnType, parameterTypes, vanillaName, bukkitName));
         }
         return methods;
+    }
+
+    private String nms(String cl) {
+        String clazz = cl.substring(cl.lastIndexOf("/") + 1);
+        return "net/minecraft/server/" + version.name() + "/" + clazz;
     }
 }

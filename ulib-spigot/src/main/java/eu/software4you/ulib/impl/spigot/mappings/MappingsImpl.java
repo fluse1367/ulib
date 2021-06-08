@@ -1,6 +1,8 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.spigot.mappings.Mappings;
+import eu.software4you.spigot.multiversion.MultiversionManager;
+import eu.software4you.spigot.multiversion.Protocol;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULib;
@@ -56,6 +58,9 @@ final class MappingsImpl extends Mappings {
     @SneakyThrows
     @Override
     protected BukkitMapping loadBukkit(String version) {
+        val prot = MultiversionManager.getVersion(version);
+        if (prot.below(Protocol.v1_8_R1))
+            return null; // no bukkit mappings before 1.8
         ULib.logger().fine(() -> "Loading Bukkit Mapping for " + version);
         val data = BuildDataMeta.loadBuildData(version);
         if (data == null)
@@ -71,7 +76,7 @@ final class MappingsImpl extends Mappings {
             return memOut;
         });
 
-        return new BukkitMapping(res.get(0).toString(), res.get(1).toString());
+        return new BukkitMapping(res.get(0).toString(), res.get(1).toString(), prot);
     }
 
     @Override

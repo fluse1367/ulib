@@ -1,7 +1,6 @@
 package eu.software4you.spigot.multiversion;
 
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
-import eu.software4you.spigot.multiversion.protocol.Protocol;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

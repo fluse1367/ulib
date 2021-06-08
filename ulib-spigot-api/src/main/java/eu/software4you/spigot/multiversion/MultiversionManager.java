@@ -1,29 +1,36 @@
 package eu.software4you.spigot.multiversion;
 
 
-import eu.software4you.spigot.multiversion.protocol.Protocol;
 import eu.software4you.utils.ClassUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MultiversionManager {
     private static final Protocol version;
-    private static MultiversionManager instance = new MultiversionManager();
+    private static final Map<String, Protocol> byVerStr = new HashMap<>();
 
     static {
         Protocol ver;
         try {
             ver = Protocol.valueOf(BukkitReflectionUtils.PackageType.getServerVersion());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ver = Protocol.UNKNOWN;
         }
         version = ver;
-    }
-
-    public static MultiversionManager getInstance() {
-        return instance;
+        for (Protocol prot : Protocol.values()) {
+            for (String verStr : prot.versions) {
+                byVerStr.put(verStr, prot);
+            }
+        }
     }
 
     public static Protocol getVersion() {
         return version;
+    }
+
+    public static Protocol getVersion(String version) {
+        return byVerStr.getOrDefault(version, Protocol.UNKNOWN);
     }
 
     public static String netMinecraftServerPrefix() {
