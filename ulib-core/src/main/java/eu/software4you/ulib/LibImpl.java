@@ -23,10 +23,9 @@ final class LibImpl implements Lib {
         ULib.impl = lib;
         Logger logger = lib.getLogger();
         logger.info(() -> "Loading ...");
+        ImplInjector.logger = logger;
 
-        ImplInjector.logger = lib.getLogger();
-
-        AgentInstaller.install(lib.getLogger());
+        AgentInstaller.install(logger);
 
         // load/register implementations
         try {
@@ -41,12 +40,12 @@ final class LibImpl implements Lib {
 
                 if (name.startsWith(pack) && name.endsWith("Impl.class")) {
                     String clName = name.replace("/", ".").substring(0, name.length() - 6);
-                    lib.getLogger().finer(() -> String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
+                    logger.finer(() -> String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
                     val cl = Class.forName(clName);
 
                     ImplInjector.autoInject(cl);
 
-                    lib.getLogger().finer(() -> String.format("Implementation %s loaded", cl.getName()));
+                    logger.finer(() -> String.format("Implementation %s loaded", cl.getName()));
                 }
 
             }
@@ -60,7 +59,7 @@ final class LibImpl implements Lib {
                 Dependencies.depend(en.getFirst(), Repositories.of(en.getSecond()));
             }
         } catch (Exception e) {
-            lib.getLogger().log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experience issues.");
+            logger.log(Level.SEVERE, e, () -> "Error while loading dependencies. You might experience issues.");
         }
 
         logger.info(() -> String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
@@ -87,9 +86,6 @@ final class LibImpl implements Lib {
         nameOnly = "uLib";
         name = String.format("%s-%s", nameOnly, runMode.getName());
 
-        logger = Logger.getLogger(getClass().getName());
-        logger.setUseParentHandlers(false);
-
         if (!properties.NO_SPLASH) {
             System.out.println(properties.BRAND);
             System.out.printf("uLib by software4you.eu, running %s implementation version %s%n", runMode.getName(), version);
@@ -97,9 +93,7 @@ final class LibImpl implements Lib {
             System.out.println("This uLib log file will be placed in: " + properties.DATA_DIR);
         }
 
-        LoggingFactory factory = new LoggingFactory(properties, logger, this);
-        factory.prepare();
-        factory.systemInstall();
+        logger = LoggingFactory.fabricate(properties, this);
     }
 
     @Override

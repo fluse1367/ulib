@@ -12,13 +12,24 @@ class LoggingFactory {
     private final Logger logger;
     private final Lib instance;
 
-    LoggingFactory(Properties properties, Logger logger, Lib instance) {
+    private LoggingFactory(Properties properties, Logger logger, Lib instance) {
         this.properties = properties;
         this.logger = logger;
         this.instance = instance;
     }
 
-    void prepare() {
+    static Logger fabricate(Properties properties, LibImpl instance) {
+        Logger logger = Logger.getLogger(instance.getClass().getName());
+        logger.setUseParentHandlers(false);
+
+        LoggingFactory factory = new LoggingFactory(properties, logger, instance);
+        factory.prepare();
+        factory.systemInstall();
+
+        return logger;
+    }
+
+    private void prepare() {
         // init logger
         PrintStream err = System.err;
         // make ConsoleHandler use the actual stdout
@@ -50,7 +61,7 @@ class LoggingFactory {
         logger.setLevel(properties.LOG_LEVEL);
     }
 
-    void systemInstall() {
+    private void systemInstall() {
         org.fusesource.jansi.AnsiConsole.systemInstall();
     }
 
