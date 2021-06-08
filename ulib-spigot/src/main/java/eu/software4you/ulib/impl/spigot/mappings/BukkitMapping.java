@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static eu.software4you.ulib.ULib.logger;
+
 final class BukkitMapping extends MappingRoot<Pair<String, String>> implements eu.software4you.spigot.mappings.BukkitMapping {
     // /^(\S++) (\S++)$/gmi
     private static final Pattern CLASS_MAPPING_PATTERN = Pattern.compile("^(\\S++) (\\S++)$",
@@ -84,6 +86,8 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
 
     @Override
     protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Pair<String, String> mappingData) {
+        logger().finer("Generating Bukkit mappings");
+
         Map<String, ClassMapping> byVanillaName = new HashMap<>();
         Map<String, ClassMapping> byBukkitName = new HashMap<>();
 
@@ -92,23 +96,27 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
 
         Matcher classMatcher = CLASS_MAPPING_PATTERN.matcher(classMapping);
         while (classMatcher.find()) {
-            String vanillaName = classMatcher.group(1);
-            String bukkitName = classMatcher.group(2);
+            logger().finest(() -> "Class Mapping match: " + classMatcher.group());
 
-            val fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitName).matcher(memberMapping);
+            String vanillaName = classMatcher.group(1).replace('/', '.');
+            String bukkitNameRaw = classMatcher.group(2);
+            String bukkitName = bukkitNameRaw.replace('/', '.');
+
+            logger().finest(() -> String.format("Class Mapping: %s -> %s", vanillaName, bukkitName));
+
+            val fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
             val fields = mapFields(fieldMatcher);
 
-            val methodMatcher = METHOD_MAPPING_PATTERN.apply(bukkitName).matcher(memberMapping);
+            val methodMatcher = METHOD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
             val methods = mapMethods(methodMatcher);
 
-            vanillaName = vanillaName.replace('/', '.');
-            bukkitName = bukkitName.replace('/', '.');
 
             ClassMapping mapping = new ClassMapping(vanillaName, bukkitName, fields, methods);
             byVanillaName.put(vanillaName, mapping);
             byBukkitName.put(bukkitName, mapping);
         }
 
+        logger().finer("Bukkit mappings generation finished");
         return new Pair<>(byVanillaName, byBukkitName);
     }
 
@@ -116,8 +124,12 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
         // triple: vanillaName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
         while (matcher.find()) {
+            logger().finest(() -> String.format("Member match (field): %s", matcher.group()));
+
             String vanillaName = matcher.group(1);
             String bukkitName = matcher.group(2);
+
+            logger().finest(() -> String.format("Class Member (field): %s -> %s", vanillaName, bukkitName));
 
             Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () ->
                     // type = null bc mapping does not contain field types
@@ -132,6 +144,8 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
         // triple: vanillaName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
         while (matcher.find()) {
+            logger().finest(() -> String.format("Member match (method): %s", matcher.group()));
+
             String vanillaName = matcher.group(1);
             String bukkitName = matcher.group(4);
 
@@ -139,17 +153,7 @@ final class BukkitMapping extends MappingRoot<Pair<String, String>> implements e
             String[] parameterTypes = group2 != null ? decodeSignatures(group2).toArray(new String[0]) : new String[0];
             String returnType = decodeSignatures(matcher.group(3)).get(0);
 
-
-            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
-                MappedClass[] paramTypes = new MappedClass[parameterTypes.length];
-                for (int i = 0; i < paramTypes.length; i++) {
-                    paramTypes[i] = getOrCreateDummy(parameterTypes[i]);
-                }
-
-                return new MappedMethod(parent, getOrCreateDummy(returnType),
-                        paramTypes, vanillaName, bukkitName);
-            };
-            methods.add(new Triple<>(vanillaName, bukkitName, loadTaskGenerator));
+            methods.add(method(returnType, parameterTypes, vanillaName, bukkitName));
         }
         return methods;
     }

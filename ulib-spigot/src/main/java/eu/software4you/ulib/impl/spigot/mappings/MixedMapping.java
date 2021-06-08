@@ -3,7 +3,6 @@ package eu.software4you.ulib.impl.spigot.mappings;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
 import eu.software4you.ulib.Loader;
-import eu.software4you.ulib.ULib;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static eu.software4you.ulib.ULib.logger;
 
 final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>> implements eu.software4you.spigot.mappings.MixedMapping {
     MixedMapping(BukkitMapping bm, VanillaMapping vm) {
@@ -24,6 +25,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
 
     @Override
     protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Pair<BukkitMapping, VanillaMapping> mappingData) {
+        logger().finer("Generating mixed mappings");
+
         val bm = mappingData.getFirst();
         val vm = mappingData.getSecond();
 
@@ -38,6 +41,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
 
             String vanillaSourceName = vc.sourceName();
 
+            logger().finest(() -> String.format("Class Mapping: %s -> %s", bukkitName, vanillaSourceName));
+
 
             ClassMapping switched = new ClassMapping(bukkitName, vanillaSourceName,
                     mapFields(vc.fieldsBySourceName.values(), cm),
@@ -47,6 +52,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
             byVanillaSource.put(vanillaSourceName, switched);
         });
 
+        logger().finer("Mixed mappings generation finished");
         return new Pair<>(byBukkit, byVanillaSource);
     }
 
@@ -64,9 +70,11 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
                     .map(Loader::get).map(Mapped::mappedName)
                     .orElseGet(() -> {
                         // fall back to vanilla obf name
-                        ULib.logger().finest(() -> String.format("field %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
+                        logger().finest(() -> String.format("field %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
                         return vanillaObfName;
                     });
+
+            logger().finest(() -> String.format("Class Member (field): %s -> %s", vanillaSourceName, bukkitName));
 
             Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> new MappedField(
                     parent, vf.type(), vanillaSourceName, bukkitName
@@ -91,9 +99,11 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
                     .map(Loader::get).map(Mapped::mappedName)
                     .orElseGet(() -> {
                         // fall back to vanilla obf name
-                        ULib.logger().finest(() -> String.format("method %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
+                        logger().finest(() -> String.format("method %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
                         return vanillaObfName;
                     });
+
+            logger().finest(() -> String.format("Member (method): %s -> %s", vanillaSourceName, bukkitName));
 
             Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,
                     vm.returnType(), vm.parameterTypes(), vanillaSourceName, bukkitName);

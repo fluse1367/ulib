@@ -2,15 +2,18 @@ package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
-import eu.software4you.ulib.ULib;
 import lombok.val;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static eu.software4you.ulib.ULib.logger;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.MULTILINE;
 
@@ -52,6 +55,8 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
     }
 
     private Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> mapClasses(String mappingData, Pattern pattern) {
+        logger().finer("Generating Vanilla mappings");
+
         Map<String, ClassMapping> byOriginalName = new HashMap<>();
         Map<String, ClassMapping> byObfuscatedName = new HashMap<>();
 
@@ -59,14 +64,14 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
         Matcher classMatcher = pattern.matcher(mappingData);
         while (classMatcher.find()) { // iterate over every class mapping
             // next class ALWAYS has group 1-3
-            ULib.logger().finest(() -> String.format("Class Mapping Match (%d): %s", classMatcher.groupCount(), classMatcher.group()));
+            logger().finest(() -> String.format("Class Mapping Match (%d): %s", classMatcher.groupCount(), classMatcher.group()));
 
             // group 1: original class name
             String originalName = classMatcher.group(1);
             // group 2: obfuscated class name
             String obfuscatedName = classMatcher.group(2);
 
-            ULib.logger().finer(() -> String.format("Class Mapping: %s -> %s", originalName, obfuscatedName));
+            logger().finest(() -> String.format("Class Mapping: %s -> %s", originalName, obfuscatedName));
 
             // group 3: members
             String members = classMatcher.group(3);
@@ -79,6 +84,7 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
             byObfuscatedName.put(obfuscatedName, mapping);
         }
 
+        logger().finer("Vanilla mappings generation finished");
         return new Pair<>(byOriginalName, byObfuscatedName);
     }
 
@@ -88,11 +94,13 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
         // triple: name, obfName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
         while (fieldsMatcher.find()) {
+            logger().finest(() -> String.format("Member match (field): %s", fieldsMatcher.group()));
+
             String type = fieldsMatcher.group(1);
             String name = fieldsMatcher.group(2);
             String obfName = fieldsMatcher.group(3);
 
-            ULib.logger().finer(() -> String.format("Member (field of type %s): %s -> %s", type, name, obfName));
+            logger().finest(() -> String.format("Member (field of type %s): %s -> %s", type, name, obfName));
 
             Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> new MappedField(parent,
                     getOrCreateDummy(type), name, obfName);
@@ -108,27 +116,18 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
         // triple: name, obfName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
         while (methodsMatcher.find()) {
+            logger().finest(() -> String.format("Member match (method): %s", methodsMatcher.group()));
+
             String returnType = methodsMatcher.group(1);
             String name = methodsMatcher.group(2);
             String group3 = methodsMatcher.group(3);
             String[] parameterTypes = group3 != null ? group3.split(",") : new String[0];
             String obfName = methodsMatcher.group(4);
 
-            ULib.logger().finer(() -> String.format("Member (method of type %s, params: %s): %s -> %s",
-                    returnType, Arrays.toString(parameterTypes), name, obfName));
-
-            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
-                MappedClass[] paramTypes = new MappedClass[parameterTypes.length];
-                for (int i = 0; i < paramTypes.length; i++) {
-                    paramTypes[i] = getOrCreateDummy(parameterTypes[i]);
-                }
-
-                return new MappedMethod(parent, getOrCreateDummy(returnType),
-                        paramTypes, name, obfName);
-            };
-            methods.add(new Triple<>(name, obfName, loadTaskGenerator));
+            methods.add(method(returnType, parameterTypes, name, obfName));
         }
         return methods;
     }
+
 
 }

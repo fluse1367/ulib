@@ -1,15 +1,20 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.common.collection.Pair;
+import eu.software4you.common.collection.Triple;
 import eu.software4you.spigot.mappings.JarMapping;
+import eu.software4you.ulib.ULib;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 abstract class MappingRoot<T> implements JarMapping {
 
@@ -53,5 +58,22 @@ abstract class MappingRoot<T> implements JarMapping {
                     Collections.emptyList(), Collections.emptyList()));
         }
         return dummies.get(originalName);
+    }
+
+    protected Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>> method(String returnType, String[] parameterTypes, String sourceName, String mappedName) {
+        ULib.logger().finest(() -> String.format("Member (method of type %s, params: %s): %s -> %s",
+                returnType, Arrays.toString(parameterTypes), sourceName, mappedName));
+
+        Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
+            MappedClass[] paramTypes = new MappedClass[parameterTypes.length];
+            for (int i = 0; i < paramTypes.length; i++) {
+                paramTypes[i] = getOrCreateDummy(parameterTypes[i]);
+            }
+
+            return new MappedMethod(parent, getOrCreateDummy(returnType),
+                    paramTypes, sourceName, mappedName);
+        };
+
+        return new Triple<>(sourceName, mappedName, loadTaskGenerator);
     }
 }
