@@ -100,7 +100,7 @@ allprojects {
         coordsXSeries = 'com.github.cryptomorin:XSeries:7.9.1.1'
 
         coordsJetbrainsAnnotations = 'org.jetbrains:annotations:20.1.0'
-        coordsLombok = 'org.projectlombok:lombok:1.18.6'
+        coordsLombok = 'org.projectlombok:lombok:1.18.20'
 
         coordsJavassist = 'org.javassist:javassist:3.27.0-GA'
 
