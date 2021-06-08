@@ -21,13 +21,15 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
     private static final Pattern CLASS_MAPPING_PATTERN = Pattern.compile("^(\\S++) (\\S++)$",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-    // /^\Q...\E (\S++) (\S++)$/gm
+    // /^\Q...\E (\S++) (\S++)$/gmi
     private static final Function<String, Pattern> FIELD_MAPPING_PATTERN = clazz ->
-            Pattern.compile(String.format("^\\Q%s\\E (\\S++) (\\S++)$", clazz));
+            Pattern.compile(String.format("^\\Q%s\\E (\\S++) (\\S++)$", clazz),
+                    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-    // /^\Q...\E (\S++) \((\S*)\)(\S++) (\S++)$/gm
+    // /^\Q...\E (\S++) \((\S*)\)(\S++) (\S++)$/gmi
     private static final Function<String, Pattern> METHOD_MAPPING_PATTERN = clazz ->
-            Pattern.compile(String.format("^\\Q%s\\E (\\S++) \\((\\S*)\\)(\\S++) (\\S++)$", clazz));
+            Pattern.compile(String.format("^\\Q%s\\E (\\S++) \\((\\S*)\\)(\\S++) (\\S++)$", clazz),
+                    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private Protocol version;
 
