@@ -32,10 +32,9 @@ final class Meta implements VersionsMeta {
         });
         this.versions = Collections.unmodifiableMap(versions);
 
-        // cache latest release and snapshot
         val latest = json.getAsJsonObject("latest");
-        get(release = latest.get("release").getAsString());
-        get(snapshot = latest.get("snapshot").getAsString());
+        this.release = latest.get("release").getAsString();
+        this.snapshot = latest.get("snapshot").getAsString();
     }
 
     @Override
