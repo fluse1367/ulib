@@ -8,13 +8,11 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.util.function.Function;
+
+import static eu.software4you.ulib.ULib.logger;
 
 /**
  * A http resource that may be cached.
@@ -28,16 +26,19 @@ public class CachedResource {
     protected final String sha1;
     @NotNull
     protected final File file;
+    private final File sha1File;
 
     /**
-     * @param url          the url of the resource
-     * @param sha1         the sha1 checksum of the resource, or {@code null}
-     * @param getCachePath function to retrieve the local cache location path
+     * @param url    the url of the resource
+     * @param sha1   the sha1 checksum of the resource, or {@code null}
+     * @param prefix prefix of local cache location path
      */
-    public CachedResource(@NotNull String url, @Nullable String sha1, @NotNull Function<URL, String> getCachePath) {
+    public CachedResource(@NotNull String url, @Nullable String sha1, @NotNull String prefix) {
         this.url = url(url);
         this.sha1 = sha1;
-        this.file = new File(ULib.get().getCacheDir(), getCachePath.apply(this.url));
+        String loc = this.url.getHost() + this.url.getPath();
+        this.file = new File(ULib.get().getCacheDir(), String.format("%s/%s", prefix, loc));
+        this.sha1File = new File(ULib.get().getCacheDir(), String.format("%s_hash/%s.sha1", prefix, loc));
     }
 
     /**
@@ -45,7 +46,7 @@ public class CachedResource {
      * @param sha1 the sha1 checksum of the resource, or {@code null}
      */
     public CachedResource(@NotNull String url, @Nullable String sha1) {
-        this(url, sha1, u -> String.format("http/%s%s", u.getHost(), u.getPath()));
+        this(url, sha1, "http");
     }
 
     @SneakyThrows
@@ -102,40 +103,70 @@ public class CachedResource {
      */
     public boolean purge() {
         if (file.exists()) {
-            return file.delete();
+            return file.delete() && (!sha1File.exists() || sha1File.delete());
         }
         return true;
     }
 
     @SneakyThrows
     private void cache() {
+        logger().finer(() -> String.format("Caching %s", file.getName()));
+
         // download to file
-        val dir = file.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        mkdirsp(file);
         IOUtil.write(request(), new FileOutputStream(file));
+
+        // save sha1 if not supplied
+        if (sha1 == null) {
+            logger().finer(() -> String.format("Caching sha1 as file of %s", file.getName()));
+            mkdirsp(sha1File);
+            IOUtil.write(new ByteArrayInputStream(genSha1(file).getBytes()),
+                    new FileOutputStream(sha1File));
+        }
     }
 
     @SneakyThrows
     private boolean validate() {
         if (!file.exists())
             return false;
-        // if file exists and sha1 sum is not supplied, just assume file is valid
-        if (sha1 == null)
-            return true;
+        val logger = logger();
+        logger.fine(() -> String.format("Checking integrity of %s", file));
 
-        val logger = ULib.logger();
-        logger.fine(() -> String.format("Checking integrity of file %s", file));
-        logger.fine(() -> String.format("Expected SHA-1 sum: %s", sha1));
-        logger.fine(() -> "Computing SHA-1 ...");
+        String expected;
+        // if file exists and sha1 sum is not supplied, read sha1 from file
+        if (this.sha1 == null) {
+            if (!sha1File.exists()) {
+                logger.fine(() -> String.format("No sha1 for %s found, re-download", file.getName()));
+                return false; // if sha1 not saved, re-download and re-generated sha1File
+            }
+            val bout = new ByteArrayOutputStream();
+            IOUtil.write(new FileInputStream(sha1File), bout);
+            expected = bout.toString();
+        } else {
+            expected = this.sha1;
+        }
 
-        String sha1 = ChecksumUtils.getFileChecksum(MessageDigest.getInstance("SHA-1"), file);
-        logger.fine(() -> String.format("SHA-1 of %s is %s", file.getName(), sha1));
-        boolean valid = sha1.equalsIgnoreCase(this.sha1);
 
-        logger.fine(() -> String.format("File is %s", valid ? "valid" : "corrupted"));
+        logger.finer(() -> String.format("Expected SHA-1 sum: %s", expected));
+
+        String sha1 = genSha1(file);
+        logger.finer(() -> String.format("SHA-1 of %s is %s", file.getName(), sha1));
+        boolean valid = sha1.equalsIgnoreCase(expected);
+
+        logger.fine(() -> String.format("%s is %s", file.getName(), valid ? "valid" : "corrupted"));
         return valid;
+    }
+
+    private void mkdirsp(File child) {
+        val dir = child.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
+
+    @SneakyThrows
+    private String genSha1(File file) {
+        return ChecksumUtils.getFileChecksum(MessageDigest.getInstance("SHA-1"), file);
     }
 
 }
