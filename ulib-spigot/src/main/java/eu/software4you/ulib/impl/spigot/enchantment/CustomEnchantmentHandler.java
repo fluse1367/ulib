@@ -7,6 +7,7 @@ import eu.software4you.spigot.enchantment.CustomEnchantment;
 import eu.software4you.spigot.enchantment.EnchantUtil;
 import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
+import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -33,15 +34,17 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class CustomEnchantmentHandler implements Listener {
-    private final String getEnchantmentSeedMethodName;
+    private String getEnchantmentSeedMethodName;
     private final ULibSpigotPlugin pl;
 
     private CustomEnchantmentHandler(ULibSpigotPlugin pl) {
         this.pl = pl;
         // Use Mappings API to get xpSeed
-        getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
-                .fromSource("net.minecraft.world.entity.player.Player")
-                .methodFromSource("getEnchantmentSeed").mappedName();
+        Tasks.run(() -> {
+            getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
+                    .fromSource("net.minecraft.world.entity.player.Player")
+                    .methodFromSource("getEnchantmentSeed").mappedName();
+        });
     }
 
     static void register() {
@@ -132,10 +135,12 @@ public class CustomEnchantmentHandler implements Listener {
         Random rand = new Random();
 
         // set seed to exp seed of player
-        int xpSeed = (int) ReflectUtil.forceCall(PackageType.CRAFTBUKKIT_ENTITY.getClass("CraftPlayer"),
-                e.getEnchanter(), String.format("getHandle().%s()", getEnchantmentSeedMethodName)
-        );
-        rand.setSeed(xpSeed);
+        if (getEnchantmentSeedMethodName != null) {
+            int xpSeed = (int) ReflectUtil.forceCall(
+                    PackageType.CRAFTBUKKIT_ENTITY.getClass("CraftPlayer"), e.getEnchanter(),
+                    String.format("getHandle().%s()", getEnchantmentSeedMethodName));
+            rand.setSeed(xpSeed);
+        }
 
         int enchantability = EnchantUtil.getItemEnchantability(e.getItem());
 
