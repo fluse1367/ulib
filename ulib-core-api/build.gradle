@@ -4,9 +4,9 @@ dependencies {
     //noinspection GroovyAssignabilityCheck
     compileShade([// apache commons
                   'commons-io:commons-io:2.8.0',
-                  'org.apache.commons:commons-configuration2:2.4',
+                  '!(commons-logging):org.apache.commons:commons-configuration2:2.4',
                   'org.apache.commons:commons-lang3:3.8.1',
-                  'commons-beanutils:commons-beanutils:1.9.3',
+                  '!(commons-logging):commons-beanutils:commons-beanutils:1.9.3',
                   'commons-codec:commons-codec:1.11',
                   // google guava/gson
                   'com.google.guava:guava:27.0.1-jre',

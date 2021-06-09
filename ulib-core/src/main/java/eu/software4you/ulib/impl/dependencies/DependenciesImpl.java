@@ -39,8 +39,9 @@ import java.util.logging.Level;
 final class DependenciesImpl extends Dependencies {
 
     static {
-        UnsafeUtil.dependUnsafe("{{maven.httpcore}}");
-        UnsafeUtil.dependUnsafe("{{maven.httpclient}}");
+        UnsafeUtil.dependUnsafe("{{maven.http-core}}");
+        UnsafeUtil.dependUnsafe("{{maven.http-client}}");
+        UnsafeUtil.dependUnsafe("{{maven.commons-logging}}");
     }
 
     private final RepositorySystem repository;
