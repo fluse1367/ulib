@@ -51,13 +51,13 @@ class LoggingFactory {
 
     private void fileInit() {
         try {
-            if (!properties.DATA_DIR.exists()) {
-                if (!properties.DATA_DIR.mkdirs()) {
+            if (!properties.LOGS_DIR.exists()) {
+                if (!properties.LOGS_DIR.mkdirs()) {
                     throw new IOException(); // trigger error message
                 }
             }
 
-            FileHandler fileHandler = new FileHandler(properties.DATA_DIR.getPath() + "/ulib.%g.log",
+            FileHandler fileHandler = new FileHandler(properties.LOGS_DIR.getPath() + "/ulib.%g.log",
                     67108864 /*64 MiB*/, 16);
             fileHandler.setFormatter(normalFormatter());
             fileHandler.setLevel(properties.LOG_LEVEL);
