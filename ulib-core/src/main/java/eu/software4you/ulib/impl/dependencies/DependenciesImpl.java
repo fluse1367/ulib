@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-@Impl(value = Dependencies.class, priority = 1000)
+@Impl(value = Dependencies.class, priority = Integer.MAX_VALUE - 3)
 final class DependenciesImpl extends Dependencies {
 
     static {

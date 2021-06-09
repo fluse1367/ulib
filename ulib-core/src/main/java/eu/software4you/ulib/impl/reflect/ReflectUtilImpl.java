@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Impl(value = ReflectUtil.class, priority = 1015)
+@Impl(value = ReflectUtil.class, priority = Integer.MAX_VALUE)
 public final class ReflectUtilImpl extends ReflectUtil {
 
     private static final SecurityManager sec = new SecurityManager();
