@@ -46,4 +46,18 @@ public class IOUtil {
         write(in, bout);
         return bout.toByteArray();
     }
+
+    /**
+     * Reads all bytes from an input stream into a string. This method closes the stream.
+     *
+     * @param in the stream to read from
+     * @return the bytes read
+     * @throws IOException inherited from {@link #write(InputStream, OutputStream)}
+     * @see #write(InputStream, OutputStream)
+     */
+    public static String toString(@NotNull InputStream in) throws IOException {
+        val bout = new ByteArrayOutputStream();
+        write(in, bout);
+        return bout.toString();
+    }
 }

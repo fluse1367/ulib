@@ -3,11 +3,7 @@ dependencies {
     // !!! When changing anything that is being shaded, UPDATE THE LICENSE AND COPYRIGHT NOTICE IN 'README.md' !!!
     //noinspection GroovyAssignabilityCheck
     compileShade([// apache commons
-                  'commons-io:commons-io:2.8.0',
-                  '!(commons-logging):org.apache.commons:commons-configuration2:2.4',
                   'org.apache.commons:commons-lang3:3.8.1',
-                  '!(commons-logging):commons-beanutils:commons-beanutils:1.9.3',
-                  'commons-codec:commons-codec:1.11',
                   // google guava/gson
                   'com.google.guava:guava:27.0.1-jre',
                   'com.google.code.gson:gson:2.8.6',
@@ -15,10 +11,6 @@ dependencies {
                   'org.yaml:snakeyaml:1.23',
                   // jansi (CLI/terminal support)
                   'org.fusesource.jansi:jansi:1.18'])
-
-    /* shade */
-    shade 'com.fasterxml.jackson.core:jackson-core:2.9.8'
-    shade 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     /* compile */
     implementation 'com.sun.mail:smtp:1.6.3'

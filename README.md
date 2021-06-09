@@ -291,14 +291,9 @@ The following 3rd-party software is included within this project:
 The following 3rd-party software is not included within the source code of this project, but within the shadowed
 ("ready-for-use") build artifacts:
 
-- [Apache Commons](https://commons.apache.org) (Copyright (c)
+- Commons Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
-  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
-    - IO ([click](https://github.com/apache/commons-io/tree/rel/commons-io-2.8.0) version 2.8
-    - Configuration ([click](https://github.com/apache/commons-configuration/tree/CONFIGURATION_2_4)) version 2.4
-    - Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) version 3.8.1
-    - BeanUtils ([click](https://github.com/apache/commons-beanutils/tree/BEANUTILS_1_9_3)) version 1.9.3
-    - Codec ([click](https://github.com/apache/commons-codec/tree/commons-codec-1.11)) version 1.11
+  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)), version 3.8.1
 - [Maven Artifact Resolver](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
@@ -324,14 +319,9 @@ The following 3rd-party software is not included within the source code of this 
 - Jansi ([click](https://github.com/fusesource/jansi/tree/jansi-project-1.18)) Copyright (c)
   2019 [FuseSource](https://github.com/fusesource), licensed under
   the [Apache License 2.0](https://github.com/fusesource/jansi/blob/jansi-project-1.18/license.txt), version 1.18
-- Jackson Core ([click](https://github.com/FasterXML/jackson-core/tree/jackson-core-2.9.8)) Copyright (c)
-  2018 [FasterXML](https://github.com/FasterXML), licensed under
-  the [Apache License 2.0](https://github.com/FasterXML/jackson-core/blob/2.13/LICENSE), version 2.9.8
-- Jackson Databind ([click](https://github.com/FasterXML/jackson-databind/tree/jackson-databind-2.9.8)) Copyright (c)
-  2018 [FasterXML](https://github.com/FasterXML), licensed under
-  the [Apache License 2.0](https://github.com/FasterXML/jackson-databind/blob/2.13/LICENSE), version 2.9.8
 - Javassist ([click](https://github.com/jboss-javassist/javassist/tree/rel_3_27_0_ga)) Copyright (c)
-  2020 [Shigeru Chiba](https://github.com/jboss-javassist), custom license
-  (click [here](https://github.com/jboss-javassist/javassist/blob/rel_3_27_0_ga/License.html)), version 3.27.0-GA
+  2020 [Shigeru Chiba](https://github.com/jboss-javassist), used under the
+  the [Apache License 2.0](https://github.com/jboss-javassist/javassist/blob/rel_3_27_0_ga/License.html) (see bottom),
+  version 3.27.0-GA
 
 ---

@@ -4,9 +4,9 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.http.HttpUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
+import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,7 +23,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +34,9 @@ final class HttpUtilImpl extends HttpUtil {
         return HttpClientBuilder.create().setUserAgent(userAgent).build();
     }
 
+    @SneakyThrows
     protected String getContentAsString0(String url, Pair<String, String>[] headers) {
-        return toString(getContent(url, headers));
+        return IOUtil.toString(getContent(url, headers));
     }
 
     protected InputStream getContent0(String url, Pair<String, String>[] headers) {
@@ -44,8 +44,9 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
 
+    @SneakyThrows
     protected String getContentAsString0(HttpClient client, String url, Pair<String, String>[] headers) {
-        return toString(getContent(client, url, headers));
+        return IOUtil.toString(getContent(client, url, headers));
     }
 
     protected InputStream getContent0(HttpClient client, String url, Pair<String, String>[] headers) {
@@ -67,32 +68,36 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
 
+    @SneakyThrows
     protected String postContentAsString0(String url, Pair<String, String>[] parameters) {
-        return toString(postContent(url, parameters));
+        return IOUtil.toString(postContent(url, parameters));
     }
 
     protected InputStream postContent0(String url, Pair<String, String>[] parameters) {
         return content(post0(url, parameters));
     }
 
+    @SneakyThrows
     protected String postContentAsString0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return toString(postContent(url, headers, parameters));
+        return IOUtil.toString(postContent(url, headers, parameters));
     }
 
     protected InputStream postContent0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
         return content(post0(url, headers, parameters));
     }
 
+    @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, Pair<String, String>[] parameters) {
-        return toString(postContent(client, url, parameters));
+        return IOUtil.toString(postContent(client, url, parameters));
     }
 
     protected InputStream postContent0(HttpClient client, String url, Pair<String, String>[] parameters) {
         return content(post0(client, url, parameters));
     }
 
+    @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return toString(postContent(client, url, headers, parameters));
+        return IOUtil.toString(postContent(client, url, headers, parameters));
     }
 
     protected InputStream postContent0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
@@ -155,12 +160,5 @@ final class HttpUtilImpl extends HttpUtil {
         val entity = res.getEntity();
         Objects.requireNonNull(entity, "No content");
         return entity.getContent();
-    }
-
-    @SneakyThrows
-    private String toString(InputStream stream) {
-        String str = IOUtils.toString(stream, Charset.defaultCharset());
-        stream.close();
-        return str;
     }
 }
