@@ -5,12 +5,14 @@ import eu.software4you.http.HttpUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -38,7 +40,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream getContent0(String url, Pair<String, String>[] headers) {
-        return content(get0(url, headers).getEntity());
+        return content(get0(url, headers));
     }
 
 
@@ -47,7 +49,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream getContent0(HttpClient client, String url, Pair<String, String>[] headers) {
-        return content(get0(client, url, headers).getEntity());
+        return content(get0(client, url, headers));
     }
 
     protected HttpResponse get0(String url, Pair<String, String>[] headers) {
@@ -70,7 +72,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream postContent0(String url, Pair<String, String>[] parameters) {
-        return content(post0(url, parameters).getEntity());
+        return content(post0(url, parameters));
     }
 
     protected String postContentAsString0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
@@ -78,7 +80,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream postContent0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return content(post0(url, headers, parameters).getEntity());
+        return content(post0(url, headers, parameters));
     }
 
     protected String postContentAsString0(HttpClient client, String url, Pair<String, String>[] parameters) {
@@ -86,7 +88,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream postContent0(HttpClient client, String url, Pair<String, String>[] parameters) {
-        return content(post0(client, url, parameters).getEntity());
+        return content(post0(client, url, parameters));
     }
 
     protected String postContentAsString0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
@@ -94,7 +96,7 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     protected InputStream postContent0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return content(post0(client, url, headers, parameters).getEntity());
+        return content(post0(client, url, headers, parameters));
     }
 
     protected HttpResponse post0(String url, Pair<String, String>[] parameters) {
@@ -145,7 +147,12 @@ final class HttpUtilImpl extends HttpUtil {
     }
 
     @SneakyThrows
-    private InputStream content(HttpEntity entity) {
+    private InputStream content(HttpResponse res) {
+        val status = res.getStatusLine();
+        val code = status.getStatusCode();
+        if (code < 200 || code > 299)
+            throw new HttpResponseException(code, status.getReasonPhrase());
+        val entity = res.getEntity();
         Objects.requireNonNull(entity, "No content");
         return entity.getContent();
     }
