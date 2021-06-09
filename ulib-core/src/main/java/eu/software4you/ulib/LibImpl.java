@@ -104,7 +104,7 @@ final class LibImpl implements Lib {
 
         }
 
-        // sort implementations with ordinal (descending)
+        // sort implementations by priority (descending)
         IMPL.sort((c1, c2) -> c2.getAnnotation(Impl.class).priority() - c1.getAnnotation(Impl.class).priority());
         return IMPL;
     }
