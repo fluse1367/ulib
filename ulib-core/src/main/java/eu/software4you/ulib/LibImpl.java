@@ -117,11 +117,11 @@ final class LibImpl implements Lib {
             }
 
             // init clazz
-            logger.finer(() -> String.format("Initializing implementation %s with %s", clazz.getName(), clazz.getClassLoader().getClass().getName()));
+            logger.finest(() -> String.format("Initializing implementation %s with %s", clazz.getName(), clazz.getClassLoader().getClass().getName()));
             Class<?> cl = Class.forName(clazz.getName());
             ImplInjector.autoInject(cl);
 
-            logger.finer(() -> String.format("Implementation %s loaded", cl.getName()));
+            logger.finest(() -> String.format("Implementation %s loaded", cl.getName()));
         }
     }
 

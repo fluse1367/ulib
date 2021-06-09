@@ -48,7 +48,7 @@ public final class ImplInjector {
 
                 return;
             }
-            logger.finer(() -> String.format("Injecting %s into %s", impl, into));
+            logger.finest(() -> String.format("Injecting %s into %s", impl, into));
 
             // direct implementation with default constructor
             Constructor<?> constructor = impl.getDeclaredConstructor();
@@ -67,7 +67,7 @@ public final class ImplInjector {
             if (!constructor.isAnnotationPresent(ImplConst.class)) {
                 continue;
             }
-            logger.finer(() -> String.format("Injecting %s as constructing function into %s", impl, into));
+            logger.finest(() -> String.format("Injecting %s as constructing function into %s", impl, into));
             constructor.setAccessible(true);
 
             ConstructingFunction<?> fun = new ConstructingFunction<Object>() {
