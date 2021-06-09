@@ -45,11 +45,19 @@ final class LibImpl implements Lib {
         logger.fine(() -> "Preparing implementations");
         val IMPL = clinit_read_implementations();
 
+        /*
+         1. ReflectUtil
+         2. DependencyLoader
+         3. Repositories
+         4. Dependencies
+            ...
+         */
+
         logger.fine(() -> "Loading implementations");
         try {
             clinit_load_implementations(IMPL);
         } catch (Throwable thr) {
-            logger.severe("Error during critical initialization phase (implemntation loading).");
+            logger.severe("Error during critical initialization phase (implementation loading).");
             throw thr;
         }
 
