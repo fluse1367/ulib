@@ -299,9 +299,6 @@ The following 3rd-party software is not included within the source code of this 
     - Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) version 3.8.1
     - BeanUtils ([click](https://github.com/apache/commons-beanutils/tree/BEANUTILS_1_9_3)) version 1.9.3
     - Codec ([click](https://github.com/apache/commons-codec/tree/commons-codec-1.11)) version 1.11
-- HttpComponents HttpClient ([click](https://github.com/apache/httpcomponents-client/tree/rel/v4.5.10)) Copyright (c)
-  2020 [The Apache Software Foundation](https://github.com/apache), licensed under
-  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) version 4.5.10
 - [Maven Artifact Resolver](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
   the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
