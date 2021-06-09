@@ -16,7 +16,7 @@ import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-@Impl(DependencyLoader.class)
+@Impl(value = DependencyLoader.class, priority = 1010)
 final class DependencyLoaderImpl extends DependencyLoader {
     @Await
     private static Agent agent;

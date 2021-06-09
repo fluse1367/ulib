@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-@Impl(Dependencies.class)
+@Impl(value = Dependencies.class, priority = 1000)
 final class DependenciesImpl extends Dependencies {
 
     private final RepositorySystem repository;

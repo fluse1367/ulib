@@ -2,8 +2,10 @@ package eu.software4you.ulib;
 
 import eu.software4you.dependencies.Dependencies;
 import eu.software4you.dependencies.Repositories;
+import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +13,8 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -18,15 +22,19 @@ import java.util.logging.Logger;
 
 final class LibImpl implements Lib {
     final static long MAIN_THREAD_ID;
+    static Logger logger;
 
     static {
-        long started = System.currentTimeMillis();
         MAIN_THREAD_ID = Thread.currentThread().getId();
+        clinit();
+    }
+
+    private static void clinit() {
+        long started = System.currentTimeMillis();
 
         val lib = new LibImpl();
         System.out.println("This uLib log file will be placed in: " + lib.properties.DATA_DIR);
         ULib.impl = lib;
-        Logger logger = lib.getLogger();
         logger.info(() -> "Log level: " + lib.properties.LOG_LEVEL);
         logger.fine(() -> String.format("Thread ID is %s", MAIN_THREAD_ID));
         logger.info(() -> "Loading ...");
@@ -34,33 +42,19 @@ final class LibImpl implements Lib {
         ImplInjector.logger = logger;
         AgentInstaller.install(logger);
 
-        // load/register implementations
+        logger.fine(() -> "Preparing implementations");
+        val IMPL = clinit_read_implementations();
+
+        logger.fine(() -> "Loading implementations");
         try {
-            // loading all classes: eu.software4you.ulib.impl.**Impl
-            String pack = String.format("%s/impl/", LibImpl.class.getPackage().getName()).replace(".", "/");
-            JarFile jar = new JarFile(FileUtils.getClassFile(LibImpl.class));
-            val e = jar.entries();
-
-            while (e.hasMoreElements()) {
-                JarEntry entry = e.nextElement();
-                String name = entry.getName();
-
-                if (name.startsWith(pack) && name.endsWith("Impl.class")) {
-                    String clName = name.replace("/", ".").substring(0, name.length() - 6);
-                    logger.finer(() -> String.format("Loading implementation %s with %s", clName, LibImpl.class.getClassLoader()));
-                    val cl = Class.forName(clName);
-
-                    ImplInjector.autoInject(cl);
-
-                    logger.finer(() -> String.format("Implementation %s loaded", cl.getName()));
-                }
-
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException("Invalid implementation", e);
+            clinit_load_implementations(IMPL);
+        } catch (Throwable thr) {
+            logger.severe("Error during critical initialization phase (implemntation loading).");
+            throw thr;
         }
 
         // load dependencies
+        logger.fine(() -> "Loading dependencies");
         try {
             for (val en : lib.properties.ADDITIONAL_LIBS) {
                 Dependencies.depend(en.getFirst(), Repositories.of(en.getSecond()));
@@ -74,7 +68,63 @@ final class LibImpl implements Lib {
         ));
     }
 
-    private final Logger logger;
+    @SneakyThrows
+    private static List<Class<?>> clinit_read_implementations() {
+        List<Class<?>> IMPL = new ArrayList<>();
+
+        // register implementations
+        String pack = String.format("%s/impl/", LibImpl.class.getPackage().getName()).replace(".", "/");
+        JarFile jar = new JarFile(FileUtils.getClassFile(LibImpl.class));
+        val e = jar.entries();
+
+        while (e.hasMoreElements()) {
+            JarEntry entry = e.nextElement();
+            String name = entry.getName();
+
+            if (name.startsWith(pack) && name.endsWith("Impl.class")) {
+                String clName = name.replace("/", ".").substring(0, name.length() - 6);
+                // NO class init
+                val cl = Class.forName(clName, false, LibImpl.class.getClassLoader());
+                if (!cl.isAnnotationPresent(Impl.class))
+                    continue;
+                Impl impl = cl.getAnnotation(Impl.class);
+
+                logger.finer(() -> String.format("Implementation found: (%d) %s", impl.priority(), cl.getName()));
+
+                IMPL.add(cl);
+            }
+
+        }
+
+        // sort implementations with ordinal (descending)
+        IMPL.sort((c1, c2) -> c2.getAnnotation(Impl.class).priority() - c1.getAnnotation(Impl.class).priority());
+        return IMPL;
+    }
+
+    @SneakyThrows
+    private static void clinit_load_implementations(List<Class<?>> IMPL) {
+        for (Class<?> clazz : IMPL) {
+            val impl = clazz.getAnnotation(Impl.class);
+            logger.finer(() -> String.format("Loading implementation: (%d) %s", impl.priority(), clazz.getName()));
+
+            // load dependencies
+            val dependencies = impl.dependencies();
+            if (dependencies.length > 0) {
+                logger.finer(() -> String.format("Implementation %s requires dependencies", clazz.getName()));
+                for (String coords : dependencies) {
+                    Dependencies.depend(coords);
+                }
+            }
+
+            // init clazz
+            logger.finer(() -> String.format("Initializing implementation %s with %s", clazz.getName(), clazz.getClassLoader().getClass().getName()));
+            Class<?> cl = Class.forName(clazz.getName());
+            ImplInjector.autoInject(cl);
+
+            logger.finer(() -> String.format("Implementation %s loaded", cl.getName()));
+        }
+    }
+
     private final Properties properties;
     private final String version;
     private final RunMode runMode;
