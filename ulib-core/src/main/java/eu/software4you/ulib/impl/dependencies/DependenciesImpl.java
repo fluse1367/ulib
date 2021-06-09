@@ -38,6 +38,11 @@ import java.util.logging.Level;
 @Impl(value = Dependencies.class, priority = 1000)
 final class DependenciesImpl extends Dependencies {
 
+    static {
+        UnsafeUtil.dependUnsafe("{{maven.httpcore}}");
+        UnsafeUtil.dependUnsafe("{{maven.httpclient}}");
+    }
+
     private final RepositorySystem repository;
     private final DefaultRepositorySystemSession session;
     private boolean fallback;
