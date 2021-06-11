@@ -6,10 +6,13 @@ import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.spigot.enchantment.CustomEnchantment;
 import eu.software4you.spigot.enchantment.EnchantUtil;
 import eu.software4you.spigot.enchantment.EnchantmentRarity;
+import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.BukkitReflectionUtils;
+import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.AnvilInventory;
@@ -26,6 +29,21 @@ import java.util.function.Function;
 @Impl(EnchantUtil.class)
 final class EnchantUtilImpl extends EnchantUtil {
     private static final Set<CustomEnchantment> customEnchantments = new HashSet<>();
+    private String methodName_enchantment_getRarity;
+    private String methodName_item_getEnchantmentValue; // enchantability
+
+    private EnchantUtilImpl() {
+        // Use mappings API to get Enchantment#getRarity() and Item#getEnchantmentValue()
+        Tasks.run(() -> {
+            val mapping = Mappings.getMixedMapping();
+            methodName_enchantment_getRarity = mapping
+                    .fromMapped("net.minecraft.world.item.enchantment.Enchantment")
+                    .methodFromSource("getRarity").mappedName();
+            methodName_item_getEnchantmentValue = mapping
+                    .fromMapped("net.minecraft.world.item.Item")
+                    .methodFromSource("getEnchantmentValue").mappedName();
+        });
+    }
 
     @Override
     protected Set<CustomEnchantment> getCustomEnchantments0() {
@@ -149,9 +167,8 @@ final class EnchantUtilImpl extends EnchantUtil {
     @SneakyThrows
     @Override
     protected int getItemEnchantability0(ItemStack stack) {
-        // return CraftItemStack.asNMSCopy(stack).getItem().c();
         return (int) ReflectUtil.forceCall(BukkitReflectionUtils.PackageType.CRAFTBUKKIT_INVENTORY.getClass("CraftItemStack"),
-                null, "asNMSCopy().getItem().c()", Parameter.single(ItemStack.class, stack));
+                null, "asNMSCopy().getItem()." + methodName_item_getEnchantmentValue + "()", Parameter.single(ItemStack.class, stack));
     }
 
     private boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
@@ -165,7 +182,7 @@ final class EnchantUtilImpl extends EnchantUtil {
     @Override
     protected EnchantmentRarity getEnchantRarity0(Enchantment enchantment) {
         String rarityName = (String) ReflectUtil.forceCall(BukkitReflectionUtils.PackageType.CRAFTBUKKIT_ENCHANTMENS.getClass("CraftEnchantment"),
-                null, "getRaw().d().name()", Parameter.single(Enchantment.class, enchantment));
+                null, "getRaw()." + methodName_enchantment_getRarity + "().name()", Parameter.single(Enchantment.class, enchantment));
 
         return EnchantmentRarity.valueOf(rarityName);
     }

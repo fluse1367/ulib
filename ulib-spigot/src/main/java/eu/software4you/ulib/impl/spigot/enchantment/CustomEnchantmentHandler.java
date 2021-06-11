@@ -34,15 +34,15 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class CustomEnchantmentHandler implements Listener {
-    private String getEnchantmentSeedMethodName;
+    private String methodName_player_getEnchantment;
     private final ULibSpigotPlugin pl;
 
     private CustomEnchantmentHandler(ULibSpigotPlugin pl) {
         this.pl = pl;
         // Use Mappings API to get xpSeed
         Tasks.run(() -> {
-            getEnchantmentSeedMethodName = Mappings.getVanillaMapping()
-                    .fromSource("net.minecraft.world.entity.player.Player")
+            methodName_player_getEnchantment = Mappings.getMixedMapping()
+                    .fromMapped("net.minecraft.world.entity.player.Player")
                     .methodFromSource("getEnchantmentSeed").mappedName();
         });
     }
@@ -135,10 +135,10 @@ public class CustomEnchantmentHandler implements Listener {
         Random rand = new Random();
 
         // set seed to exp seed of player
-        if (getEnchantmentSeedMethodName != null) {
+        if (methodName_player_getEnchantment != null) {
             int xpSeed = (int) ReflectUtil.forceCall(
                     PackageType.CRAFTBUKKIT_ENTITY.getClass("CraftPlayer"), e.getEnchanter(),
-                    String.format("getHandle().%s()", getEnchantmentSeedMethodName));
+                    String.format("getHandle().%s()", methodName_player_getEnchantment));
             rand.setSeed(xpSeed);
         }
 
