@@ -168,6 +168,8 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
     }
 
     private String nms(String cl) {
+        if (version.atLeast(Protocol.v1_17_R1))
+            return cl;
         String clazz = cl.substring(cl.lastIndexOf("/") + 1);
         return "net/minecraft/server/" + version.name() + "/" + clazz;
     }
