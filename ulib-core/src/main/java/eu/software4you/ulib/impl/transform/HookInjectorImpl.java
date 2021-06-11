@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-@Impl(HookInjector.class)
+@Impl(value = HookInjector.class, priority = Integer.MAX_VALUE - 1)
 final class HookInjectorImpl extends HookInjector {
     @Await
     private static Agent agent;

@@ -9,7 +9,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import java.util.HashMap;
 import java.util.Map;
 
-@Impl(value = Repositories.class, priority = Integer.MAX_VALUE - 2)
+@Impl(value = Repositories.class, priority = Integer.MAX_VALUE - 3)
 final class RepositoriesImpl extends Repositories {
     private final Map<String, Repo> repos = new HashMap<>();
 

@@ -11,6 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 final class HookRunner {
     private static final Map<String, Map<Integer, List<Entry<Object, Method>>>> hooks = new ConcurrentHashMap<>();
 
+    static {
+        // loading Map$Entry at <clinit> to prevent infinite loop when self-transforming class loader
+        //noinspection ResultOfMethodCallIgnored
+        Map.Entry.class.getName();
+    }
+
     synchronized static void addHook(Method source, Object sourceInst, String fullDescriptor, int at) {
 
         if (!hooks.containsKey(fullDescriptor)) {
