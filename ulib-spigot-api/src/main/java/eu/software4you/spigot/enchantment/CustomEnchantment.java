@@ -1,5 +1,6 @@
 package eu.software4you.spigot.enchantment;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
