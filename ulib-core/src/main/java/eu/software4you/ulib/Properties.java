@@ -94,6 +94,7 @@ class Properties {
                 if (!saved.isSet(k))
                     saved.set(k, v);
             });
+            saved.set("config-version", cv);
             saved.save(conf);
         }
         return saved;
