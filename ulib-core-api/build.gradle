@@ -8,7 +8,7 @@ dependencies {
                   'com.google.guava:guava:27.0.1-jre',
                   'com.google.code.gson:gson:2.8.6',
                   // (snake)yaml
-                  'org.yaml:snakeyaml:1.23',
+                  'org.yaml:snakeyaml:1.28',
                   // jansi (CLI/terminal support)
                   'org.fusesource.jansi:jansi:1.18'])
 

@@ -1,10 +1,10 @@
 package ulib.ported.org.bukkit.configuration;
 
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is a {@link Configuration} implementation that does not save or load
@@ -25,7 +25,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
-     * @throws IllegalArgumentException Thrown if defaults is {@code null}
+     * @throws IllegalArgumentException Thrown if defaults is null
      */
     public MemoryConfiguration(@Nullable Configuration defaults) {
         this.defaults = defaults;
@@ -33,7 +33,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
 
     @Override
     public void addDefault(@NotNull String path, @Nullable Object value) {
-        Objects.requireNonNull(path, "Path may not be null");
+        Validate.notNull(path, "Path may not be null");
 
         if (defaults == null) {
             defaults = new MemoryConfiguration();
@@ -44,7 +44,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
 
     @Override
     public void addDefaults(@NotNull Map<String, Object> defaults) {
-        Objects.requireNonNull(defaults, "Defaults may not be null");
+        Validate.notNull(defaults, "Defaults may not be null");
 
         for (Map.Entry<String, Object> entry : defaults.entrySet()) {
             addDefault(entry.getKey(), entry.getValue());
@@ -53,14 +53,14 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
 
     @Override
     public void addDefaults(@NotNull Configuration defaults) {
-        Objects.requireNonNull(defaults, "Defaults may not be null");
+        Validate.notNull(defaults, "Defaults may not be null");
 
         addDefaults(defaults.getValues(true));
     }
 
     @Override
     public void setDefaults(@NotNull Configuration defaults) {
-        Objects.requireNonNull(defaults, "Defaults may not be null");
+        Validate.notNull(defaults, "Defaults may not be null");
 
         this.defaults = defaults;
     }

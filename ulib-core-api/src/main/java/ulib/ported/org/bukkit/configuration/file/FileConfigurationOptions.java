@@ -2,7 +2,6 @@ package ulib.ported.org.bukkit.configuration.file;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ulib.ported.org.bukkit.configuration.Configuration;
 import ulib.ported.org.bukkit.configuration.MemoryConfiguration;
 import ulib.ported.org.bukkit.configuration.MemoryConfigurationOptions;
 
@@ -47,8 +46,8 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      * <p>
-     * {@code Null} is a valid value which will indicate that no header is to be
-     * applied. The default value is {@code null}.
+     * Null is a valid value which will indicate that no header is to be
+     * applied. The default value is null.
      *
      * @return Header
      */
@@ -66,7 +65,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * automatically be applied, but you may include one if you wish for extra
      * spacing.
      * <p>
-     * {@code Null} is a valid value which will indicate that no header is to be
+     * Null is a valid value which will indicate that no header is to be
      * applied.
      *
      * @param value New header
@@ -83,13 +82,13 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If this is true, if a default {@link FileConfiguration} is passed to
      * {@link
-     * FileConfiguration#setDefaults(Configuration)}
+     * FileConfiguration#setDefaults(ulib.ported.org.bukkit.configuration.Configuration)}
      * then upon saving it will use the header from that config, instead of
      * the one provided here.
      * <p>
      * If no default is set on the configuration, or the default is not of
      * type FileConfiguration, or that config has no header ({@link #header()}
-     * returns {@code null}) then the header specified in this configuration will be
+     * returns null) then the header specified in this configuration will be
      * used.
      * <p>
      * Defaults to true.
@@ -105,13 +104,13 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * <p>
      * If this is true, if a default {@link FileConfiguration} is passed to
      * {@link
-     * FileConfiguration#setDefaults(Configuration)}
+     * FileConfiguration#setDefaults(ulib.ported.org.bukkit.configuration.Configuration)}
      * then upon saving it will use the header from that config, instead of
      * the one provided here.
      * <p>
      * If no default is set on the configuration, or the default is not of
      * type FileConfiguration, or that config has no header ({@link #header()}
-     * returns {@code null}) then the header specified in this configuration will be
+     * returns null) then the header specified in this configuration will be
      * used.
      * <p>
      * Defaults to true.

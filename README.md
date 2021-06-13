@@ -271,11 +271,11 @@ The following 3rd-party software is included within this project:
   Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
   the [MIT license](https://raw.githubusercontent.com/BananaPuncher714/NBTEditor/4884d2f95f2e648de6db12c0a1dcaaae2d866cef/LICENSE)
 - Bukkit (Copyright (c) 2020 Bukkit, licensed under
-  the [GNU General Public License v3.0](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/raw/LICENCE.txt?at=85e683b7eb8d14911ce47d309558caf3a968bde7)):
+  the [GNU General Public License v3.0](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/raw/LICENCE.txt?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0)):
     - YAML-Configuration
-      Package ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/configuration?at=85e683b7eb8d14911ce47d309558caf3a968bde7))
+      Package ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/configuration?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0))
     - NumberConversions
-      Class ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/util/NumberConversions.java?at=85e683b7eb8d14911ce47d309558caf3a968bde7))
+      Class ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/util/NumberConversions.java?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0))
 - ParticleEffect
   Library ([click](https://github.com/DarkBlade12/ParticleEffect/tree/df3f57fa3f1ecd82ad8efac24dcf8371b993c019))
   Copyright (c) 2016 [DarkBlade12](https://github.com/DarkBlade12), custom license (see
@@ -312,10 +312,10 @@ The following 3rd-party software is not included within the source code of this 
 - SLF4J-Simple ([click](https://github.com/qos-ch/slf4j/tree/v_1.7.30)) Copyright (c)
   2019 [QOS](https://github.com/qos-ch), licensed under the
   [MIT license](https://github.com/qos-ch/slf4j/blob/v_1.7.30/LICENSE.txt), version 1.7.30
-- SnakeYAML ([click](https://github.com/asomov/snakeyaml/tree/e8feed726e6298e7b7377c82936cd62e2662108a)) Copyright (c)
+- SnakeYAML ([click](https://github.com/asomov/snakeyaml/tree/b28f0b4d87c60ef4dd2aed9188a4c7f7fbb0ae66)) Copyright (c)
   2018 [Andrey Somov](https://github.com/asomov), licensed under the
-  [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/e8feed726e6298e7b7377c82936cd62e2662108a/LICENSE.txt),
-  version 1.23
+  [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/b28f0b4d87c60ef4dd2aed9188a4c7f7fbb0ae66/LICENSE.txt),
+  version 1.28
 - Jansi ([click](https://github.com/fusesource/jansi/tree/jansi-project-1.18)) Copyright (c)
   2019 [FuseSource](https://github.com/fusesource), licensed under
   the [Apache License 2.0](https://github.com/fusesource/jansi/blob/jansi-project-1.18/license.txt), version 1.18

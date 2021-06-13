@@ -1,5 +1,6 @@
 package ulib.ported.org.bukkit.configuration.serialization;
 
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ulib.ported.org.bukkit.configuration.Configuration;
@@ -10,7 +11,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +19,11 @@ import java.util.logging.Logger;
  */
 public class ConfigurationSerialization {
     public static final String SERIALIZED_TYPE_KEY = "==";
-    private static Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
     private final Class<? extends ConfigurationSerializable> clazz;
+    private static Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
+
+    static {
+    }
 
     protected ConfigurationSerialization(@NotNull Class<? extends ConfigurationSerializable> clazz) {
         this.clazz = clazz;
@@ -35,7 +38,7 @@ public class ConfigurationSerialization {
      * ConfigurationSerializable.
      * <p>
      * If a new instance could not be made, an example being the class not
-     * fully implementing the interface, {@code null} will be returned.
+     * fully implementing the interface, null will be returned.
      *
      * @param args  Arguments for deserialization
      * @param clazz Class to deserialize into
@@ -55,7 +58,7 @@ public class ConfigurationSerialization {
      * ConfigurationSerializable.
      * <p>
      * If a new instance could not be made, an example being the class not
-     * fully implementing the interface, {@code null} will be returned.
+     * fully implementing the interface, null will be returned.
      *
      * @param args Arguments for deserialization
      * @return New instance of the specified class
@@ -87,93 +90,15 @@ public class ConfigurationSerialization {
     }
 
     /**
-     * Registers the given {@link ConfigurationSerializable} class by its
-     * alias
-     *
-     * @param clazz Class to register
-     */
-    public static void registerClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
-        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
-
-        if (delegate == null) {
-            registerClass(clazz, getAlias(clazz));
-            registerClass(clazz, clazz.getName());
-        }
-    }
-
-    /**
-     * Registers the given alias to the specified {@link
-     * ConfigurationSerializable} class
-     *
-     * @param clazz Class to register
-     * @param alias Alias to register as
-     * @see SerializableAs
-     */
-    public static void registerClass(@NotNull Class<? extends ConfigurationSerializable> clazz, @NotNull String alias) {
-        aliases.put(alias, clazz);
-    }
-
-    /**
-     * Unregisters the specified alias to a {@link ConfigurationSerializable}
-     *
-     * @param alias Alias to unregister
-     */
-    public static void unregisterClass(@NotNull String alias) {
-        aliases.remove(alias);
-    }
-
-    /**
-     * Unregisters any aliases for the specified {@link
-     * ConfigurationSerializable} class
-     *
-     * @param clazz Class to unregister
-     */
-    public static void unregisterClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
-        while (aliases.values().remove(clazz)) {
-            ;
-        }
-    }
-
-    /**
      * Attempts to get a registered {@link ConfigurationSerializable} class by
      * its alias
      *
      * @param alias Alias of the serializable
-     * @return Registered class, or {@code null} if not found
+     * @return Registered class, or null if not found
      */
     @Nullable
     public static Class<? extends ConfigurationSerializable> getClassByAlias(@NotNull String alias) {
         return aliases.get(alias);
-    }
-
-    /**
-     * Gets the correct alias for the given {@link ConfigurationSerializable}
-     * class
-     *
-     * @param clazz Class to get alias for
-     * @return Alias to use for the class
-     */
-    @NotNull
-    public static String getAlias(@NotNull Class<? extends ConfigurationSerializable> clazz) {
-        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
-
-        if (delegate != null) {
-            if ((delegate.value() == null) || (delegate.value() == clazz)) {
-                delegate = null;
-            } else {
-                return getAlias(delegate.value());
-            }
-        }
-
-        if (delegate == null) {
-            SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
-
-            if ((alias != null) && (alias.value() != null)) {
-                return alias.value();
-            }
-        }
-
-        return clazz.getName();
     }
 
     @Nullable
@@ -241,9 +166,57 @@ public class ConfigurationSerialization {
         return null;
     }
 
+    /**
+     * Registers the given {@link ConfigurationSerializable} class by its
+     * alias
+     *
+     * @param clazz Class to register
+     */
+    public static void registerClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
+        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
+
+        if (delegate == null) {
+            registerClass(clazz, getAlias(clazz));
+            registerClass(clazz, clazz.getName());
+        }
+    }
+
+    /**
+     * Registers the given alias to the specified {@link
+     * ConfigurationSerializable} class
+     *
+     * @param clazz Class to register
+     * @param alias Alias to register as
+     * @see SerializableAs
+     */
+    public static void registerClass(@NotNull Class<? extends ConfigurationSerializable> clazz, @NotNull String alias) {
+        aliases.put(alias, clazz);
+    }
+
+    /**
+     * Unregisters the specified alias to a {@link ConfigurationSerializable}
+     *
+     * @param alias Alias to unregister
+     */
+    public static void unregisterClass(@NotNull String alias) {
+        aliases.remove(alias);
+    }
+
+    /**
+     * Unregisters any aliases for the specified {@link
+     * ConfigurationSerializable} class
+     *
+     * @param clazz Class to unregister
+     */
+    public static void unregisterClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
+        while (aliases.values().remove(clazz)) {
+            ;
+        }
+    }
+
     @Nullable
     public ConfigurationSerializable deserialize(@NotNull Map<String, ?> args) {
-        Objects.requireNonNull(args, "Args must not be null");
+        Validate.notNull(args, "Args must not be null");
 
         ConfigurationSerializable result = null;
         Method method = null;
@@ -273,5 +246,35 @@ public class ConfigurationSerialization {
         }
 
         return result;
+    }
+
+    /**
+     * Gets the correct alias for the given {@link ConfigurationSerializable}
+     * class
+     *
+     * @param clazz Class to get alias for
+     * @return Alias to use for the class
+     */
+    @NotNull
+    public static String getAlias(@NotNull Class<? extends ConfigurationSerializable> clazz) {
+        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
+
+        if (delegate != null) {
+            if ((delegate.value() == null) || (delegate.value() == clazz)) {
+                delegate = null;
+            } else {
+                return getAlias(delegate.value());
+            }
+        }
+
+        if (delegate == null) {
+            SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
+
+            if ((alias != null) && (alias.value() != null)) {
+                return alias.value();
+            }
+        }
+
+        return clazz.getName();
     }
 }
