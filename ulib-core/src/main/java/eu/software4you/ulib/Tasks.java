@@ -10,8 +10,10 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Tasks {
-    public static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(0);
-    public static final ExecutorService RUNNER = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+    private static final boolean SYNC = Properties.getInstance().FORCE_SYNC;
+
+    public static final ScheduledExecutorService SCHEDULER = SYNC ? Executors.newSingleThreadScheduledExecutor() : Executors.newScheduledThreadPool(0);
+    public static final ExecutorService RUNNER = new ThreadPoolExecutor(0, SYNC ? 1 : Integer.MAX_VALUE,
             0, TimeUnit.NANOSECONDS, new SynchronousQueue<>());
 
     @SafeVarargs

@@ -58,3 +58,8 @@ directories:
   # Default: ''
   # Command line equivalent: -Dulib.directory.libraries=YOUR_VALUE
   libraries: ''
+
+# Switch to force uLib to handle all requests synchronously that would usually worked off multi-threaded.
+# Enforcing synchronous work will significantly decrease uLib's performance in certain areas!
+# Possible values: true, false; Default: false
+force-synchronous-work: false
