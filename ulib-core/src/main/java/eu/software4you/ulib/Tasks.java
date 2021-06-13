@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Tasks {
@@ -33,14 +34,32 @@ public class Tasks {
     }
 
     public static <T> Future<T> run(Callable<T> task) {
-        return RUNNER.submit(task);
+        return RUNNER.submit(() -> catching(task));
     }
 
     public static <T> Future<T> run(Runnable task, T result) {
-        return RUNNER.submit(task, result);
+        return RUNNER.submit(() -> catching(task), result);
     }
 
     public static Future<?> run(Runnable task) {
-        return RUNNER.submit(task);
+        return RUNNER.submit(() -> catching(task));
+    }
+
+    private static void catching(Runnable r) {
+        try {
+            r.run();
+        } catch (Throwable thr) {
+            ULib.logger().log(Level.SEVERE, thr, () -> "An error occurred while executing a task.");
+        }
+    }
+
+    @SneakyThrows
+    private static <R> R catching(Callable<R> c) {
+        try {
+            return c.call();
+        } catch (Throwable thr) {
+            ULib.logger().log(Level.SEVERE, thr, () -> "An error occurred while executing a task.");
+            throw thr;
+        }
     }
 }
