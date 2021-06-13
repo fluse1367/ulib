@@ -290,18 +290,14 @@ subprojects {
             archives javadocJar
         }
 
+        components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
+            skip()
+        }
+
         publishing {
             publications {
                 library(MavenPublication) {
                     from components.java
-                    // exclude runtime dependencies from pom
-                    pom.withXml {
-                        asNode().dependencies.'*'.findAll() {
-                            it.scope.text() == 'runtime'
-                        }.each() {
-                            it.parent().remove(it)
-                        }
-                    }
                 }
             }
             repositories {
