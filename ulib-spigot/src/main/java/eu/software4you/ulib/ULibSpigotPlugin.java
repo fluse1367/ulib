@@ -9,6 +9,7 @@ import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -18,6 +19,7 @@ import org.bukkit.plugin.messaging.Messenger;
 
 public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
     public static final boolean PAPER;
+    private static final Loader<String> PLAIN_MC_VERSION;
     private static final String PROP_KEY = "ulib.plugin_status";
     private static ULibSpigotPlugin instance = null;
 
@@ -36,7 +38,12 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
         } catch (ClassNotFoundException e) {
             paper = false;
         }
-        PAPER = paper;
+        val server = Bukkit.getServer();
+        if (PAPER = paper) {
+            PLAIN_MC_VERSION = new Loader<>(server::getMinecraftVersion);
+        } else {
+            PLAIN_MC_VERSION = new Loader<>(() -> (String) ReflectUtil.call(server.getClass(), server, "getServer().getVersion()"));
+        }
 
         Properties.getInstance().ADDITIONAL_LIBS.add(new Pair<>("{{maven.xseries}}", "central"));
         ULib.init();
@@ -46,10 +53,14 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
 
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
     private SqlEngine mainUserCacheEngine;
-    private String plainMcVersion;
+
 
     public static ULibSpigotPlugin getInstance() {
         return instance;
+    }
+
+    public static String getPlainMcVersion() {
+        return PLAIN_MC_VERSION.get();
     }
 
     @Override
@@ -71,15 +82,14 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
             MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
 
             if (PAPER) {
-                plainMcVersion = getServer().getMinecraftVersion();
-
+                // for future usage
             } else {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
                         " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
                         " See https://papermc.io/ for more information.");
                 // register no-paper workarounds
 
-                plainMcVersion = (String) ReflectUtil.call(getServer().getClass(), getServer(), "getServer().getVersion()");
+                // for future usage
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,10 +123,6 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
     @EventHandler
     public void handle(PluginDisableEvent e) {
         DependencyLoader.free(e.getPlugin().getClass().getClassLoader());
-    }
-
-    public String getPlainMcVersion() {
-        return plainMcVersion;
     }
 
     public boolean isListening(Class<? extends Listener> clazz) {

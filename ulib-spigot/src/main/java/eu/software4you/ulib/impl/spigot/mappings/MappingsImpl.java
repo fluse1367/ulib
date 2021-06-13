@@ -6,7 +6,6 @@ import eu.software4you.spigot.multiversion.Protocol;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULib;
-import eu.software4you.ulib.ULibSpigotPlugin;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
@@ -16,19 +15,21 @@ import lombok.val;
 
 import java.io.ByteArrayOutputStream;
 
-@Impl(Mappings.class)
+import static eu.software4you.ulib.ULibSpigotPlugin.getPlainMcVersion;
+
+@Impl(value = Mappings.class, priority = 4999)
 final class MappingsImpl extends Mappings {
     private final Loader<VanillaMapping> currentVanilla = new Loader<>(() -> {
-        String ver = ULibSpigotPlugin.getInstance().getPlainMcVersion();
+        String ver = getPlainMcVersion();
         val manifest = LauncherMeta.getVersionManifest().get(ver);
         if (manifest == null)
             throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));
         return loadVanilla(manifest);
     });
     private final Loader<BukkitMapping> currentBukkit = new Loader<>(() ->
-            loadBukkit(ULibSpigotPlugin.getInstance().getPlainMcVersion()));
+            loadBukkit(getPlainMcVersion()));
     private final Loader<MixedMapping> currentMixed = new Loader<>(() -> {
-        String ver = ULibSpigotPlugin.getInstance().getPlainMcVersion();
+        String ver = getPlainMcVersion();
         val manifest = LauncherMeta.getVersionManifest().get(ver);
         if (manifest == null)
             throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));

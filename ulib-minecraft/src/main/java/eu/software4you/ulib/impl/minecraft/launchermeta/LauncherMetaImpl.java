@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 
 import java.io.InputStreamReader;
 
-@Impl(LauncherMeta.class)
+@Impl(value = LauncherMeta.class, priority = 5000)
 final class LauncherMetaImpl extends LauncherMeta {
     private final Loader<Meta> loader = new Loader<>(() -> new Meta(JsonParser.parseReader(new InputStreamReader(
             HttpUtil.getContent("https://launchermeta.mojang.com/mc/game/version_manifest.json")
