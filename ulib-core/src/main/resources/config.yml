@@ -1,0 +1,56 @@
+# uLib configuration file.
+
+# The ulib-data-directory is uLib's main directory for all it's files.
+# This directory can only be changed via command-line options.
+# To change it, add this to the command-line (before the -jar):
+#   -Dulib.ulib.directory.main=YOUR_VALUE
+# Default to '.ulib'
+
+# Switch to override properties set via the command line.
+# Usually the properties set via command line override the settings in this file.
+# Possible values: true, false; Default value: false
+override-command-line: false
+
+# Logging settings
+logging:
+  # Switch to toggle the branding splash.
+  # Possible values: true, false; Default value: true
+  # Command line equivalent: -Dulib.splash=YOUR_VALUE
+  splash: true
+
+  # Adjustment of logging level.
+  # Possible values: OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, DEBUG, ALL; Default value: INFO
+  # Note: FINEST and DEBUG are equivalent.
+  # Command line equivalent: -Dulib.loglevel=YOUR_VALUE
+  log-level: INFO
+
+  # Switch to completely turn off all logging (does override log-level setting!).
+  # Possible values: true, false; Default value: false
+  # Command line equivalent: -Dulib.quiet=YOUR_VALUE
+  quiet: false
+
+# Directories settings
+directories:
+  # Where the log files will be placed.
+  # If the value is '' the 'logs' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.logs=YOUR_VALUE
+  logs: ''
+
+  # Where cached files will be placed.
+  # If the value is '' the 'cache' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.cache=YOUR_VALUE
+  cache: ''
+
+  # Where not further resolved maven artifacts will be stored.
+  # If the value is '' the 'libraries_unsafe' directory will be placed inside the cache-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.libraries_unsafe=YOUR_VALUE
+  libraries_unsafe: ''
+
+  # Where fully-resolved maven artifacts will be stored.
+  # If the value is '' the 'libraries' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.libraries=YOUR_VALUE
+  libraries: ''

@@ -1,8 +1,14 @@
 package eu.software4you.ulib;
 
 import eu.software4you.common.collection.Pair;
+import eu.software4you.utils.IOUtil;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.lang3.Validate;
+import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +27,9 @@ class Properties {
     final String BRAND;
     final List<Pair<String, String>> ADDITIONAL_LIBS = new ArrayList<>();
 
+    private YamlConfiguration yaml;
+    private boolean clOverride;
+
     private Properties() {
         BRAND = "\n" +
                 "        ______ _____ ______  \n" +
@@ -32,31 +41,56 @@ class Properties {
 
         DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
 
-        String logsDir = System.getProperty("ulib.directory.logs");
-        LOGS_DIR = logsDir != null ? new File(logsDir) : new File(DATA_DIR, "logs");
+        yaml = loadConfig();
+        clOverride = yaml.getBoolean("override-command-line", false);
 
-        String cacheDir = System.getProperty("ulib.directory.cache");
-        CACHE_DIR = cacheDir != null ? new File(cacheDir) : new File(DATA_DIR, "cache");
+        LOGS_DIR = new File(get("directories.logs", "ulib.directory.logs",
+                String.format("%s%slogs", DATA_DIR.getPath(), File.separator)));
+        CACHE_DIR = new File(get("directories.cache", "ulib.directory.cache",
+                String.format("%s%scache", DATA_DIR.getPath(), File.separator)));
+        LIBS_UNSAFE_DIR = new File(get("directories.libraries_unsafe", "ulib.directory.libraries_unsafe",
+                String.format("%s%slibraries_unsafe", CACHE_DIR.getPath(), File.separator)));
+        LIBS_DIR = new File(get("directories.libraries", "ulib.directory.libraries",
+                String.format("%s%slibraries", DATA_DIR.getPath(), File.separator)));
 
-        String libsUnsafeDir = System.getProperty("ulib.directory.libraries_unsafe");
-        LIBS_UNSAFE_DIR = libsUnsafeDir != null ? new File(libsUnsafeDir) : new File(CACHE_DIR, "libraries_unsafe");
 
-        String libsDir = System.getProperty("ulib.directory.libraries");
-        LIBS_DIR = libsDir != null ? new File(libsDir) : new File(DATA_DIR, "libraries");
-
-        QUIET = System.getProperty("ulib.quiet", "false").equalsIgnoreCase("true");
-
-        NO_SPLASH = System.getProperty("ulib.splash", "true").equalsIgnoreCase("false");
+        QUIET = get("logging.quiet", "ulib.quiet", "false").equalsIgnoreCase("true");
+        NO_SPLASH = get("logging.splash", "ulib.splash", "true").equalsIgnoreCase("false");
 
         Level logLevel = Level.INFO;
         try {
-            String levelStr = System.getProperty("ulib.loglevel", "INFO").toUpperCase();
+            String levelStr = get("logging.log-level", "ulib.loglevel", "INFO").toUpperCase();
             logLevel = levelStr.equals("DEBUG") ? Level.FINEST : Level.parse(levelStr);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
         LOG_LEVEL = QUIET ? Level.OFF : logLevel;
+
+        yaml = null; // let gc do its work
+    }
+
+    @SneakyThrows
+    private YamlConfiguration loadConfig() {
+        val conf = new File(DATA_DIR, "config.yml");
+        if (!conf.exists()) {
+            val res = getClass().getResourceAsStream("/config.yml");
+            Validate.notNull(res, "Configuration not found");
+            val out = new FileOutputStream(conf);
+            IOUtil.write(res, out);
+        }
+        return YamlConfiguration.loadConfiguration(conf);
+    }
+
+    private String get(String yamlPath, String propsKey, String def) {
+        String pVal = System.getProperty(propsKey), cVal = String.valueOf(yaml.get(yamlPath, pVal));
+        String preferred = clOverride ? cVal : pVal, second = clOverride ? preferred : cVal;
+
+        if (preferred != null && !preferred.isEmpty())
+            return preferred;
+        if (second != null && !second.isEmpty())
+            return second;
+        return def;
     }
 
     static Properties getInstance() {
