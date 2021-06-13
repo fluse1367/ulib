@@ -19,11 +19,12 @@ import java.util.logging.Logger;
  */
 public class ConfigurationSerialization {
     public static final String SERIALIZED_TYPE_KEY = "==";
-    private final Class<? extends ConfigurationSerializable> clazz;
-    private static Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
+    private static final Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
 
     static {
     }
+
+    private final Class<? extends ConfigurationSerializable> clazz;
 
     protected ConfigurationSerialization(@NotNull Class<? extends ConfigurationSerializable> clazz) {
         this.clazz = clazz;
@@ -101,71 +102,6 @@ public class ConfigurationSerialization {
         return aliases.get(alias);
     }
 
-    @Nullable
-    protected Method getMethod(@NotNull String name, boolean isStatic) {
-        try {
-            Method method = clazz.getDeclaredMethod(name, Map.class);
-
-            if (!ConfigurationSerializable.class.isAssignableFrom(method.getReturnType())) {
-                return null;
-            }
-            if (Modifier.isStatic(method.getModifiers()) != isStatic) {
-                return null;
-            }
-
-            return method;
-        } catch (NoSuchMethodException ex) {
-            return null;
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Nullable
-    protected Constructor<? extends ConfigurationSerializable> getConstructor() {
-        try {
-            return clazz.getConstructor(Map.class);
-        } catch (NoSuchMethodException ex) {
-            return null;
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Nullable
-    protected ConfigurationSerializable deserializeViaMethod(@NotNull Method method, @NotNull Map<String, ?> args) {
-        try {
-            ConfigurationSerializable result = (ConfigurationSerializable) method.invoke(null, args);
-
-            if (result == null) {
-                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization: method returned null");
-            } else {
-                return result;
-            }
-        } catch (Throwable ex) {
-            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
-                    Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization",
-                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    protected ConfigurationSerializable deserializeViaCtor(@NotNull Constructor<? extends ConfigurationSerializable> ctor, @NotNull Map<String, ?> args) {
-        try {
-            return ctor.newInstance(args);
-        } catch (Throwable ex) {
-            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
-                    Level.SEVERE,
-                    "Could not call constructor '" + ctor.toString() + "' of " + clazz + " for deserialization",
-                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
-        }
-
-        return null;
-    }
-
     /**
      * Registers the given {@link ConfigurationSerializable} class by its
      * alias
@@ -210,8 +146,102 @@ public class ConfigurationSerialization {
      */
     public static void unregisterClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
         while (aliases.values().remove(clazz)) {
-            ;
         }
+    }
+
+    /**
+     * Gets the correct alias for the given {@link ConfigurationSerializable}
+     * class
+     *
+     * @param clazz Class to get alias for
+     * @return Alias to use for the class
+     */
+    @NotNull
+    public static String getAlias(@NotNull Class<? extends ConfigurationSerializable> clazz) {
+        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
+
+        if (delegate != null) {
+            if ((delegate.value() == null) || (delegate.value() == clazz)) {
+                delegate = null;
+            } else {
+                return getAlias(delegate.value());
+            }
+        }
+
+        if (delegate == null) {
+            SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
+
+            if ((alias != null) && (alias.value() != null)) {
+                return alias.value();
+            }
+        }
+
+        return clazz.getName();
+    }
+
+    @Nullable
+    protected Method getMethod(@NotNull String name, boolean isStatic) {
+        try {
+            Method method = clazz.getDeclaredMethod(name, Map.class);
+
+            if (!ConfigurationSerializable.class.isAssignableFrom(method.getReturnType())) {
+                return null;
+            }
+            if (Modifier.isStatic(method.getModifiers()) != isStatic) {
+                return null;
+            }
+
+            return method;
+        } catch (NoSuchMethodException ex) {
+            return null;
+        } catch (SecurityException ex) {
+            return null;
+        }
+    }
+
+    @Nullable
+    protected Constructor<? extends ConfigurationSerializable> getConstructor() {
+        try {
+            return clazz.getConstructor(Map.class);
+        } catch (NoSuchMethodException ex) {
+            return null;
+        } catch (SecurityException ex) {
+            return null;
+        }
+    }
+
+    @Nullable
+    protected ConfigurationSerializable deserializeViaMethod(@NotNull Method method, @NotNull Map<String, ?> args) {
+        try {
+            ConfigurationSerializable result = (ConfigurationSerializable) method.invoke(null, args);
+
+            if (result == null) {
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method + "' of " + clazz + " for deserialization: method returned null");
+            } else {
+                return result;
+            }
+        } catch (Throwable ex) {
+            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
+                    Level.SEVERE,
+                    "Could not call method '" + method + "' of " + clazz + " for deserialization",
+                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    protected ConfigurationSerializable deserializeViaCtor(@NotNull Constructor<? extends ConfigurationSerializable> ctor, @NotNull Map<String, ?> args) {
+        try {
+            return ctor.newInstance(args);
+        } catch (Throwable ex) {
+            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
+                    Level.SEVERE,
+                    "Could not call constructor '" + ctor + "' of " + clazz + " for deserialization",
+                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
+        }
+
+        return null;
     }
 
     @Nullable
@@ -246,35 +276,5 @@ public class ConfigurationSerialization {
         }
 
         return result;
-    }
-
-    /**
-     * Gets the correct alias for the given {@link ConfigurationSerializable}
-     * class
-     *
-     * @param clazz Class to get alias for
-     * @return Alias to use for the class
-     */
-    @NotNull
-    public static String getAlias(@NotNull Class<? extends ConfigurationSerializable> clazz) {
-        DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
-
-        if (delegate != null) {
-            if ((delegate.value() == null) || (delegate.value() == clazz)) {
-                delegate = null;
-            } else {
-                return getAlias(delegate.value());
-            }
-        }
-
-        if (delegate == null) {
-            SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
-
-            if ((alias != null) && (alias.value() != null)) {
-                return alias.value();
-            }
-        }
-
-        return clazz.getName();
     }
 }
