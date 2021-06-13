@@ -9,6 +9,8 @@ import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -74,12 +76,25 @@ class Properties {
     private YamlConfiguration loadConfig() {
         val conf = new File(DATA_DIR, "config.yml");
         if (!conf.exists()) {
-            val res = getClass().getResourceAsStream("/config.yml");
-            Validate.notNull(res, "Configuration not found");
-            val out = new FileOutputStream(conf);
-            IOUtil.write(res, out);
+            IOUtil.write(getCurrentConfig(), new FileOutputStream(conf));
+            return YamlConfiguration.loadConfiguration(conf);
         }
-        return YamlConfiguration.loadConfiguration(conf);
+        val current = YamlConfiguration.loadConfiguration(new InputStreamReader(getCurrentConfig()));
+        val saved = YamlConfiguration.loadConfiguration(conf);
+
+        // check if upgrade is required
+        int cv = current.getInt("config-version"), sv = saved.getInt("config-version");
+        if (cv > sv) {
+            System.out.printf("[uLib] Updating config from version %d to %d%n", sv, cv);
+            // update config.yml with newer contents
+            current.getValues(true).forEach(saved::set);
+            saved.save(conf);
+        }
+        return saved;
+    }
+
+    private InputStream getCurrentConfig() {
+        return Validate.notNull(getClass().getResourceAsStream("/config.yml"), "Configuration not found");
     }
 
     private String get(String yamlPath, String propsKey, String def) {

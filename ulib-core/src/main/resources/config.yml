@@ -1,5 +1,9 @@
 # uLib configuration file.
 
+# !!! DO NOT CHANGE !!!
+# Internal setting to track config version updates.
+config-version: 1
+
 # The ulib-data-directory is uLib's main directory for all it's files.
 # This directory can only be changed via command-line options.
 # To change it, add this to the command-line (before the -jar):
