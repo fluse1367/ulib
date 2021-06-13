@@ -90,7 +90,10 @@ class Properties {
         if (cv > sv) {
             System.out.printf("[uLib] Updating config from version %d to %d%n", sv, cv);
             // update config.yml with newer contents
-            current.getValues(true).forEach(saved::set);
+            current.getValues(true).forEach((k, v) -> {
+                if (!saved.isSet(k))
+                    saved.set(k, v);
+            });
             saved.save(conf);
         }
         return saved;
