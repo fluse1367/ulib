@@ -4,6 +4,7 @@ import eu.software4you.configuration.Configurations;
 import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.inject.Impl;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -21,11 +22,13 @@ final public class ConfigurationsImpl extends Configurations {
 
     @Override
     protected YamlSub loadYaml0(Reader reader) throws IOException {
-        return yaml.deserialize(reader);
+        val sub = newYaml0();
+        sub.load(reader);
+        return sub;
     }
 
     @Override
     protected void saveYaml0(YamlSub yaml, Writer writer) throws IOException {
-        this.yaml.serialize(yaml, writer);
+        yaml.save(writer);
     }
 }

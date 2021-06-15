@@ -101,7 +101,7 @@ class Properties {
         // upgrade config.yml with newer contents
         YamlSub upgrade = serializer.createNew();
         upgrade.set("config-version", cv);
-        upgrade.setComments("config-version", current.getComments("config-version").toArray(new String[0]));
+        upgrade.setComments("config-version", current.getComments("config-version"));
 
 
         current.getValues(true).forEach((k, v) -> {
@@ -118,8 +118,7 @@ class Properties {
         // set comments of subs (bc the subs itself arent included in #getValues())
         copyComments(saved, upgrade);
 
-
-        serializer.serialize(upgrade, new FileWriter(conf));
+        upgrade.save(new FileWriter(conf));
         return upgrade;
     }
 

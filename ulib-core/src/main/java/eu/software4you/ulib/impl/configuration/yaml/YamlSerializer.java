@@ -23,8 +23,8 @@ public class YamlSerializer {
     /* singleton */
     private static final YamlSerializer instance = new YamlSerializer();
 
-    final Yaml yaml;
-    final YamlConstructor constructor;
+    private final Yaml yaml;
+    private final YamlConstructor constructor;
 
     private YamlSerializer() {
         LoaderOptions loaderConfig = new LoaderOptions();
@@ -41,35 +41,50 @@ public class YamlSerializer {
     }
 
     public YamlDocument createNew() {
-        return new YamlDocument(this, new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO));
+        val doc = new YamlDocument(this);
+        doc.node = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        return doc;
     }
 
     public YamlDocument deserialize(Reader reader) throws IOException {
+        YamlDocument doc = new YamlDocument(this);
+        doc.load(reader);
+        return doc;
+    }
+
+    void deserialize(Reader reader, YamlDocument doc) throws IOException {
         val content = new String(IOUtil.read(reader)); // copy contents
 
         Node root = yaml.compose(new StringReader(content));
 
+        // clear doc
+        doc.clear();
+
+        // replace root
+        doc.replaceNode(extractAnchor(root));
+
         if (root instanceof MappingNode) {
-            return graph(new YamlDocument(this, root),
-                    (MappingNode) root, "\n" + content, 0);
+            graph(doc, (MappingNode) root, "\n" + content, 0);
+        } else {
+            doc.keyNodes.put("", doc.node);
+            doc.data.put("", read(doc.node));
         }
-
-        YamlDocument sub = new YamlDocument(this, root);
-
-        root = extractAnchor(root);
-        sub.keyNodes.put("", root);
-        sub.data.put("", read(root));
-
-        return sub;
     }
 
-    public void serialize(YamlSub sub, Writer writer) throws IOException {
+    void serialize(YamlSub sub, Writer writer) throws IOException {
         if (!(sub instanceof YamlDocument))
             throw new IllegalArgumentException("Serialization of " + sub.getClass().getName() + " not supported");
 
         StringWriter dumper = new StringWriter();
 
-        ((YamlDocument) sub).serialize(dumper);
+        Node root = ((YamlDocument) sub).node;
+
+        if (root != null) {
+            yaml.serialize(root, dumper);
+        } else {
+            dumper.write("");
+            dumper.flush();
+        }
 
         // replace
         String output = dumper.toString()
@@ -78,6 +93,10 @@ public class YamlSerializer {
                 ;
 
         IOUtil.write(new StringReader(output), writer);
+    }
+
+    Node represent(Object data) {
+        return yaml.represent(data);
     }
 
     private YamlDocument graph(YamlDocument parent, MappingNode root, final String content, final int start) {

@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,6 +56,22 @@ public interface YamlSub extends Sub {
     default void setComments(@NotNull String path, @NotNull List<String> lines) throws IllegalArgumentException {
         setComments(path, lines.toArray(new String[0]));
     }
+
+    /**
+     * Clears all data from the sub and loads new data in.
+     *
+     * @param reader the data
+     * @throws IOException If an I/O error occurs
+     */
+    void load(Reader reader) throws IOException;
+
+    /**
+     * Writes (serializes) this sub to a writer.
+     *
+     * @param writer the writer to write to
+     * @throws IOException If an I/O error occurs
+     */
+    void save(Writer writer) throws IOException;
 
     @Override
     @Nullable YamlSub getSub(@NotNull String path);

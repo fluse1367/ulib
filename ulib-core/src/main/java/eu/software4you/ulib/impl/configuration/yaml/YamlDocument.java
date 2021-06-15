@@ -11,7 +11,9 @@ import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.nodes.*;
 
-import java.io.StringWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ class YamlDocument implements YamlSub, Nameable {
     final Map<String, Node> keyNodes = new LinkedHashMap<>();
     // yaml-subs
     final Map<String, YamlDocument> children = new LinkedHashMap<>();
-    private final YamlSerializer generator;
+    private final YamlSerializer serializer;
     private final YamlDocument root;
     private final YamlDocument parent;
     private final String key;
@@ -32,19 +34,18 @@ class YamlDocument implements YamlSub, Nameable {
     private boolean throwIfConversionFails;
 
     // constructor for root
-    YamlDocument(YamlSerializer generator, Node node) {
-        this.generator = generator;
+    YamlDocument(YamlSerializer serializer) {
+        this.serializer = serializer;
         this.parent = this;
         this.root = this;
         this.key = "";
-        this.node = node;
     }
 
     // constructor for sub
     YamlDocument(YamlDocument parent, String key, Node node) {
         this.root = parent.getRoot();
         this.parent = parent;
-        this.generator = root.generator;
+        this.serializer = root.serializer;
         this.key = key;
         this.node = node;
     }
@@ -120,7 +121,7 @@ class YamlDocument implements YamlSub, Nameable {
                 Node node = restPath.isEmpty() ? null : new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
                 YamlDocument sub = new YamlDocument(doc, key, node);
 
-                Node keyNode = addNode(key, node, doc.node); // add new node to current
+                Node keyNode = doc.addNode(key, node); // add new node to current
                 doc.children.put(key, sub);
 
                 // sub overwrites other data
@@ -137,11 +138,11 @@ class YamlDocument implements YamlSub, Nameable {
             doc.children.remove(key);
             doc.keyNodes.remove(key);
             doc.data.remove(key);
-            doc.delNode(key, doc.node);
+            doc.delNode(key);
             return;
         }
 
-        Node dataNode = doc.generator.yaml.represent(value);
+        Node dataNode = doc.serializer.represent(value);
         Node keyNode;
 
         if (key.isEmpty()) {
@@ -150,8 +151,8 @@ class YamlDocument implements YamlSub, Nameable {
             doc.keyNodes.clear();
             doc.data.clear();
         } else {
-            doc.delNode(key, doc.node);
-            keyNode = addNode(key, dataNode, doc.node);
+            doc.delNode(key);
+            keyNode = doc.addNode(key, dataNode);
         }
         doc.children.remove(key); // remove any subs with that name
 
@@ -223,13 +224,31 @@ class YamlDocument implements YamlSub, Nameable {
 
     /* helpers */
 
-    void serialize(StringWriter dump) {
-        if (node != null) {
-            generator.yaml.serialize(node, dump);
+    void clear() {
+        children.clear();
+        keyNodes.clear();
+        data.clear();
+    }
+
+    @Override
+    public void reset() {
+        clear();
+        Node newNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        if (isRoot()) {
+            node = newNode;
         } else {
-            dump.write("");
-            dump.flush();
+            replaceNode(newNode);
         }
+    }
+
+    @Override
+    public void load(Reader reader) throws IOException {
+        serializer.deserialize(reader, this);
+    }
+
+    @Override
+    public void save(Writer writer) throws IOException {
+        serializer.serialize(this, writer);
     }
 
     private Optional<Pair<YamlDocument, String>> resolve(final String fullPath) {
@@ -254,11 +273,11 @@ class YamlDocument implements YamlSub, Nameable {
         return resolve(fullPath).map(pair -> pair.getFirst().keyNodes.get(pair.getSecond()));
     }
 
-    private Node addNode(String key, Node node, Node rootNode) {
-        if (!(rootNode instanceof MappingNode)) {
+    private Node addNode(String key, Node node) {
+        if (!(this.node instanceof MappingNode)) {
             throw new IllegalStateException("Sub cannot hold keyed values.");
         }
-        MappingNode root = ((MappingNode) rootNode);
+        MappingNode root = ((MappingNode) this.node);
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
 
         Node keyNode = new ScalarNode(Tag.STR, key, null, null, DumperOptions.ScalarStyle.PLAIN);
@@ -269,21 +288,24 @@ class YamlDocument implements YamlSub, Nameable {
         return keyNode;
     }
 
-    private void delNode(String key, Node rootNode) {
-        if (!(rootNode instanceof MappingNode)) {
+    private void delNode(String key) {
+        if (!(this.node instanceof MappingNode)) {
             throw new IllegalStateException("Sub cannot hold keyed values.");
         }
-        MappingNode root = ((MappingNode) rootNode);
+        MappingNode root = ((MappingNode) this.node);
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
         tuples.removeIf(tuple -> ((ScalarNode) tuple.getKeyNode()).getValue().equals(key));
         root.setValue(tuples);
     }
 
     // replaces the current node with a new one
-    private void replaceNode(Node newNode) {
-        // update parent node
-        delNode(key, parent.node);
-        addNode(key, newNode, parent.node);
+    void replaceNode(Node newNode) {
+        if (!isRoot()) {
+            // update parent node
+            parent.delNode(key);
+            parent.addNode(key, newNode);
+            parent.keyNodes.put(key, newNode);
+        }
 
         // update this node
         this.node = newNode;

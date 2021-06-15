@@ -108,6 +108,11 @@ public interface Sub {
     boolean isSet(@NotNull String path);
 
     /**
+     * Clears all data from this sub.
+     */
+    void reset();
+
+    /**
      * Searches the configuration for a configuration-sub with a specific key.
      *
      * @param path the key path; elements seperated by {@code .}
