@@ -8,7 +8,7 @@ config-version: 1
 # This directory can only be changed via command-line options.
 # To change it, add this to the command-line (before the -jar):
 #   -Dulib.ulib.directory.main=YOUR_VALUE
-# Default to '.ulib'
+# Defaults to '.ulib'
 
 # Switch to override properties set via the command line.
 # Usually the properties set via command line override the settings in this file.
