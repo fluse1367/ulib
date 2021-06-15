@@ -150,8 +150,10 @@ class YamlDocument implements YamlSub, Nameable {
             doc.children.clear();
             doc.keyNodes.clear();
             doc.data.clear();
-        } else {
+        } else if (keyNodes.containsKey(key)) {
             keyNode = doc.replaceNode(key, dataNode);
+        } else {
+            keyNode = doc.addNode(key, dataNode);
         }
         doc.children.remove(key); // remove any subs with that name
 
