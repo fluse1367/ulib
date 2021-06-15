@@ -43,22 +43,26 @@ class Properties {
                 "                             ";
 
         DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
-        if (!DATA_DIR.exists()) {
-            if (!DATA_DIR.mkdirs())
-                throw new Exception(String.format("Data directory cannot be created (%s)", DATA_DIR));
-        }
+        mkdirs(DATA_DIR);
 
         yaml = loadConfig();
         clOverride = yaml.get("override-command-line", false);
 
         LOGS_DIR = new File(get("directories.logs", "ulib.directory.logs",
                 String.format("%s%slogs", DATA_DIR.getPath(), File.separator)));
+        mkdirs(LOGS_DIR);
+
         CACHE_DIR = new File(get("directories.cache", "ulib.directory.cache",
                 String.format("%s%scache", DATA_DIR.getPath(), File.separator)));
+        mkdirs(CACHE_DIR);
+
         LIBS_UNSAFE_DIR = new File(get("directories.libraries_unsafe", "ulib.directory.libraries_unsafe",
                 String.format("%s%slibraries_unsafe", CACHE_DIR.getPath(), File.separator)));
+        mkdirs(LIBS_UNSAFE_DIR);
+
         LIBS_DIR = new File(get("directories.libraries", "ulib.directory.libraries",
                 String.format("%s%slibraries", DATA_DIR.getPath(), File.separator)));
+        mkdirs(LIBS_DIR);
 
 
         QUIET = get("logging.quiet", "ulib.quiet", "false").equalsIgnoreCase("true");
@@ -136,6 +140,14 @@ class Properties {
         if (second != null && !second.isEmpty())
             return second;
         return def;
+    }
+
+    @SneakyThrows
+    private void mkdirs(File dir) {
+        if (!dir.exists()) {
+            if (!dir.mkdirs())
+                throw new Exception(String.format("Directory %s cannot be created ", dir));
+        }
     }
 
     static Properties getInstance() {
