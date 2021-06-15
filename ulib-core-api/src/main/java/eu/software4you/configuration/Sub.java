@@ -122,7 +122,7 @@ public interface Sub {
     Sub getSub(@NotNull String path);
 
     /**
-     * Returns all subs of this sub.
+     * Collects all subs of this sub.
      *
      * @return a collection containing all subs.
      */
