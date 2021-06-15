@@ -92,34 +92,23 @@ class Properties {
         YamlSub saved = serializer.deserialize(new FileReader(conf));
 
         // check if upgrade is required
-        int cv = current.get("config-version", 1), sv = saved.get("config-version", 0);
-        if (sv == cv)
+        int cv = current.get("config-version", -1), sv = saved.get("config-version", -2);
+        if (cv <= sv)
             return saved;
 
         System.out.printf("[uLib] Upgrading config from version %d to %d%n", sv, cv);
 
         // upgrade config.yml with newer contents
-        YamlSub upgrade = serializer.createNew();
-        upgrade.set("config-version", cv);
-        upgrade.setComments("config-version", current.getComments("config-version"));
-
-
+        saved.set("config-version", cv);
         current.getValues(true).forEach((k, v) -> {
-            if (k.equals("config-version"))
-                return; // config-version already set, skip
             if (!saved.isSet(k)) {
-                upgrade.set(k, v);
-                upgrade.setComments(k, current.getComments(k));
-            } else { // config.yml already contains key
-                upgrade.set(k, saved.get(k));
-                upgrade.setComments(k, saved.getComments(k));
+                saved.set(k, v);
+                saved.setComments(k, current.getComments(k));
             }
         });
-        // set comments of subs (bc the subs itself arent included in #getValues())
-        copyComments(saved, upgrade);
 
-        upgrade.save(new FileWriter(conf));
-        return upgrade;
+        saved.save(new FileWriter(conf));
+        return saved;
     }
 
     private void copyComments(YamlSub source, YamlSub target) {
