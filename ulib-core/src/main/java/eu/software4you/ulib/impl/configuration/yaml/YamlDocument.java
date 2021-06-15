@@ -151,8 +151,7 @@ class YamlDocument implements YamlSub, Nameable {
             doc.keyNodes.clear();
             doc.data.clear();
         } else {
-            doc.delNode(key);
-            keyNode = doc.addNode(key, dataNode);
+            keyNode = doc.replaceNode(key, dataNode);
         }
         doc.children.remove(key); // remove any subs with that name
 
@@ -274,10 +273,7 @@ class YamlDocument implements YamlSub, Nameable {
     }
 
     private Node addNode(String key, Node node) {
-        if (!(this.node instanceof MappingNode)) {
-            throw new IllegalStateException("Sub cannot hold keyed values.");
-        }
-        MappingNode root = ((MappingNode) this.node);
+        MappingNode root = selfRoot();
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
 
         Node keyNode = new ScalarNode(Tag.STR, key, null, null, DumperOptions.ScalarStyle.PLAIN);
@@ -289,10 +285,7 @@ class YamlDocument implements YamlSub, Nameable {
     }
 
     private void delNode(String key) {
-        if (!(this.node instanceof MappingNode)) {
-            throw new IllegalStateException("Sub cannot hold keyed values.");
-        }
-        MappingNode root = ((MappingNode) this.node);
+        MappingNode root = selfRoot();
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
         tuples.removeIf(tuple -> ((ScalarNode) tuple.getKeyNode()).getValue().equals(key));
         root.setValue(tuples);
@@ -302,12 +295,38 @@ class YamlDocument implements YamlSub, Nameable {
     void replaceNode(Node newNode) {
         if (!isRoot()) {
             // update parent node
-            parent.delNode(key);
-            parent.addNode(key, newNode);
-            parent.keyNodes.put(key, newNode);
+            parent.replaceNode(key, newNode);
+            parent.keyNodes.put(this.key, newNode);
         }
 
         // update this node
         this.node = newNode;
+    }
+
+    private Node replaceNode(String key, Node newNode) {
+        MappingNode root = selfRoot();
+
+        List<NodeTuple> tuples = new ArrayList<>(root.getValue());
+        int i = -1;
+        for (int j = 0; j < tuples.size(); j++) {
+            if (((ScalarNode) tuples.get(j).getKeyNode()).getValue().equals(key)) {
+                i = j;
+                break;
+            }
+        }
+        if (i < 0)
+            throw new IllegalStateException("Could not find " + key + " in parent");
+
+        Node keyNode = new ScalarNode(Tag.STR, this.key, null, null, DumperOptions.ScalarStyle.PLAIN);
+        tuples.set(i, new NodeTuple(keyNode, newNode));
+        root.setValue(tuples);
+        return keyNode;
+    }
+
+    private MappingNode selfRoot() {
+        if (node instanceof MappingNode) {
+            return (MappingNode) node;
+        }
+        throw new IllegalStateException("Sub cannot hold keyed values.");
     }
 }
