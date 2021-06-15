@@ -70,7 +70,7 @@ public final class Agent {
         logger.fine("Loading libex");
 
         // extract ulibex
-        File libex = new File(Properties.getInstance().DATA_DIR, "libex.jar");
+        File libex = new File(Properties.getInstance().CACHE_DIR, "libex.jar");
         logger.fine(() -> "Attempt to extract libex to " + libex);
 
         boolean extract = true;

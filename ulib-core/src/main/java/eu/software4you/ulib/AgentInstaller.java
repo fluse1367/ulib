@@ -129,7 +129,7 @@ final class AgentInstaller {
     @SneakyThrows
     private String extractAgent() {
 
-        File file = new File(Properties.getInstance().DATA_DIR, "agent.jar");
+        File file = new File(Properties.getInstance().CACHE_DIR, "agent.jar");
         logger.fine(() -> "Attempt to extract agent to " + file);
 
 
