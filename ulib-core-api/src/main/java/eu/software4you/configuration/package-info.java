@@ -1,4 +1,4 @@
 /**
- * Simple utilities for yaml type configurations.
+ * Classes regarding configurations.
  */
 package eu.software4you.configuration;
