@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.common.Nameable;
+import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
@@ -117,7 +117,7 @@ class Properties {
 
     private void copyComments(YamlSub source, YamlSub target) {
         source.getSubs().forEach(sub -> {
-            String key = ((Nameable) sub).getName(); // #getName *is* the key
+            String key = ((Keyable<String>) sub).getKey();
 
             //noinspection ConstantConditions
             target.setComments(key, source.getComments(key));

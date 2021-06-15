@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.configuration.yaml;
 
-import eu.software4you.common.Nameable;
+import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
 import lombok.val;
@@ -18,7 +18,7 @@ import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class YamlDocument implements YamlSub, Nameable {
+class YamlDocument implements YamlSub, Keyable<String> {
     private static final String PATH_SEPARATOR = ".";
     // key -> ( key-node, data/sub )
     final Map<String, Pair<Node, Object>> children = new LinkedHashMap<>();
@@ -50,7 +50,7 @@ class YamlDocument implements YamlSub, Nameable {
     }
 
     @Override
-    public @Nullable String getName() {
+    public @NotNull String getKey() {
         return key;
     }
 
