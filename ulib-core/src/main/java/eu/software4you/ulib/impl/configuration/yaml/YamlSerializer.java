@@ -1,5 +1,6 @@
 package eu.software4you.ulib.impl.configuration.yaml;
 
+import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.utils.IOUtil;
 import lombok.val;
@@ -58,16 +59,14 @@ public class YamlSerializer {
         Node root = yaml.compose(new StringReader(content));
 
         // clear doc
-        doc.clear();
-
-        // replace root
+        doc.children.clear();
+        // replace node
         doc.replaceNode(extractAnchor(root));
 
         if (root instanceof MappingNode) {
             graph(doc, (MappingNode) root, "\n" + content, 0);
         } else {
-            doc.keyNodes.put("", doc.node);
-            doc.data.put("", read(doc.node));
+            doc.children.put("", new Pair<>(doc.node, read(doc.node)));
         }
     }
 
@@ -114,17 +113,18 @@ public class YamlSerializer {
             int e = m.getIndex() - m.getColumn();
             keyNode.setBlockComments(comment(content, s, e));
 
+            Object value;
             if (node instanceof MappingNode) {
                 MappingNode mNode = (MappingNode) node;
-                parent.children.put(key, graph(new YamlDocument(parent, key, node), mNode,
-                        content, keyNode.getEndMark().getIndex()));
+                value = graph(new YamlDocument(parent, key, node), mNode,
+                        content, keyNode.getEndMark().getIndex());
 
                 // get last child to set `ai` to correct position
                 ai.set(getLastChild(mNode).getEndMark().getIndex());
             } else {
-                parent.data.put(key, read(node));
+                value = read(node);
             }
-            parent.keyNodes.put(key, keyNode);
+            parent.children.put(key, new Pair<>(keyNode, value));
         });
 
         return parent;
