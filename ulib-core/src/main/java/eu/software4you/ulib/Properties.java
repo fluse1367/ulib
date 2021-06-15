@@ -1,16 +1,15 @@
 package eu.software4you.ulib;
 
+import eu.software4you.common.Nameable;
 import eu.software4you.common.collection.Pair;
+import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.Validate;
-import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,9 +29,10 @@ class Properties {
     final List<Pair<String, String>> ADDITIONAL_LIBS = new ArrayList<>();
     final boolean FORCE_SYNC;
 
-    private YamlConfiguration yaml;
-    private boolean clOverride;
+    private final boolean clOverride;
+    private YamlSub yaml;
 
+    @SneakyThrows
     private Properties() {
         BRAND = "\n" +
                 "        ______ _____ ______  \n" +
@@ -43,9 +43,13 @@ class Properties {
                 "                             ";
 
         DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
+        if (!DATA_DIR.exists()) {
+            if (!DATA_DIR.mkdirs())
+                throw new Exception(String.format("Data directory cannot be created (%s)", DATA_DIR));
+        }
 
         yaml = loadConfig();
-        clOverride = yaml.getBoolean("override-command-line", false);
+        clOverride = yaml.get("override-command-line", false);
 
         LOGS_DIR = new File(get("directories.logs", "ulib.directory.logs",
                 String.format("%s%slogs", DATA_DIR.getPath(), File.separator)));
@@ -76,28 +80,59 @@ class Properties {
     }
 
     @SneakyThrows
-    private YamlConfiguration loadConfig() {
+    private YamlSub loadConfig() {
+        YamlSerializer serializer = YamlSerializer.getInstance();
+
         val conf = new File(DATA_DIR, "config.yml");
         if (!conf.exists()) {
             IOUtil.write(getCurrentConfig(), new FileOutputStream(conf));
-            return YamlConfiguration.loadConfiguration(conf);
+            return serializer.deserialize(new FileReader(conf));
         }
-        val current = YamlConfiguration.loadConfiguration(new InputStreamReader(getCurrentConfig()));
-        val saved = YamlConfiguration.loadConfiguration(conf);
+        YamlSub current = serializer.deserialize(new InputStreamReader(getCurrentConfig()));
+        YamlSub saved = serializer.deserialize(new FileReader(conf));
 
         // check if upgrade is required
-        int cv = current.getInt("config-version"), sv = saved.getInt("config-version");
-        if (cv > sv) {
-            System.out.printf("[uLib] Updating config from version %d to %d%n", sv, cv);
-            // update config.yml with newer contents
-            current.getValues(true).forEach((k, v) -> {
-                if (!saved.isSet(k))
-                    saved.set(k, v);
-            });
-            saved.set("config-version", cv);
-            saved.save(conf);
-        }
-        return saved;
+        int cv = current.get("config-version", 1), sv = saved.get("config-version", 0);
+        if (sv == cv)
+            return saved;
+
+        System.out.printf("[uLib] Upgrading config from version %d to %d%n", sv, cv);
+
+        // upgrade config.yml with newer contents
+        YamlSub upgrade = serializer.createNew();
+        upgrade.set("config-version", cv);
+        upgrade.setComments("config-version", current.getComments("config-version").toArray(new String[0]));
+
+
+        current.getValues(true).forEach((k, v) -> {
+            if (k.equals("config-version"))
+                return; // config-version already set, skip
+            if (!saved.isSet(k)) {
+                upgrade.set(k, v);
+                upgrade.setComments(k, current.getComments(k));
+            } else { // config.yml already contains key
+                upgrade.set(k, saved.get(k));
+                upgrade.setComments(k, saved.getComments(k));
+            }
+        });
+        // set comments of subs (bc the subs itself arent included in #getValues())
+        copyComments(saved, upgrade);
+
+
+        serializer.serialize(upgrade, new FileWriter(conf));
+        return upgrade;
+    }
+
+    private void copyComments(YamlSub source, YamlSub target) {
+        source.getSubs().forEach(sub -> {
+            String key = ((Nameable) sub).getName(); // #getName *is* the key
+
+            //noinspection ConstantConditions
+            target.setComments(key, source.getComments(key));
+
+            // deep
+            copyComments(sub, target.getSub(key));
+        });
     }
 
     private InputStream getCurrentConfig() {

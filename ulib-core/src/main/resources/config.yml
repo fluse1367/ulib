@@ -1,7 +1,7 @@
 # uLib configuration file.
 
-# !!! DO NOT CHANGE !!!
 # Internal setting to track config version updates.
+# !!! DO NOT CHANGE !!!
 config-version: 1
 
 # The ulib-data-directory is uLib's main directory for all it's files.
@@ -14,6 +14,12 @@ config-version: 1
 # Usually the properties set via command line override the settings in this file.
 # Possible values: true, false; Default value: false
 override-command-line: false
+
+# Switch to force uLib to handle all requests synchronously that would usually worked off multi-threaded.
+# Enforcing synchronous work will significantly decrease uLib's performance in certain areas!
+# Possible values: true, false; Default: false
+# Command line equivalent: -Dulib.forcesync=YOUR_VALUE
+force-synchronous-work: false
 
 # Logging settings
 logging:
@@ -58,8 +64,3 @@ directories:
   # Default: ''
   # Command line equivalent: -Dulib.directory.libraries=YOUR_VALUE
   libraries: ''
-
-# Switch to force uLib to handle all requests synchronously that would usually worked off multi-threaded.
-# Enforcing synchronous work will significantly decrease uLib's performance in certain areas!
-# Possible values: true, false; Default: false
-force-synchronous-work: false
