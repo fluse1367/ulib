@@ -4,5 +4,5 @@
  * Changes:
  * - Removed Bukkit exclusive serialization types (Color, Location, OfflinePlayer, ItemStack, Vector)
  */
-package ulib.ported.ulib.ported.org.bukkit.configuration;
+package ulib.ported.org.bukkit.configuration;
 
