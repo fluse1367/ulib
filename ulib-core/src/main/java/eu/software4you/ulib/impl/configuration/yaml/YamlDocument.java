@@ -306,11 +306,14 @@ class YamlDocument implements YamlSub, Nameable {
     private Node replaceNode(String key, Node newNode) {
         MappingNode root = selfRoot();
 
+        List<CommentLine> comments = null; /* = null to make compiler happy */
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
         int i = -1;
         for (int j = 0; j < tuples.size(); j++) {
-            if (((ScalarNode) tuples.get(j).getKeyNode()).getValue().equals(key)) {
+            ScalarNode keyNode = (ScalarNode) tuples.get(j).getKeyNode();
+            if (keyNode.getValue().equals(key)) {
                 i = j;
+                comments = keyNode.getBlockComments();
                 break;
             }
         }
@@ -318,6 +321,7 @@ class YamlDocument implements YamlSub, Nameable {
             throw new IllegalStateException("Could not find " + key + " in parent");
 
         Node keyNode = new ScalarNode(Tag.STR, this.key, null, null, DumperOptions.ScalarStyle.PLAIN);
+        keyNode.setBlockComments(comments);
         tuples.set(i, new NodeTuple(keyNode, newNode));
         root.setValue(tuples);
         return keyNode;
