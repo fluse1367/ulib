@@ -127,7 +127,15 @@ class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     public void set(@NotNull String fullPath, Object value) {
-        val r = resolveFull(fullPath);
+        Pair<YamlDocument, String> r;
+        if (value != null) {
+            r = resolveFull(fullPath);
+        } else {
+            val op = resolve(fullPath);
+            if (!op.isPresent())
+                return;
+            r = op.get();
+        }
         r.getFirst().placeNewValue(r.getSecond(), value);
     }
 
