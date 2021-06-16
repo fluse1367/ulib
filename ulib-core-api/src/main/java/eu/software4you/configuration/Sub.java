@@ -48,7 +48,21 @@ public interface Sub {
     /**
      * Searches the configuration for a specific key and converts the value to a specified type.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
+     * @param <T>  the type to convert to
+     * @return the value, or {@code null} if {@code path} not found
+     * @throws IllegalArgumentException if conversion policy is set to throwing and the value cannot be converted
+     * @see #setConversionPolicy(boolean)
+     */
+    @Nullable
+    default <T> T get(@NotNull String path) {
+        return get(path, null);
+    }
+
+    /**
+     * Searches the configuration for a specific key and converts the value to a specified type.
+     *
+     * @param path the key path; nodes seperated by {@code .}
      * @param def  the default value that will be returned if {@code path} not found
      * @param <T>  the type to convert to
      * @return the value
@@ -58,17 +72,6 @@ public interface Sub {
     @Nullable
     @Contract("_, !null -> !null")
     <T> T get(@NotNull String path, @Nullable T def) throws IllegalArgumentException;
-
-    /**
-     * Searches the configuration for a specific key and converts the value to a specified type.
-     *
-     * @param path the key path; elements seperated by {@code .}
-     * @param <T>  the type to convert to
-     * @return the value, or {@code null} if {@code path} not found
-     * @throws IllegalArgumentException if conversion policy is set to throwing and the value cannot be converted
-     * @see #setConversionPolicy(boolean)
-     */
-    @Nullable <T> T get(@NotNull String path);
 
     /**
      * Collects all keys from this sub.
@@ -95,7 +98,7 @@ public interface Sub {
      * <p>
      * Any previous associated value will be overwritten.
      *
-     * @param path  the key path; elements seperated by {@code .}
+     * @param path  the key path; nodes seperated by {@code .}
      * @param value the value
      * @throws IllegalStateException if the sub cannot hold keyed values. This is the case if the sub was directly loaded with not-keyed data.
      */
@@ -104,7 +107,7 @@ public interface Sub {
     /**
      * Determines whether a certain key holds any value.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
      * @return {@code true}, if the {@code path} holds a value
      */
     boolean isSet(@NotNull String path);
@@ -112,7 +115,7 @@ public interface Sub {
     /**
      * Determines whether a certain key holds is included in this sub.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
      * @return {@code true}, if the {@code path} is known
      */
     boolean contains(@NotNull String path);
@@ -125,7 +128,7 @@ public interface Sub {
     /**
      * Searches the configuration for a configuration-sub with a specific key.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
      * @return the sub, or {@code null} if {@code path} not found
      */
     @Nullable
@@ -136,7 +139,7 @@ public interface Sub {
      * <p>
      * Any previous associated value will be overwritten.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
      * @return the newly created sub
      */
     @NotNull
@@ -155,7 +158,7 @@ public interface Sub {
      * <p>
      * This method will also return false if the {@code path} is not set or if it holds a non-configuration-sub value.
      *
-     * @param path the key path; elements seperated by {@code .}
+     * @param path the key path; nodes seperated by {@code .}
      * @return {@code true}, if the {@code path} holds a sub
      */
     boolean isSub(@NotNull String path);

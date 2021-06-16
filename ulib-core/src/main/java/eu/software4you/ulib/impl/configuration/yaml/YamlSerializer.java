@@ -10,7 +10,10 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.error.Mark;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.nodes.AnchorNode;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
@@ -42,15 +45,11 @@ public class YamlSerializer {
     }
 
     public YamlDocument createNew() {
-        val doc = new YamlDocument(this);
-        doc.node = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
-        return doc;
+        return new ExtYamlDocument(this);
     }
 
     public YamlDocument deserialize(Reader reader) throws IOException {
-        YamlDocument doc = new YamlDocument(this);
-        doc.load(reader);
-        return doc;
+        return new ExtYamlDocument(this, reader);
     }
 
     void deserialize(Reader reader, YamlDocument doc) throws IOException {
@@ -116,7 +115,7 @@ public class YamlSerializer {
             Object value;
             if (node instanceof MappingNode) {
                 MappingNode mNode = (MappingNode) node;
-                value = graph(new YamlDocument(parent, key, node), mNode,
+                value = graph(parent.constructChild(key, node), mNode,
                         content, keyNode.getEndMark().getIndex());
 
                 // get last child to set `ai` to correct position

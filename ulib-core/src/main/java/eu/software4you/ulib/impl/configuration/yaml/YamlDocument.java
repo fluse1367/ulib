@@ -30,23 +30,39 @@ class YamlDocument implements YamlSub, Keyable<String> {
     // node that this sub represents
     // (value node)
     Node node;
-    private boolean throwIfConversionFails;
+    boolean throwIfConversionFails;
 
-    // constructor for root
-    YamlDocument(YamlSerializer serializer) {
+    // constructor for empty root
+    protected YamlDocument(YamlSerializer serializer) {
         this.serializer = serializer;
         this.parent = this;
         this.root = this;
         this.key = "";
+        this.node = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+    }
+
+    // constructor for deserialized root
+    protected YamlDocument(YamlSerializer serializer, Reader reader) throws IOException {
+        this.serializer = serializer;
+        this.parent = this;
+        this.root = this;
+        this.key = "";
+        load(reader);
     }
 
     // constructor for sub
-    YamlDocument(YamlDocument parent, String key, Node valueNode) {
+    protected YamlDocument(YamlDocument parent, String key, Node valueNode) {
         this.root = parent.getRoot();
         this.parent = parent;
         this.serializer = root.serializer;
         this.key = key;
         this.node = valueNode;
+    }
+
+    // constructs a new sub
+    // to be overridden by subclasses
+    protected YamlDocument constructChild(String key, Node valueNode) {
+        return new YamlDocument(this, key, valueNode);
     }
 
     @Override
@@ -58,18 +74,14 @@ class YamlDocument implements YamlSub, Keyable<String> {
         return root;
     }
 
-    public <T> T get(@NotNull String path) {
-        return get(path, null);
-    }
-
     public <T> T get(@NotNull String path, T def) {
         Validate.notNull(path, "Path may not be null");
 
         return resolveChild(path)
+                .map(Pair::getSecond)
                 .map(child -> {
-                    Object value = child.getSecond();
                     try {
-                        return (T) value;
+                        return (T) child;
                     } catch (ClassCastException e) {
                         if (root.throwIfConversionFails)
                             throw new IllegalArgumentException("Cannot convert " + path + " to requested type", e);
@@ -195,7 +207,7 @@ class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     @Override
-    public @NotNull Collection<YamlSub> getSubs() {
+    public @NotNull Collection<? extends YamlSub> getSubs() {
         return children.values().stream()
                 .map(Pair::getSecond)
                 .filter(value -> value instanceof YamlDocument)
@@ -293,7 +305,7 @@ class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     // returns pair: (key node, child)
-    private Optional<Pair<Node, Object>> resolveChild(final String fullPath) {
+    Optional<Pair<Node, Object>> resolveChild(final String fullPath) {
         return resolve(fullPath)
                 // pair: (doc, key)
                 .map(pair -> pair.getFirst().children.get(pair.getSecond()));
@@ -344,7 +356,7 @@ class YamlDocument implements YamlSub, Keyable<String> {
             keyNode = addNode(key, valueNode);
         }
 
-        YamlDocument sub = new YamlDocument(this, key, valueNode);
+        YamlDocument sub = constructChild(key, valueNode);
         children.put(key, new Pair<>(keyNode, sub));
         return sub;
     }
