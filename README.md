@@ -270,12 +270,6 @@ The following 3rd-party software is included within this project:
 - NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/4884d2f95f2e648de6db12c0a1dcaaae2d866cef))
   Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
   the [MIT license](https://raw.githubusercontent.com/BananaPuncher714/NBTEditor/4884d2f95f2e648de6db12c0a1dcaaae2d866cef/LICENSE)
-- Bukkit (Copyright (c) 2020 Bukkit, licensed under
-  the [GNU General Public License v3.0](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/raw/LICENCE.txt?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0)):
-    - YAML-Configuration
-      Package ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/configuration?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0))
-    - NumberConversions
-      Class ([click](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/util/NumberConversions.java?at=8523fa23ad15bb668c9d2c4f259ee7d058ed1ff0))
 - ParticleEffect
   Library ([click](https://github.com/DarkBlade12/ParticleEffect/tree/df3f57fa3f1ecd82ad8efac24dcf8371b993c019))
   Copyright (c) 2016 [DarkBlade12](https://github.com/DarkBlade12), custom license (see
