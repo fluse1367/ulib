@@ -11,7 +11,10 @@ import java.util.List;
 
 /**
  * A wrapper for the {@link ConfigurationSection} with some useful shortcuts.
+ *
+ * @deprecated see {@link Sub}
  */
+@Deprecated
 public class ConfigurationWrapper {
     private ConfigurationSection section;
 
