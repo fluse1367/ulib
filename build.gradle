@@ -293,6 +293,9 @@ subprojects {
         components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
             skip()
         }
+        tasks.withType(GenerateModuleMetadata) {
+            enabled = false
+        }
 
         publishing {
             publications {
