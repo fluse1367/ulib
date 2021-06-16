@@ -92,6 +92,8 @@ public interface Sub {
      * Sets a key to a specific value in the configuration.
      * <p>
      * A {@code null} value removes the key from the configuration.
+     * <p>
+     * Any previous associated value will be overwritten.
      *
      * @param path  the key path; elements seperated by {@code .}
      * @param value the value
@@ -102,7 +104,7 @@ public interface Sub {
     /**
      * Determines whether a certain key holds any value.
      *
-     * @param path the path
+     * @param path the key path; elements seperated by {@code .}
      * @return {@code true}, if the {@code path} holds a value
      */
     boolean isSet(@NotNull String path);
