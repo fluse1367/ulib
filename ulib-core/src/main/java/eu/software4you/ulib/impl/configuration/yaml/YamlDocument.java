@@ -2,6 +2,7 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
+import eu.software4you.configuration.ConversionPolicy;
 import eu.software4you.configuration.yaml.YamlSub;
 import lombok.val;
 import org.apache.commons.lang3.Validate;
@@ -18,7 +19,7 @@ import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class YamlDocument implements YamlSub, Keyable<String> {
+public class YamlDocument implements YamlSub, Keyable<String> {
     private static final String PATH_SEPARATOR = ".";
     // key -> ( key-node, data/sub )
     final Map<String, Pair<Node, Object>> children = new LinkedHashMap<>();
@@ -30,7 +31,8 @@ class YamlDocument implements YamlSub, Keyable<String> {
     // node that this sub represents
     // (value node)
     Node node;
-    boolean throwIfConversionFails;
+    @NotNull
+    protected ConversionPolicy conversionPolicy = ConversionPolicy.RETURN_DEFAULT;
 
     // constructor for empty root
     protected YamlDocument(YamlSerializer serializer) {
@@ -83,9 +85,13 @@ class YamlDocument implements YamlSub, Keyable<String> {
                     try {
                         return (T) child;
                     } catch (ClassCastException e) {
-                        if (root.throwIfConversionFails)
-                            throw new IllegalArgumentException("Cannot convert " + path + " to requested type", e);
-                        return def;
+                        switch (root.conversionPolicy) {
+                            case THROW_EXCEPTION:
+                                throw new IllegalArgumentException("Cannot convert " + path + " to requested type", e);
+                            case RETURN_DEFAULT:
+                                return def;
+                        }
+                        throw new IllegalStateException(); // make compiler happy
                     }
                 }).orElse(def);
     }
@@ -175,8 +181,8 @@ class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     @Override
-    public void setConversionPolicy(boolean throwing) {
-        root.throwIfConversionFails = throwing;
+    public void setConversionPolicy(@NotNull ConversionPolicy policy) {
+        root.conversionPolicy = policy;
     }
 
     @Override

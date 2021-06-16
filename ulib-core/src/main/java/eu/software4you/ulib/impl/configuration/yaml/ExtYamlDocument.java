@@ -14,14 +14,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
+public class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
     // constructor for empty root
-    ExtYamlDocument(YamlSerializer serializer) {
+    protected ExtYamlDocument(YamlSerializer serializer) {
         super(serializer);
     }
 
     // constructor for deserialized root
-    ExtYamlDocument(YamlSerializer serializer, Reader reader) throws IOException {
+    protected ExtYamlDocument(YamlSerializer serializer, Reader reader) throws IOException {
         super(serializer, reader);
     }
 
@@ -51,7 +51,7 @@ class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
     @Override
     public @NotNull ExtYamlSub subAndCreate(@NotNull String path) {
         val sub = getSub(path);
-        return sub != null ? sub : (ExtYamlSub) createSub(path);
+        return sub != null ? sub : createSub(path);
     }
 
     @Override
@@ -132,12 +132,14 @@ class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
     }
 
     private <T> T thrOrDef(T def, Class<?> clazz, Object val, String path) {
-        if (throwIfConversionFails) {
-            throw new IllegalArgumentException(String.format("Cannot convert %s to type %s (%s)",
-                    val.getClass().getName(), clazz.getName(), path));
-        } else {
-            return def;
+        switch (getRoot().conversionPolicy) {
+            case RETURN_DEFAULT:
+                return def;
+            case THROW_EXCEPTION:
+                throw new IllegalArgumentException(String.format("Cannot convert %s to type %s (%s)",
+                        val.getClass().getName(), clazz.getName(), path));
         }
+        throw new IllegalStateException(); // make compiler happy
     }
 
     @Override

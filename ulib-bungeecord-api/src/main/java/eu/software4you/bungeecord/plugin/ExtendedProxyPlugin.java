@@ -1,17 +1,14 @@
 package eu.software4you.bungeecord.plugin;
 
-import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.Configurations;
+import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.utils.IOUtil;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import org.jetbrains.annotations.NotNull;
-import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -32,9 +29,10 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final static String layoutBaseName = "layout";
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
-    private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final Layout layout = new Layout(null);
+    private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
+    private final Layout layout = LayoutConstructor.construct();
     private String layoutFileName = defaultLayoutFileName;
+    private boolean configInit, layoutInit;
 
     @Override
     public void saveDefaultConfig() {
@@ -43,16 +41,22 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public @NotNull ConfigurationWrapper getConf() {
-        if (configWrapper.section() == null)
+    public @NotNull ExtYamlSub getConf() {
+        if (!configInit) {
             reloadConfig();
-        return configWrapper;
+            configInit = true;
+        }
+        return config;
     }
 
     @Override
     public void reloadConfig() {
         saveDefaultConfig();
-        configWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
+        try {
+            config.load(new FileReader(new File(getDataFolder(), "config.yml")));
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, e, () -> "Failure while reloading config.yml!");
+        }
     }
 
     @Override
@@ -63,8 +67,10 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
 
     @Override
     public @NotNull Layout getLayout() {
-        if (layout.section() == null)
+        if (!layoutInit) {
             reloadLayout();
+            layoutInit = true;
+        }
         return layout;
     }
 
@@ -72,7 +78,11 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     public void reloadLayout() {
         saveDefaultLayout();
         File layoutFile = new File(getDataFolder(), layoutFileName);
-        layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
+        try {
+            layout.load(new FileReader(layoutFile));
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, e, () -> String.format("Failure while reloading %s!", layoutFile.getName()));
+        }
     }
 
     @Override

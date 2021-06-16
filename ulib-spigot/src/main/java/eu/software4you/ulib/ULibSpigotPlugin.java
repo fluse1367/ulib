@@ -1,6 +1,7 @@
 package eu.software4you.ulib;
 
 import eu.software4you.common.collection.Pair;
+import eu.software4you.configuration.ConversionPolicy;
 import eu.software4you.dependencies.DependencyLoader;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
@@ -66,6 +67,8 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
     @Override
     public void onEnable() {
         try {
+            getConf().setConversionPolicy(ConversionPolicy.THROW_EXCEPTION);
+
             registerEvents(instance = this);
 
 

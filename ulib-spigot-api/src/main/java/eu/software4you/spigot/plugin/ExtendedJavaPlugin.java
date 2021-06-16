@@ -1,6 +1,7 @@
 package eu.software4you.spigot.plugin;
 
-import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.Configurations;
+import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.spigot.inventorymenu.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -10,11 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * Implementation of {@link ExtendedPlugin}.
@@ -29,10 +32,11 @@ import java.util.concurrent.TimeUnit;
  * </p>
  */
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
-    private final Layout layout = new Layout(null);
-    private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
+    private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
+    private final Layout layout = LayoutConstructor.construct();
     private String layoutFileName = DEFAULT_LAYOUT_FILE_NAME;
     private MenuManager mainMenuManager;
+    private boolean configInit, layoutInit;
 
     public ExtendedJavaPlugin() {
         super();
@@ -43,16 +47,22 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public @NotNull ConfigurationWrapper getConf() {
-        if (configWrapper.section() == null)
+    public @NotNull ExtYamlSub getConf() {
+        if (!configInit) {
             reloadConfig();
-        return configWrapper;
+            configInit = true;
+        }
+        return config;
     }
 
     @Override
     public void reloadConfig() {
         saveDefaultConfig();
-        configWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
+        try {
+            config.load(new FileReader(new File(getDataFolder(), "config.yml")));
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, e, () -> "Failure while reloading config.yml!");
+        }
     }
 
     @Override
@@ -63,8 +73,10 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
 
     @Override
     public @NotNull Layout getLayout() {
-        if (layout.section() == null)
+        if (!layoutInit) {
             reloadLayout();
+            layoutInit = true;
+        }
         return layout;
     }
 
@@ -72,7 +84,11 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     public void reloadLayout() {
         saveDefaultLayout();
         File layoutFile = new File(getDataFolder(), layoutFileName);
-        layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
+        try {
+            layout.load(new FileReader(layoutFile));
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, e, () -> String.format("Failure while reloading %s!", layoutFile.getName()));
+        }
     }
 
     @Override

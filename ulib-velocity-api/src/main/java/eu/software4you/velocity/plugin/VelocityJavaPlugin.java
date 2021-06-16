@@ -4,7 +4,8 @@ import com.google.common.collect.Multimap;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.Configurations;
+import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.utils.FileUtils;
 import eu.software4you.utils.IOUtil;
@@ -13,12 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import ulib.ported.org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -63,9 +60,10 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     private final File dataFolder;
     @Getter
     private final File file = FileUtils.getClassFile(getClass());
-    private final ConfigurationWrapper configWrapper = new ConfigurationWrapper(null);
-    private final Layout layout = new Layout(null);
+    private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
+    private final Layout layout = LayoutConstructor.construct();
     private String layoutFileName = defaultLayoutFileName;
+    private boolean configInit, layoutInit;
 
     private PluginContainer getPlugin() {
         return proxyServer.getPluginManager().getPlugin(id)
@@ -74,7 +72,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
     @Override
     public @NotNull String getName() {
-        return getPlugin().getDescription().getName().orElse(null);
+        return getPlugin().getDescription().getName().orElse("");
     }
 
     @Override
@@ -84,16 +82,22 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public @NotNull ConfigurationWrapper getConf() {
-        if (configWrapper.section() == null)
+    public @NotNull ExtYamlSub getConf() {
+        if (!configInit) {
+            configInit = true;
             reloadConfig();
-        return configWrapper;
+        }
+        return config;
     }
 
     @Override
     public void reloadConfig() {
         saveDefaultConfig();
-        configWrapper.setSection(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
+        try {
+            config.load(new FileReader(new File(getDataFolder(), "config.yml")));
+        } catch (IOException e) {
+            getLogger().warn("Failure while reloading config.yml!", e);
+        }
     }
 
     @Override
@@ -104,8 +108,10 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
     @Override
     public @NotNull Layout getLayout() {
-        if (layout.section() == null)
+        if (!layoutInit) {
+            layoutInit = true;
             reloadLayout();
+        }
         return layout;
     }
 
@@ -113,7 +119,11 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     public void reloadLayout() {
         saveDefaultLayout();
         File layoutFile = new File(getDataFolder(), layoutFileName);
-        layout.setSection(YamlConfiguration.loadConfiguration(layoutFile));
+        try {
+            layout.load(new FileReader(layoutFile));
+        } catch (IOException e) {
+            getLogger().warn(String.format("Failure while reloading %s!", layoutFile.getName()), e);
+        }
     }
 
     @Override

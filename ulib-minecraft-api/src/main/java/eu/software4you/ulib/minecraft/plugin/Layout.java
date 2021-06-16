@@ -1,27 +1,18 @@
 package eu.software4you.ulib.minecraft.plugin;
 
-import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.ExtSub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ulib.ported.org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
- * An extended version of the config wrapper to provide direct sending of e.g. messages to players.
+ * An variation of the {@link ExtSub} to provide direct sending of e.g. messages to players.
  *
  * @param <T> the message receiver type
- * @see eu.software4you.configuration.ConfigurationWrapper
  */
-public abstract class Layout<T> extends ConfigurationWrapper {
-    /**
-     * The default constructor.
-     *
-     * @param section the configuration section to wrap
-     */
-    public Layout(@Nullable ConfigurationSection section) {
-        super(section);
-    }
+public interface Layout<T> extends ExtSub {
 
     /**
      * Reads a String, processes it with {@link String#format(String, Object...)}
@@ -31,7 +22,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param key          the key
      * @param replacements the replacements
      */
-    public void sendString(@NotNull T receiver, @NotNull String key, Object... replacements) {
+    default void sendString(@NotNull T receiver, @NotNull String key, Object... replacements) {
         sendMessage(receiver, string(key, replacements));
     }
 
@@ -45,7 +36,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param def          default value that will be sent if {@code key} does not exist
      * @param replacements the replacements
      */
-    public void sendString(@NotNull T receiver, @NotNull String key, @Nullable String def, Object... replacements) {
+    default void sendString(@NotNull T receiver, @NotNull String key, @Nullable String def, Object... replacements) {
         sendMessage(receiver, string(key, def, replacements));
     }
 
@@ -57,7 +48,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param key          the key
      * @param replacements the replacements
      */
-    public void sendList(@NotNull T receiver, @NotNull String key, Object... replacements) {
+    default void sendList(@NotNull T receiver, @NotNull String key, Object... replacements) {
         sendMessage(receiver, stringList(key, replacements));
     }
 
@@ -71,7 +62,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param def          default value that will be sent if {@code key} does not exist
      * @param replacements the replacements
      */
-    public void sendList(@NotNull T receiver, @NotNull String key, @Nullable List<String> def, Object... replacements) {
+    default void sendList(@NotNull T receiver, @NotNull String key, @Nullable List<String> def, Object... replacements) {
         sendMessage(receiver, stringList(key, def, replacements));
     }
 
@@ -81,7 +72,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param receiver the receiver
      * @param key      the key
      */
-    public void send(@NotNull T receiver, @NotNull String key) {
+    default void send(@NotNull T receiver, @NotNull String key) {
         sendMessage(receiver, String.valueOf(get(Object.class, key)));
     }
 
@@ -93,29 +84,9 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param key      the key
      * @param def      default value that will be sent if {@code key} does not exist
      */
-    public void send(@NotNull T receiver, @NotNull String key, @Nullable Object def) {
+    default void send(@NotNull T receiver, @NotNull String key, @Nullable Object def) {
         sendMessage(receiver, String.valueOf(get(Object.class, key, def)));
     }
-
-    @Override
-    @Nullable
-    public Layout<T> sub(@NotNull String key) {
-        return section().isConfigurationSection(key) ? create(section(key)) : null;
-    }
-
-    @Override
-    @NotNull
-    public Layout<T> subAndCreate(@NotNull String key) {
-        return create(sectionAndCreate(key));
-    }
-
-    /**
-     * Creates a new instance of the layout.
-     *
-     * @param section the section
-     * @return the new instance
-     */
-    protected abstract Layout<T> create(@Nullable ConfigurationSection section);
 
     /**
      * Sends multiple messages, or {@code "null"} if {@code messages} equal {@code null}.
@@ -123,7 +94,7 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param receiver the receiver of the message
      * @param messages the messages
      */
-    protected void sendMessage(@NotNull T receiver, @Nullable Iterable<String> messages) {
+    default void sendMessage(@NotNull T receiver, @Nullable Iterable<String> messages) {
         if (messages == null) {
             sendMessage(receiver, "null");
             return;
@@ -139,5 +110,17 @@ public abstract class Layout<T> extends ConfigurationWrapper {
      * @param receiver the receiver of the message
      * @param message  the message to send
      */
-    protected abstract void sendMessage(@NotNull T receiver, @Nullable String message);
+    void sendMessage(@NotNull T receiver, @Nullable String message);
+
+    @Override
+    @NotNull Layout<T> subAndCreate(@NotNull String path);
+
+    @Override
+    @Nullable Layout<T> getSub(@NotNull String path);
+
+    @Override
+    @NotNull Layout<T> createSub(@NotNull String path);
+
+    @Override
+    @NotNull Collection<? extends Layout<T>> getSubs();
 }

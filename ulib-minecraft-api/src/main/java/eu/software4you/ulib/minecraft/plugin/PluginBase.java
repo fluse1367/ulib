@@ -1,6 +1,6 @@
 package eu.software4you.ulib.minecraft.plugin;
 
-import eu.software4you.configuration.ConfigurationWrapper;
+import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.ulib.minecraft.plugin.controllers.ASyncSchedulerController;
 import eu.software4you.ulib.minecraft.plugin.controllers.EventController;
 import org.jetbrains.annotations.NotNull;
@@ -34,16 +34,16 @@ public interface PluginBase<L, R, E> extends EventController<L>, ASyncSchedulerC
     void saveDefaultConfig();
 
     /**
-     * Returns the configuration wrapper for the {@code config.yml} file, if there is one.<br>
+     * Returns the an extended sub instance for the {@code config.yml} file, if there is one.<br>
      * Attempts to save the default {@code config.yml} file.
      *
-     * @return the config wrapper
+     * @return the sub
      */
     @NotNull
-    ConfigurationWrapper getConf();
+    ExtYamlSub getConf();
 
     /**
-     * Reloads the config wrapper.<br>
+     * Reloads the extended sub retrieved with {@link #getConf()} with the {@code config.yml} file.<br>
      * <b>Does not</b> reload the framework's config instance, if there is one.
      */
     void reloadConfig();

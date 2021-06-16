@@ -32,18 +32,13 @@ public interface Sub {
     /**
      * Sets what to do if a value cannot be converted to the requested type.
      * <p>
-     * There are two options:
-     * <ul>
-     *     <li>Return the supplied default value</li>
-     *     <li>Throw an exception</li>
-     * </ul>
-     * By default the default value will be returned.
+     * By default this is set to {@link ConversionPolicy#RETURN_DEFAULT}.
      * <p>
      * The policy applies to all subs of the current document.
      *
-     * @param throwing {@code true} if an exception should be thrown, {@code false} if the default value should be returned
+     * @param policy the policy to set
      */
-    void setConversionPolicy(boolean throwing);
+    void setConversionPolicy(@NotNull ConversionPolicy policy);
 
     /**
      * Searches the configuration for a specific key and converts the value to a specified type.
@@ -52,7 +47,7 @@ public interface Sub {
      * @param <T>  the type to convert to
      * @return the value, or {@code null} if {@code path} not found
      * @throws IllegalArgumentException if conversion policy is set to throwing and the value cannot be converted
-     * @see #setConversionPolicy(boolean)
+     * @see #setConversionPolicy(ConversionPolicy)
      */
     @Nullable
     default <T> T get(@NotNull String path) {
@@ -67,7 +62,7 @@ public interface Sub {
      * @param <T>  the type to convert to
      * @return the value
      * @throws IllegalArgumentException if conversion policy is set to throwing and the value cannot be converted
-     * @see #setConversionPolicy(boolean)
+     * @see #setConversionPolicy(ConversionPolicy)
      */
     @Nullable
     @Contract("_, !null -> !null")

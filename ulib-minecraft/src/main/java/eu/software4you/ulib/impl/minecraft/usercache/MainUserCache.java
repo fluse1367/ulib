@@ -1,6 +1,5 @@
 package eu.software4you.ulib.impl.minecraft.usercache;
 
-import eu.software4you.configuration.ConfigurationWrapper;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
@@ -8,6 +7,7 @@ import eu.software4you.ulib.minecraft.usercache.UserCache;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.val;
 
 import java.io.File;
 
@@ -20,14 +20,13 @@ public abstract class MainUserCache extends eu.software4you.ulib.minecraft.userc
     @Override
     protected UserCache enable0() {
         engine.disableAutomaticParameterizedQueries = true;
-
-        ConfigurationWrapper backend = plugin.getConf().sub("user-cache-backend");
+        val backend = plugin.getConf().getSub("user-cache-backend");
         switch (backend.string("type", "FILE").toUpperCase()) {
             case "FILE":
                 engine.setConnectionData(new SqlEngine.ConnectionData(new File(plugin.getDataFolder(), "user_cache.db")));
                 break;
             case "MYSQL":
-                ConfigurationWrapper login = backend.sub("login");
+                val login = backend.getSub("login");
                 engine.setConnectionData(new SqlEngine.ConnectionData(
                         login.string("host", "localhost"), login.string("user", "root"),
                         login.string("password", "root"), login.string("database", "mainusercache")));

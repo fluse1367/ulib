@@ -1,6 +1,7 @@
 package eu.software4you.ulib;
 
 import eu.software4you.bungeecord.plugin.ExtendedProxyPlugin;
+import eu.software4you.configuration.ConversionPolicy;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.ulib.impl.bungeecord.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.bungeecord.usercache.MainUserCacheImpl;
@@ -17,6 +18,8 @@ public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
     @Override
     public void onEnable() {
         try {
+            getConf().setConversionPolicy(ConversionPolicy.THROW_EXCEPTION);
+
             proxyServerBridgeImpl = ProxyServerBridgeImpl.init(this);
             registerEvents(proxyServerBridgeImpl);
             getProxy().registerChannel(proxyServerBridgeImpl.CHANNEL);

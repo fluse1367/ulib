@@ -1,25 +1,32 @@
 package eu.software4you.bungeecord.plugin;
 
+import eu.software4you.configuration.yaml.YamlSub;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
-import ulib.ported.org.bukkit.configuration.ConfigurationSection;
+
+import java.util.Collection;
 
 /**
- * BungeeCord implementation of {@link eu.software4you.ulib.minecraft.plugin.Layout} with {@link CommandSender} as receiver.
+ * BungeeCord variant of {@link eu.software4you.ulib.minecraft.plugin.Layout} with {@link CommandSender} as receiver.
  */
-public class Layout extends eu.software4you.ulib.minecraft.plugin.Layout<CommandSender> {
-    public Layout(ConfigurationSection section) {
-        super(section);
-    }
-
+public interface Layout extends eu.software4you.ulib.minecraft.plugin.Layout<CommandSender>, YamlSub {
     @Override
-    protected Layout create(ConfigurationSection section) {
-        return new Layout(section);
-    }
-
-    @Override
-    protected void sendMessage(@NotNull CommandSender receiver, String message) {
+    default void sendMessage(@NotNull CommandSender receiver, String message) {
         receiver.sendMessage(new TextComponent(message));
     }
+
+    @Override
+    @NotNull
+    Layout subAndCreate(@NotNull String path);
+
+    @Override
+    Layout getSub(@NotNull String path);
+
+    @Override
+    @NotNull
+    Layout createSub(@NotNull String path);
+
+    @Override
+    @NotNull Collection<? extends Layout> getSubs();
 }
