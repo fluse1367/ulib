@@ -108,6 +108,14 @@ public interface Sub {
     boolean isSet(@NotNull String path);
 
     /**
+     * Determines whether a certain key holds is included in this sub.
+     *
+     * @param path the key path; elements seperated by {@code .}
+     * @return {@code true}, if the {@code path} is known
+     */
+    boolean contains(@NotNull String path);
+
+    /**
      * Clears all data from this sub.
      */
     void reset();

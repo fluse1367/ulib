@@ -162,6 +162,14 @@ class YamlDocument implements YamlSub, Keyable<String> {
 
     @Override
     public boolean isSet(@NotNull String path) {
+        return resolveChild(path)
+                .map(Pair::getSecond)
+                .map(o -> !(o instanceof YamlDocument))
+                .orElse(false);
+    }
+
+    @Override
+    public boolean contains(@NotNull String path) {
         return resolveChild(path).isPresent();
     }
 
