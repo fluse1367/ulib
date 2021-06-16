@@ -2,6 +2,7 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
+import eu.software4you.configuration.Sub;
 import eu.software4you.configuration.yaml.YamlSub;
 import lombok.val;
 import org.apache.commons.lang3.Validate;
@@ -127,62 +128,8 @@ class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     public void set(@NotNull String fullPath, Object value) {
-
-        String restPath = fullPath;
-        YamlDocument doc = this;
-        int i;
-        while ((i = restPath.indexOf(PATH_SEPARATOR)) >= 0) {
-            String key = restPath.substring(0, i);
-            restPath = restPath.substring(i + PATH_SEPARATOR.length());
-
-            if (doc.children.containsKey(key) && doc.children.get(key).getSecond() instanceof YamlDocument) {
-                doc = (YamlDocument) doc.children.get(key).getSecond();
-                continue;
-            }
-
-            if (value == null) {
-                // path does not exist, no need to remove
-                return;
-            }
-
-            // create new sub
-            Node keyNode, valueNode = restPath.isEmpty() ? null : new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
-
-            if (doc.children.containsKey(key)) {
-                // replace old node
-                keyNode = doc.replaceNode(key, valueNode);
-            } else {
-                // add new node to current
-                keyNode = doc.addNode(key, valueNode);
-            }
-
-            YamlDocument sub = new YamlDocument(doc, key, valueNode);
-            doc.children.put(key, new Pair<>(keyNode, sub));
-            doc = sub;
-        }
-
-        final String key = restPath;
-
-        if (value == null) {
-            // remove node
-            doc.children.remove(key);
-            doc.delNode(key);
-            return;
-        }
-
-        Node keyNode, valueNode = doc.serializer.represent(value);
-
-        if (key.isEmpty()) {
-            doc.replaceNode(keyNode = valueNode);
-            doc.children.clear();
-        } else if (doc.children.containsKey(key)) {
-            keyNode = doc.replaceNode(key, valueNode);
-        } else {
-            keyNode = doc.addNode(key, valueNode);
-        }
-
-        // overwrite potential old values
-        doc.children.put(key, new Pair<>(keyNode, value));
+        val r = resolveFull(fullPath);
+        r.getFirst().placeNewValue(r.getSecond(), value);
     }
 
     public List<String> getComments(@NotNull String fullPath) {
@@ -201,11 +148,6 @@ class YamlDocument implements YamlSub, Keyable<String> {
                 .map(line -> new CommentLine(null, null, line, CommentType.BLOCK))
                 .collect(Collectors.toList());
         node.setBlockComments(comments);
-    }
-
-    @Override
-    public String toString() {
-        return getValues(true).toString();
     }
 
     @Override
@@ -273,43 +215,78 @@ class YamlDocument implements YamlSub, Keyable<String> {
         serializer.serialize(this, writer);
     }
 
+    @Override
+    public String toString() {
+        return getValues(true).toString();
+    }
+
     /* helpers */
 
-    // resolves the fullPath into a valid sub and a key
+    // attempts to resolve the full path into a valid sub and a key
+    // if `createSub` is true, resolution success is guaranteed
     // note that the key is not guaranteed to exist in the sub
-    private Optional<Pair<YamlDocument, String>> resolve(final String fullPath) {
-
+    // returns pair: (sub, key)
+    private Optional<Pair<YamlDocument, String>> resolve(final String fullPath, boolean createSub) {
         String restPath = fullPath;
         YamlDocument doc = this;
         int i;
         while ((i = restPath.indexOf(PATH_SEPARATOR)) >= 0) {
-            String subPath = restPath.substring(0, i);
+            String key = restPath.substring(0, i);
             restPath = restPath.substring(i + PATH_SEPARATOR.length());
 
-            val pair = doc.children.get(subPath);
-            if (pair == null || !(pair.getSecond() instanceof YamlDocument)) {
+            if (doc.children.containsKey(key) && doc.children.get(key).getSecond() instanceof YamlDocument) {
+                doc = (YamlDocument) doc.children.get(key).getSecond();
+                // sub does exist
+                // continue with that
+                continue;
+            }
+
+            // sub does not exist
+            if (!createSub) {
+                // not allowed to create a new sub or overwrite existing value with one
+                // indicate failure
                 return Optional.empty();
             }
 
-            doc = (YamlDocument) pair.getSecond();
+            // create/overwrite
+            doc = doc.placeNewSub(key);
         }
 
+        // successfully resolved
         return Optional.of(new Pair<>(doc, restPath));
     }
 
-    // returns pair: (keyNode, child)
+    // attempts to resolve the full path into a valid sub and a key
+    // resolution success is not guaranteed
+    // note that the key is not guaranteed to exist in the sub
+    // returns pair: (sub, key)
+    private Optional<Pair<YamlDocument, String>> resolve(final String fullPath) {
+        return resolve(fullPath, false);
+    }
+
+    // resolves the full path into a valid sub and key
+    // creates new subs if necessary
+    private Pair<YamlDocument, String> resolveFull(final String fullPath) {
+        return resolve(fullPath, true)
+                .orElseThrow(() -> new IllegalStateException("Resolution failure"));
+    }
+
+    // returns pair: (key node, child)
     private Optional<Pair<Node, Object>> resolveChild(final String fullPath) {
         return resolve(fullPath)
                 // pair: (doc, key)
                 .map(pair -> pair.getFirst().children.get(pair.getSecond()));
     }
 
+    // returns key-node
     private Optional<Node> resolveKeyNode(String fullPath) {
         return resolveChild(fullPath)
                 // pair: (keyNode, child)
                 .map(Pair::getFirst);
     }
 
+    // adds a keyed node to the current node
+    // assumes the current node is able to hold other keyed nodes
     private Node addNode(String key, Node node) {
         MappingNode root = selfRoot();
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
@@ -322,6 +299,8 @@ class YamlDocument implements YamlSub, Keyable<String> {
         return keyNode;
     }
 
+    // deletes a keyed node from the current node
+    // assumes the current node is able to hold other keyed nodes
     private void delNode(String key) {
         MappingNode root = selfRoot();
         List<NodeTuple> tuples = new ArrayList<>(root.getValue());
@@ -329,22 +308,76 @@ class YamlDocument implements YamlSub, Keyable<String> {
         root.setValue(tuples);
     }
 
+    // places a new sub at the specified key
+    // overwrites any other associated value
+    // returns the new sub
+    private YamlDocument placeNewSub(String key) {
+        // create new sub
+        Node keyNode, valueNode = key.isEmpty() ? null : new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+
+        if (children.containsKey(key)) {
+            // replace old node
+            keyNode = replaceNode(key, valueNode);
+        } else {
+            // add new node to current
+            keyNode = addNode(key, valueNode);
+        }
+
+        YamlDocument sub = new YamlDocument(this, key, valueNode);
+        children.put(key, new Pair<>(keyNode, sub));
+        return sub;
+    }
+
+    // places a new value at the specified key
+    // overwrites any other associated value
+    private void placeNewValue(String key, Object value) {
+        if (value == null) {
+            // remove node
+            children.remove(key);
+            delNode(key);
+            return;
+        }
+
+        Node keyNode;
+        Node valueNode = serializer.represent(value);
+
+        if (key.isEmpty()) {
+            // overwrite current node
+            replaceNode(keyNode = valueNode);
+            children.clear();
+        } else if (children.containsKey(key)) {
+            // replace already existing node
+            keyNode = replaceNode(key, valueNode);
+        } else {
+            // add node
+            keyNode = addNode(key, valueNode);
+        }
+
+        // overwrite potential old values
+        children.put(key, new Pair<>(keyNode, value));
+    }
+
     // replaces the current node with a new one
     void replaceNode(Node newNode) {
         if (!isRoot()) {
             // update parent node
-            parent.replaceNode(key, newNode);
+
             val child = parent.children.get(key);
             if (child.getSecond() != this) { // value of child should be this instance
                 throw new IllegalStateException("Parent has stored another value than acceptable");
             }
             child.setFirst(newNode);
+
+            parent.replaceNode(key, newNode);
         }
 
         // update this node
         this.node = newNode;
     }
 
+    // replaces a specific keyed node within the current node with another node
+    // assumes a node with that specific key already exists
+    // assumes the current node is able to hold other keyed nodes
     private Node replaceNode(String key, Node newNode) {
         MappingNode root = selfRoot();
 
@@ -369,6 +402,8 @@ class YamlDocument implements YamlSub, Keyable<String> {
         return keyNode;
     }
 
+    // fetches the current node as mapping node (that is able to hold keyed values)
+    // throws an exception if current node cannot hold keyed values
     private MappingNode selfRoot() {
         if (node instanceof MappingNode) {
             return (MappingNode) node;
