@@ -130,6 +130,17 @@ public interface Sub {
     Sub getSub(@NotNull String path);
 
     /**
+     * Creates a new sub at the given key.
+     * <p>
+     * Any previous associated value will be overwritten.
+     *
+     * @param path the key path; elements seperated by {@code .}
+     * @return the newly created sub
+     */
+    @NotNull
+    Sub createSub(@NotNull String path);
+
+    /**
      * Collects all subs of this sub.
      *
      * @return a collection containing all subs.

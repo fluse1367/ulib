@@ -78,4 +78,7 @@ public interface YamlSub extends Sub {
 
     @Override
     @NotNull Collection<YamlSub> getSubs();
+
+    @Override
+    @NotNull YamlSub createSub(@NotNull String path);
 }

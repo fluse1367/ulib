@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.Sub;
 import eu.software4you.configuration.yaml.YamlSub;
 import lombok.val;
 import org.apache.commons.lang3.Validate;
@@ -179,6 +178,12 @@ class YamlDocument implements YamlSub, Keyable<String> {
                 .map(Pair::getSecond)
                 .filter(value -> value instanceof YamlDocument)
                 .orElse(null);
+    }
+
+    @Override
+    public @NotNull YamlDocument createSub(@NotNull String fullPath) {
+        val r = resolveFull(fullPath);
+        return r.getFirst().placeNewSub(r.getSecond());
     }
 
     @Override
