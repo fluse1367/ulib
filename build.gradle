@@ -1,6 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import org.apache.tools.ant.filters.ReplaceTokens
 
+import static java.util.Optional.ofNullable
+
 defaultTasks 'clean', 'build', 'jar'
 apply plugin: 'java-library'
 
@@ -57,8 +59,24 @@ allprojects {
 
     def major = 2, minor = 0, patch = 0
 
+    // evaluate variation
+    String variation
+    switch (ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase()) {
+        case 'release':
+            variation = ''
+            break
+        case 'beta':
+            variation = "BETA-${ofNullable((String) project.findProperty('beta')).orElse(('0'))}"
+            break
+        case 'snapshot':
+            // fallthrough to default
+        default:
+            variation = 'SNAPSHOT'
+    }
+
+
     group 'eu.software4you.ulib'
-    version "$major.$minor.$patch${project.hasProperty('release') ? '' : '-SNAPSHOT'}"
+    version "$major.$minor.$patch${variation.isEmpty() ? '' : "-$variation"}"
 
     repositories {
         mavenCentral()

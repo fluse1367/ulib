@@ -1,4 +1,7 @@
-image: 'gradle:7.1-jdk8'
+image: 'gradle:7.1-jdk16'
+
+variables:
+  GRADLE_EXEC: 'gradle -g .gradlehome'
 
 cache:
   key: '$CI_COMMIT_BRANCH'
@@ -9,55 +12,73 @@ cache:
 
 stages:
   #- test
-  - build_publish
-  - docs
+  - build # ready-for-use files
+  - publish # api files for maven repository
+  - docs # javadocs
 
-snapshot:
-  stage: build_publish
-  script:
-    - 'gradle shadowJar publish -g .gradlehome'
-  artifacts: &artifacts
+# snapshots
+snapshot build:
+  stage: build
+  script: "$GRADLE_EXEC shadowJar -Pvariation=snapshot"
+  artifacts: &artifacts_build
     paths:
-      # core
       - ulib-core/build/libs/*-lib.jar
-      - ulib-core-api/build/libs/*-javadoc.jar
-      - ulib-core-api/build/libs/*-sources.jar
-      # spigot
       - ulib-spigot/build/libs/*-plugin.jar
-      - ulib-spigot-api/build/libs/*-javadoc.jar
-      - ulib-spigot-api/build/libs/*-sources.jar
-      # bungeecord
       - ulib-bungeecord/build/libs/*-plugin.jar
-      - ulib-bungeecord-api/build/libs/*-javadoc.jar
-      - ulib-bungeecord-api/build/libs/*-sources.jar
-      # velocity
       - ulib-velocity/build/libs/*-plugin.jar
-      - ulib-velocity-api/build/libs/*-javadoc.jar
-      - ulib-velocity-api/build/libs/*-sources.jar
-  only:
-    - develop
+  # only run if this is a snapshot release on the 'develop' branch
+  rules: &rules_snapshot
+    - if: $BETA != null  # cancel if beta
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+snapshot publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=snapshot"
+  artifacts: &artifacts_publication
+    paths:
+      - ulib-*-api/build/libs/*.jar
+  rules: *rules_snapshot
 
-release:
-  stage: build_publish
-  script:
-    - 'gradle shadowJar publish -g .gradlehome -Prelease'
-  artifacts: *artifacts
-  only:
-    - web
-  except:
-    - develop
+# betas
+beta build:
+  stage: build
+  script: "$GRADLE_EXEC shadowJar -Pvariation=beta -Pbeta=$BETA"
+  artifacts: *artifacts_build
+  # only run if this is a beta release, triggered via the web on the 'develop' branch
+  rules: &rules_beta
+    - if: $BETA == null # cancel if not beta
+      when: never
+    - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+beta publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=beta -Pbeta=$BETA"
+  artifacts: *artifacts_publication
+  rules: *rules_beta
 
+# releases
+release build:
+  stage: build
+  script: "$GRADLE_EXEC shadowJar -Pvariation=release"
+  artifacts: *artifacts_build
+  # only run if this is a full release, triggered via the web on the 'master' branch
+  rules: &rules_release
+    - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'master' # only on master
+release publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=release"
+  artifacts: *artifacts_publication
+  rules: *rules_release
 pages:
   stage: docs
-  script:
-    - 'gradle docsWebpage -g .gradlehome -Prelease'
+  script: '$GRADLE_EXEC docsWebpage -Pvariation=release'
   artifacts:
     paths:
       - public
-  only:
-    - web
-  except:
-    - develop
+  rules: *rules_release
 
 # include:
 #   - template: Security/SAST.gitlab-ci.yml
