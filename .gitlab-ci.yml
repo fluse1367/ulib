@@ -8,7 +8,7 @@ cache:
   when: always
 
 stages:
-  - test
+  #- test
   - build_publish
   - docs
 
@@ -59,9 +59,9 @@ pages:
   except:
     - develop
 
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
-  - template: Security/License-Scanning.gitlab-ci.yml
-variables:
-  SECURE_LOG_LEVEL: "debug"
+# include:
+#   - template: Security/SAST.gitlab-ci.yml
+#   - template: Dependency-Scanning.gitlab-ci.yml
+#   - template: Security/License-Scanning.gitlab-ci.yml
+# variables:
+#   SECURE_LOG_LEVEL: "debug"
