@@ -1,4 +1,4 @@
-image: 'gradle:7.0.2-jdk8'
+image: 'gradle:7.1-jdk8'
 
 cache:
   key: '$CI_COMMIT_BRANCH'
