@@ -46,7 +46,9 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
             PLAIN_MC_VERSION = new Loader<>(() -> (String) ReflectUtil.call(server.getClass(), server, "getServer().getVersion()"));
         }
 
-        Properties.getInstance().ADDITIONAL_LIBS.add(new Pair<>("{{maven.xseries}}", "central"));
+        val props = Properties.getInstance();
+        props.MODE = RunMode.SPIGOT;
+        props.ADDITIONAL_LIBS.add(new Pair<>("{{maven.xseries}}", "central"));
         ULib.init();
 
         System.setProperty(PROP_KEY, "cinit");

@@ -32,6 +32,8 @@ class Properties {
     private final boolean clOverride;
     private YamlSub yaml;
 
+    RunMode MODE = RunMode.STANDALONE;
+
     @SneakyThrows
     private Properties() {
         BRAND = "\n" +

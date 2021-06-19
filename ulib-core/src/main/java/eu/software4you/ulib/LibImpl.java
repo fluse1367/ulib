@@ -3,7 +3,6 @@ package eu.software4you.ulib;
 import eu.software4you.dependencies.Dependencies;
 import eu.software4you.dependencies.Repositories;
 import eu.software4you.ulib.inject.Impl;
-import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.FileUtils;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -143,10 +142,7 @@ final class LibImpl implements Lib {
         properties = Properties.getInstance();
         version = ULib.class.getPackage().getImplementationVersion();
 
-        runMode = ClassUtils.isClass("eu.software4you.ulib.ULibVelocityPlugin") ? RunMode.VELOCITY
-                : ClassUtils.isClass("eu.software4you.ulib.ULibSpigotPlugin") ? RunMode.SPIGOT
-                : ClassUtils.isClass("eu.software4you.ulib.ULibBungeecordPlugin") ? RunMode.BUNGEECORD
-                : RunMode.STANDALONE;
+        runMode = properties.MODE;
 
         nameOnly = "uLib";
         name = String.format("%s-%s", nameOnly, runMode.getName());

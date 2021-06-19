@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 
 public class ULibBungeecordPlugin extends ExtendedProxyPlugin {
     static {
+        Properties.getInstance().MODE = RunMode.BUNGEECORD;
         ULib.init();
     }
 

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 public class ULibVelocityPlugin extends VelocityJavaPlugin {
 
     static {
+        Properties.getInstance().MODE = RunMode.VELOCITY;
         ULib.init();
     }
 
