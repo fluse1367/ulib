@@ -30,8 +30,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         val bm = mappingData.getFirst();
         val vm = mappingData.getSecond();
 
-        Map<String, ClassMapping> byBukkit = new HashMap<>();
         Map<String, ClassMapping> byVanillaSource = new HashMap<>();
+        Map<String, ClassMapping> byBukkit = new HashMap<>();
 
         bm.byMappedName.forEach((name, cm) -> {
             String bukkitName = cm.mappedName();
@@ -41,19 +41,19 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
 
             String vanillaSourceName = vc.sourceName();
 
-            logger().finest(() -> String.format("Class Mapping: %s -> %s", bukkitName, vanillaSourceName));
+            logger().finest(() -> String.format("Class Mapping: %s -> %s", vanillaSourceName, bukkitName));
 
 
-            ClassMapping switched = new ClassMapping(bukkitName, vanillaSourceName,
+            ClassMapping switched = new ClassMapping(vanillaSourceName, bukkitName,
                     mapFields(vc.fieldsBySourceName.values(), cm),
                     mapMethods(vc.methodsBySourceName.values(), cm));
 
-            byBukkit.put(bukkitName, switched);
             byVanillaSource.put(vanillaSourceName, switched);
+            byBukkit.put(bukkitName, switched);
         });
 
         logger().finer("Mixed mappings generation finished");
-        return new Pair<>(byBukkit, byVanillaSource);
+        return new Pair<>(byVanillaSource, byBukkit);
     }
 
     private List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> mapFields(

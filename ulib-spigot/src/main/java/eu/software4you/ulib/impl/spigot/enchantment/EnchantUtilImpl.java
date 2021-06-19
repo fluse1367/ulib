@@ -37,10 +37,10 @@ final class EnchantUtilImpl extends EnchantUtil {
         Tasks.run(() -> {
             val mapping = Mappings.getMixedMapping();
             methodName_enchantment_getRarity = mapping
-                    .fromMapped("net.minecraft.world.item.enchantment.Enchantment")
+                    .fromSource("net.minecraft.world.item.enchantment.Enchantment")
                     .methodFromSource("getRarity").mappedName();
             methodName_item_getEnchantmentValue = mapping
-                    .fromMapped("net.minecraft.world.item.Item")
+                    .fromSource("net.minecraft.world.item.Item")
                     .methodFromSource("getEnchantmentValue").mappedName();
         });
     }

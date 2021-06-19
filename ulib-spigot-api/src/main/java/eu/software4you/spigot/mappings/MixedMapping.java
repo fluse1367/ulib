@@ -6,8 +6,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a mixture of a {@link VanillaMapping Vanilla-} and {@link BukkitMapping Bukkit-}Mapping.
  * <p>
- * The classes have the Bukkit names as source and the Vanilla source names as mappings (Bukkit -> Vanilla Source).<br>
- * The method and fields have the Vanilla source names as source and the Bukkit names as mapping (Vanilla Source -> Bukkit).
+ * This mapping effectively skips the Obfuscated Vanilla version:
+ * The classes, methods and fields have source names as source and the Bukkit names as mapping (Vanilla Source -> Bukkit).
  * <p>
  * This mapping is useful for deep dynamic reflection.
  * <p>
