@@ -64,13 +64,14 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         vanillaFields.forEach(loader -> {
             val vf = loader.get();
 
-            String vanillaSourceName = vf.mappedName();
-            String vanillaObfName = vf.sourceName();
+            String vanillaSourceName = vf.sourceName();
+            String vanillaObfName = vf.mappedName();
             String bukkitName = Optional.ofNullable(bukkitResolve.fieldsBySourceName.get(vanillaObfName))
                     .map(Loader::get).map(Mapped::mappedName)
                     .orElseGet(() -> {
                         // fall back to vanilla obf name
-                        logger().finest(() -> String.format("field %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
+                        logger().finest(() -> String.format("field %s (originally %s) not found in bukkit (vanilla obf -> bukkit) mappings",
+                                vanillaObfName, vanillaSourceName));
                         return vanillaObfName;
                     });
 
@@ -99,7 +100,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
                     .map(Loader::get).map(Mapped::mappedName)
                     .orElseGet(() -> {
                         // fall back to vanilla obf name
-                        logger().finest(() -> String.format("method %s not found in bukkit (vanilla obf -> bukkit) mappings", vanillaObfName));
+                        logger().finest(() -> String.format("method %s (originally %s) not found in bukkit (vanilla obf -> bukkit) mappings",
+                                vanillaObfName, vanillaSourceName));
                         return vanillaObfName;
                     });
 
