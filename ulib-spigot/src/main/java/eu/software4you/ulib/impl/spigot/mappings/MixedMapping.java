@@ -87,29 +87,32 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
     }
 
     private List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> mapMethods(
-            Collection<Loader<MappedMethod>> vanillaMethods, ClassMapping bukkitResolve) {
+            Collection<Loader<List<MappedMethod>>> vanillaMethods, ClassMapping bukkitResolve) {
         // triple: vanillaSourceName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
 
         vanillaMethods.forEach(loader -> {
-            val vm = loader.get();
+            val li = loader.get();
 
-            String vanillaSourceName = vm.sourceName();
-            String vanillaObfName = vm.mappedName();
-            String bukkitName = Optional.ofNullable(bukkitResolve.methodsBySourceName.get(vanillaObfName))
-                    .map(Loader::get).map(Mapped::mappedName)
-                    .orElseGet(() -> {
-                        // fall back to vanilla obf name
-                        logger().finest(() -> String.format("method %s (originally %s) not found in bukkit (vanilla obf -> bukkit) mappings",
-                                vanillaObfName, vanillaSourceName));
-                        return vanillaObfName;
-                    });
+            li.forEach(vm -> {
+                String vanillaSourceName = vm.sourceName();
+                String vanillaObfName = vm.mappedName();
+                String bukkitName = Optional.ofNullable(bukkitResolve.methodFromSource(vanillaObfName, vm.parameterTypes()))
+                        .map(Mapped::mappedName)
+                        .orElseGet(() -> {
+                            // fall back to vanilla obf name
+                            logger().finest(() -> String.format("method %s (originally %s) not found in bukkit (vanilla obf -> bukkit) mappings",
+                                    vanillaObfName, vanillaSourceName));
+                            return vanillaObfName;
+                        });
 
-            logger().finest(() -> String.format("Member (method): %s -> %s", vanillaSourceName, bukkitName));
+                logger().finest(() -> String.format("Member (method): %s -> %s", vanillaSourceName, bukkitName));
 
-            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,
-                    vm.returnType(), vm.parameterTypes(), vanillaSourceName, bukkitName);
-            methods.add(new Triple<>(vanillaSourceName, bukkitName, loadTaskGenerator));
+                Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,
+                        vm.returnType(), vm.parameterTypes(), vanillaSourceName, bukkitName);
+                methods.add(new Triple<>(vanillaSourceName, bukkitName, loadTaskGenerator));
+            });
+
         });
 
         return methods;
