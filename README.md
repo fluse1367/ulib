@@ -267,9 +267,9 @@ installed, uLib will try to load the file from there.
 
 The following 3rd-party software is included within this project:
 
-- NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/4884d2f95f2e648de6db12c0a1dcaaae2d866cef))
+- NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/62e8919f10415aaff73f86aa8d4561f2ec4de791))
   Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
-  the [MIT license](https://raw.githubusercontent.com/BananaPuncher714/NBTEditor/4884d2f95f2e648de6db12c0a1dcaaae2d866cef/LICENSE)
+  the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/62e8919f10415aaff73f86aa8d4561f2ec4de791/LICENSE)
 - ParticleEffect
   Library ([click](https://github.com/DarkBlade12/ParticleEffect/tree/df3f57fa3f1ecd82ad8efac24dcf8371b993c019))
   Copyright (c) 2016 [DarkBlade12](https://github.com/DarkBlade12), custom license (see
