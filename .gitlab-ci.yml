@@ -31,6 +31,11 @@ snapshot build:
     - if: $BETA != null  # cancel if beta
       when: never
     - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+      changes: &file_changes
+        - "*.gradle"
+        - "ulib-*/**/*"
+        - "docs/**/*"
+        - "gradle/**/*"
 snapshot publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=snapshot"
@@ -51,6 +56,7 @@ beta build:
     - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
       when: never
     - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+      changes: *file_changes
 beta publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=beta -Pbeta=$BETA"
@@ -67,6 +73,7 @@ release build:
     - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
       when: never
     - if: $CI_COMMIT_BRANCH == 'master' # only on master
+      changes: *file_changes
 release publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=release"
