@@ -73,6 +73,12 @@ final class LibImpl implements Lib {
         logger.info(() -> String.format("Done (%ss)!", BigDecimal.valueOf(System.currentTimeMillis() - started)
                 .divide(BigDecimal.valueOf(1000), new MathContext(4, RoundingMode.HALF_UP)).toPlainString()
         ));
+
+        if (UnsafeOperations.allowed()) {
+            logger.warning(() -> "Unsafe operations are allowed. " +
+                    "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
+                    "Use this at your own risk!");
+        }
     }
 
     @SneakyThrows

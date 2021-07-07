@@ -2,7 +2,7 @@
 
 # Internal setting to track config version updates.
 # !!! DO NOT CHANGE !!!
-config-version: 1
+config-version: 2
 
 # The ulib-data-directory is uLib's main directory for all it's files.
 # This directory can only be changed via command-line options.
@@ -20,6 +20,13 @@ override-command-line: false
 # Possible values: true, false; Default: false
 # Command line equivalent: -Dulib.forcesync=YOUR_VALUE
 force-synchronous-work: false
+
+# Switch to allow uLib to use potentially unsafe operations if necessary.
+# Allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind!
+# Use this at your own risk!
+# Possible values: allow, deny; Default: deny
+# Command line equivalent: -Dulib.unsafe_operations=YOUR_VALUE
+unsafe-operations: deny
 
 # Logging settings
 logging:

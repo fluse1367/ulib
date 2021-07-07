@@ -24,6 +24,7 @@ class Properties {
     final File LIBS_DIR;
     final boolean QUIET;
     final boolean NO_SPLASH;
+    final boolean UNSAFE_OPERATIONS;
     final Level LOG_LEVEL;
     final String BRAND;
     final List<Pair<String, String>> ADDITIONAL_LIBS = new ArrayList<>();
@@ -81,6 +82,7 @@ class Properties {
         LOG_LEVEL = QUIET ? Level.OFF : logLevel;
 
         FORCE_SYNC = get("force-synchronous-work", "ulib.forcesync", "false").equalsIgnoreCase("true");
+        UNSAFE_OPERATIONS = get("unsafe-operations", "ulib.unsafe_operations", "deny").equalsIgnoreCase("allow");
 
         yaml = null; // let gc do its work
     }

@@ -6,6 +6,7 @@ import eu.software4you.spigot.multiversion.Protocol;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULib;
+import eu.software4you.ulib.UnsafeOperations;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
@@ -59,9 +60,14 @@ final class MappingsImpl extends Mappings {
     @SneakyThrows
     @Override
     protected BukkitMapping loadBukkit(String version) {
-        val prot = MultiversionManager.getVersion(version);
-        if (prot.below(Protocol.v1_8_R1))
+        val protocol = MultiversionManager.getVersion(version);
+        if (!UnsafeOperations.comply(protocol == Protocol.UNKNOWN, "Bukkit Mappings loading",
+                String.format("version '%s' unknown", version),
+                String.format("Ignoring version '%s' being unknown", version)) && protocol.below(Protocol.v1_8_R1)) {
+            ULib.logger().fine(() -> "(Bukkit Mappings loading) Cannot comply: version '" + version + "' is below '1.8'.");
             return null; // no bukkit mappings before 1.8
+        }
+
         ULib.logger().fine(() -> "Loading Bukkit Mapping for " + version);
         val data = BuildDataMeta.loadBuildData(version);
         if (data == null)
@@ -77,7 +83,7 @@ final class MappingsImpl extends Mappings {
             return memOut;
         });
 
-        return new BukkitMapping(res.get(0).toString(), res.get(1).toString(), prot);
+        return new BukkitMapping(res.get(0).toString(), res.get(1).toString(), protocol);
     }
 
     @Override
