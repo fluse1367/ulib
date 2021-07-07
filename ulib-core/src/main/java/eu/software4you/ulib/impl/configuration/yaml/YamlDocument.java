@@ -229,11 +229,6 @@ public class YamlDocument implements YamlSub, Keyable<String> {
     }
 
     @Override
-    public @NotNull Node asNode() {
-        return node;
-    }
-
-    @Override
     public void reset() {
         children.clear();
         Node newNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);

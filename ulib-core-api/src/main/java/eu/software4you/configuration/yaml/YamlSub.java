@@ -3,7 +3,6 @@ package eu.software4you.configuration.yaml;
 import eu.software4you.configuration.Sub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.nodes.Node;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -15,18 +14,6 @@ import java.util.List;
  * Representation of a YAML-type configuration sub.
  */
 public interface YamlSub extends Sub {
-
-    /**
-     * Returns this sub's root YAML node.
-     * <p>
-     * Not to be confused with {@code getRoot().asNode()}!
-     * <p>
-     * <b>Warning:</b> Changes may not be reflected back to this sub.
-     *
-     * @return the yaml node
-     */
-    @NotNull
-    Node asNode();
 
     /**
      * Returns the comments of a specific key.
