@@ -68,8 +68,8 @@ class LoggingFactory {
             public String format(LogRecord record) {
                 StringBuilder b = new StringBuilder(simpleFormat(record));
                 if (record.getThrown() != null)
-                    b.append(getStackTrace(record.getThrown())).append("\n");
-                return b.toString();
+                    b.append("\n").append(getStackTrace(record.getThrown()));
+                return b.append("\n").toString();
             }
         };
     }
@@ -96,8 +96,8 @@ class LoggingFactory {
                 ansi.a(simpleFormat(record));
 
                 if (record.getThrown() != null)
-                    ansi.fg(RED).a(getStackTrace(record.getThrown()) + "\n");
-                return ansi.reset().toString();
+                    ansi.a("\n").fg(RED).a(getStackTrace(record.getThrown()));
+                return ansi.reset().a("\n").toString();
             }
         };
     }
@@ -106,7 +106,7 @@ class LoggingFactory {
         long tid = record.getThreadID();
         String thread = tid == LibImpl.MAIN_THREAD_ID ? "main" : String.format("t-%d", tid);
         String prefix = String.format("[%s/%s]", instance.getNameOnly(), thread);
-        return String.format("%-12s %tT %s: %s\n", prefix,
+        return String.format("%-12s %tT %s: %s", prefix,
                 new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());
     }
 
