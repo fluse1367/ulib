@@ -282,8 +282,8 @@ The following 3rd-party software is included within this project:
     - Triple
       Class ([click](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/cloudnet-common/src/main/java/de/dytanic/cloudnet/common/collection/Triple.java))
 
-The following 3rd-party software is not included within the source code of this project, but within the shadowed
-("ready-for-use") build artifacts:
+The following 3rd-party software is not included within the source code of this project, but redistributed within the
+shadowed build artifacts:
 
 - Commons Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) (Copyright (c)
   2021 [The Apache Software Foundation](https://github.com/apache), licensed under
@@ -296,7 +296,7 @@ The following 3rd-party software is not included within the source code of this 
       Basic ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-connector-basic))
       version 1.6.2
     - Transport
-      HTTP ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-transport-http)):
+      HTTP ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-transport-http))
       version 1.6.2
 - Guava ([click](https://github.com/google/guava/tree/v27.0.1)) Copyright (c) 2018 [Google](https://github.com/google),
   licensed under the [Apache License 2.0](https://github.com/google/guava/blob/v27.0.1/COPYING), version 27.0.1
