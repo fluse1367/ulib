@@ -5,7 +5,6 @@ import eu.software4you.libex.function.Callb;
 import eu.software4you.libex.function.Func;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.transform.Hook;
-import eu.software4you.transform.HookInjector;
 import eu.software4you.transform.HookPoint;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
@@ -22,10 +21,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-@Impl(value = HookInjector.class, priority = Integer.MAX_VALUE - 1)
-final class HookInjectorImpl extends HookInjector {
+@Impl(value = eu.software4you.transform.HookInjector.class, priority = Integer.MAX_VALUE - 1)
+final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
     @Await
     private static Agent agent;
+    private final Map<String, List<String>> injected = new ConcurrentHashMap<>(); // class -> methods
 
     public HookInjectorImpl() {
         Callb.put(
@@ -41,9 +41,8 @@ final class HookInjectorImpl extends HookInjector {
                 /* [3] caller class determination */
                 () -> ReflectUtil.getCallerClass(4)
         );
+        agent.addTransformer(new HookInjector(ULib.logger(), injected));
     }
-
-    private final Map<String, List<String>> injected = new ConcurrentHashMap<>();
 
     @Override
     protected void hookStatic0(Class<?> clazz) {
@@ -137,7 +136,6 @@ final class HookInjectorImpl extends HookInjector {
 
         HookRunner.addHook(source, sourceInst, fullDescriptor, at.ordinal());
 
-
         String desc = methodName + Util.resolveDescriptor(className, methodName, methodDescriptor, loader);
         if (injected.containsKey(className)) {
             if (injected.get(className).contains(desc)) {
@@ -146,21 +144,14 @@ final class HookInjectorImpl extends HookInjector {
         } else {
             injected.put(className, new ArrayList<>());
         }
-        val li = injected.get(className);
-
-        List<String> methods = new ArrayList<>(li.size() + 1);
-        methods.addAll(li);
+        val methods = injected.get(className);
         methods.add(desc);
 
         try {
             val cl = Class.forName(className, false, source.getDeclaringClass().getClassLoader());
-            agent.transform(cl, new Transformer(
-                    className, methods, ULib.logger()));
+            agent.transform(cl);
         } catch (Throwable thr) {
             ULib.logger().log(Level.WARNING, thr, () -> "Agent transformation failure (" + fullDescriptor + ")");
-            return;
         }
-        // add desc only after successful transformation
-        li.add(desc);
     }
 }

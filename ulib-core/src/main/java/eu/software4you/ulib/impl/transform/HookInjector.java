@@ -8,26 +8,26 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // Created with the help of: https://stackoverflow.com/a/18576798/8400001 and https://gist.github.com/nickman/6494990
-final class Transformer implements ClassFileTransformer {
-    private final String className;
-    private final List<String> methods; // methodName methodDescriptor
+final class HookInjector implements ClassFileTransformer {
     private final Logger logger;
+    private final Map<String, List<String>> covering;
 
-    Transformer(String className, List<String> methods, Logger logger) {
-        this.className = className;
-        this.methods = methods;
+    HookInjector(Logger logger, Map<String, List<String>> covering) {
         this.logger = logger;
+        this.covering = covering;
 
         this.logger.finest(() -> this + " init");
     }
 
     @Override
     public byte[] transform(ClassLoader loader, String clName, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] byteCode) throws IllegalClassFormatException {
-        if (!clName.replace('/', '.').equals(this.className))
+        final String className;
+        if (!covering.containsKey(className = clName.replace('/', '.')))
             return byteCode;
 
         logger.fine(() -> "Transforming " + className);
@@ -41,7 +41,7 @@ final class Transformer implements ClassFileTransformer {
             CtClass cc = pool.get(className);
             logger.finest(cc::toString);
 
-            for (final String desc : methods) {
+            for (final String desc : covering.get(className)) {
                 logger.finer(() -> "Searching for " + desc);
 
                 val pair = Util.resolveMethod(desc);
