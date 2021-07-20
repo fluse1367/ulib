@@ -8,7 +8,9 @@ dependencies {
 
 //shadowing
 shadowJar {
-    configurations = [project(':ulib-core').configurations.shade]
+    def c = project(':ulib-core').configurations.shade.copyRecursive()
+    c.exclude group: 'org.slf4j'
+    configurations = [c]
     //noinspection GroovyAssignabilityCheck
     shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'velocity-api'])
 }
