@@ -2,10 +2,12 @@ package eu.software4you.ulib.impl.dependencies;
 
 import eu.software4you.dependencies.Dependencies;
 import eu.software4you.dependencies.DependencyLoader;
+import eu.software4you.dependencies.Repositories;
 import eu.software4you.dependencies.Repository;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.impl.dependencies.RepositoriesImpl.Repo;
 import eu.software4you.ulib.inject.Impl;
+import lombok.var;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -30,6 +32,7 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -111,8 +114,12 @@ final class DependenciesImpl extends Dependencies {
         // build dependency graph
         CollectResult graph;
         try {
+            var repos = new ArrayList<>(Collections.singletonList(repo.getRepository()));
+            if (repo != Repositories.mavenCentral())
+                repos.add(((Repo) Repositories.mavenCentral()).getRepository());
+
             graph = repository.collectDependencies(session,
-                    new CollectRequest(dependency, Collections.singletonList(repo.getRepository())));
+                    new CollectRequest(dependency, repos));
         } catch (DependencyCollectionException e) {
             ULib.logger().log(Level.SEVERE, e, () -> String.format("Could not build dependency graph for %s", coords));
             return;
