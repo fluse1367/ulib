@@ -179,8 +179,19 @@ final class EnchantUtilImpl extends EnchantUtil {
     @SneakyThrows
     @Override
     protected EnchantmentRarity getEnchantRarity0(Enchantment enchantment) {
-        String rarityName = (String) ReflectUtil.forceCall(BukkitReflectionUtils.PackageType.CRAFTBUKKIT_ENCHANTMENS.getClass("CraftEnchantment"),
-                null, "getRaw()." + methodName_enchantment_getRarity + "().name()", Parameter.single(Enchantment.class, enchantment));
+        if (enchantment instanceof CustomEnchantment ce)
+            return ce.getEnchantmentRarity();
+
+        String rarityName;
+        if (ULibSpigotPlugin.PAPER) {
+            rarityName = enchantment.getRarity().name();
+        } else {
+            var ce = BukkitReflectionUtils.PackageType.CRAFTBUKKIT_ENCHANTMENS.getClass("CraftEnchantment");
+            if (!ce.isInstance(enchantment))
+                throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
+            rarityName = (String) ReflectUtil.forceCall(ce, null, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
+                    Parameter.single(Enchantment.class, enchantment));
+        }
 
         return EnchantmentRarity.valueOf(rarityName);
     }
