@@ -1,7 +1,6 @@
 package eu.software4you.ulib.impl.transform;
 
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -23,12 +22,12 @@ final class HookRunner {
             hooks.put(fullDescriptor, new ConcurrentHashMap<>());
         }
 
-        val map = hooks.get(fullDescriptor);
+        var map = hooks.get(fullDescriptor);
         if (!map.containsKey(at)) {
             map.put(at, new ArrayList<>());
         }
 
-        val methods = map.get(at);
+        var methods = map.get(at);
         methods.add(new AbstractMap.SimpleEntry<>(sourceInst, source));
     }
 
@@ -74,7 +73,7 @@ final class HookRunner {
 
         hooks.entrySet().removeIf(en -> {
             String fullDesc = en.getKey();
-            val map = en.getValue();
+            var map = en.getValue();
             if (map.isEmpty()) {
                 // resolve fullDesc
                 String className = fullDesc.substring(0, fullDesc.lastIndexOf("."));
@@ -95,9 +94,9 @@ final class HookRunner {
     static void delHook(Method source, Object sourceInst, String fullDescriptor, int at) {
         if (!hooks.containsKey(fullDescriptor))
             return;
-        val hookPoints = hooks.get(fullDescriptor);
+        var hookPoints = hooks.get(fullDescriptor);
         if (hookPoints.containsKey(at)) {
-            val li = hookPoints.get(at);
+            var li = hookPoints.get(at);
             li.removeIf(pair -> pair.getKey() == sourceInst && pair.getValue() == source);
             if (li.isEmpty()) {
                 hookPoints.remove(at); // gc
@@ -115,7 +114,7 @@ final class HookRunner {
         if (!hooks.containsKey(hookId))
             return cb;
 
-        val map = hooks.get(hookId);
+        var map = hooks.get(hookId);
         if (!map.containsKey(at))
             return cb;
 

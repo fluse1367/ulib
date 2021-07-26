@@ -12,7 +12,6 @@ import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.AnvilInventory;
@@ -35,7 +34,7 @@ final class EnchantUtilImpl extends EnchantUtil {
     private EnchantUtilImpl() {
         // Use mappings API to get Enchantment#getRarity() and Item#getEnchantmentValue()
         Tasks.run(() -> {
-            val mapping = Mappings.getMixedMapping();
+            var mapping = Mappings.getMixedMapping();
             methodName_enchantment_getRarity = mapping
                     .fromSource("net.minecraft.world.item.enchantment.Enchantment")
                     .methodFromSource("getRarity").mappedName();

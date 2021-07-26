@@ -8,7 +8,6 @@ import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.net.URL;
@@ -96,7 +95,7 @@ final class DependencyLoaderImpl extends DependencyLoader {
 
     @Override
     protected void load0(URL url) {
-        val cl = ReflectUtil.getCallerClass(2).getClassLoader();
+        var cl = ReflectUtil.getCallerClass(2).getClassLoader();
         if (cl instanceof URLClassLoader)
             load0(url, (URLClassLoader) cl);
         throw new UnsupportedOperationException(String.format("%s is not assignable as %s",

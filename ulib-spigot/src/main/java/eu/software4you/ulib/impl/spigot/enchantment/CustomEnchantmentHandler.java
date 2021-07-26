@@ -10,7 +10,6 @@ import eu.software4you.spigot.multiversion.BukkitReflectionUtils.PackageType;
 import eu.software4you.ulib.Tasks;
 import eu.software4you.ulib.ULibSpigotPlugin;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -48,8 +47,8 @@ public class CustomEnchantmentHandler implements Listener {
     }
 
     static void register() {
-        val pl = ULibSpigotPlugin.getInstance();
-        val handler = new CustomEnchantmentHandler(pl);
+        var pl = ULibSpigotPlugin.getInstance();
+        var handler = new CustomEnchantmentHandler(pl);
 
         pl.registerEvents(handler);
         pl.registerEvents(ULibSpigotPlugin.PAPER ? new Paper() : handler.new NoPaper());

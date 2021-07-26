@@ -4,7 +4,6 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.transform.Callback;
 import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.net.URL;
@@ -25,15 +24,15 @@ public final class ClassLoaderHook {
 
         if (!register.containsKey(cl)) {
             // not known yet, init
-            val classes = collectClasses(file);
-            val loader = new DependencyClassLoader(new URL[]{file.toURI().toURL()});
+            var classes = collectClasses(file);
+            var loader = new DependencyClassLoader(new URL[]{file.toURI().toURL()});
 
             register.put(cl, new Pair<>(classes, loader));
             return;
         }
 
         // already known, only add file and classes
-        val pair = register.get(cl);
+        var pair = register.get(cl);
         pair.getFirst().addAll(collectClasses(file));
         pair.getSecond().addFile(file);
     }
@@ -50,9 +49,9 @@ public final class ClassLoaderHook {
 
         List<String> classes = new ArrayList<>(jar.size());
 
-        val it = jar.entries();
+        var it = jar.entries();
         while (it.hasMoreElements()) {
-            val entry = it.nextElement();
+            var entry = it.nextElement();
 
             String path = entry.getName();
             if (entry.isDirectory() || !path.endsWith(".class"))
@@ -70,8 +69,8 @@ public final class ClassLoaderHook {
         if (!(classLoader instanceof ClassLoader) || !register.containsKey(classLoader))
             return null;
 
-        val pair = register.get(classLoader);
-        val register = pair.getFirst();
+        var pair = register.get(classLoader);
+        var register = pair.getFirst();
 
         if (!register.contains(className))
             return null;
@@ -83,14 +82,14 @@ public final class ClassLoaderHook {
 
     // hooks into the findClass method of a classloader
     public void findClass(String name, Callback<Class<?>> cb) throws ClassNotFoundException {
-        val loader = loader(cb.self(), name);
+        var loader = loader(cb.self(), name);
         if (loader != null)
             cb.setReturnValue(loader.findClass(name));
     }
 
     // hooks into the loadClass method of a classloader
     public void loadClass(String name, boolean resolve, Callback<Class<?>> cb) throws ClassNotFoundException {
-        val loader = loader(cb.self(), name);
+        var loader = loader(cb.self(), name);
         if (loader != null)
             cb.setReturnValue(loader.loadClass(name, resolve));
     }

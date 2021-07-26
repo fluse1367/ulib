@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.database.sql.query;
 
 import eu.software4you.ulib.impl.database.sql.SqlDatabase;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.sql.PreparedStatement;
 import java.util.HashMap;
@@ -46,8 +45,8 @@ class Metadata {
     protected PreparedStatement applyOps(PreparedStatement st) {
         Set<Integer> set = new HashSet<>();
         for (Map.Entry<Integer, BiConsumer<Integer, PreparedStatement>> en : operations.entrySet()) {
-            val off = en.getKey();
-            val con = en.getValue();
+            var off = en.getKey();
+            var con = en.getValue();
 
             int param = 1 + off;
             con.accept(param, st);

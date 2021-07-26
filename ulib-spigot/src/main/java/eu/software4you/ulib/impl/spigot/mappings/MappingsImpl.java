@@ -12,7 +12,6 @@ import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.ByteArrayOutputStream;
 
@@ -22,7 +21,7 @@ import static eu.software4you.ulib.ULibSpigotPlugin.getPlainMcVersion;
 final class MappingsImpl extends Mappings {
     private final Loader<VanillaMapping> currentVanilla = new Loader<>(() -> {
         String ver = getPlainMcVersion();
-        val manifest = LauncherMeta.getVersionManifest().get(ver);
+        var manifest = LauncherMeta.getVersionManifest().get(ver);
         if (manifest == null)
             throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));
         return loadVanilla(manifest);
@@ -31,7 +30,7 @@ final class MappingsImpl extends Mappings {
             loadBukkit(getPlainMcVersion()));
     private final Loader<MixedMapping> currentMixed = new Loader<>(() -> {
         String ver = getPlainMcVersion();
-        val manifest = LauncherMeta.getVersionManifest().get(ver);
+        var manifest = LauncherMeta.getVersionManifest().get(ver);
         if (manifest == null)
             throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));
         return loadMixed(manifest);
@@ -43,11 +42,11 @@ final class MappingsImpl extends Mappings {
         if (version == null)
             return null;
         ULib.logger().fine(() -> "Loading Vanilla Mappings for " + version.getId());
-        val mapping = version.getDownload("server_mappings");
+        var mapping = version.getDownload("server_mappings");
         if (mapping == null)
             return null;
 
-        val out = new ByteArrayOutputStream();
+        var out = new ByteArrayOutputStream();
         mapping.download(out);
         return new VanillaMapping(out.toString());
     }
@@ -60,7 +59,7 @@ final class MappingsImpl extends Mappings {
     @SneakyThrows
     @Override
     protected BukkitMapping loadBukkit(String version) {
-        val protocol = MultiversionManager.getVersion(version);
+        var protocol = MultiversionManager.getVersion(version);
         if (!UnsafeOperations.comply(protocol == Protocol.UNKNOWN, "Bukkit Mappings loading",
                 String.format("version '%s' unknown", version),
                 String.format("Ignoring version '%s' being unknown", version)) && protocol.below(Protocol.v1_8_R1)) {
@@ -69,16 +68,16 @@ final class MappingsImpl extends Mappings {
         }
 
         ULib.logger().fine(() -> "Loading Bukkit Mapping for " + version);
-        val data = BuildDataMeta.loadBuildData(version);
+        var data = BuildDataMeta.loadBuildData(version);
         if (data == null)
             return null;
 
-        val res = Tasks.await(() -> {
-            val clOut = new ByteArrayOutputStream();
+        var res = Tasks.await(() -> {
+            var clOut = new ByteArrayOutputStream();
             IOUtil.write(data.getClassMappings().require(), clOut);
             return clOut;
         }, () -> {
-            val memOut = new ByteArrayOutputStream();
+            var memOut = new ByteArrayOutputStream();
             IOUtil.write(data.getMemberMappings().require(), memOut);
             return memOut;
         });
@@ -94,20 +93,20 @@ final class MappingsImpl extends Mappings {
     @SneakyThrows
     @Override
     protected MixedMapping loadMixed(VersionManifest version) {
-        val logger = ULib.logger();
+        var logger = ULib.logger();
         logger.fine(() -> "Loading mixed mappings for " + version.getId());
-        val res = Tasks.await(() -> {
-            val mapping = loadVanilla(version);
+        var res = Tasks.await(() -> {
+            var mapping = loadVanilla(version);
             logger.fine(() -> "Vanilla Mappings loaded!");
             return mapping;
         }, () -> {
-            val mapping = loadBukkit(version.getId());
+            var mapping = loadBukkit(version.getId());
             logger.fine(() -> "Bukkit Mappings loaded!");
             return mapping;
         });
 
-        val vm = res.get(0);
-        val bm = res.get(1);
+        var vm = res.get(0);
+        var bm = res.get(1);
         if (!(vm instanceof VanillaMapping) || !(bm instanceof BukkitMapping))
             return null;
         logger.fine(() -> "Combining ...");

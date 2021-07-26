@@ -4,7 +4,6 @@ import eu.software4you.database.sql.Column;
 import eu.software4you.ulib.impl.database.sql.SqlDatabase;
 import eu.software4you.ulib.impl.database.sql.Table;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.util.Map;
 
@@ -17,9 +16,9 @@ final class MySQLTable extends Table {
     @SneakyThrows
     @Override
     public boolean exists() {
-        val st = sql.prepareStatement("select count(*) from `information_schema`.`tables` where `table_schema` = database() AND `table_name` = ?");
+        var st = sql.prepareStatement("select count(*) from `information_schema`.`tables` where `table_schema` = database() AND `table_name` = ?");
         st.setString(1, name);
-        val res = st.executeQuery();
+        var res = st.executeQuery();
         if (res.next()) {
             return res.getInt("count(*)") > 0;
         }

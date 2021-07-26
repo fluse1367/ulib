@@ -4,7 +4,6 @@ import eu.software4you.utils.IOUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +26,7 @@ public final class Agent {
 
         logger.finer(() -> "Agent pre init");
 
-        val props = System.getProperties();
+        var props = System.getProperties();
 
         Object[] array = (Object[]) props.get("ulib.javaagent");
         try {

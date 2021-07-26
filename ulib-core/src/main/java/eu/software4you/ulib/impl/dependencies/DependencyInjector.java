@@ -7,7 +7,6 @@ import eu.software4you.ulib.ULib;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ final class DependencyInjector {
     }
 
     private Optional<Method> findFirstUnderlying(Class<? extends ClassLoader> cl, List<Class<?>> reg, String mName, Class<?>... mParams) {
-        val scl = ClassLoader.getSystemClassLoader().getClass();
+        var scl = ClassLoader.getSystemClassLoader().getClass();
         Class<?> superclass;
 
         do {

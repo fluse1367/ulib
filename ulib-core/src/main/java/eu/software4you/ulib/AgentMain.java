@@ -1,7 +1,6 @@
 package eu.software4you.ulib;
 
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -17,7 +16,7 @@ public final class AgentMain {
     }
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        val agent = new AgentMain(inst);
+        var agent = new AgentMain(inst);
         System.getProperties().put("ulib.javaagent", new Object[]{
                 (Consumer<Class<?>>) agent::transform,
                 (Consumer<ClassFileTransformer>) agent::addTransformer,

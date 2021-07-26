@@ -6,7 +6,6 @@ import eu.software4you.http.CachedResource;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,16 +22,16 @@ final class Meta implements VersionsMeta {
         // versions loading
         Map<String, Loader<Version>> versions = new HashMap<>();
         json.getAsJsonArray("versions").forEach(e -> {
-            val ver = e.getAsJsonObject();
-            val id = ver.get("id").getAsString();
-            val url = ver.get("url").getAsString();
+            var ver = e.getAsJsonObject();
+            var id = ver.get("id").getAsString();
+            var url = ver.get("url").getAsString();
 
             versions.put(id, new Loader<>(() -> new Version(url, JsonParser.parseReader(
                     new InputStreamReader(new CachedResource(url, null).require())).getAsJsonObject())));
         });
         this.versions = Collections.unmodifiableMap(versions);
 
-        val latest = json.getAsJsonObject("latest");
+        var latest = json.getAsJsonObject("latest");
         this.release = latest.get("release").getAsString();
         this.snapshot = latest.get("snapshot").getAsString();
     }

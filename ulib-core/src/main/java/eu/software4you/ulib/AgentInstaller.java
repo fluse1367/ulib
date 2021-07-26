@@ -5,7 +5,6 @@ import com.sun.tools.attach.VirtualMachine;
 import eu.software4you.ulib.agentex.Loader;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -98,7 +97,7 @@ final class AgentInstaller {
 
         logger.finer(() -> "Starting process: " + Arrays.toString(cmd.toArray()));
 
-        val p = new ProcessBuilder(cmd)
+        var p = new ProcessBuilder(cmd)
                 .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                 .redirectError(ProcessBuilder.Redirect.INHERIT)
                 .start();
@@ -178,7 +177,7 @@ final class AgentInstaller {
     private byte[] readClass(Class<?> cl) {
         logger.finest(() -> "Reading bytes of " + cl.getName());
 
-        val in = cl.getResourceAsStream(String.format("/%s.class", cl.getName().replace(".", "/")));
+        var in = cl.getResourceAsStream(String.format("/%s.class", cl.getName().replace(".", "/")));
         if (in == null) {
             throw new IllegalStateException("Cannot read class " + cl.getName());
         }

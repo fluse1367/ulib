@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.transform;
 
 import eu.software4you.transform.HookPoint;
 import javassist.*;
-import lombok.val;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -44,7 +43,7 @@ final class HookInjector implements ClassFileTransformer {
             for (final String desc : covering.get(className)) {
                 logger.finer(() -> "Searching for " + desc);
 
-                val pair = Util.resolveMethod(desc);
+                var pair = Util.resolveMethod(desc);
                 String methodName = pair.getFirst();
                 String methodDescriptor = pair.getSecond();
 

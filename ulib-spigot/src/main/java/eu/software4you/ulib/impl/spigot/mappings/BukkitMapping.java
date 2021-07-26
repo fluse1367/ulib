@@ -3,7 +3,6 @@ package eu.software4you.ulib.impl.spigot.mappings;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
 import eu.software4you.spigot.multiversion.Protocol;
-import lombok.val;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,11 +112,11 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
 
             logger().finest(() -> String.format("Class Mapping: %s -> %s (raw: %s)", vanillaName, bukkitName, bukkitNameRaw));
 
-            val fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
-            val fields = mapFields(fieldMatcher);
+            var fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
+            var fields = mapFields(fieldMatcher);
 
-            val methodMatcher = METHOD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
-            val methods = mapMethods(methodMatcher);
+            var methodMatcher = METHOD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
+            var methods = mapMethods(methodMatcher);
 
 
             ClassMapping mapping = new ClassMapping(vanillaName, bukkitName, fields, methods);

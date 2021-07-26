@@ -3,7 +3,6 @@ package eu.software4you.ulib.impl.configuration.yaml;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.utils.IOUtil;
-import lombok.val;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -53,7 +52,7 @@ public class YamlSerializer {
     }
 
     void deserialize(Reader reader, YamlDocument doc) throws IOException {
-        val content = new String(IOUtil.read(reader)); // copy contents
+        var content = new String(IOUtil.read(reader)); // copy contents
 
         Node root = yaml.compose(new StringReader(content));
 
@@ -130,9 +129,9 @@ public class YamlSerializer {
     }
 
     private Node getLastChild(MappingNode root) {
-        val li = root.getValue();
-        val last = li.get(li.size() - 1);
-        val node = last.getValueNode();
+        var li = root.getValue();
+        var last = li.get(li.size() - 1);
+        var node = last.getValueNode();
 
         if (node instanceof MappingNode)
             return getLastChild((MappingNode) node);

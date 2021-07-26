@@ -5,7 +5,6 @@ import eu.software4you.utils.IOUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,7 +144,7 @@ public class ChecksumFile {
     private boolean validate() {
         if (!file.exists())
             return false;
-        val logger = logger();
+        var logger = logger();
         logger.fine(() -> String.format("Checking integrity of %s", file));
 
         String expected;
@@ -155,7 +154,7 @@ public class ChecksumFile {
                 logger.fine(() -> String.format("No %s for %s found, re-download", algorithm, file.getName()));
                 return false; // if checksum not saved, re-download and re-generated sha1File
             }
-            val bout = new ByteArrayOutputStream();
+            var bout = new ByteArrayOutputStream();
             IOUtil.write(new FileInputStream(checksumFile), bout);
             expected = bout.toString();
         } else {
@@ -179,7 +178,7 @@ public class ChecksumFile {
     }
 
     protected void mkdirsp(File child) {
-        val dir = child.getParentFile();
+        var dir = child.getParentFile();
         if (!dir.exists()) {
             dir.mkdirs();
         }

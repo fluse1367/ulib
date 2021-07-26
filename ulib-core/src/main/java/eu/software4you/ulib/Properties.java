@@ -6,7 +6,6 @@ import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.apache.commons.lang3.Validate;
 
 import java.io.*;
@@ -91,7 +90,7 @@ class Properties {
     private YamlSub loadConfig() {
         YamlSerializer serializer = YamlSerializer.getInstance();
 
-        val conf = new File(DATA_DIR, "config.yml");
+        var conf = new File(DATA_DIR, "config.yml");
         if (!conf.exists()) {
             IOUtil.write(getCurrentConfig(), new FileOutputStream(conf));
             return serializer.deserialize(new FileReader(conf));

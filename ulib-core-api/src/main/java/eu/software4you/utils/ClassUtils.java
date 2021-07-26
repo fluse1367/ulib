@@ -2,7 +2,6 @@ package eu.software4you.utils;
 
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
-import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,7 +192,7 @@ public class ClassUtils {
     public static Method findUnderlyingDeclaredMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {
         Class<?> current = clazz;
         do {
-            val cl = current;
+            var cl = current;
             ULib.logger().finer(() -> String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), cl));
             try {
                 return current.getDeclaredMethod(methodName, parameterTypes);

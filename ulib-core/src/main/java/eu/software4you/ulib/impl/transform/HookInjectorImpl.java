@@ -11,7 +11,6 @@ import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -109,14 +108,14 @@ final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
         if (!injected.containsKey(className)) {
             return;
         }
-        val li = injected.get(className);
+        var li = injected.get(className);
         li.remove(desc);
         if (li.isEmpty())
             injected.remove(className);
     }
 
     private void inject(Hook hook, Method source, Object obj, ClassLoader cl) {
-        val p = Util.resolveMethod(hook);
+        var p = Util.resolveMethod(hook);
 
         String className = hook.clazz();
         if (className.isEmpty()) {
@@ -144,11 +143,11 @@ final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
         } else {
             injected.put(className, new ArrayList<>());
         }
-        val methods = injected.get(className);
+        var methods = injected.get(className);
         methods.add(desc);
 
         try {
-            val cl = Class.forName(className, false, source.getDeclaringClass().getClassLoader());
+            var cl = Class.forName(className, false, source.getDeclaringClass().getClassLoader());
             agent.transform(cl);
         } catch (Throwable thr) {
             ULib.logger().log(Level.WARNING, thr, () -> "Agent transformation failure (" + fullDescriptor + ")");

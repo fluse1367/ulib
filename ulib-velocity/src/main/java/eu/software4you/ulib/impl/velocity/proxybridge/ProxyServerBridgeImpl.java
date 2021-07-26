@@ -18,7 +18,6 @@ import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import eu.software4you.velocity.plugin.VelocityPlugin;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -44,7 +43,7 @@ public final class ProxyServerBridgeImpl extends eu.software4you.ulib.impl.minec
     }
 
     private RegisteredServer findServer(String serverName) {
-        val server = plugin.getProxyServer().getServer(serverName);
+        var server = plugin.getProxyServer().getServer(serverName);
         if (!server.isPresent())
             throw new IllegalArgumentException(String.format("Server %s was not found or is not connected", serverName));
         return server.get();

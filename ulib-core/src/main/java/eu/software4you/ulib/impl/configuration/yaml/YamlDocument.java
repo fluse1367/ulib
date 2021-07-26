@@ -4,7 +4,6 @@ import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.ConversionPolicy;
 import eu.software4you.configuration.yaml.YamlSub;
-import lombok.val;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -149,7 +148,7 @@ public class YamlDocument implements YamlSub, Keyable<String> {
         if (value != null) {
             r = resolveFull(fullPath);
         } else {
-            val op = resolve(fullPath);
+            var op = resolve(fullPath);
             if (!op.isPresent())
                 return;
             r = op.get();
@@ -208,7 +207,7 @@ public class YamlDocument implements YamlSub, Keyable<String> {
 
     @Override
     public @NotNull YamlDocument createSub(@NotNull String fullPath) {
-        val r = resolveFull(fullPath);
+        var r = resolveFull(fullPath);
         return r.getFirst().placeNewSub(r.getSecond());
     }
 
@@ -396,7 +395,7 @@ public class YamlDocument implements YamlSub, Keyable<String> {
         if (!isRoot()) {
             // update parent node
 
-            val child = parent.children.get(key);
+            var child = parent.children.get(key);
             if (child.getSecond() != this) { // value of child should be this instance
                 throw new IllegalStateException("Parent has stored another value than acceptable");
             }

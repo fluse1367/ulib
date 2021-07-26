@@ -1,7 +1,6 @@
 package eu.software4you.ulib.impl.database.sql.query;
 
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,9 +34,9 @@ class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint 
     @SneakyThrows
     @Override
     public PreparedStatement build(Object... parameters) {
-        val st = build();
+        var st = build();
 
-        val alreadySet = meta.set();
+        var alreadySet = meta.set();
 
         for (int i = 0, param = 1; i < parameters.length; param++) {
             if (alreadySet.contains(param))

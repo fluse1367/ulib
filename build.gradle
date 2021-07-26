@@ -113,9 +113,9 @@ allprojects {
         deployRepoCredentialMethod = "${release ? 'Job' : 'Deploy'}-Token"
         deployRepoCredentialValue = System.getenv("CI_${release ? /*releases*/ 'JOB' : /*snapshots*/ 'SNAPSHOT_REPOSITORY_DEPLOY'}_TOKEN")
 
-        coordsPaper = 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+        coordsPaper = 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
         coordsWaterfall = 'io.github.waterfallmc:waterfall-api:1.17-R0.1-SNAPSHOT'
-        coordsVelocity = 'com.velocitypowered:velocity-api:1.1.9-SNAPSHOT'
+        coordsVelocity = 'com.velocitypowered:velocity-api:3.0.0-SNAPSHOT'
         coordsXSeries = 'com.github.cryptomorin:XSeries:7.9.1.1'
 
         coordsHttpClient = 'org.apache.httpcomponents:httpclient:4.5.10'
@@ -157,8 +157,7 @@ subprojects {
     }
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_16
     }
 
     jar {

@@ -7,7 +7,6 @@ import eu.software4you.dependencies.Repository;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.impl.dependencies.RepositoriesImpl.Repo;
 import eu.software4you.ulib.inject.Impl;
-import lombok.var;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;

@@ -5,7 +5,6 @@ import eu.software4you.http.ChecksumFile;
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,8 +35,8 @@ final class UnsafeUtil {
 
     @SneakyThrows
     private static void generate(File file, URL url) {
-        try (val in = url.openStream();
-             val out = new FileOutputStream(file)) {
+        try (var in = url.openStream();
+             var out = new FileOutputStream(file)) {
             IOUtil.write(in, out);
         }
     }

@@ -3,7 +3,6 @@ package eu.software4you.ulib.impl.spigot.mappings;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
 import eu.software4you.ulib.Loader;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +26,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
     protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Pair<BukkitMapping, VanillaMapping> mappingData) {
         logger().finer("Generating mixed mappings");
 
-        val bm = mappingData.getFirst();
-        val vm = mappingData.getSecond();
+        var bm = mappingData.getFirst();
+        var vm = mappingData.getSecond();
 
         Map<String, ClassMapping> byVanillaSource = new HashMap<>();
         Map<String, ClassMapping> byBukkit = new HashMap<>();
@@ -37,7 +36,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
             String bukkitName = cm.mappedName();
 
             String vanillaObfName = cm.sourceName();
-            val vc = vm.byMappedName.get(vanillaObfName);
+            var vc = vm.byMappedName.get(vanillaObfName);
 
             String vanillaSourceName = vc.sourceName();
 
@@ -62,7 +61,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
 
         vanillaFields.forEach(loader -> {
-            val vf = loader.get();
+            var vf = loader.get();
 
             String vanillaSourceName = vf.sourceName();
             String vanillaObfName = vf.mappedName();
@@ -92,7 +91,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
 
         vanillaMethods.forEach(loader -> {
-            val li = loader.get();
+            var li = loader.get();
 
             li.forEach(vm -> {
                 String vanillaSourceName = vm.sourceName();

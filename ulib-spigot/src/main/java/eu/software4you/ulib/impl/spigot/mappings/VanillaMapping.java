@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.spigot.mappings;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
-import lombok.val;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,8 +74,8 @@ final class VanillaMapping extends MappingRoot<String> implements eu.software4yo
 
             // group 3: members
             String members = classMatcher.group(3);
-            val fields = mapFields(members);
-            val methods = mapMethods(members);
+            var fields = mapFields(members);
+            var methods = mapMethods(members);
 
 
             ClassMapping mapping = new ClassMapping(originalName, obfuscatedName, fields, methods);

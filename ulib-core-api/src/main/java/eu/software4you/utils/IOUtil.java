@@ -1,6 +1,5 @@
 package eu.software4you.utils;
 
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -20,7 +19,7 @@ public class IOUtil {
      * @see OutputStream#close()
      */
     public static void write(@NotNull InputStream in, @NotNull OutputStream out) throws IOException {
-        try (val is = in; val os = out) {
+        try (var is = in; var os = out) {
             byte[] buff = new byte[1024];
             int len;
             while ((len = is.read(buff)) != -1) {
@@ -44,7 +43,7 @@ public class IOUtil {
      * @see OutputStream#close()
      */
     public static void write(@NotNull Reader reader, @NotNull Writer writer) throws IOException {
-        try (val in = reader; val out = writer) {
+        try (var in = reader; var out = writer) {
             char[] buff = new char[1024];
             int len;
             while ((len = in.read(buff)) != -1) {
@@ -63,7 +62,7 @@ public class IOUtil {
      * @see #write(InputStream, OutputStream)
      */
     public static byte[] read(@NotNull InputStream in) throws IOException {
-        val bout = new ByteArrayOutputStream();
+        var bout = new ByteArrayOutputStream();
         write(in, bout);
         return bout.toByteArray();
     }
@@ -77,7 +76,7 @@ public class IOUtil {
      * @see #write(InputStream, OutputStream)
      */
     public static char[] read(@NotNull Reader reader) throws IOException {
-        val cout = new CharArrayWriter();
+        var cout = new CharArrayWriter();
         write(reader, cout);
         return cout.toCharArray();
     }
@@ -91,7 +90,7 @@ public class IOUtil {
      * @see #write(InputStream, OutputStream)
      */
     public static String toString(@NotNull InputStream in) throws IOException {
-        val bout = new ByteArrayOutputStream();
+        var bout = new ByteArrayOutputStream();
         write(in, bout);
         return bout.toString();
     }

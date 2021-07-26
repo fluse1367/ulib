@@ -3,7 +3,6 @@ package eu.software4you.ulib.impl.database.sql;
 import eu.software4you.database.sql.Column;
 import eu.software4you.database.sql.ColumnBuilder;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,7 +157,7 @@ public abstract class SqlDatabase implements eu.software4you.database.sql.SqlDat
     private Table addTable(String name, Column<?>... columns) {
         if (tables.containsKey(name))
             throw new IllegalStateException(String.format("Table %s already added", name));
-        val table = createTable(name, Arrays.stream(columns).collect(Collectors.toMap(
+        var table = createTable(name, Arrays.stream(columns).collect(Collectors.toMap(
                 Column::getName, col -> col
         )));
         tables.put(name, table);

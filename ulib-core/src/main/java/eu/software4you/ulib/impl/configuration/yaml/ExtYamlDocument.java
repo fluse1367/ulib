@@ -2,7 +2,6 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.ExtYamlSub;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;
@@ -50,7 +49,7 @@ public class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
 
     @Override
     public @NotNull ExtYamlSub subAndCreate(@NotNull String path) {
-        val sub = getSub(path);
+        var sub = getSub(path);
         return sub != null ? sub : createSub(path);
     }
 

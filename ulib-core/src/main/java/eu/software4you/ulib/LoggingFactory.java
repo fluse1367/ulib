@@ -1,6 +1,5 @@
 package eu.software4you.ulib;
 
-import lombok.val;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
@@ -78,7 +77,7 @@ class LoggingFactory {
         return new Formatter() {
             @Override
             public String format(LogRecord record) {
-                val ansi = ansi();
+                var ansi = ansi();
                 Level level = record.getLevel();
 
                 if (level == Level.SEVERE) {

@@ -2,7 +2,6 @@ package eu.software4you.configuration;
 
 import eu.software4you.configuration.yaml.YamlSub;
 import eu.software4you.ulib.Await;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -71,7 +70,7 @@ public abstract class Configurations {
      * @throws IOException If an I/O error occurs
      */
     public static InputStream dumpYaml(YamlSub yaml) throws IOException {
-        val out = new ByteArrayOutputStream();
+        var out = new ByteArrayOutputStream();
         saveYaml(yaml, out);
         return new ByteArrayInputStream(out.toByteArray());
     }

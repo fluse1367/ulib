@@ -7,7 +7,6 @@ import eu.software4you.utils.ClassUtils;
 import eu.software4you.utils.IOUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.apache.http.client.HttpClient;
 
 import java.io.File;
@@ -112,8 +111,8 @@ public class UnsafeDependencies {
         if (!dest.exists()) {
             dest.getParentFile().mkdirs();
 
-            try (val in = HttpUtil.getContent(httpClient, url + request);
-                 val out = new FileOutputStream(dest)) {
+            try (var in = HttpUtil.getContent(httpClient, url + request);
+                 var out = new FileOutputStream(dest)) {
                 IOUtil.write(in, out);
             }
         }

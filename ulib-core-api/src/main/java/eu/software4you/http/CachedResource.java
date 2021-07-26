@@ -3,7 +3,6 @@ package eu.software4you.http;
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,7 @@ public class CachedResource extends ChecksumFile {
     }
 
     private static Path urlLoc(String url) {
-        val u = url(url);
+        var u = url(url);
         return Paths.get(u.getHost() + u.getPath());
     }
 

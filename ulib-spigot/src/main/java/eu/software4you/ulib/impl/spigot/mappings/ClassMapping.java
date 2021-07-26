@@ -4,7 +4,6 @@ import eu.software4you.common.collection.Triple;
 import eu.software4you.spigot.mappings.MappedField;
 import eu.software4you.spigot.mappings.MappedMethod;
 import eu.software4you.ulib.Loader;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +28,7 @@ final class ClassMapping extends MappedClass implements eu.software4you.spigot.m
         Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByOriginalName = new HashMap<>();
         Map<String, Loader<eu.software4you.ulib.impl.spigot.mappings.MappedField>> fieldsByMappedName = new HashMap<>();
         fields.forEach(t -> {
-            val loader = new Loader<>(t.getThird().apply(this));
+            var loader = new Loader<>(t.getThird().apply(this));
             fieldsByOriginalName.put(t.getFirst(), loader);
             fieldsByMappedName.put(t.getSecond(), loader);
         });

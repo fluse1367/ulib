@@ -6,7 +6,10 @@ import eu.software4you.database.sql.DataType;
 import eu.software4you.ulib.impl.database.sql.query.Query;
 import eu.software4you.ulib.impl.database.sql.query.QueryStart;
 import eu.software4you.ulib.impl.database.sql.query.SetQuery;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +112,7 @@ public abstract class Table implements eu.software4you.database.sql.Table {
     @SneakyThrows
     @Override
     public boolean insert(@NotNull Object v, Object... vs) {
-        val values = concat(v, vs);
+        var values = concat(v, vs);
 
         StringJoiner vals = new StringJoiner(", ", "(", ")");
         vals.setEmptyValue("()");
@@ -118,7 +121,7 @@ public abstract class Table implements eu.software4you.database.sql.Table {
         }
         String query = String.format("insert into `%s` values %s", name, vals);
 
-        val st = sql.prepareStatement(query);
+        var st = sql.prepareStatement(query);
         for (int i = 0; i < values.length; i++) {
             st.setObject(i + 1, values[i]);
         }
@@ -129,7 +132,7 @@ public abstract class Table implements eu.software4you.database.sql.Table {
     @SneakyThrows
     @Override
     public final boolean insert(@NotNull Pair<String, Object> v, Pair<String, Object>... vs) {
-        val values = concat(v, vs);
+        var values = concat(v, vs);
 
         StringJoiner columnsStr = new StringJoiner(", ", "(", ")");
         columnsStr.setEmptyValue("()");
@@ -142,7 +145,7 @@ public abstract class Table implements eu.software4you.database.sql.Table {
         }
 
         String query = String.format("insert into `%s` %s values %s", name, columnsStr, valuesStr);
-        val st = sql.prepareStatement(query);
+        var st = sql.prepareStatement(query);
         for (int i = 0; i < values.length; i++) {
             st.setObject(i + 1, values[i].getSecond());
         }

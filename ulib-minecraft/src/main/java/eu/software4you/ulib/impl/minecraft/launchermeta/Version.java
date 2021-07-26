@@ -6,7 +6,6 @@ import eu.software4you.ulib.minecraft.launchermeta.RemoteLibrary;
 import eu.software4you.ulib.minecraft.launchermeta.RemoteResource;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,7 @@ final class Version implements VersionManifest {
     Version(String url, JsonObject json) {
         this.id = json.get("id").getAsString();
 
-        val ai = json.get("assetIndex").getAsJsonObject();
+        var ai = json.get("assetIndex").getAsJsonObject();
         this.assetIndex = new Resource(ai.get("id").getAsString(), ai);
 
         this.type = Type.valueOf(json.get("type").getAsString().toUpperCase());
@@ -47,9 +46,9 @@ final class Version implements VersionManifest {
             List<Library> libs = new ArrayList<>();
 
             json.getAsJsonArray("libraries").forEach(e -> {
-                val lib = e.getAsJsonObject();
-                val mvnc = lib.get("name").getAsString();
-                val dwnlds = lib.get("downloads").getAsJsonObject();
+                var lib = e.getAsJsonObject();
+                var mvnc = lib.get("name").getAsString();
+                var dwnlds = lib.get("downloads").getAsJsonObject();
                 libs.add(new Library(mvnc, dwnlds));
             });
 

@@ -10,7 +10,6 @@ import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -39,14 +38,14 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
         } catch (ClassNotFoundException e) {
             paper = false;
         }
-        val server = Bukkit.getServer();
+        var server = Bukkit.getServer();
         if (PAPER = paper) {
             PLAIN_MC_VERSION = new Loader<>(server::getMinecraftVersion);
         } else {
             PLAIN_MC_VERSION = new Loader<>(() -> (String) ReflectUtil.call(server.getClass(), server, "getServer().getVersion()"));
         }
 
-        val props = Properties.getInstance();
+        var props = Properties.getInstance();
         props.MODE = RunMode.SPIGOT;
         props.ADDITIONAL_LIBS.add(new Pair<>("{{maven.xseries}}", "central"));
         ULib.init();

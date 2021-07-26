@@ -5,7 +5,6 @@ import eu.software4you.dependencies.Repositories;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.FileUtils;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,7 +30,7 @@ final class LibImpl implements Lib {
     private static void clinit() {
         long started = System.currentTimeMillis();
 
-        val lib = new LibImpl();
+        var lib = new LibImpl();
         System.out.println("This uLib log file will be placed in: " + lib.properties.DATA_DIR);
         ULib.impl = lib;
         logger.info(() -> "Log level: " + lib.properties.LOG_LEVEL);
@@ -42,7 +41,7 @@ final class LibImpl implements Lib {
         AgentInstaller.install(logger);
 
         logger.fine(() -> "Preparing implementations");
-        val IMPL = clinit_read_implementations();
+        var IMPL = clinit_read_implementations();
 
         /*
          1. ReflectUtil
@@ -63,7 +62,7 @@ final class LibImpl implements Lib {
         // load dependencies
         logger.fine(() -> "Loading dependencies");
         try {
-            for (val en : lib.properties.ADDITIONAL_LIBS) {
+            for (var en : lib.properties.ADDITIONAL_LIBS) {
                 Dependencies.depend(en.getFirst(), Repositories.of(en.getSecond()));
             }
         } catch (Exception e) {
@@ -88,7 +87,7 @@ final class LibImpl implements Lib {
         // register implementations
         String pack = String.format("%s/impl/", LibImpl.class.getPackage().getName()).replace(".", "/");
         JarFile jar = new JarFile(FileUtils.getClassFile(LibImpl.class));
-        val e = jar.entries();
+        var e = jar.entries();
 
         while (e.hasMoreElements()) {
             JarEntry entry = e.nextElement();
@@ -97,7 +96,7 @@ final class LibImpl implements Lib {
             if (name.startsWith(pack) && name.endsWith("Impl.class")) {
                 String clName = name.replace("/", ".").substring(0, name.length() - 6);
                 // NO class init
-                val cl = Class.forName(clName, false, LibImpl.class.getClassLoader());
+                var cl = Class.forName(clName, false, LibImpl.class.getClassLoader());
                 if (!cl.isAnnotationPresent(Impl.class))
                     continue;
                 Impl impl = cl.getAnnotation(Impl.class);
@@ -117,11 +116,11 @@ final class LibImpl implements Lib {
     @SneakyThrows
     private static void clinit_load_implementations(List<Class<?>> IMPL) {
         for (Class<?> clazz : IMPL) {
-            val impl = clazz.getAnnotation(Impl.class);
+            var impl = clazz.getAnnotation(Impl.class);
             logger.finer(() -> String.format("Loading implementation: (%d) %s", impl.priority(), clazz.getName()));
 
             // load dependencies
-            val dependencies = impl.dependencies();
+            var dependencies = impl.dependencies();
             if (dependencies.length > 0) {
                 logger.finer(() -> String.format("Implementation %s requires dependencies", clazz.getName()));
                 for (String coords : dependencies) {

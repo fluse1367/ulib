@@ -6,7 +6,6 @@ import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -153,11 +152,11 @@ final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     private InputStream content(HttpResponse res) {
-        val status = res.getStatusLine();
-        val code = status.getStatusCode();
+        var status = res.getStatusLine();
+        var code = status.getStatusCode();
         if (code < 200 || code > 299)
             throw new HttpResponseException(code, status.getReasonPhrase());
-        val entity = res.getEntity();
+        var entity = res.getEntity();
         Objects.requireNonNull(entity, "No content");
         return entity.getContent();
     }

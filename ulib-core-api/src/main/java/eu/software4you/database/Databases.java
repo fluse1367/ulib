@@ -4,7 +4,6 @@ import eu.software4you.database.sql.MySQLDatabase;
 import eu.software4you.database.sql.SQLiteDatabase;
 import eu.software4you.database.sql.SqlDatabase;
 import eu.software4you.ulib.Await;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -98,7 +97,7 @@ public abstract class Databases {
      */
     @NotNull
     public static Database connect(@NotNull String url, @NotNull Properties info) throws IllegalArgumentException {
-        val db = prepare(url, info);
+        var db = prepare(url, info);
         db.connect();
         return db;
     }
@@ -112,7 +111,7 @@ public abstract class Databases {
      */
     @NotNull
     public static SQLiteDatabase connect(@NotNull File file) {
-        val db = prepare(file);
+        var db = prepare(file);
         db.connect();
         return db;
     }
@@ -132,7 +131,7 @@ public abstract class Databases {
      */
     @NotNull
     public static MySQLDatabase connect(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
-        val db = prepare(host, port, database, user, password, parameters);
+        var db = prepare(host, port, database, user, password, parameters);
         db.connect();
         return db;
     }

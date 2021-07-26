@@ -4,7 +4,6 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
 import eu.software4you.spigot.mappings.JarMapping;
 import eu.software4you.ulib.ULib;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ abstract class MappingRoot<T> implements JarMapping {
     private final Map<String, MappedClass> dummies = new ConcurrentHashMap<>();
 
     MappingRoot(final T mappingData) {
-        val mappings = generateMappings(mappingData);
+        var mappings = generateMappings(mappingData);
         this.bySourceName = Collections.unmodifiableMap(mappings.getFirst());
         this.byMappedName = Collections.unmodifiableMap(mappings.getSecond());
     }

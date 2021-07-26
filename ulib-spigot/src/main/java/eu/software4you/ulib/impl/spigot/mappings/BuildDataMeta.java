@@ -10,7 +10,6 @@ import eu.software4you.http.HttpUtil;
 import eu.software4you.ulib.ULib;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.io.FileReader;
@@ -55,11 +54,11 @@ final class BuildDataMeta {
         String url = SPIGOTMC_REST + "/raw/info.json?at=" + commitHash;
 
         ULib.logger().fine(() -> "Requesting " + url);
-        val in = HttpUtil.getContent(url);
+        var in = HttpUtil.getContent(url);
 
         ULib.logger().finer(() -> "Loading JSON");
         JsonObject json;
-        try (val reader = new InputStreamReader(in)) {
+        try (var reader = new InputStreamReader(in)) {
             json = JsonParser.parseReader(reader).getAsJsonObject();
         }
 
@@ -72,7 +71,7 @@ final class BuildDataMeta {
 
     @SneakyThrows
     static BuildDataMeta loadBuildData(String ver) {
-        val logger = ULib.logger();
+        var logger = ULib.logger();
         logger.fine(() -> "Loading bukkit build data for " + ver);
 
         // load cached meta
@@ -86,8 +85,8 @@ final class BuildDataMeta {
 
         // load from versions.json
         if (cachedMeta.has(ver)) {
-            val json = cachedMeta.getAsJsonObject(ver);
-            val data = fromJson(json, ver);
+            var json = cachedMeta.getAsJsonObject(ver);
+            var data = fromJson(json, ver);
             logger.finer(() -> String.format("From versions.json: %s", data));
             return data;
         }
@@ -97,8 +96,8 @@ final class BuildDataMeta {
 
         String url = String.format("https://hub.spigotmc.org/versions/%s.json", ver);
         logger.fine(() -> String.format("Loading %s from %s", ver, url));
-        try (val reader = new InputStreamReader(new CachedResource(url, null).require())) {
-            val json = JsonParser.parseReader(reader).getAsJsonObject();
+        try (var reader = new InputStreamReader(new CachedResource(url, null).require())) {
+            var json = JsonParser.parseReader(reader).getAsJsonObject();
             String commit = json.getAsJsonObject("refs").get("BuildData").getAsString();
 
             buildData = fromCommit(commit);
@@ -113,7 +112,7 @@ final class BuildDataMeta {
         }
 
         // save meta.json
-        val dir = metaFile.getParentFile();
+        var dir = metaFile.getParentFile();
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -122,7 +121,7 @@ final class BuildDataMeta {
                 .setPrettyPrinting()
                 .create();
 
-        try (val writer = new JsonWriter(new FileWriter(metaFile, false))) {
+        try (var writer = new JsonWriter(new FileWriter(metaFile, false))) {
             gson.toJson(cachedMeta, writer);
         }
         return buildData;

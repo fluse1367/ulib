@@ -4,7 +4,6 @@ import eu.software4you.database.sql.Column;
 import eu.software4you.ulib.impl.database.sql.SqlDatabase;
 import eu.software4you.ulib.impl.database.sql.Table;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.util.Map;
 
@@ -16,9 +15,9 @@ final class SQLiteTable extends Table {
     @SneakyThrows
     @Override
     public boolean exists() {
-        val st = sql.prepareStatement("select count(*) from `sqlite_master` where `type` = 'table' and `name` = ?");
+        var st = sql.prepareStatement("select count(*) from `sqlite_master` where `type` = 'table' and `name` = ?");
         st.setString(1, name);
-        val res = st.executeQuery();
+        var res = st.executeQuery();
         if (res.next()) {
             return res.getInt("count(*)") > 0;
         }

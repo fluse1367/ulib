@@ -9,7 +9,6 @@ import eu.software4you.ulib.inject.Impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.val;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -33,7 +32,7 @@ final class DatabasesImpl extends Databases {
     @SneakyThrows
     @Override
     protected Database prepare0(String url, Properties info) {
-        for (val en : regs.entrySet()) {
+        for (var en : regs.entrySet()) {
             if (!url.startsWith(en.getKey())) {
                 continue;
             }
@@ -55,7 +54,7 @@ final class DatabasesImpl extends Databases {
             throw new IllegalStateException("Connection is closed.");
         String url = connection.getMetaData().getURL();
 
-        for (val en : regs.entrySet()) {
+        for (var en : regs.entrySet()) {
             if (!url.startsWith(en.getKey()) || !SqlDatabase.class.isAssignableFrom(en.getValue())) {
                 continue;
             }
