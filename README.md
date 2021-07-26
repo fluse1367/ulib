@@ -12,35 +12,40 @@ See "Included Software" (at the bottom) for copyright and license notice of incl
 | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) |
 | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |
 
-## Disclaimer
+## Important Things to Know
 
-This library depends on recent paper/waterfall versions. That means it may not work as expected or may not work at all
-on older server versions. You will not receive any support, when using another server version than the one this library
-is built for.
+- This library depends on recent paper/waterfall versions. That means it may not work as expected or may not work at all
+  on older server versions. You will not receive any support, when using another server version than the one this
+  library is built for. <br><br>
+  If you want to use older server versions, consider a cross-version compatibility tool, like
+  [ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448),
+  [ViaRewind](https://www.spigotmc.org/resources/viarewind.52109) or
+  [ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201).
 
-If you want to use older server versions, consider a cross-version compatibility tool, like
-[ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448),
-[ViaRewind](https://www.spigotmc.org/resources/viarewind.52109) or
-[ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201).
 
-When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io)
-and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.   
-Paper/Waterfall provide better performance, and an expanded API which allows uLib to implement more and better
-features.   
-uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
-needed to implement some features on Spigot.   
-Consider using [Purpur](https://purpur.pl3x.net), [Airplane](https://airplane.gg),
-[Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io),
-and [Velocity](https://velocitypowered.com)
-or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
+- Minimum Java version is 16.
+
+
+- When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io)
+  and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.   
+  Paper/Waterfall provide better performance, and an expanded API which allows uLib to implement more and better
+  features.   
+  uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
+  necessary to implement some features on Spigot. <br><br>
+  Consider using [Purpur](https://purpur.pl3x.net), [Airplane](https://airplane.gg),
+  [Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io),
+  and [Velocity](https://velocitypowered.com)
+  or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
+
+
+- When launching uLib for the first time (or if the `libraries`/`cache` folder was removed), it will download a few of
+  dependencies/libraries (about 2 MB).
+
+### Disclaimer
 
 Also, note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The developer(s) /
 contributors of this project do not take any responsibility/liability in any way.
 
-### First Startup
-
-When launching uLib for the first time (or if the `libraries` folder was removed), it will download a few of
-dependencies/libraries, this only takes a couple of seconds.
 
 ---
 
@@ -177,10 +182,6 @@ to `true` **within the command line**:
 ```shell
 java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
 ```
-
-In order for uLib to load the javaagent **on Java 8** though, it needs to load the tools.jar file, that is unfortunately
-not available in the regular Java 8 runtime. However, to solve this problem simply make sure the respective JDK is
-installed, uLib will try to load the file from there.
 
 ---
 
