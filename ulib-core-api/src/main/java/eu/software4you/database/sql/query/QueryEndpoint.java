@@ -10,7 +10,7 @@ public interface QueryEndpoint {
 
     /**
      * Builds and executes the query. Expects return data from the database.
-     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.</p>
+     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.
      *
      * @param parameters the query parameters
      * @return what the database returned
@@ -21,7 +21,7 @@ public interface QueryEndpoint {
 
     /**
      * Builds and executes the query.
-     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.</p>
+     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.
      *
      * @param parameters the query parameters
      * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
@@ -46,7 +46,7 @@ public interface QueryEndpoint {
 
     /**
      * Builds the query with parameters.
-     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.</p>
+     * <p>This method skips certain parameter numbers (but not the values!) if parameters are already known for a specific number.
      *
      * @param parameters the parameters
      * @return the built query

@@ -23,7 +23,6 @@ import java.util.logging.Level;
  *     // ...
  * }
  * }</pre>
- * </p>
  */
 public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final static String layoutBaseName = "layout";

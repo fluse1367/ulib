@@ -12,7 +12,6 @@ import static eu.software4you.dependencies.Repositories.mavenCentral;
  * Loads libraries (from maven repositories).
  * <p>
  * By default the fallback policy is set to {@code true}.
- * </p>
  */
 public abstract class Dependencies {
     @Await
@@ -74,7 +73,6 @@ public abstract class Dependencies {
      * Allows for the same library with different versions to be loaded simultaneously (via different class loaders).
      * <b>This is achieved by injecting code into the class loaders.</b>
      * No code will be injected into the system class loader, instead the respective files will be added to
-     * </p>
      *
      * @param coords     the library maven coordinates
      * @param repository the repository to search in
@@ -144,7 +142,6 @@ public abstract class Dependencies {
      * <p>
      * Allows for the same library with different versions to be loaded simultaneously (via different class loaders).
      * <b>This is achieved by injecting code into the class loaders.</b>
-     * </p>
      *
      * @param coords     the library maven coordinates
      * @param testClass  fully qualified name of the test-class

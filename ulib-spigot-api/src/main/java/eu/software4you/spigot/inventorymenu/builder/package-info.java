@@ -14,6 +14,5 @@
  *     <li>{@link eu.software4you.spigot.inventorymenu.builder.MultiPageMenuBuilder}</li>
  *     <li>{@link eu.software4you.spigot.inventorymenu.builder.PageBuilder}</li>
  * </ul>
- * </p>
  */
 package eu.software4you.spigot.inventorymenu.builder;

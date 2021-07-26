@@ -7,8 +7,7 @@ import org.bukkit.inventory.ItemStack;
  * <p>
  * The item-click will be handled by the system.
  * If you still set an own handler, this handler will be called after the item was toggled.
- * </p>
- * <p>Actually an simplified implementation of the {@link MultiStateEntry} with the type {@link Boolean}.</p>
+ * <p>Actually an simplified implementation of the {@link MultiStateEntry} with the type {@link Boolean}.
  */
 public interface ToggleableEntry extends Entry {
     /**

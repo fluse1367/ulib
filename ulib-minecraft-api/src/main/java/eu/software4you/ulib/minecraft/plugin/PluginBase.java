@@ -72,7 +72,6 @@ public interface PluginBase<L, R, E> extends EventController<L>, ASyncSchedulerC
      * Reloads the layout afterwards.
      * <p>
      * Effectively uses another layout file name: {@code layout.{@link Locale#getLanguage()}.yml}
-     * </p>
      * Use {@code null} as param to go back to the default layout file.
      *
      * @param locale the locale to set, or {@code null} to reset to the default layout

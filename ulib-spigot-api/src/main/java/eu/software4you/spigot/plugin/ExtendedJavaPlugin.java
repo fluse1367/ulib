@@ -29,7 +29,6 @@ import java.util.logging.Level;
  *     // ...
  * }
  * }</pre>
- * </p>
  */
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
     private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();

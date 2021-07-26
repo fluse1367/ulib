@@ -27,7 +27,7 @@ public interface Condition<R> {
 
     /**
      * Tests for equality with a specific value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -57,7 +57,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is greater than another value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -87,7 +87,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is greater than or equals another value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -117,7 +117,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is less than another value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -147,7 +147,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is less than or equals another value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -178,7 +178,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is between two other values using a parameterized sql query.
-     * <p>The two others values must be handed over later as parameters in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The two others values must be handed over later as parameters in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -209,7 +209,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value matches a specific pattern using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @return R
      * @see QueryEndpoint#build(Object...)
@@ -243,7 +243,7 @@ public interface Condition<R> {
 
     /**
      * Tests if a value is within a pool of other values using a parameterized sql query.
-     * <p>The others values must be handed over later as parameters in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The others values must be handed over later as parameters in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @param amount the amount of other values
      * @return R

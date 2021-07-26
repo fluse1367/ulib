@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit;
  * // ...
  * }</pre>
  * <b>It is crucial to pass the exact <u>same</u> plugin id to the superclass constructor.</b>
- * </p>
  */
 @RequiredArgsConstructor
 public abstract class VelocityJavaPlugin implements VelocityPlugin {

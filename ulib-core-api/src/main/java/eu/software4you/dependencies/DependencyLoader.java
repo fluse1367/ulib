@@ -20,7 +20,6 @@ public abstract class DependencyLoader {
      * <p>
      * The {@code classLoader} will no longer load any classes from additionally loaded libraries (files loaded using this class and {@link Dependencies}).
      * Already loaded classes will not be "unloaded" by this method.
-     * </p>
      *
      * @param classLoader the class loader
      */
@@ -42,7 +41,6 @@ public abstract class DependencyLoader {
      * This method is equivalent with {@code load(file, false)}.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
-     * </p>
      *
      * @param file the jar file to load
      * @see Dependencies#depend(String, Repository, ClassLoader)
@@ -55,7 +53,6 @@ public abstract class DependencyLoader {
      * Tries to load a JAR-File (from {@link File}) with the {@link ClassLoader} from the calling class.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
-     * </p>
      *
      * @param file     the jar file to load
      * @param fallback if the file should be loaded via the system class loader as fallback procedure on failure
@@ -70,7 +67,6 @@ public abstract class DependencyLoader {
      * This method is equivalent with {@code load(file, classLoader, false)}.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
-     * </p>
      *
      * @param file the jar file to load
      * @see Dependencies#depend(String, Repository, ClassLoader)
@@ -83,7 +79,6 @@ public abstract class DependencyLoader {
      * Attempts to load a JAR-File (from {@link File}) with the provided {@link ClassLoader}.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
-     * </p>
      *
      * @param file     the jar file to load
      * @param fallback if the file should be loaded via the system class loader as fallback procedure on failure
@@ -97,7 +92,6 @@ public abstract class DependencyLoader {
      * Attempts to load a JAR-File (from {@link File}) with the provided {@link ClassLoader}.
      * <p>
      * If {@code exclusive} is {@code true}, no fallback will be attempted, regardless to the value of {@code fallback}.
-     * </p>
      *
      * @param file      the jar file to load
      * @param fallback  if the file should be loaded via the system class loader as fallback procedure on failure

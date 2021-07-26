@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Manages {@link Menu} instances.
- * <p>You have to call {@link #listen()} in order to make the manager effective.</p>
+ * <p>You have to call {@link #listen()} in order to make the manager effective.
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MenuManager {

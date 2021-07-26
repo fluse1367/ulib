@@ -3,6 +3,5 @@
  * <a href="https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/" target="_blank">Plugin Messaging Channel</a>.
  * <p>
  * Access can be gained with {@link eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge#getInstance()}.
- * </p>
  */
 package eu.software4you.ulib.minecraft.proxybridge;

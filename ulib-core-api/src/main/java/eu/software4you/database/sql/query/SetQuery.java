@@ -19,7 +19,7 @@ public interface SetQuery extends Query {
 
     /**
      * Sets a column to a specific value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @param column the column to set
      * @return this
@@ -50,7 +50,7 @@ public interface SetQuery extends Query {
 
     /**
      * Sets a column to a specific value using a parameterized sql query.
-     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.</p>
+     * <p>The value must be handed over later as parameter in {@link QueryEndpoint#build(Object...)}, {@link QueryEndpoint#query(Object...)} or {@link QueryEndpoint#update(Object...)}.
      *
      * @param column the column to set
      * @return this
