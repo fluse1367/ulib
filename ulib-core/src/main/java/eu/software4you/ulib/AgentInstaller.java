@@ -40,7 +40,7 @@ final class AgentInstaller {
 
     private boolean load() {
         boolean self = !JavaVersion.isJava9OrLater()
-                || System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true");
+                       || System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true");
 
         try {
             if (self && toolsLoadingRequired() && !loadTools()) { // load tools beforehand

@@ -15,7 +15,7 @@ public class ScoreboardManager {
     private static ExtendedPlugin plugin;
 
     public static void setPlugin(ExtendedPlugin plugin) {
-        if(ScoreboardManager.plugin != null)
+        if (ScoreboardManager.plugin != null)
             throw new IllegalStateException(String.format("Scoreboard manager already initialized by %s", plugin.getDescription().getName()));
         ScoreboardManager.plugin = plugin;
     }

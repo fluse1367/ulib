@@ -34,7 +34,7 @@ public final class ImplInjector {
         // look out of @Await
         for (Field into : target.getDeclaredFields()) {
             if (!into.isAnnotationPresent(Await.class)
-                    || !Modifier.isStatic(into.getModifiers()))
+                || !Modifier.isStatic(into.getModifiers()))
                 continue;
             // @Await found, inject
 
@@ -103,8 +103,8 @@ public final class ImplInjector {
 
         for (Field field : into.getDeclaredFields()) {
             if (!field.isAnnotationPresent(Await.class)
-                    || !Modifier.isStatic(field.getModifiers())
-                    || !field.getType().isInstance(instance)) {
+                || !Modifier.isStatic(field.getModifiers())
+                || !field.getType().isInstance(instance)) {
                 continue;
             }
             inject(instance, field);

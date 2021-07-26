@@ -27,7 +27,7 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
         // check for already existing instance
         if (System.getProperties().containsKey(PROP_KEY)) {
             System.err.println("[uLib] A previous uLib instance was detected. uLib does not support being reloaded." +
-                    " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
+                               " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
             throw new IllegalStateException("Reloading not supported");
         }
 
@@ -89,8 +89,8 @@ public class ULibSpigotPlugin extends ExtendedJavaPlugin implements Listener {
                 // for future usage
             } else {
                 getLogger().warning("This server does not run on paper, some features may not be available!" +
-                        " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
-                        " See https://papermc.io/ for more information.");
+                                    " Consider switching to purpur, airplane, tuinity or paper as they provide better performance, bug fixes and more features." +
+                                    " See https://papermc.io/ for more information.");
                 // register no-paper workarounds
 
                 // for future usage

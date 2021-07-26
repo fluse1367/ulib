@@ -75,8 +75,8 @@ final class LibImpl implements Lib {
 
         if (UnsafeOperations.allowed()) {
             logger.warning(() -> "Unsafe operations are allowed. " +
-                    "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
-                    "Use this at your own risk!");
+                                 "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
+                                 "Use this at your own risk!");
         }
     }
 

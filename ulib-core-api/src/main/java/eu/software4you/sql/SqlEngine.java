@@ -259,7 +259,7 @@ public class SqlEngine {
             conn = DriverManager.getConnection(driver.url + connectionData.file.getPath());
         } else if (driver.equals(Driver.MySQL) && connectionData.host != null && connectionData.database != null && connectionData.user != null && connectionData.password != null) {
             conn = DriverManager.getConnection(driver.url + connectionData.host + ":" + connectionData.port + "/"
-                    + connectionData.database + "?autoReconnect=true&maxReconnects=5", connectionData.user, connectionData.password);
+                                               + connectionData.database + "?autoReconnect=true&maxReconnects=5", connectionData.user, connectionData.password);
         }
     }
 

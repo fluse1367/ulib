@@ -138,10 +138,10 @@ final class BuildDataMeta {
     @Override
     public String toString() {
         return "BuildDataMeta{" +
-                "mcVersion='" + mcVersion + '\'' +
-                ", hash='" + hash + '\'' +
-                ", cm='" + cm + '\'' +
-                ", mm='" + mm + '\'' +
-                '}';
+               "mcVersion='" + mcVersion + '\'' +
+               ", hash='" + hash + '\'' +
+               ", cm='" + cm + '\'' +
+               ", mm='" + mm + '\'' +
+               '}';
     }
 }

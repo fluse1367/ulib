@@ -109,7 +109,7 @@ class PageImpl implements Page {
 
     private void validateSlot(int slot) {
         if (previousPageButton != null && slot == rows * 9 - 9
-                || nextPageButton != null && slot == rows * 9 - 1)
+            || nextPageButton != null && slot == rows * 9 - 1)
             throw new IllegalArgumentException(String.format("Slot %d reserved for page switch button", slot));
     }
 

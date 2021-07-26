@@ -22,7 +22,7 @@ final class DependencyInjector {
     boolean acceptable(ClassLoader cl) {
         // no check for root CL bc it's abstract
         return cl != ClassLoader.getSystemClassLoader()
-                && !(cl instanceof DependencyClassLoader);
+               && !(cl instanceof DependencyClassLoader);
     }
 
     // hooks into a classloader
@@ -85,8 +85,8 @@ final class DependencyInjector {
             ULib.logger().finer(() -> String.format("Flagging %s for dependency injection", m));
             return Optional.of(m);
         } while ((superclass = cl.getSuperclass()) != null // verify we still have a superclass
-                // verify we're still within a (sub)class of CL
-                && (cl = (Class<? extends ClassLoader>) superclass).isAssignableFrom(ClassLoader.class)
+                 // verify we're still within a (sub)class of CL
+                 && (cl = (Class<? extends ClassLoader>) superclass).isAssignableFrom(ClassLoader.class)
         );
 
         return Optional.empty();
