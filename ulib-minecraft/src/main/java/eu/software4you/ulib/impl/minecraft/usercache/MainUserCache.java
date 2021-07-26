@@ -21,17 +21,14 @@ public abstract class MainUserCache extends eu.software4you.ulib.minecraft.userc
         engine.disableAutomaticParameterizedQueries = true;
         var backend = plugin.getConf().getSub("user-cache-backend");
         switch (backend.string("type", "FILE").toUpperCase()) {
-            case "FILE":
-                engine.setConnectionData(new SqlEngine.ConnectionData(new File(plugin.getDataFolder(), "user_cache.db")));
-                break;
-            case "MYSQL":
+            case "FILE" -> engine.setConnectionData(new SqlEngine.ConnectionData(new File(plugin.getDataFolder(), "user_cache.db")));
+            case "MYSQL" -> {
                 var login = backend.getSub("login");
                 engine.setConnectionData(new SqlEngine.ConnectionData(
                         login.string("host", "localhost"), login.string("user", "root"),
                         login.string("password", "root"), login.string("database", "mainusercache")));
-                break;
-            default:
-                throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type", "null")));
+            }
+            default -> throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type", "null")));
         }
 
         SqlTable table = engine.newTable("cached_users");

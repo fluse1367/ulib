@@ -37,9 +37,7 @@ final class Version implements VersionManifest {
         this.releaseTime = OffsetDateTime.parse(json.get("releaseTime").getAsString());
 
         Map<String, Resource> downloads = new HashMap<>();
-        json.getAsJsonObject("downloads").entrySet().forEach(en -> {
-            downloads.put(en.getKey(), new Resource(en.getKey(), en.getValue().getAsJsonObject()));
-        });
+        json.getAsJsonObject("downloads").entrySet().forEach(en -> downloads.put(en.getKey(), new Resource(en.getKey(), en.getValue().getAsJsonObject())));
         this.downloads = Collections.unmodifiableMap(downloads);
 
         this.libraries = new Loader<>(() -> {

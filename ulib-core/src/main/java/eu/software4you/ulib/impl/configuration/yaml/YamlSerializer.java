@@ -112,8 +112,7 @@ public class YamlSerializer {
             keyNode.setBlockComments(comment(content, s, e));
 
             Object value;
-            if (node instanceof MappingNode) {
-                MappingNode mNode = (MappingNode) node;
+            if (node instanceof MappingNode mNode) {
                 value = graph(parent.constructChild(key, node), mNode,
                         content, keyNode.getEndMark().getIndex());
 

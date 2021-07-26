@@ -84,13 +84,10 @@ public class YamlDocument implements YamlSub, Keyable<String> {
                     try {
                         return (T) child;
                     } catch (ClassCastException e) {
-                        switch (root.conversionPolicy) {
-                            case THROW_EXCEPTION:
-                                throw new IllegalArgumentException("Cannot convert " + path + " to requested type", e);
-                            case RETURN_DEFAULT:
-                                return def;
-                        }
-                        throw new IllegalStateException(); // make compiler happy
+                        return switch (root.conversionPolicy) {
+                            case THROW_EXCEPTION -> throw new IllegalArgumentException("Cannot convert " + path + " to requested type", e);
+                            case RETURN_DEFAULT -> def;
+                        };
                     }
                 }).orElse(def);
     }
@@ -102,9 +99,8 @@ public class YamlDocument implements YamlSub, Keyable<String> {
         children.forEach((key, child) -> {
 
             // do not add a sub as key, only it's values
-            if (deep && child.getSecond() instanceof YamlDocument) {
+            if (deep && child.getSecond() instanceof YamlDocument doc) {
                 String prefix = this.key == null || this.key.isEmpty() ? "" : this.key + PATH_SEPARATOR;
-                YamlDocument doc = (YamlDocument) child.getSecond();
 
                 doc.getKeys(true).stream()
                         .map(k -> String.format("%s%s%s%s", prefix, doc.key, PATH_SEPARATOR, k))
@@ -127,13 +123,10 @@ public class YamlDocument implements YamlSub, Keyable<String> {
             Object value = child.getSecond();
 
             // do not add a sub as key, only it's values
-            if (deep && value instanceof YamlDocument) {
+            if (deep && value instanceof YamlDocument doc) {
                 String prefix = this.key == null || this.key.isEmpty() ? "" : this.key + PATH_SEPARATOR;
-                YamlDocument doc = (YamlDocument) value;
 
-                doc.getValues(true).forEach((k, v) -> {
-                    values.put(String.format("%s%s%s%s", prefix, doc.key, PATH_SEPARATOR, k), v);
-                });
+                doc.getValues(true).forEach((k, v) -> values.put(String.format("%s%s%s%s", prefix, doc.key, PATH_SEPARATOR, k), v));
             } else {
                 values.put(key, value);
             }

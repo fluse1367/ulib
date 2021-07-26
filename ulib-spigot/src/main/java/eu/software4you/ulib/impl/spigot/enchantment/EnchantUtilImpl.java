@@ -61,10 +61,9 @@ final class EnchantUtilImpl extends EnchantUtil {
 
         getItemEnchants(stack).forEach((enc, level) -> {
 
-            if (!(enc instanceof CustomEnchantment))
+            if (!(enc instanceof CustomEnchantment ce))
                 return; // not a custom enchantment
 
-            CustomEnchantment ce = (CustomEnchantment) enc;
             if (!customEnchantments.contains(ce))
                 return; // not registered
 

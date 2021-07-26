@@ -69,10 +69,9 @@ public class CustomEnchantmentHandler implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handle(VillagerAcquireTradeEvent e) {
 
-        if (!(e.getEntity() instanceof Villager))
+        if (!(e.getEntity() instanceof Villager v))
             return;
 
-        Villager v = (Villager) e.getEntity();
         if (v.getProfession() != Villager.Profession.LIBRARIAN)
             return;
 

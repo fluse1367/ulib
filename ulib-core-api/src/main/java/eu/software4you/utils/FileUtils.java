@@ -16,13 +16,13 @@ public class FileUtils {
     }
 
     public static ArrayList<File> listDir(File dir, boolean deep) {
-        ArrayList<File> filesArray = new ArrayList<File>();
+        ArrayList<File> filesArray = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                filesArray.add(files[i]);
-                if (files[i].isDirectory() && deep) {
-                    for (File h : listDir(files[i])) {
+            for (File file : files) {
+                filesArray.add(file);
+                if (file.isDirectory() && deep) {
+                    for (File h : listDir(file)) {
                         if (!filesArray.contains(h)) {
                             filesArray.add(h);
                         }

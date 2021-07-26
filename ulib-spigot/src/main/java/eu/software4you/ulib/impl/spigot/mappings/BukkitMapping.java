@@ -44,46 +44,29 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
 
         while (pos < sigs.length()) {
             switch (sigs.charAt(pos)) {
-                case 'Z':
-                    types.add("boolean");
-                    break;
-                case 'B':
-                    types.add("byte");
-                    break;
-                case 'C':
-                    types.add("char");
-                    break;
-                case 'S':
-                    types.add("short");
-                    break;
-                case 'I':
-                    types.add("int");
-                    break;
-                case 'J':
-                    types.add("long");
-                    break;
-                case 'F':
-                    types.add("float");
-                    break;
-                case 'D':
-                    types.add("double");
-                    break;
-                case 'V':
-                    types.add("void");
-                    break;
-                case 'L':
+                case 'Z' -> types.add("boolean");
+                case 'B' -> types.add("byte");
+                case 'C' -> types.add("char");
+                case 'S' -> types.add("short");
+                case 'I' -> types.add("int");
+                case 'J' -> types.add("long");
+                case 'F' -> types.add("float");
+                case 'D' -> types.add("double");
+                case 'V' -> types.add("void");
+                case 'L' -> {
                     int pos2 = sigs.indexOf(";", pos);
                     String type = sigs.substring(pos + 1, pos2).replace('/', '.');
                     types.add(type);
                     pos = pos2;
-                    break;
-                case '[':
+                }
+                case '[' -> {
                     String rest = sigs.substring(pos + 1);
                     List<String> restTypes = decodeSignatures(rest);
                     // first of rest types is an array
                     restTypes.set(0, restTypes.get(0) + "[]");
                     types.addAll(restTypes);
                     return types;
+                }
             }
             pos++;
         }

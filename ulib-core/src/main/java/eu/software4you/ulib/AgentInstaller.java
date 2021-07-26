@@ -149,11 +149,13 @@ final class AgentInstaller {
         }
 
         Manifest manifest = new Manifest(new ByteArrayInputStream(String.format(
-                "Manifest-Version: 1.0\n" +
-                        "Implementation-Version: %s\n" +
-                        "Agent-Class: %s\n" +
-                        "Can-Redefine-Classes: true\n" +
-                        "Can-Retransform-Classes: true\n",
+                """
+                        Manifest-Version: 1.0
+                        Implementation-Version: %s
+                        Agent-Class: %s
+                        Can-Redefine-Classes: true
+                        Can-Retransform-Classes: true
+                        """,
                 ver, AgentMain.class.getName()).getBytes()));
         JarOutputStream out = new JarOutputStream(new FileOutputStream(file), manifest);
 

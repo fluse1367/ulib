@@ -10,14 +10,9 @@ final class LegacyDriverLoaderImpl extends SqlEngine.DriverLoader {
     @Override
     protected void load0(SqlEngine.Driver driver) {
         switch (driver) {
-            case MySQL:
-                MySQLDatabaseDepend.$();
-                return;
-            case SqLite:
-                SQLiteDatabaseDepend.$();
-                return;
-            default:
-                throw new IllegalStateException();
+            case MySQL -> MySQLDatabaseDepend.$();
+            case SqLite -> SQLiteDatabaseDepend.$();
+            default -> throw new IllegalStateException();
         }
     }
 }

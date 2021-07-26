@@ -91,10 +91,11 @@ final class HookInjector implements ClassFileTransformer {
                     boolean hasReturnValue = !head && hasReturnType;
 
                     int at = hookPoint.ordinal();
-                    String src = String.format("{\n" +
-                                    "  Callb cb = new Callb(%s.class, %s, %s, %s, \"%s\", %d, $args);\n" +
-                                    "  if (cb.isReturning()) return%s;\n" +
-                                    "}",
+                    String src = String.format("""
+                                    {
+                                      Callb cb = new Callb(%s.class, %s, %s, %s, "%s", %d, $args);
+                                      if (cb.isReturning()) return%s;
+                                    }""",
                             /*Hook call*/ returnType, returnValue, hasReturnValue, self, /*hookId*/ fullDesc, at,
                             /*return*/ hasReturnType ? " ($r) cb.getReturnValue()" : ""
                     );

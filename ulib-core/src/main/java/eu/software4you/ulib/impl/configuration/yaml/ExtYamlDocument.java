@@ -131,14 +131,11 @@ public class ExtYamlDocument extends YamlDocument implements ExtYamlSub {
     }
 
     private <T> T thrOrDef(T def, Class<?> clazz, Object val, String path) {
-        switch (getRoot().conversionPolicy) {
-            case RETURN_DEFAULT:
-                return def;
-            case THROW_EXCEPTION:
-                throw new IllegalArgumentException(String.format("Cannot convert %s to type %s (%s)",
-                        val.getClass().getName(), clazz.getName(), path));
-        }
-        throw new IllegalStateException(); // make compiler happy
+        return switch (getRoot().conversionPolicy) {
+            case RETURN_DEFAULT -> def;
+            case THROW_EXCEPTION -> throw new IllegalArgumentException(String.format("Cannot convert %s to type %s (%s)",
+                    val.getClass().getName(), clazz.getName(), path));
+        };
     }
 
     @Override

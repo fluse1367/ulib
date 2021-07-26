@@ -70,7 +70,7 @@ public final class ImplInjector {
             logger.finest(() -> String.format("Injecting %s as constructing function into %s", impl, into));
             constructor.setAccessible(true);
 
-            ConstructingFunction<?> fun = new ConstructingFunction<Object>() {
+            @SuppressWarnings({"Convert2Lambda", "Anonymous2MethodRef"}) ConstructingFunction<?> fun = new ConstructingFunction<>() {
                 @SneakyThrows
                 @Override
                 public Object apply(Object... objects) {

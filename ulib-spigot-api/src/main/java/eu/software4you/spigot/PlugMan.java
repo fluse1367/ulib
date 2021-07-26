@@ -67,21 +67,14 @@ public class PlugMan {
         }
         if (listeners != null && reloadlisteners) {
             for (final SortedSet<RegisteredListener> set : listeners.values()) {
-                final Iterator<RegisteredListener> it = set.iterator();
-                while (it.hasNext()) {
-                    final RegisteredListener value = it.next();
-                    if (value.getPlugin() == plugin) {
-                        it.remove();
-                    }
-                }
+                set.removeIf(value -> value.getPlugin() == plugin);
             }
         }
         if (commandMap != null) {
             final Iterator<Map.Entry<String, Command>> it2 = commands.entrySet().iterator();
             while (it2.hasNext()) {
                 final Map.Entry<String, Command> entry = it2.next();
-                if (entry.getValue() instanceof PluginCommand) {
-                    final PluginCommand c = (PluginCommand) entry.getValue();
+                if (entry.getValue() instanceof final PluginCommand c) {
                     if (c.getPlugin() != plugin) {
                         continue;
                     }

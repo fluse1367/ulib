@@ -36,13 +36,14 @@ class Properties {
 
     @SneakyThrows
     private Properties() {
-        BRAND = "\n" +
-                "        ______ _____ ______  \n" +
-                "____  _____  / ___(_)___  /_ \n" +
-                "_  / / /__  /  __  / __  __ \\\n" +
-                "/ /_/ / _  /____  /  _  /_/ /\n" +
-                "\\__,_/  /_____//_/   /_.___/ \n" +
-                "                             ";
+        BRAND = """
+
+                        ______ _____ ______ \s
+                ____  _____  / ___(_)___  /_\s
+                _  / / /__  /  __  / __  __ \\
+                / /_/ / _  /____  /  _  /_/ /
+                \\__,_/  /_____//_/   /_.___/\s
+                                            \s""";
 
         DATA_DIR = new File(System.getProperty("ulib.directory.main", ".ulib"));
         mkdirs(DATA_DIR);

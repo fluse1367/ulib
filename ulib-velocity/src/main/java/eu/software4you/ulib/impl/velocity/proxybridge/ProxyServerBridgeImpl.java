@@ -87,9 +87,8 @@ public final class ProxyServerBridgeImpl extends eu.software4you.ulib.impl.minec
         if (!je.isJsonObject())
             return;
 
-        if (!(e.getSource() instanceof ServerConnection))
+        if (!(e.getSource() instanceof ServerConnection from))
             return;
-        ServerConnection from = (ServerConnection) e.getSource();
 
         Message message = new Gson().fromJson(je, Message.class);
 

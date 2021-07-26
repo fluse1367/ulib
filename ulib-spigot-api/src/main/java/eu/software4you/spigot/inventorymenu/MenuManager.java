@@ -91,15 +91,13 @@ public abstract class MenuManager {
      */
     public Page getPage(Inventory inventory) {
         for (Menu m : menus) {
-            if (m instanceof MultiPageMenu) {
-                MultiPageMenu menu = (MultiPageMenu) m;
+            if (m instanceof MultiPageMenu menu) {
                 for (Map.Entry<Integer, Page> entry : menu.getPages().entrySet()) {
                     Page page = entry.getValue();
                     if (page.getInventory().equals(inventory))
                         return page;
                 }
-            } else if (m instanceof Page) {
-                Page page = (Page) m;
+            } else if (m instanceof Page page) {
                 if (page.getInventory().equals(inventory))
                     return page;
             }
@@ -118,8 +116,7 @@ public abstract class MenuManager {
             return (SinglePageMenu) page;
 
         for (Menu m : menus) {
-            if (m instanceof MultiPageMenu) {
-                MultiPageMenu menu = (MultiPageMenu) m;
+            if (m instanceof MultiPageMenu menu) {
                 for (Map.Entry<Integer, Page> entry : menu.getPages().entrySet()) {
                     if (entry.getValue().equals(page))
                         return menu;
@@ -147,8 +144,7 @@ public abstract class MenuManager {
      */
     public Pair<MultiPageMenu, Integer> tryPage(Page page) {
         for (Menu m : menus) {
-            if (m instanceof MultiPageMenu) {
-                MultiPageMenu menu = (MultiPageMenu) m;
+            if (m instanceof MultiPageMenu menu) {
                 for (Map.Entry<Integer, Page> entry : menu.getPages().entrySet()) {
                     if (entry.getValue().equals(page))
                         return new Pair<>(menu, entry.getKey());

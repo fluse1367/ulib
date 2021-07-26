@@ -75,8 +75,7 @@ public class MenuManagerListener implements Runnable, Listener {
         if (perm != null && !perm.isEmpty() && !p.hasPermission(perm))
             return;
 
-        if (entry instanceof ToggleableEntry) {
-            ToggleableEntry ten = (ToggleableEntry) entry;
+        if (entry instanceof ToggleableEntry ten) {
             ten.setToggled(!ten.isToggled());
         }
 
