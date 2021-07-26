@@ -1,6 +1,6 @@
 package eu.software4you.spigot.enchantment;
 
-import io.papermc.paper.enchantments.EnchantmentRarity;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -24,8 +24,8 @@ public abstract class CustomEnchantment extends Enchantment {
     public CustomEnchantment(@NotNull NamespacedKey key, boolean treasure, boolean cursed, boolean obtainableViaVillagerTrading, int startLevel, int maxLevel, EnchantmentTarget itemTarget, EnchantmentRarity rarity) {
         super(key);
 
-        assert startLevel > 0 : "Minimum level for an enchantment is 1";
-        assert maxLevel >= startLevel : "Maximum level for an enchantment must not be lower then it's minimum level";
+        Validate.isTrue(startLevel > 0, "Minimum level for an enchantment is 1");
+        Validate.isTrue(maxLevel >= startLevel, "Maximum level for an enchantment must not be lower then it's minimum level");
 
         this.treasure = treasure;
         this.cursed = cursed;
@@ -111,7 +111,7 @@ public abstract class CustomEnchantment extends Enchantment {
         return itemTarget;
     }
 
-    public EnchantmentRarity getRarity() {
+    public EnchantmentRarity getEnchantmentRarity() {
         return rarity;
     }
 
