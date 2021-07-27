@@ -1,7 +1,0 @@
-user-cache-backend:
-  type: FILE # FILE (sqlite) / MYSQL
-  login: # only mysql
-    host: localhost
-    user: root
-    password: root
-    database: UserCache
