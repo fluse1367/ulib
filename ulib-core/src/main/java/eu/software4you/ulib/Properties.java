@@ -132,7 +132,7 @@ class Properties {
     }
 
     private InputStream getCurrentConfig() {
-        return Validate.notNull(getClass().getResourceAsStream("/config.yml"), "Configuration not found");
+        return Validate.notNull(getClass().getResourceAsStream("/coreconfig.yml"), "Configuration not found");
     }
 
     private String get(String yamlPath, String propsKey, String def) {
