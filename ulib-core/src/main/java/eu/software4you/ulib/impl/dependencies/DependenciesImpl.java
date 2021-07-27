@@ -4,6 +4,7 @@ import eu.software4you.dependencies.Dependencies;
 import eu.software4you.dependencies.DependencyLoader;
 import eu.software4you.dependencies.Repositories;
 import eu.software4you.dependencies.Repository;
+import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.impl.dependencies.RepositoriesImpl.Repo;
 import eu.software4you.ulib.inject.Impl;
@@ -41,9 +42,11 @@ import java.util.logging.Level;
 final class DependenciesImpl extends Dependencies {
 
     static {
-        UnsafeUtil.dependUnsafe("{{maven.http-core}}");
-        UnsafeUtil.dependUnsafe("{{maven.http-client}}");
-        UnsafeUtil.dependUnsafe("{{maven.commons-logging}}");
+        if (Agent.available()) {
+            UnsafeUtil.dependUnsafe("{{maven.http-core}}");
+            UnsafeUtil.dependUnsafe("{{maven.http-client}}");
+            UnsafeUtil.dependUnsafe("{{maven.commons-logging}}");
+        }
     }
 
     private final RepositorySystem repository;

@@ -27,6 +27,8 @@ final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
     private final Map<String, List<String>> injected = new ConcurrentHashMap<>(); // class -> methods
 
     public HookInjectorImpl() {
+        if (!Agent.available())
+            return;
         Callb.put(
                 /* [0] Hook runner */
                 HookRunner::runHooks,

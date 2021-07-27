@@ -39,6 +39,9 @@ final class LibImpl implements Lib {
 
         ImplInjector.logger = logger;
         AgentInstaller.install(logger);
+        if (!Agent.available()) {
+            logger.warning(() -> "Failed to load agent. Some features may be unavailable.");
+        }
 
         logger.fine(() -> "Preparing implementations");
         var IMPL = clinit_read_implementations();
