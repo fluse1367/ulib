@@ -97,19 +97,32 @@ final class AgentInstaller {
 
         logger.finer(() -> "Starting process: " + Arrays.toString(cmd.toArray()));
 
-        var p = new ProcessBuilder(cmd)
-                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                .redirectError(ProcessBuilder.Redirect.INHERIT)
-                .start();
-        if (!p.waitFor(10, TimeUnit.SECONDS)) {
-            p.destroyForcibly();
-            logger.warning("External Agent not terminated within 10 seconds!");
-            return false;
-        } else if (p.exitValue() != 0) {
-            logger.warning("External Agent failed: " + p.exitValue());
-            return false;
+        var p = new ProcessBuilder(cmd).start();
+
+        Thread thrOut, thrErr;
+        (thrOut = IOUtil.redirect(p.getInputStream(), System.out)).start();
+        (thrErr = IOUtil.redirect(p.getErrorStream(), System.err)).start();
+
+        try {
+            if (!p.waitFor(10, TimeUnit.SECONDS)) {
+                p.destroyForcibly();
+                logger.warning("External Agent not terminated within 10 seconds!");
+                return false;
+            } else if (p.exitValue() != 0) {
+                logger.warning("External Agent failed: " + p.exitValue());
+                return false;
+            }
+            return true;
+        } finally {
+            if (thrOut.isAlive()) {
+                logger.warning("External agent stdout redirect still active");
+                thrOut.interrupt();
+            }
+            if (thrErr.isAlive()) {
+                logger.warning("External agent stderr redirect still active");
+                thrErr.interrupt();
+            }
         }
-        return true;
     }
 
     @SneakyThrows

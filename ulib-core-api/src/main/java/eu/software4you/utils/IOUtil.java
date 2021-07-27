@@ -1,8 +1,10 @@
 package eu.software4you.utils;
 
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.concurrent.ThreadFactory;
 
 public class IOUtil {
     /**
@@ -12,6 +14,7 @@ public class IOUtil {
      * @param out the stream to write to
      * @throws IOException inherited from {@link InputStream#read()}, {@link InputStream#close()},
      *                     {@link OutputStream#write(byte[], int, int)}, {@link OutputStream#flush()} and {@link OutputStream#close()}
+     * @see #redirect(InputStream, OutputStream)
      * @see InputStream#read()
      * @see InputStream#close()
      * @see OutputStream#write(byte[], int, int)
@@ -93,5 +96,45 @@ public class IOUtil {
         var bout = new ByteArrayOutputStream();
         write(in, bout);
         return bout.toString();
+    }
+
+    /**
+     * Creates a new {@link Thread} that redirects all data read from an {@link InputStream} to an {@link OutputStream}.
+     * <p>
+     * The {@link Thread} will not be started by this method.
+     *
+     * @param in  the stream to read from
+     * @param out the stream to write to
+     * @return the thread
+     * @see #write(InputStream, OutputStream)
+     */
+    public static Thread redirect(InputStream in, OutputStream out) {
+        return redirect(in, out, Thread::new);
+    }
+
+    /**
+     * Creates a new {@link Thread} that redirects all data read from an {@link InputStream} to an {@link OutputStream}.
+     * Any exception thrown by {@link InputStream#read()} will not be caught.
+     * <p>
+     * The {@link Thread} will not be started by this method.
+     *
+     * @param in      the stream to read from
+     * @param out     the stream to write to
+     * @param factory the factory to create the thread
+     * @return the thread
+     * @see #write(InputStream, OutputStream)
+     */
+    public static Thread redirect(InputStream in, OutputStream out, ThreadFactory factory) {
+        //noinspection Convert2Lambda
+        return factory.newThread(new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                int b;
+                while (!Thread.currentThread().isInterrupted() && (b = in.read()) != -1) {
+                    out.write(b);
+                }
+            }
+        });
     }
 }
