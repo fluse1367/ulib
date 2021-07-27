@@ -88,7 +88,7 @@ final class AgentInstaller {
         String bin = javaBin;
         logger.finer(() -> "Java executable: " + bin);
 
-        StringBuilder cp = new StringBuilder(AgentInstaller.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+        StringBuilder cp = new StringBuilder(new File(Loader.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
         if (toolsLoadingRequired()) {
             cp.append(":").append(toolsFile().getPath());
         }
