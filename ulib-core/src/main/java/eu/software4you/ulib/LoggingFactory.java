@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.management.ManagementFactory;
 import java.util.Date;
 import java.util.logging.*;
 
@@ -103,7 +104,7 @@ class LoggingFactory {
 
     private String simpleFormat(LogRecord record) {
         long tid = record.getThreadID();
-        String thread = tid == LibImpl.MAIN_THREAD_ID ? "main" : String.format("t-%d", tid);
+        String thread = tid == LibImpl.MAIN_THREAD_ID ? "main" : ManagementFactory.getThreadMXBean().getThreadInfo(tid).getThreadName();
         String prefix = String.format("[%s/%s]", instance.getNameOnly(), thread);
         return String.format("%-12s %tT %s: %s", prefix,
                 new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());

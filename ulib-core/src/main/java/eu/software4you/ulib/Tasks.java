@@ -12,9 +12,13 @@ import java.util.stream.Collectors;
 public class Tasks {
     private static final boolean SYNC = Properties.getInstance().FORCE_SYNC;
 
-    public static final ScheduledExecutorService SCHEDULER = SYNC ? Executors.newSingleThreadScheduledExecutor() : Executors.newScheduledThreadPool(0);
-    public static final ExecutorService RUNNER = new ThreadPoolExecutor(0, SYNC ? 1 : Integer.MAX_VALUE,
-            0, TimeUnit.NANOSECONDS, new SynchronousQueue<>());
+    public static final ExecutorService RUNNER = new ThreadPoolExecutor(1, SYNC ? 1 : Integer.MAX_VALUE,
+            10L, TimeUnit.SECONDS, SYNC ? new LinkedBlockingQueue<>() : new SynchronousQueue<>(), r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        t.setName("runner-%d".formatted(t.getId()));
+        return t;
+    });
 
     @SafeVarargs
     public static <T> List<T> await(Callable<T> task, Callable<T>... tasks) {
