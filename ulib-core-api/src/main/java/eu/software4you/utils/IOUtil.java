@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.util.concurrent.ThreadFactory;
 
+/**
+ * Class containing I/O (stream) operations.
+ */
 public class IOUtil {
     /**
      * Writes an input stream into an output stream. This method closes the streams.
