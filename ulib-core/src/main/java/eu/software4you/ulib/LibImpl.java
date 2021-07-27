@@ -73,6 +73,10 @@ final class LibImpl implements Lib {
                 .divide(BigDecimal.valueOf(1000), new MathContext(4, RoundingMode.HALF_UP)).toPlainString()
         ));
 
+        if (Properties.getInstance().FORCE_SYNC) {
+            logger.warning("Enforcing synchronous work enabled. This will significantly decrease uLib's performance in certain areas!");
+        }
+
         if (UnsafeOperations.allowed()) {
             logger.warning(() -> "Unsafe operations are allowed. " +
                                  "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
