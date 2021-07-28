@@ -39,7 +39,7 @@ See "Included Software" (at the bottom) for copyright and license notice of incl
 
 
 - When launching uLib for the first time (or if the `libraries`/`cache` folder was removed), it will download a few of
-  dependencies/libraries (about 2 MB).
+  dependencies/libraries (about 2-7 MB, depends on the variation).
 
 ### Disclaimer
 
