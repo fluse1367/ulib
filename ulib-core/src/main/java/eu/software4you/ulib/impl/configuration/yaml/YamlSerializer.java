@@ -2,7 +2,9 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.ulib.impl.configuration.SerializationAdapters;
 import eu.software4you.utils.IOUtil;
+import lombok.Getter;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -13,7 +15,6 @@ import org.yaml.snakeyaml.nodes.AnchorNode;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,8 +25,11 @@ import java.util.stream.Collectors;
 
 public class YamlSerializer {
     /* singleton */
+    @Getter
     private static final YamlSerializer instance = new YamlSerializer();
 
+    @Getter
+    private final SerializationAdapters adapters;
     private final Yaml yaml;
     private final YamlConstructor constructor;
 
@@ -35,12 +39,14 @@ public class YamlSerializer {
         DumperOptions dumperConfig = new DumperOptions();
         dumperConfig.setIndent(2);
 
-        constructor = new YamlConstructor(loaderConfig);
-        yaml = new Yaml(constructor, new Representer(), dumperConfig, loaderConfig);
-    }
 
-    public static YamlSerializer getInstance() {
-        return instance;
+        var representer = new YamlRepresenter(dumperConfig);
+
+        this.adapters = new SerializationAdapters(representer);
+        this.constructor = new YamlConstructor(loaderConfig);
+
+        this.yaml = new Yaml(constructor, representer,
+                dumperConfig, loaderConfig);
     }
 
     public YamlDocument createNew() {
@@ -113,9 +119,10 @@ public class YamlSerializer {
 
             Object value;
             if (node instanceof MappingNode mNode) {
-                value = graph(parent.constructChild(key, node), mNode,
-                        content, keyNode.getEndMark().getIndex());
-
+                if (!constructor.isSerialized(mNode) || (value = constructor.getSerializationConstruct().construct(mNode)) == null) {
+                    value = graph(parent.constructChild(key, node), mNode,
+                            content, keyNode.getEndMark().getIndex());
+                }
                 // get last child to set `ai` to correct position
                 ai.set(getLastChild(mNode).getEndMark().getIndex());
             } else {
