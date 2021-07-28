@@ -1,7 +1,7 @@
 package eu.software4you.database.sql;
 
-import eu.software4you.function.ConstructingFunction;
 import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ImplFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public final class ColumnBuilder<T> {
     @Await
-    private static ConstructingFunction<Column<?>> constructor;
+    private static ImplFactory<Column<?>> columnFactory;
 
     private final Class<T> t;
     private final String name;
@@ -201,6 +201,6 @@ public final class ColumnBuilder<T> {
      */
     @NotNull
     public Column<T> build() {
-        return (Column<T>) constructor.apply(t, name, dataType, notNull, autoIncrement, index, size, defaultValue, accept.toArray());
+        return (Column<T>) columnFactory.fabricate(t, name, dataType, notNull, autoIncrement, index, size, defaultValue, accept.toArray());
     }
 }

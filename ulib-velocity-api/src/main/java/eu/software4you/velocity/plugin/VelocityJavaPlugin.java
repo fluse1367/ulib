@@ -7,6 +7,8 @@ import com.velocitypowered.api.scheduler.ScheduledTask;
 import eu.software4you.configuration.Configurations;
 import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ImplFactory;
 import eu.software4you.utils.FileUtils;
 import eu.software4you.utils.IOUtil;
 import lombok.Getter;
@@ -41,10 +43,11 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiredArgsConstructor
 public abstract class VelocityJavaPlugin implements VelocityPlugin {
-
     private final static String layoutBaseName = "layout";
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
+    @Await
+    private static ImplFactory<Layout> layoutFactory;
     @Getter
     @NotNull
     private final String id;
@@ -60,7 +63,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @Getter
     private final File file = FileUtils.getClassFile(getClass());
     private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
-    private final Layout layout = LayoutConstructor.construct();
+    private final Layout layout = layoutFactory.fabricate();
     private String layoutFileName = defaultLayoutFileName;
     private boolean configInit, layoutInit;
 

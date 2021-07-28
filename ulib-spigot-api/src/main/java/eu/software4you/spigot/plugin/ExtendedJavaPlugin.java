@@ -3,6 +3,8 @@ package eu.software4you.spigot.plugin;
 import eu.software4you.configuration.Configurations;
 import eu.software4you.configuration.yaml.ExtYamlSub;
 import eu.software4you.spigot.inventorymenu.MenuManager;
+import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ImplFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -32,7 +34,9 @@ import java.util.logging.Level;
  */
 public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedPlugin {
     private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
-    private final Layout layout = LayoutConstructor.construct();
+    @Await
+    private static ImplFactory<Layout> layoutFactory;
+    private final Layout layout = layoutFactory.fabricate();
     private String layoutFileName = DEFAULT_LAYOUT_FILE_NAME;
     private MenuManager mainMenuManager;
     private boolean configInit, layoutInit;

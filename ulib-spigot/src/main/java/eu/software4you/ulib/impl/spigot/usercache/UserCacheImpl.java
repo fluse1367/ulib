@@ -3,8 +3,8 @@ package eu.software4you.ulib.impl.spigot.usercache;
 import eu.software4you.spigot.plugin.ExtendedPlugin;
 import eu.software4you.sql.SqlEngine;
 import eu.software4you.sql.SqlTable;
+import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
-import eu.software4you.ulib.inject.ImplConst;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public final class UserCacheImpl extends eu.software4you.ulib.impl.minecraft.usercache.UserCache implements Listener {
     private final ExtendedPlugin owner;
 
-    @ImplConst
+    @Factory
     private UserCacheImpl(ExtendedPlugin owner, SqlEngine engine, SqlTable table) {
         super(engine, table);
         this.owner = owner;

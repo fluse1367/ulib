@@ -1,12 +1,12 @@
 package eu.software4you.spigot.inventorymenu;
 
 import eu.software4you.common.collection.Pair;
-import eu.software4you.function.ConstructingFunction;
 import eu.software4you.spigot.inventorymenu.menu.Menu;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;
 import eu.software4you.spigot.inventorymenu.menu.SinglePageMenu;
 import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ImplFactory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.HandlerList;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MenuManager {
     @Await
-    private static ConstructingFunction<MenuManager> constructor;
+    private static ImplFactory<MenuManager> constructor;
 
     private final Plugin plugin;
     private final List<Menu> menus = new ArrayList<>();
@@ -39,7 +39,7 @@ public abstract class MenuManager {
      * @return the newly created menu manager
      */
     public static MenuManager of(Plugin plugin) {
-        return constructor.apply(plugin);
+        return constructor.fabricate(plugin);
     }
 
     /**

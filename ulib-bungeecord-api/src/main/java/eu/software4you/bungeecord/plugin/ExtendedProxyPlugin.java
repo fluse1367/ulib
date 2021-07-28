@@ -2,6 +2,8 @@ package eu.software4you.bungeecord.plugin;
 
 import eu.software4you.configuration.Configurations;
 import eu.software4you.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.Await;
+import eu.software4you.ulib.ImplFactory;
 import eu.software4you.utils.IOUtil;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
@@ -28,8 +30,10 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final static String layoutBaseName = "layout";
     private final static String layoutFileExtension = "yml";
     private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
+    @Await
+    private static ImplFactory<Layout> layoutFactory;
     private final ExtYamlSub config = (ExtYamlSub) Configurations.newYaml();
-    private final Layout layout = LayoutConstructor.construct();
+    private final Layout layout = layoutFactory.fabricate();
     private String layoutFileName = defaultLayoutFileName;
     private boolean configInit, layoutInit;
 
