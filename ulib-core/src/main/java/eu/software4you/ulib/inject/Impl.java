@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Impl {
-    Class<?> value();
+    Class<?>[] value();
 
     // The higher, so sooner the implementation will be loaded
     int priority() default 0;

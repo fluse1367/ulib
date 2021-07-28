@@ -25,7 +25,9 @@ public final class ImplInjector {
             }
             Impl im = impl.getDeclaredAnnotation(Impl.class);
 
-            autoInject(impl, im.value());
+            for (Class<?> target : im.value()) {
+                autoInject(impl, target);
+            }
         }
     }
 
