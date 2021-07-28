@@ -57,7 +57,7 @@ clean {
 
 allprojects {
 
-    def major = 2, minor = 0, patch = 0
+    def major = 2, minor = 1, patch = 0
 
     // evaluate variation
     String variation
@@ -190,11 +190,11 @@ subprojects {
                 for (String dependency : depList) {
                     // exclusion
                     if (dependency.startsWith('!(') && dependency.contains("):")) {
-                        int i;
+                        int i
                         String[] excl = dependency.substring(2, i = dependency.indexOf("):")).split(",")
 
 
-                        dependency = dependency.substring(i + 2);
+                        dependency = dependency.substring(i + 2)
 
                         implementation(dependency) {
                             for (String exclusion : excl) {
