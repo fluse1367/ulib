@@ -2,8 +2,8 @@ package eu.software4you.ulib.impl.dependencies;
 
 import eu.software4you.dependencies.DependencyLoader;
 import eu.software4you.http.ChecksumFile;
+import eu.software4you.io.IOUtil;
 import eu.software4you.ulib.ULib;
-import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 
 import java.io.File;

@@ -2,8 +2,8 @@ package eu.software4you.ulib.impl.configuration.yaml;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.io.IOUtil;
 import eu.software4you.ulib.impl.configuration.SerializationAdapters;
-import eu.software4you.utils.IOUtil;
 import lombok.Getter;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;

@@ -2,9 +2,9 @@ package eu.software4you.ulib.impl.http;
 
 import eu.software4you.common.collection.Pair;
 import eu.software4you.http.HttpUtil;
+import eu.software4you.io.IOUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
-import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;

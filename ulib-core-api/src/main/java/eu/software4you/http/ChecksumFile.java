@@ -1,7 +1,7 @@
 package eu.software4you.http;
 
+import eu.software4you.io.IOUtil;
 import eu.software4you.utils.ChecksumUtils;
-import eu.software4you.utils.IOUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;

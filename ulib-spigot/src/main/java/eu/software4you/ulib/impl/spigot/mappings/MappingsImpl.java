@@ -1,5 +1,6 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
+import eu.software4you.io.IOUtil;
 import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.MultiversionManager;
 import eu.software4you.spigot.multiversion.Protocol;
@@ -10,7 +11,6 @@ import eu.software4you.ulib.UnsafeOperations;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
-import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayOutputStream;

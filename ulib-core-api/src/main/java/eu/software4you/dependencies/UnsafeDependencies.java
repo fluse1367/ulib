@@ -1,10 +1,10 @@
 package eu.software4you.dependencies;
 
 import eu.software4you.http.HttpUtil;
+import eu.software4you.io.IOUtil;
 import eu.software4you.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.utils.ClassUtils;
-import eu.software4you.utils.IOUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.http.client.HttpClient;

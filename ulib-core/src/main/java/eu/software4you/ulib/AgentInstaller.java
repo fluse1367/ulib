@@ -1,8 +1,8 @@
 package eu.software4you.ulib;
 
 import com.sun.tools.attach.VirtualMachine;
+import eu.software4you.io.IOUtil;
 import eu.software4you.ulib.agentex.Loader;
-import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayInputStream;

@@ -3,8 +3,8 @@ package eu.software4you.ulib;
 import eu.software4you.common.Keyable;
 import eu.software4you.common.collection.Pair;
 import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.io.IOUtil;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
-import eu.software4you.utils.IOUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.Validate;
 
