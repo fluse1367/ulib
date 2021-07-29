@@ -97,8 +97,9 @@ public final class ImplInjector {
             };
             inject(fun, into);
 
-            break;
+            return;
         }
+        throw new InjectionException(impl, into, "missing injection point");
     }
 
     @SneakyThrows
