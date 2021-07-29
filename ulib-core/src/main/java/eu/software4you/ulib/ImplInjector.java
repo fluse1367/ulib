@@ -10,11 +10,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public final class ImplInjector {
 
     static Logger logger;
+    static Map<Class<?>, Object> instances = new HashMap<>();
+    static Map<Class<?>, ImplFactory<?>> factories = new HashMap<>();
 
     static void autoInject(Class<?> impl) {
         // check for @Impl
@@ -70,10 +75,13 @@ public final class ImplInjector {
             logger.finest(() -> String.format("Injecting %s into %s", impl, into));
 
             // direct implementation with default constructor
-            Constructor<?> constructor = impl.getDeclaredConstructor();
-            constructor.setAccessible(true);
+            if (!instances.containsKey(impl)) {
+                Constructor<?> constructor = impl.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                instances.put(impl, constructor.newInstance());
+            }
 
-            inject(constructor.newInstance(), into);
+            inject(instances.get(impl), into);
             injected++;
         }
         if (injected == 0)
@@ -81,25 +89,24 @@ public final class ImplInjector {
     }
 
     private static void injectImplFactory(Class<?> impl, Field into) {
-        for (Constructor<?> constructor : impl.getDeclaredConstructors()) {
-            if (!constructor.isAnnotationPresent(Factory.class)) {
-                continue;
-            }
-            logger.finest(() -> String.format("Injecting %s as factory into %s", impl, into));
-            constructor.setAccessible(true);
+        if (!factories.containsKey(impl)) {
+            var constr = Arrays.stream(impl.getDeclaredConstructors())
+                    .filter(c -> c.isAnnotationPresent(Factory.class))
+                    .findFirst()
+                    .orElseThrow(() -> new InjectionException(impl, into, "missing factory constructor"));
 
-            @SuppressWarnings({"Convert2Lambda", "Anonymous2MethodRef"}) ImplFactory<?> fun = new ImplFactory<>() {
+            constr.setAccessible(true);
+            factories.put(impl, new ImplFactory<>() {
                 @SneakyThrows
                 @Override
                 public Object fabricate(Object... objects) {
-                    return constructor.newInstance(objects);
+                    return constr.newInstance(objects);
                 }
-            };
-            inject(fun, into);
-
-            return;
+            });
         }
-        throw new InjectionException(impl, into, "missing injection point");
+
+        logger.finest(() -> String.format("Injecting %s as factory into %s", impl, into));
+        inject(factories.get(impl), into);
     }
 
     @SneakyThrows

@@ -60,7 +60,11 @@ final class LibImpl implements Lib {
         } catch (Throwable thr) {
             logger.severe("Error during critical initialization phase (implementation loading).");
             throw thr;
+        } finally {
+            ImplInjector.instances = null;
+            ImplInjector.factories = null;
         }
+
 
         // load dependencies
         logger.fine(() -> "Loading dependencies");
