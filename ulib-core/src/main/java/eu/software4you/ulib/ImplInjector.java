@@ -43,7 +43,7 @@ public final class ImplInjector {
             // @Await found, inject
 
             // ImplFactory
-            if (into.getType() != into.getDeclaringClass()) {
+            if (!into.getType().isAssignableFrom(impl)) {
                 if (into.getType() == ImplFactory.class
                     // check if type parameter of `into` is compatible with the factory
                     && into.getGenericType() instanceof ParameterizedType type
