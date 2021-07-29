@@ -3,6 +3,7 @@ package eu.software4you.ulib.impl.spigot.plugin;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.ulib.impl.configuration.yaml.YamlDocument;
 import eu.software4you.ulib.impl.minecraft.plugin.YamlLayout;
+import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,8 @@ import java.util.Collection;
 
 @Impl(ExtendedJavaPlugin.class)
 final class LayoutImpl extends YamlLayout<CommandSender> implements eu.software4you.spigot.plugin.Layout {
+
+    @Factory
     private LayoutImpl() {
         // empty root
     }

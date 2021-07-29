@@ -2,6 +2,7 @@ package eu.software4you.ulib.impl.velocity.plugin;
 
 import eu.software4you.ulib.impl.configuration.yaml.YamlDocument;
 import eu.software4you.ulib.impl.minecraft.plugin.YamlLayout;
+import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.velocity.plugin.VelocityJavaPlugin;
 import net.kyori.adventure.audience.Audience;
@@ -13,6 +14,8 @@ import java.util.Collection;
 
 @Impl(VelocityJavaPlugin.class)
 final class LayoutImpl extends YamlLayout<Audience> implements eu.software4you.velocity.plugin.Layout {
+
+    @Factory
     private LayoutImpl() {
         // empty root
     }

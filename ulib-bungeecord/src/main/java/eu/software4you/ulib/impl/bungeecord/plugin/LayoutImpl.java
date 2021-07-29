@@ -3,6 +3,7 @@ package eu.software4you.ulib.impl.bungeecord.plugin;
 import eu.software4you.bungeecord.plugin.ExtendedProxyPlugin;
 import eu.software4you.ulib.impl.configuration.yaml.YamlDocument;
 import eu.software4you.ulib.impl.minecraft.plugin.YamlLayout;
+import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
 import net.md_5.bungee.api.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,8 @@ import java.util.Collection;
 
 @Impl(ExtendedProxyPlugin.class)
 final class LayoutImpl extends YamlLayout<CommandSender> implements eu.software4you.bungeecord.plugin.Layout {
+
+    @Factory
     private LayoutImpl() {
         // empty root
     }
