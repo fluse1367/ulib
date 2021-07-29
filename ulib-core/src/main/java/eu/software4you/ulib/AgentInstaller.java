@@ -10,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -52,7 +51,7 @@ final class AgentInstaller {
             agentPath = extractAgent();
             logger.fine(() -> "Agent file: " + agentPath);
 
-            pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+            pid = String.valueOf(ProcessHandle.current().pid());
 
             if (self) {
                 logger.finer("Self attach!");
