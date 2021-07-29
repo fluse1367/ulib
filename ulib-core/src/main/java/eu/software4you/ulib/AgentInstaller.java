@@ -75,17 +75,13 @@ final class AgentInstaller {
 
     @SneakyThrows
     private boolean attachEx() {
-        String javaBin = String.format("%s%sbin%2$sjava", System.getProperty("java.home"), File.separator);
+        String bin = AgentUtil.getJavaBin();
 
-
-        if (!new File(javaBin).exists()) {
-            if (!new File(javaBin += ".exe").exists()) {
-                logger.log(Level.SEVERE, () -> "Unable to find java executable!");
-                return false;
-            }
+        if (bin == null) {
+            logger.log(Level.SEVERE, () -> "Unable to find java executable!");
+            return false;
         }
 
-        String bin = javaBin;
         logger.finer(() -> "Java executable: " + bin);
 
         StringBuilder cp = new StringBuilder(new File(Loader.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
@@ -93,7 +89,7 @@ final class AgentInstaller {
             cp.append(":").append(toolsFile().getPath());
         }
 
-        List<String> cmd = Arrays.asList(javaBin, "-cp", cp.toString(), Loader.class.getName(), /* main args */ pid, agentPath);
+        List<String> cmd = Arrays.asList(bin, "-cp", cp.toString(), Loader.class.getName(), /* main args */ pid, agentPath);
 
         logger.finer(() -> "Starting process: " + Arrays.toString(cmd.toArray()));
 
