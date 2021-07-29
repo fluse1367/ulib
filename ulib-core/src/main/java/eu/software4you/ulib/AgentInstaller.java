@@ -1,6 +1,5 @@
 package eu.software4you.ulib;
 
-import com.google.gson.internal.JavaVersion;
 import com.sun.tools.attach.VirtualMachine;
 import eu.software4you.ulib.agentex.Loader;
 import eu.software4you.utils.IOUtil;
@@ -8,11 +7,7 @@ import lombok.SneakyThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,14 +33,7 @@ final class AgentInstaller {
     }
 
     private boolean load() {
-        boolean self = !JavaVersion.isJava9OrLater()
-                       || System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true");
-
         try {
-            if (self && toolsLoadingRequired() && !loadTools()) { // load tools beforehand
-                return false;
-            }
-
             logger.finer("Extracting agent ...");
 
             agentPath = extractAgent();
@@ -53,7 +41,7 @@ final class AgentInstaller {
 
             pid = String.valueOf(ProcessHandle.current().pid());
 
-            if (self) {
+            if (System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
                 logger.finer("Self attach!");
                 attachSelf();
             } else {
@@ -83,12 +71,9 @@ final class AgentInstaller {
 
         logger.finer(() -> "Java executable: " + bin);
 
-        StringBuilder cp = new StringBuilder(new File(Loader.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
-        if (toolsLoadingRequired()) {
-            cp.append(":").append(toolsFile().getPath());
-        }
+        String jarPath = new File(Loader.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
 
-        List<String> cmd = Arrays.asList(bin, "-cp", cp.toString(), Loader.class.getName(), /* main args */ pid, agentPath);
+        List<String> cmd = Arrays.asList(bin, "-cp", jarPath, Loader.class.getName(), /* main args */ pid, agentPath);
 
         logger.finer(() -> "Starting process: " + Arrays.toString(cmd.toArray()));
 
@@ -193,48 +178,5 @@ final class AgentInstaller {
         }
 
         return IOUtil.read(in);
-    }
-
-    private boolean toolsLoadingRequired() {
-        try {
-            Class.forName("com.sun.tools.attach.VirtualMachine");
-        } catch (ClassNotFoundException e) {
-            return true;
-        }
-        return false;
-    }
-
-    @SneakyThrows
-    private File toolsFile() {
-        File tools = new File(System.getProperty("java.home"), "/../lib/tools.jar");
-        if (!tools.exists()) {
-            throw new FileNotFoundException("tools.jar not found: " + tools.getAbsolutePath());
-        }
-        return tools;
-    }
-
-    private boolean loadTools() {
-        try {
-            logger.fine(() -> "Locating tools.jar");
-            File tools = toolsFile();
-
-            logger.fine(() -> "Loading " + tools);
-
-            ClassLoader cl = getClass().getClassLoader();
-            if (cl instanceof URLClassLoader || (cl = ClassLoader.getSystemClassLoader()) instanceof URLClassLoader) {
-                URLClassLoader ucl = (URLClassLoader) cl;
-                Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                addUrl.setAccessible(true);
-                addUrl.invoke(ucl, tools.toURI().toURL());
-            } else {
-                throw new IllegalStateException("cannot access a url class loader");
-            }
-        } catch (Throwable thr) {
-            logger.warning(() -> "Could not load agent: cannot load tools.jar but it is required in java 8");
-            logger.warning(thr.getMessage());
-            logger.log(Level.FINEST, thr, () -> "");
-            return false;
-        }
-        return true;
     }
 }
