@@ -48,6 +48,12 @@ class MultiPageMenuImpl implements MultiPageMenu {
         }
         pages.put(index, page);
         updatePageSwitchButtons(index);
+        if (pages.containsKey(index - 1)) {
+            updatePageSwitchButtons(index - 1);
+        }
+        if (pages.containsKey(index + 1)) {
+            updatePageSwitchButtons(index + 1);
+        }
     }
 
     private void updatePageSwitchButtons(int pageIndex) {
