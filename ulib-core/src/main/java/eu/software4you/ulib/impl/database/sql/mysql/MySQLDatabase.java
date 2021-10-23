@@ -23,4 +23,14 @@ public final class MySQLDatabase extends SqlDatabase implements eu.software4you.
     protected Table createTable(String name, Map<String, Column<?>> columns) {
         return new MySQLTable(this, name, columns);
     }
+
+    @Override
+    protected String autoIncrementKeyword() {
+        return "auto_increment";
+    }
+
+    @Override
+    protected boolean applyIndexBeforeAI() {
+        return false;
+    }
 }

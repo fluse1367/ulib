@@ -57,11 +57,20 @@ public abstract class Table implements eu.software4you.database.sql.Table {
             if (col.isNotNull()) {
                 sb.append(" not null");
             }
-            if (col.isAutoIncrement()) {
-                sb.append(" auto_increment");
-            }
-            if (col.getIndex() != null) {
-                sb.append(" ").append(col.getIndex().getSql());
+            if (sql.applyIndexBeforeAI()) {
+                if (col.getIndex() != null) {
+                    sb.append(" ").append(col.getIndex().getSql());
+                }
+                if (col.isAutoIncrement()) {
+                    sb.append(" ").append(sql.autoIncrementKeyword());
+                }
+            } else {
+                if (col.isAutoIncrement()) {
+                    sb.append(" ").append(sql.autoIncrementKeyword());
+                }
+                if (col.getIndex() != null) {
+                    sb.append(" ").append(col.getIndex().getSql());
+                }
             }
             if (col.getDefaultValue() != null) {
                 Object def = col.getDefaultValue();

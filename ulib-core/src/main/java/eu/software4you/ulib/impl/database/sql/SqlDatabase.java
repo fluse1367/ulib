@@ -166,6 +166,10 @@ public abstract class SqlDatabase implements eu.software4you.database.sql.SqlDat
 
     protected abstract Table createTable(String name, Map<String, Column<?>> columns);
 
+    protected abstract String autoIncrementKeyword();
+
+    protected abstract boolean applyIndexBeforeAI();
+
     @Override
     public @NotNull Table addTable(@NotNull String name, @NotNull Column<?> column, Column<?>... columns) {
         List<Column<?>> cols = new ArrayList<>();

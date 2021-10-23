@@ -40,4 +40,14 @@ public final class SQLiteDatabase extends SqlDatabase implements eu.software4you
     protected Table createTable(String name, Map<String, Column<?>> columns) {
         return new SQLiteTable(this, name, columns);
     }
+
+    @Override
+    protected String autoIncrementKeyword() {
+        return "autoincrement";
+    }
+
+    @Override
+    protected boolean applyIndexBeforeAI() {
+        return true;
+    }
 }
