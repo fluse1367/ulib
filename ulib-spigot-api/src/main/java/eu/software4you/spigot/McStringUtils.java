@@ -1,6 +1,6 @@
 package eu.software4you.spigot;
 
-import eu.software4you.utils.StringUtils;
+import eu.software4you.ulib.core.api.utils.StringUtils;
 import org.bukkit.ChatColor;
 
 public class McStringUtils {

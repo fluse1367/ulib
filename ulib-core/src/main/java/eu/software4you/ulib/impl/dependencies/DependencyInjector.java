@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.transform.Callback;
-import eu.software4you.transform.HookInjector;
-import eu.software4you.transform.HookPoint;
+import eu.software4you.ulib.core.api.transform.Callback;
+import eu.software4you.ulib.core.api.transform.HookInjector;
+import eu.software4you.ulib.core.api.transform.HookPoint;
 import eu.software4you.ulib.ULib;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.http;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.http.HttpUtil;
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.http.HttpUtil;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.inject.Impl;
 import lombok.SneakyThrows;

@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.spigot.usercache;
 
 import eu.software4you.spigot.plugin.ExtendedPlugin;
-import eu.software4you.sql.SqlEngine;
-import eu.software4you.sql.SqlTable;
+import eu.software4you.ulib.core.api.sql.SqlEngine;
+import eu.software4you.ulib.core.api.sql.SqlTable;
 import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.minecraft.usercache.UserCache;

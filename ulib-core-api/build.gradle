@@ -15,6 +15,6 @@ dependencies {
     /* compile */
     implementation 'com.sun.mail:smtp:2.0.1'
     implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
-    // apache httpclient; update version in eu.software4you.http.HttpUtil (core-api) when updating this
+    // apache httpclient; update version in eu.software4you.ulib.core.api.http.HttpUtil (core-api) when updating this
     implementation coordsHttpClient
 }

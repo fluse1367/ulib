@@ -7,7 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import eu.software4you.sql.SqlEngine;
+import eu.software4you.ulib.core.api.sql.SqlEngine;
 import eu.software4you.ulib.impl.velocity.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.velocity.usercache.MainUserCacheImpl;
 import eu.software4you.velocity.plugin.VelocityJavaPlugin;

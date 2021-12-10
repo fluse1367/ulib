@@ -2,7 +2,7 @@ package eu.software4you.ulib.impl.minecraft.launchermeta;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import eu.software4you.http.CachedResource;
+import eu.software4you.ulib.core.api.http.CachedResource;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;

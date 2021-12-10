@@ -1,6 +1,6 @@
 package eu.software4you.spigot.plugin;
 
-import eu.software4you.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,9 +1,9 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.dependencies.Dependencies;
-import eu.software4you.dependencies.DependencyLoader;
-import eu.software4you.dependencies.Repositories;
-import eu.software4you.dependencies.Repository;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.dependencies.Repositories;
+import eu.software4you.ulib.core.api.dependencies.Repository;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.ULib;
 import eu.software4you.ulib.impl.dependencies.RepositoriesImpl.Repo;

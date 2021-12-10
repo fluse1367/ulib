@@ -1,6 +1,6 @@
-package eu.software4you.transform;
+package eu.software4you.ulib.core.api.transform;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.Await;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

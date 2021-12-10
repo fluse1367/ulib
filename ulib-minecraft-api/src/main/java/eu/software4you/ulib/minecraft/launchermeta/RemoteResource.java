@@ -1,6 +1,6 @@
 package eu.software4you.ulib.minecraft.launchermeta;
 
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;

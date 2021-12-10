@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.utils.ArrayUtils;
+import eu.software4you.ulib.core.api.utils.ArrayUtils;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;

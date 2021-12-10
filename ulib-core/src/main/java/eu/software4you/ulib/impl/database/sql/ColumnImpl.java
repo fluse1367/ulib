@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.database.sql;
 
-import eu.software4you.database.sql.Column;
-import eu.software4you.database.sql.ColumnBuilder;
-import eu.software4you.database.sql.DataType;
+import eu.software4you.ulib.core.api.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.ColumnBuilder;
+import eu.software4you.ulib.core.api.database.sql.DataType;
 import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;
 import lombok.AccessLevel;

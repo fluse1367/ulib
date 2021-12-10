@@ -1,7 +1,7 @@
-package eu.software4you.smtp;
+package eu.software4you.ulib.core.api.smtp;
 
 import com.sun.mail.smtp.SMTPTransport;
-import eu.software4you.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
 import jakarta.mail.Message;
 import jakarta.mail.Session;
 import jakarta.mail.internet.InternetAddress;

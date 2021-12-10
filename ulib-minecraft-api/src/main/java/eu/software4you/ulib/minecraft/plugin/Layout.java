@@ -1,6 +1,6 @@
 package eu.software4you.ulib.minecraft.plugin;
 
-import eu.software4you.configuration.ExtSub;
+import eu.software4you.ulib.core.api.configuration.ExtSub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

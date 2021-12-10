@@ -1,11 +1,11 @@
 package eu.software4you.ulib.impl.configuration;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.serialization.DeSerializationFactory;
-import eu.software4you.configuration.serialization.InvalidFactoryDeclarationException;
-import eu.software4you.configuration.serialization.Serializable;
-import eu.software4you.configuration.serialization.SerializationException;
-import eu.software4you.utils.ClassUtils;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.configuration.serialization.DeSerializationFactory;
+import eu.software4you.ulib.core.api.configuration.serialization.InvalidFactoryDeclarationException;
+import eu.software4you.ulib.core.api.configuration.serialization.Serializable;
+import eu.software4you.ulib.core.api.configuration.serialization.SerializationException;
+import eu.software4you.ulib.core.api.utils.ClassUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;

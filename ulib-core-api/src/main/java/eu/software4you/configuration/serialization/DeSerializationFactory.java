@@ -1,9 +1,9 @@
-package eu.software4you.configuration.serialization;
+package eu.software4you.ulib.core.api.configuration.serialization;
 
 import java.util.Map;
 
 /**
- * Interface for object deserialization with the {@link eu.software4you.configuration.Configurations Configuration API}.
+ * Interface for object deserialization with the {@link eu.software4you.ulib.core.api.configuration.Configurations Configuration API}.
  * <p>
  * Any class implementing this interface is able to deserialize the declared objects.
  * <p>

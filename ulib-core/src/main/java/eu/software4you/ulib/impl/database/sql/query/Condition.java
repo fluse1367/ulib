@@ -6,9 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
-import static eu.software4you.utils.ArrayUtils.concat;
+import static eu.software4you.ulib.core.api.utils.ArrayUtils.concat;
 
-final class Condition<R> implements eu.software4you.database.sql.query.Condition<R> {
+final class Condition<R> implements eu.software4you.ulib.core.api.database.sql.query.Condition<R> {
     protected final Metadata meta;
     protected final String source;
     private final Function<Condition<R>, R> constructor;

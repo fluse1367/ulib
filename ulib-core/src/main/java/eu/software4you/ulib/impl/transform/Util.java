@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.transform;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.transform.Hook;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.transform.Hook;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;

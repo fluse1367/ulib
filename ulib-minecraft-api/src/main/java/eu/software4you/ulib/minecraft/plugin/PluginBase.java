@@ -1,6 +1,6 @@
 package eu.software4you.ulib.minecraft.plugin;
 
-import eu.software4you.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
 import eu.software4you.ulib.minecraft.plugin.controllers.ASyncSchedulerController;
 import eu.software4you.ulib.minecraft.plugin.controllers.EventController;
 import org.jetbrains.annotations.NotNull;

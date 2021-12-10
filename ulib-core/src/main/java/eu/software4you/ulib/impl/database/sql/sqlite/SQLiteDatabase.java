@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.database.sql.sqlite;
 
-import eu.software4you.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.Column;
 import eu.software4you.ulib.impl.database.sql.SqlDatabase;
 import eu.software4you.ulib.impl.database.sql.Table;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.sql.Connection;
 import java.util.Map;
 import java.util.Properties;
 
-public final class SQLiteDatabase extends SqlDatabase implements eu.software4you.database.sql.SQLiteDatabase {
+public final class SQLiteDatabase extends SqlDatabase implements eu.software4you.ulib.core.api.database.sql.SQLiteDatabase {
 
     @Getter
     private final Path path;

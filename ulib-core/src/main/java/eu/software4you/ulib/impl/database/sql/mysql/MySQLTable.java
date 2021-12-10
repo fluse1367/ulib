@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.database.sql.mysql;
 
-import eu.software4you.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.Column;
 import eu.software4you.ulib.impl.database.sql.SqlDatabase;
 import eu.software4you.ulib.impl.database.sql.Table;
 import lombok.SneakyThrows;

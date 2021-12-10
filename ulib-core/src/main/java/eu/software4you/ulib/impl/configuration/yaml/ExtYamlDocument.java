@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.configuration.yaml;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;

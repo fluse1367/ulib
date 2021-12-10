@@ -1,4 +1,4 @@
-package eu.software4you.configuration;
+package eu.software4you.ulib.core.api.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

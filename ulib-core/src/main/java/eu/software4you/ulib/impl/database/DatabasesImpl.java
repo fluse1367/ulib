@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.database;
 
-import eu.software4you.database.Database;
-import eu.software4you.database.Databases;
-import eu.software4you.database.sql.SqlDatabase;
+import eu.software4you.ulib.core.api.database.Database;
+import eu.software4you.ulib.core.api.database.Databases;
+import eu.software4you.ulib.core.api.database.sql.SqlDatabase;
 import eu.software4you.ulib.impl.database.sql.mysql.MySQLDatabase;
 import eu.software4you.ulib.impl.database.sql.sqlite.SQLiteDatabase;
 import eu.software4you.ulib.inject.Impl;
@@ -70,13 +70,13 @@ final class DatabasesImpl extends Databases {
     }
 
     @Override
-    protected eu.software4you.database.sql.SQLiteDatabase prepare0(File file) {
-        return (eu.software4you.database.sql.SQLiteDatabase) prepare0(String.format("jdbc:sqlite:%s", file.getPath()), new Properties());
+    protected eu.software4you.ulib.core.api.database.sql.SQLiteDatabase prepare0(File file) {
+        return (eu.software4you.ulib.core.api.database.sql.SQLiteDatabase) prepare0(String.format("jdbc:sqlite:%s", file.getPath()), new Properties());
     }
 
     @SneakyThrows
     @Override
-    protected eu.software4you.database.sql.MySQLDatabase prepare0(String host, int port, String database, String user, String password, String... parameters) {
+    protected eu.software4you.ulib.core.api.database.sql.MySQLDatabase prepare0(String host, int port, String database, String user, String password, String... parameters) {
         StringJoiner params = new StringJoiner("&", "?", "");
         params.setEmptyValue("");
         for (String parameter : parameters) {
@@ -95,6 +95,6 @@ final class DatabasesImpl extends Databases {
         if (password != null) {
             info.put("password", password);
         }
-        return (eu.software4you.database.sql.MySQLDatabase) prepare0(url, info);
+        return (eu.software4you.ulib.core.api.database.sql.MySQLDatabase) prepare0(url, info);
     }
 }

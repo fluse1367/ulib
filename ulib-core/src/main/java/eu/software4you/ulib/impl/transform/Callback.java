@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class Callback<T> implements eu.software4you.transform.Callback<T> {
+final class Callback<T> implements eu.software4you.ulib.core.api.transform.Callback<T> {
 
     private final Class<T> returnType;
     private final Object self;

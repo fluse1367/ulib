@@ -1,6 +1,6 @@
-package eu.software4you.configuration.yaml;
+package eu.software4you.ulib.core.api.configuration.yaml;
 
-import eu.software4you.configuration.Sub;
+import eu.software4you.ulib.core.api.configuration.Sub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

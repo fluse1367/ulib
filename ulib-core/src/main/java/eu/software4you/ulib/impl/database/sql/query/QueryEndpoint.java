@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-class QueryEndpoint implements eu.software4you.database.sql.query.QueryEndpoint {
+class QueryEndpoint implements eu.software4you.ulib.core.api.database.sql.query.QueryEndpoint {
     protected final Metadata meta;
 
     private boolean limit = false;

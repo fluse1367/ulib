@@ -1,9 +1,9 @@
 package eu.software4you.ulib;
 
-import eu.software4you.common.Keyable;
-import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.yaml.YamlSub;
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.common.Keyable;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.Validate;

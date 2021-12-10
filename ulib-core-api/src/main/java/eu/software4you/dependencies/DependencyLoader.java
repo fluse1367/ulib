@@ -1,6 +1,6 @@
-package eu.software4you.dependencies;
+package eu.software4you.ulib.core.api.dependencies;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.Await;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package eu.software4you.reflect;
+package eu.software4you.ulib.core.api.reflect;
 
 import eu.software4you.ulib.Await;
 import lombok.SneakyThrows;

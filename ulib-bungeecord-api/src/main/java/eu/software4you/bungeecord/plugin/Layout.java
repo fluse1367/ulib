@@ -1,6 +1,6 @@
 package eu.software4you.bungeecord.plugin;
 
-import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;

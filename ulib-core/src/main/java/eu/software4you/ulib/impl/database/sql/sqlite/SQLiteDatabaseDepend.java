@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.database.sql.sqlite;
 
-import eu.software4you.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
 
 public class SQLiteDatabaseDepend {
     static {

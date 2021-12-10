@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.database.sql.mysql;
 
-import eu.software4you.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
 
 public class MySQLDatabaseDepend {
     static {

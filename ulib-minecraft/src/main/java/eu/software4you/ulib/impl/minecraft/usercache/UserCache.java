@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.minecraft.usercache;
 
-import eu.software4you.sql.SqlEngine;
-import eu.software4you.sql.SqlTable;
-import eu.software4you.sql.SqlTableWrapper;
+import eu.software4you.ulib.core.api.sql.SqlEngine;
+import eu.software4you.ulib.core.api.sql.SqlTable;
+import eu.software4you.ulib.core.api.sql.SqlTableWrapper;
 import lombok.SneakyThrows;
 
 import java.sql.ResultSet;

@@ -1,6 +1,6 @@
 package eu.software4you.spigot;
 
-import eu.software4you.math.Coordinate3D;
+import eu.software4you.ulib.core.api.math.Coordinate3D;
 import org.bukkit.Location;
 import org.bukkit.World;
 

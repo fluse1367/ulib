@@ -1,6 +1,6 @@
-package eu.software4you.utils;
+package eu.software4you.ulib.core.api.utils;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.ULib;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;

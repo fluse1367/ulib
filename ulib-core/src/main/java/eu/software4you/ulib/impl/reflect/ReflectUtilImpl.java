@@ -1,9 +1,9 @@
 package eu.software4you.ulib.impl.reflect;
 
-import eu.software4you.reflect.Parameter;
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.Parameter;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.inject.Impl;
-import eu.software4you.utils.ClassUtils;
+import eu.software4you.ulib.core.api.utils.ClassUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ArrayUtils;
 

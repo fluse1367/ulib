@@ -1,6 +1,6 @@
 package eu.software4you.spigot;
 
-import eu.software4you.http.HttpUtil;
+import eu.software4you.ulib.core.api.http.HttpUtil;
 
 import java.util.UUID;
 

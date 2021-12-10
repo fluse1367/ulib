@@ -1,4 +1,4 @@
-package eu.software4you.io;
+package eu.software4you.ulib.core.api.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

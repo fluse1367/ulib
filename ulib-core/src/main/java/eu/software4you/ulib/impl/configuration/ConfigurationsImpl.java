@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.configuration;
 
-import eu.software4you.configuration.Configurations;
-import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.ulib.core.api.configuration.Configurations;
+import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.inject.Impl;
 

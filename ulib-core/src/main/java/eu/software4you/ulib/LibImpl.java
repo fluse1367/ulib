@@ -1,9 +1,9 @@
 package eu.software4you.ulib;
 
-import eu.software4you.dependencies.Dependencies;
-import eu.software4you.dependencies.Repositories;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.Repositories;
 import eu.software4you.ulib.inject.Impl;
-import eu.software4you.utils.FileUtils;
+import eu.software4you.ulib.core.api.utils.FileUtils;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 

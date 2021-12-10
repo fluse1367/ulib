@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.spigot.inventorymenu;
 
-import eu.software4you.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.spigot.inventorymenu.MenuManager;
 import eu.software4you.spigot.inventorymenu.entry.Entry;
 import eu.software4you.spigot.inventorymenu.entry.ToggleableEntry;

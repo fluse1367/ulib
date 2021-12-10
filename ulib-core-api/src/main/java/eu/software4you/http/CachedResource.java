@@ -1,6 +1,6 @@
-package eu.software4you.http;
+package eu.software4you.ulib.core.api.http;
 
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
 package eu.software4you.spigot.mappings;
 
-import eu.software4you.reflect.Parameter;
+import eu.software4you.ulib.core.api.reflect.Parameter;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,13 +31,13 @@ public interface MappedMethod extends Mapped<Method> {
     MappedClass[] parameterTypes();
 
     /**
-     * Generates a parameters list for this method, ready for use in {@link eu.software4you.reflect.ReflectUtil}.
+     * Generates a parameters list for this method, ready for use in {@link eu.software4you.ulib.core.api.reflect.ReflectUtil}.
      *
      * @param params the parameters
      * @return the parameter list
      * @throws IllegalArgumentException  if a parameters is of wrong type
      * @throws IndexOutOfBoundsException if the method has more params than provided
-     * @see eu.software4you.reflect.ReflectUtil#call(String, Object, String, List[])
+     * @see eu.software4you.ulib.core.api.reflect.ReflectUtil#call(String, Object, String, List[])
      */
     default List<Parameter<?>> asParams(Object... params) {
         AtomicInteger i = new AtomicInteger(0);

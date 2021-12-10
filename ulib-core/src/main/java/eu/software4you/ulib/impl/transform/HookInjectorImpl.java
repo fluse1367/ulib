@@ -3,9 +3,9 @@ package eu.software4you.ulib.impl.transform;
 import eu.software4you.libex.function.BoolFunc;
 import eu.software4you.libex.function.Callb;
 import eu.software4you.libex.function.Func;
-import eu.software4you.reflect.ReflectUtil;
-import eu.software4you.transform.Hook;
-import eu.software4you.transform.HookPoint;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.transform.Hook;
+import eu.software4you.ulib.core.api.transform.HookPoint;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;
@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-@Impl(value = eu.software4you.transform.HookInjector.class, priority = Integer.MAX_VALUE - 1)
-final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
+@Impl(value = eu.software4you.ulib.core.api.transform.HookInjector.class, priority = Integer.MAX_VALUE - 1)
+final class HookInjectorImpl extends eu.software4you.ulib.core.api.transform.HookInjector {
     @Await
     private static Agent agent;
     private final Map<String, List<String>> injected = new ConcurrentHashMap<>(); // class -> methods
@@ -122,10 +122,10 @@ final class HookInjectorImpl extends eu.software4you.transform.HookInjector {
         String className = hook.clazz();
         if (className.isEmpty()) {
             Class<?> declaring = source.getDeclaringClass();
-            if (!declaring.isAnnotationPresent(eu.software4you.transform.Hooks.class)) {
+            if (!declaring.isAnnotationPresent(eu.software4you.ulib.core.api.transform.Hooks.class)) {
                 throw new IllegalArgumentException("Empty fully qualified class name without @Hooks annotation being present.");
             }
-            className = declaring.getAnnotation(eu.software4you.transform.Hooks.class).value();
+            className = declaring.getAnnotation(eu.software4you.ulib.core.api.transform.Hooks.class).value();
         }
 
         inject(source, obj, className, p.getFirst(), p.getSecond(), hook.at(), cl);

@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.spigot.mappings.Mappings;
 import eu.software4you.spigot.multiversion.MultiversionManager;
 import eu.software4you.spigot.multiversion.Protocol;

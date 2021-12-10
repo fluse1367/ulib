@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.transform.Callback;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.transform.Callback;
 import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;
 

@@ -1,6 +1,6 @@
-package eu.software4you.http;
+package eu.software4you.ulib.core.api.http;
 
-import eu.software4you.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.ulib.Await;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

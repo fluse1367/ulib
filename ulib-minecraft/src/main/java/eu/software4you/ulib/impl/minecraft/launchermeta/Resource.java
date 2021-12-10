@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.minecraft.launchermeta;
 
 import com.google.gson.JsonObject;
-import eu.software4you.http.CachedResource;
+import eu.software4you.ulib.core.api.http.CachedResource;
 import eu.software4you.ulib.minecraft.launchermeta.RemoteResource;
 import lombok.AccessLevel;
 import lombok.Getter;

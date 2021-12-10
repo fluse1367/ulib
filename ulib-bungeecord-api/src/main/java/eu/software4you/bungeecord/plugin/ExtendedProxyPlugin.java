@@ -1,8 +1,8 @@
 package eu.software4you.bungeecord.plugin;
 
-import eu.software4you.configuration.Configurations;
-import eu.software4you.configuration.yaml.ExtYamlSub;
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.configuration.Configurations;
+import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ImplFactory;
 import net.md_5.bungee.api.plugin.Command;

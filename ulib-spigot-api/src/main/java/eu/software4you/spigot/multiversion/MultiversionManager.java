@@ -1,7 +1,7 @@
 package eu.software4you.spigot.multiversion;
 
 
-import eu.software4you.utils.ClassUtils;
+import eu.software4you.ulib.core.api.utils.ClassUtils;
 
 import java.util.HashMap;
 import java.util.Map;

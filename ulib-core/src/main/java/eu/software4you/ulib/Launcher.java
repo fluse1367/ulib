@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import joptsimple.*;
 import lombok.SneakyThrows;
 

@@ -1,4 +1,4 @@
-package eu.software4you.configuration;
+package eu.software4you.ulib.core.api.configuration;
 
 /**
  * Policy how to behave when a value cannot be converted to the requested type.

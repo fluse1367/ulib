@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

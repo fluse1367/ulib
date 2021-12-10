@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 

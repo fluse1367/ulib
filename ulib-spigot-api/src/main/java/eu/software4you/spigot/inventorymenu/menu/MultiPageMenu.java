@@ -1,6 +1,6 @@
 package eu.software4you.spigot.inventorymenu.menu;
 
-import eu.software4you.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

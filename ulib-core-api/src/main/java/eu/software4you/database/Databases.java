@@ -1,8 +1,8 @@
-package eu.software4you.database;
+package eu.software4you.ulib.core.api.database;
 
-import eu.software4you.database.sql.MySQLDatabase;
-import eu.software4you.database.sql.SQLiteDatabase;
-import eu.software4you.database.sql.SqlDatabase;
+import eu.software4you.ulib.core.api.database.sql.MySQLDatabase;
+import eu.software4you.ulib.core.api.database.sql.SQLiteDatabase;
+import eu.software4you.ulib.core.api.database.sql.SqlDatabase;
 import eu.software4you.ulib.Await;
 import org.jetbrains.annotations.NotNull;
 

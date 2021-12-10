@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.transform;
 
-import eu.software4you.transform.HookPoint;
+import eu.software4you.ulib.core.api.transform.HookPoint;
 import javassist.*;
 
 import java.lang.instrument.ClassFileTransformer;

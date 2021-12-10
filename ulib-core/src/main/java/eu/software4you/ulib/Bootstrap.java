@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Pair;
 
 public class Bootstrap {
 

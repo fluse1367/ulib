@@ -1,4 +1,4 @@
-package eu.software4you.dependencies;
+package eu.software4you.ulib.core.api.dependencies;
 
 import eu.software4you.ulib.Await;
 

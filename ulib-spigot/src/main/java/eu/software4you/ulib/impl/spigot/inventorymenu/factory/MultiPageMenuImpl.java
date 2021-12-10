@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.spigot.inventorymenu.factory;
 
-import eu.software4you.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.spigot.inventorymenu.handlers.PageSwitchHandler;
 import eu.software4you.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.spigot.inventorymenu.menu.Page;

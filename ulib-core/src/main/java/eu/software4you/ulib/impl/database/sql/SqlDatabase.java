@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.database.sql;
 
-import eu.software4you.database.sql.Column;
-import eu.software4you.database.sql.ColumnBuilder;
+import eu.software4you.ulib.core.api.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.ColumnBuilder;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class SqlDatabase implements eu.software4you.database.sql.SqlDatabase {
+public abstract class SqlDatabase implements eu.software4you.ulib.core.api.database.sql.SqlDatabase {
 
     private final String url;
     private final Properties info;
@@ -145,7 +145,7 @@ public abstract class SqlDatabase implements eu.software4you.database.sql.SqlDat
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.database.sql.Table> getTables() {
+    public @NotNull Collection<eu.software4you.ulib.core.api.database.sql.Table> getTables() {
         return Collections.unmodifiableCollection(tables.values());
     }
 

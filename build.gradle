@@ -1,338 +1,55 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-import org.apache.tools.ant.filters.ReplaceTokens
-
 import static java.util.Optional.ofNullable
 
-defaultTasks 'clean', 'build', 'jar'
-apply plugin: 'java-library'
-
+// plugin support
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        // lombok plugin
-        classpath "io.freefair.gradle:lombok-plugin:6.0.0-m2"
-        // shadow plugin
-        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+        classpath "io.freefair.gradle:lombok-plugin:6.3.0"
     }
 }
-
-// docs build - start
-task docsWebpage {
-    subprojects {
-        if (project.name.endsWith('-api')) {
-            dependsOn "${project.name}:javadoc"
-        }
-    }
-
-    doLast {
-        delete 'public'
-
-        mkdir 'public'
-        copy {
-            from 'docs'
-            into 'public'
-        }
-
-        subprojects {
-            if (!project.name.endsWith('-api')) return
-
-            def name = project.name
-            name = name.substring(name.indexOf("-") + 1, name.lastIndexOf("-"))
-
-            copy {
-                from "${buildDir}/docs/javadoc"
-                into "${rootDir}/public/$name"
-            }
-
-        }
-    }
-}
-
-clean {
-    delete "${rootDir}/public"
-}
-// docs build - end
 
 allprojects {
-
-    def major = 2, minor = 1, patch = 0
-
-    // evaluate variation
-    String variation
-    switch (ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase()) {
-        case 'release':
-            variation = ''
-            break
-        case 'beta':
-            variation = "BETA-${ofNullable((String) project.findProperty('beta')).orElse(('0'))}"
-            break
-        case 'snapshot':
-            // fallthrough to default
-        default:
-            variation = 'SNAPSHOT'
+    // plugins
+    {
+        apply plugin: 'java-library'
+        apply plugin: "io.freefair.lombok"
     }
 
-
-    group 'eu.software4you.ulib'
-    version "$major.$minor.$patch${variation.isEmpty() ? '' : "-$variation"}"
-
-    repositories {
-        mavenCentral()
-
-        maven {
-            name 'PaperMC'
-            url 'https://papermc.io/repo/repository/maven-public/'
-        }
-        if (project.name.contains('velocity')) {
-            maven {
-                name = 'velocitypowered-repo'
-                url = 'https://repo.velocitypowered.com/releases/'
-            }
-        }
-    }
-
-    ext {
-        gitCommitHash = { ->
-            try {
-                def stdout = new ByteArrayOutputStream()
-                exec {
-                    commandLine 'git', 'rev-parse', '--short', 'HEAD'
-                    standardOutput = stdout
-                }
-                return stdout.toString().trim()
-            } catch (Exception ignored) {
-                return "unknown"
-            }
+    // project meta settings
+    {
+        def major = 2, minor = 1, patch = 0
+        // evaluate variation
+        String variation
+        switch (ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase()) {
+            case 'release':
+                variation = ''
+                break
+            case 'beta':
+                variation = "BETA-${ofNullable((String) project.findProperty('beta')).orElse(('0'))}"
+                break
+            case 'snapshot':
+                // fallthrough to default
+            default:
+                variation = 'SNAPSHOT'
         }
 
-        def release = project.hasProperty('release')
-
-        deployRepoUrl = "https://gitlab.com/api/v4/projects/${release ? /*ulib*/ '19415500' : /*ulib-snapshots*/ '26647460'}/packages/maven"
-        deployRepoCredentialMethod = "${release ? 'Job' : 'Deploy'}-Token"
-        deployRepoCredentialValue = System.getenv("CI_${release ? /*releases*/ 'JOB' : /*snapshots*/ 'SNAPSHOT_REPOSITORY_DEPLOY'}_TOKEN")
-
-        coordsPaper = 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-        coordsWaterfall = 'io.github.waterfallmc:waterfall-api:1.17-R0.1-SNAPSHOT'
-        coordsVelocity = 'com.velocitypowered:velocity-api:3.0.0-SNAPSHOT'
-        coordsXSeries = 'com.github.cryptomorin:XSeries:8.2.0'
-
-        coordsHttpClient = 'org.apache.httpcomponents:httpclient:4.5.13'
-
-        coordsJetbrainsAnnotations = 'org.jetbrains:annotations:21.0.1'
-
-        coordsJavassist = 'org.javassist:javassist:3.27.0-GA'
-
-        def props = new Properties()
-        props.putAll([
-                'version'              : version.toString(),
-                'maven.mysql'          : 'mysql:mysql-connector-java:8.0.23',
-                'maven.sqlite'         : 'org.xerial:sqlite-jdbc:3.25.2',
-                'maven.xseries'        : coordsXSeries,
-                'maven.mail-api'       : 'javax.mail:javax.mail-api:1.6.2',
-                'maven.smtp'           : 'com.sun.mail:smtp:2.0.1',
-                // required for dependency resolving
-                'maven.http-core'      : 'org.apache.httpcomponents:httpcore:4.4.12',
-                'maven.http-client'    : coordsHttpClient,
-                'maven.commons-logging': 'commons-logging:commons-logging:1.2',
-        ])
-
-        replacementTokens = props
+        group 'eu.software4you.ulib'
+        version "$major.$minor.$patch${variation.isEmpty() ? '' : "-$variation"}"
     }
 
-}
 
-subprojects {
-    apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
-    apply plugin: "io.freefair.lombok"
-
-    compileJava {
-        options.encoding = 'UTF-8'
-    }
-
-    compileTestJava {
-        options.encoding = 'UTF-8'
-    }
-
-    java {
-        sourceCompatibility = JavaVersion.VERSION_16
-    }
-
-    jar {
-        manifest.attributes([
-                'Implementation-Title'  : project.name,
-                'Implementation-Version': "${archiveVersion.get()}-${gitCommitHash()}",
-                'Specification-Version' : archiveVersion.get(),
-                'Implementation-Vendor' : 'Software4You.eu',
-                'Built-By'              : System.getProperty("user.name"),
-                'Build-Jdk'             : System.getProperty("java.version"),
-                'Created-By'            : 'Gradle ' + gradle.gradleVersion,
-        ])
-    }
-
-    configurations {
-        shade
-    }
-
-    // default dependencies
-    dependencies {
-        implementation coordsJetbrainsAnnotations
-    }
-
-    ext {
-        /**
-         * Adds a list of dependencies as implementation and shade dependency.
-         */
-        compileShade = { depList ->
-            dependencies {
-                for (String dependency : depList) {
-                    // exclusion
-                    if (dependency.startsWith('!(') && dependency.contains("):")) {
-                        int i
-                        String[] excl = dependency.substring(2, i = dependency.indexOf("):")).split(",")
-
-
-                        dependency = dependency.substring(i + 2)
-
-                        implementation(dependency) {
-                            for (String exclusion : excl) {
-                                if (exclusion.contains(":")) {
-                                    String[] p = exclusion.split(":")
-                                    exclude group: p[0], module: p[1]
-                                } else {
-                                    exclude group: exclusion
-                                }
-                            }
-                        }
-                        shade(dependency) {
-                            for (String exclusion : excl) {
-                                if (exclusion.contains(":")) {
-                                    String[] p = exclusion.split(":")
-                                    exclude group: p[0], module: p[1]
-                                } else {
-                                    exclude group: exclusion
-                                }
-                            }
-                        }
-                        continue
-                    }
-
-                    implementation dependency
-                    shade dependency
-                }
-            }
-        }
-    }
-
-    // replace tokens - start
-    task processSources(type: Sync) {
-        from sourceSets.main.java.srcDirs
-        //inputs.property 'version', version.toString()
-        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
-        into "$buildDir/src"
-    }
-    compileJava.source = processSources.outputs
-
-    processResources {
-        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
-    }
-    // replace tokens - end
-
-    // shadowing
-    if (project.name == 'ulib-core'
-            || project.name == 'ulib-spigot'
-            || project.name == 'ulib-bungeecord'
-            || project.name == 'ulib-velocity') {
-        apply plugin: 'com.github.johnrengelman.shadow' // shadowing
-
-        ext {
-            shadowJarIncludeFrom = { projects ->
-                for (String sub : projects) {
-                    def proj = ':ulib-' + sub
-                    def buildDir = project(proj).buildDir
-
-                    shadowJar {
-                        dependsOn "$proj:build"
-                        from("$buildDir/classes/java/main") { include '**' }
-                        from("$buildDir/resources/main") { include '**' }
-                    }
-                }
-            }
+    // dependencies
+    {
+        repositories {
+            mavenCentral()
         }
 
-        // https://imperceptiblethoughts.com/shadow/configuration/relocation/#automatically-relocating-dependencies
-        task relocateShadowJar(type: ConfigureShadowRelocation) {
-            target = tasks.shadowJar
-            prefix = "ulib.ported"
-        }
-
-        // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#configuring-shadowed-dependencies
-        shadowJar {
-            dependsOn tasks.relocateShadowJar
-            dependsOn ':ulib-libex:jar'
-
-            from("${project(':ulib-libex').buildDir}/libs/") {
-                include "libex"
-            }
-
-            archiveClassifier.set(project.name == 'ulib-core' ? 'lib' : 'plugin')
+        dependencies {
+            compileOnly 'org.jetbrains:annotations:22.0.0'
         }
     }
-    // shadowing end
-
-    // publishing
-    if (project.name.endsWith("-api")) {
-        javadoc {
-            title "${project.name.substring(0, project.name.lastIndexOf('-api'))} ${jar.archiveVersion.get()} API"
-            if (project.name != 'ulib-core-api') {
-                def projects = ['minecraft-api', 'core-api']
-                for (String sub : projects) {
-                    def proj = project(':ulib-' + sub)
-                    source(proj.projectDir.getPath() + "/src/main/java")
-                    //classpath = files(classpath.files, proj.configurations.compileClasspath.collect())
-                }
-            }
-            failOnError false
-        }
-
-        java {
-            withSourcesJar()
-            withJavadocJar()
-        }
-
-        artifacts {
-            archives sourcesJar
-            archives javadocJar
-        }
-
-        components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
-            skip()
-        }
-        tasks.withType(GenerateModuleMetadata) {
-            enabled = false
-        }
-
-        publishing {
-            publications {
-                library(MavenPublication) {
-                    from components.java
-                }
-            }
-            repositories {
-                maven {
-                    url deployRepoUrl
-                    credentials(HttpHeaderCredentials) {
-                        name = deployRepoCredentialMethod
-                        value = deployRepoCredentialValue
-                    }
-                    authentication {
-                        header(HttpHeaderAuthentication)
-                    }
-                }
-            }
-        }
-    }
-    // publishing end
 }

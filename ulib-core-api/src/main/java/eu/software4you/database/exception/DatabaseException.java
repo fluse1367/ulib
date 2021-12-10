@@ -1,9 +1,9 @@
-package eu.software4you.database.exception;
+package eu.software4you.ulib.core.api.database.exception;
 
-import eu.software4you.database.Database;
+import eu.software4you.ulib.core.api.database.Database;
 
 /**
- * Superclass for all {@link eu.software4you.database.Database} related exceptions.
+ * Superclass for all {@link eu.software4you.ulib.core.api.database.Database} related exceptions.
  */
 public class DatabaseException extends RuntimeException {
     private final Database database;

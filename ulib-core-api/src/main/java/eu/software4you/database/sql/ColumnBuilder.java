@@ -1,4 +1,4 @@
-package eu.software4you.database.sql;
+package eu.software4you.ulib.core.api.database.sql;
 
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ImplFactory;

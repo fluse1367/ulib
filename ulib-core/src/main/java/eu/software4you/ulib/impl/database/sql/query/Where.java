@@ -1,15 +1,15 @@
 package eu.software4you.ulib.impl.database.sql.query;
 
-import eu.software4you.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.Column;
 import org.jetbrains.annotations.NotNull;
 
-final class Where extends QueryEndpoint implements eu.software4you.database.sql.query.Where {
+final class Where extends QueryEndpoint implements eu.software4you.ulib.core.api.database.sql.query.Where {
 
-    Where(Condition<eu.software4you.database.sql.query.Where> condition) {
+    Where(Condition<eu.software4you.ulib.core.api.database.sql.query.Where> condition) {
         this(condition, "where");
     }
 
-    Where(Condition<eu.software4you.database.sql.query.Where> condition, String operand) {
+    Where(Condition<eu.software4you.ulib.core.api.database.sql.query.Where> condition, String operand) {
         super(condition.meta);
         meta.query.append(String.format(" %s %s`%s` %s",
                 operand, condition.not ? "not " : "", condition.source, condition.condition));
@@ -26,12 +26,12 @@ final class Where extends QueryEndpoint implements eu.software4you.database.sql.
 
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> and(@NotNull Column<?> column) {
+    public Condition<eu.software4you.ulib.core.api.database.sql.query.Where> and(@NotNull Column<?> column) {
         return and(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> and(@NotNull String column) {
+    public Condition<eu.software4you.ulib.core.api.database.sql.query.Where> and(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " and"));
     }
 
@@ -42,12 +42,12 @@ final class Where extends QueryEndpoint implements eu.software4you.database.sql.
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> or(@NotNull Column<?> column) {
+    public Condition<eu.software4you.ulib.core.api.database.sql.query.Where> or(@NotNull Column<?> column) {
         return or(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.database.sql.query.Where> or(@NotNull String column) {
+    public Condition<eu.software4you.ulib.core.api.database.sql.query.Where> or(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " or"));
     }
 

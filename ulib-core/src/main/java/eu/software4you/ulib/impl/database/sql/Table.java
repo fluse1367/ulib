@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.database.sql;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.database.sql.Column;
-import eu.software4you.database.sql.DataType;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.database.sql.Column;
+import eu.software4you.ulib.core.api.database.sql.DataType;
 import eu.software4you.ulib.impl.database.sql.query.Query;
 import eu.software4you.ulib.impl.database.sql.query.QueryStart;
 import eu.software4you.ulib.impl.database.sql.query.SetQuery;
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import static eu.software4you.utils.ArrayUtils.concat;
+import static eu.software4you.ulib.core.api.utils.ArrayUtils.concat;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class Table implements eu.software4you.database.sql.Table {
+public abstract class Table implements eu.software4you.ulib.core.api.database.sql.Table {
     protected final SqlDatabase sql;
     @Getter
     protected final String name;

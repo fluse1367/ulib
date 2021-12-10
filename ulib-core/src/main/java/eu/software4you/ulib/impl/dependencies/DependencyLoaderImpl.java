@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.dependencies.DependencyLoader;
-import eu.software4you.reflect.Parameter;
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.reflect.Parameter;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.Agent;
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;

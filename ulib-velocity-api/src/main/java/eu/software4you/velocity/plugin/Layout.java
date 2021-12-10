@@ -1,6 +1,6 @@
 package eu.software4you.velocity.plugin;
 
-import eu.software4you.configuration.yaml.ExtYamlSub;
+import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;

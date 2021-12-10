@@ -1,6 +1,6 @@
 package eu.software4you.spigot.mappings;
 
-import eu.software4you.utils.ArrayUtils;
+import eu.software4you.ulib.core.api.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

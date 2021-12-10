@@ -1,11 +1,11 @@
 package eu.software4you.ulib;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.ConversionPolicy;
-import eu.software4you.dependencies.DependencyLoader;
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.configuration.ConversionPolicy;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
-import eu.software4you.sql.SqlEngine;
+import eu.software4you.ulib.core.api.sql.SqlEngine;
 import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.impl.spigot.configuration.BukkitSerialisationAdapter;
 import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;

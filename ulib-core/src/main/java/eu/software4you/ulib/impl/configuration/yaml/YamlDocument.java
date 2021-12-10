@@ -1,9 +1,9 @@
 package eu.software4you.ulib.impl.configuration.yaml;
 
-import eu.software4you.common.Keyable;
-import eu.software4you.common.collection.Pair;
-import eu.software4you.configuration.ConversionPolicy;
-import eu.software4you.configuration.yaml.YamlSub;
+import eu.software4you.ulib.core.api.common.Keyable;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.configuration.ConversionPolicy;
+import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

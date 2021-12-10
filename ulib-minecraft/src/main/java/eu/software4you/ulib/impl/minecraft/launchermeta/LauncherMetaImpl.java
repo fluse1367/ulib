@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.minecraft.launchermeta;
 
 import com.google.gson.JsonParser;
-import eu.software4you.http.HttpUtil;
+import eu.software4you.ulib.core.api.http.HttpUtil;
 import eu.software4you.ulib.Loader;
 import eu.software4you.ulib.inject.Impl;
 import eu.software4you.ulib.minecraft.launchermeta.LauncherMeta;

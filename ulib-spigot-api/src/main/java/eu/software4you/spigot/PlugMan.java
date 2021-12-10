@@ -1,6 +1,6 @@
 package eu.software4you.spigot;
 
-import eu.software4you.utils.FileUtils;
+import eu.software4you.ulib.core.api.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;

@@ -1,6 +1,6 @@
 package eu.software4you.ulib.minecraft.usercache;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.Await;
 import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;

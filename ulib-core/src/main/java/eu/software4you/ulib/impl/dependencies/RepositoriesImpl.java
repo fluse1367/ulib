@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.dependencies.Repositories;
-import eu.software4you.dependencies.Repository;
+import eu.software4you.ulib.core.api.dependencies.Repositories;
+import eu.software4you.ulib.core.api.dependencies.Repository;
 import eu.software4you.ulib.inject.Impl;
 import lombok.Getter;
 import org.eclipse.aether.repository.RemoteRepository;

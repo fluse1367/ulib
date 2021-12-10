@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.dependencies;
 
-import eu.software4you.dependencies.DependencyLoader;
-import eu.software4you.http.ChecksumFile;
-import eu.software4you.io.IOUtil;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.http.ChecksumFile;
+import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.ULib;
 import lombok.SneakyThrows;
 

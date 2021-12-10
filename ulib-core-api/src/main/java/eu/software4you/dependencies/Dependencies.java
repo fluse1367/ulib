@@ -1,12 +1,12 @@
-package eu.software4you.dependencies;
+package eu.software4you.ulib.core.api.dependencies;
 
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.Await;
 
 import java.io.File;
 import java.util.function.Consumer;
 
-import static eu.software4you.dependencies.Repositories.mavenCentral;
+import static eu.software4you.ulib.core.api.dependencies.Repositories.mavenCentral;
 
 /**
  * Loads libraries (from maven repositories).
@@ -78,7 +78,7 @@ public abstract class Dependencies {
      * @param repository the repository to search in
      * @param source     the class loader that should load the library
      * @see Repositories
-     * @see eu.software4you.transform.HookInjector
+     * @see eu.software4you.ulib.core.api.transform.HookInjector
      */
     public static void depend(String coords, Repository repository, ClassLoader source) {
         impl.depend0(coords, repository, source);
@@ -148,7 +148,7 @@ public abstract class Dependencies {
      * @param repository the repository to search in
      * @param source     the class loader that should load the library
      * @see Repositories
-     * @see eu.software4you.transform.HookInjector
+     * @see eu.software4you.ulib.core.api.transform.HookInjector
      */
     public static void depend(String coords, String testClass, Repository repository, ClassLoader source) {
         impl.depend0(coords, testClass, repository, source);

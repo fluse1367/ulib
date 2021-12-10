@@ -1,7 +1,7 @@
 package eu.software4you.ulib.impl.spigot.mappings;
 
-import eu.software4you.common.collection.Pair;
-import eu.software4you.common.collection.Triple;
+import eu.software4you.ulib.core.api.common.collection.Pair;
+import eu.software4you.ulib.core.api.common.collection.Triple;
 import eu.software4you.spigot.multiversion.Protocol;
 
 import java.util.ArrayList;

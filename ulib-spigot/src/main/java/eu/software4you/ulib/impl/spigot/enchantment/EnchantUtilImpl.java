@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.spigot.enchantment;
 
-import eu.software4you.math.MathUtils;
-import eu.software4you.reflect.Parameter;
-import eu.software4you.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.math.MathUtils;
+import eu.software4you.ulib.core.api.reflect.Parameter;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.spigot.enchantment.CustomEnchantment;
 import eu.software4you.spigot.enchantment.EnchantUtil;
 import eu.software4you.spigot.enchantment.EnchantmentRarity;
