@@ -161,15 +161,15 @@ subprojects {
     }
 
     jar {
-        manifest {
-            attributes 'Implementation-Title': project.name
-            attributes 'Implementation-Version': "${archiveVersion.get()}-${gitCommitHash()}"
-            attributes 'Specification-Version': archiveVersion.get()
-            attributes 'Implementation-Vendor': 'Software4You.eu'
-            attributes 'Built-By': System.getProperty("user.name")
-            attributes 'Build-Jdk': System.getProperty("java.version")
-            attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
-        }
+        manifest.attributes([
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': "${archiveVersion.get()}-${gitCommitHash()}",
+                'Specification-Version' : archiveVersion.get(),
+                'Implementation-Vendor' : 'Software4You.eu',
+                'Built-By'              : System.getProperty("user.name"),
+                'Build-Jdk'             : System.getProperty("java.version"),
+                'Created-By'            : 'Gradle ' + gradle.gradleVersion,
+        ])
     }
 
     configurations {

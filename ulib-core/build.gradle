@@ -19,9 +19,7 @@ dependencies {
 }
 
 jar {
-    manifest {
-        attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
-    }
+    manifest.attributes 'Main-Class': 'eu.software4you.ulib.Bootstrap'
 }
 
 //shadowing
