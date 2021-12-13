@@ -79,7 +79,8 @@ public final class DependenciesImpl extends Dependencies {
 
             @Override
             public void transferFailed(TransferEvent e) {
-                ULib.logger().finer(() -> String.format("[Dependencies] Download of %s failed.", e.getResource().getResourceName()));
+                ULib.logger().log(Level.FINER, e.getException(),
+                        () -> String.format("[Dependencies] Download of %s failed.", e.getResource().getResourceName()));
             }
         });
 
