@@ -27,6 +27,7 @@ ext {
     }
 }
 
+//noinspection GrUnnecessarySemicolon
 allprojects {
     // plugins
     {
@@ -68,7 +69,7 @@ allprojects {
         implementation {
             extendsFrom lib
         }
-    }
+    }; // <- for somewhat reason the build fails without this semicolon
 
 
     // dependencies
