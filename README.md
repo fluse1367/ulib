@@ -165,7 +165,7 @@ java -jar ulib-core-VERSION-lib.jar --launch my-application.jar --args "--mode::
 or this:
 
 ```shell
-java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
+java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.core.launch.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
 ```
 
 ## About Java 9+ / Javaagent
@@ -180,7 +180,7 @@ In order to allow this **on Java 9** (and higher) you need to set the system pro
 to `true` **within the command line**:
 
 ```shell
-java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
+java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.core.launch.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
 ```
 
 ---

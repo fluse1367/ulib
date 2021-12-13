@@ -55,18 +55,6 @@ public final class ULib {
     }
 
     /**
-     * Returns a singleton service provider.
-     *
-     * @param service the service base interface / class
-     * @param <S>     the service type
-     * @return the service provider
-     * @throws IllegalArgumentException if no service is loaded for the specified class
-     */
-    public static <S> ServiceLoader.Provider<S> provider(Class<S> service) throws IllegalArgumentException {
-        return impl.getProvider(service);
-    }
-
-    /**
      * Used to load this class. Alternatively you can use {@link Class#forName(String)}.
      */
     public static void init() {

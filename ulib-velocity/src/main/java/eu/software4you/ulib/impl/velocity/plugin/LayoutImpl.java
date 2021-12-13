@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.velocity.plugin;
 
-import eu.software4you.ulib.impl.configuration.yaml.YamlDocument;
+import eu.software4you.ulib.core.impl.configuration.yaml.YamlDocument;
 import eu.software4you.ulib.impl.minecraft.plugin.YamlLayout;
 import eu.software4you.ulib.inject.Factory;
 import eu.software4you.ulib.inject.Impl;

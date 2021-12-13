@@ -1,8 +1,8 @@
 package eu.software4you.ulib.impl.minecraft.plugin;
 
-import eu.software4you.ulib.impl.configuration.yaml.ExtYamlDocument;
-import eu.software4you.ulib.impl.configuration.yaml.YamlDocument;
-import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
+import eu.software4you.ulib.core.impl.configuration.yaml.ExtYamlDocument;
+import eu.software4you.ulib.core.impl.configuration.yaml.YamlDocument;
+import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.minecraft.plugin.Layout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

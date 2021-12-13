@@ -12,6 +12,21 @@ buildscript {
     }
 }
 
+ext {
+    gitCommitHash = { ->
+        try {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        } catch (Exception ignored) {
+            return "unknown"
+        }
+    }
+}
+
 allprojects {
     // plugins
     {
@@ -41,15 +56,45 @@ allprojects {
         version "$major.$minor.$patch${variation.isEmpty() ? '' : "-$variation"}"
     }
 
+    // lib including
+    configurations {
+        libOnly {
+
+        }
+        lib {
+            canBeResolved = true
+            extendsFrom libOnly
+        }
+        implementation {
+            extendsFrom lib
+        }
+    }
+
 
     // dependencies
     {
         repositories {
             mavenCentral()
+
         }
 
         dependencies {
             compileOnly 'org.jetbrains:annotations:22.0.0'
         }
     }
+
+    java {
+        sourceCompatibility = '17'
+    }
+
+    // manifest data
+    jar.manifest.attributes([
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': "${version}-${gitCommitHash()}",
+            'Specification-Version' : version,
+            'Implementation-Vendor' : 'Software4You.eu',
+            'Built-By'              : "${System.getProperty('os.name')} ${System.getProperty('os.version')}",
+            'Build-Jdk'             : "${System.getProperty('java.vendor')} ${System.getProperty('java.version')}",
+            'Created-By'            : "Gradle ${gradle.gradleVersion}",
+    ])
 }

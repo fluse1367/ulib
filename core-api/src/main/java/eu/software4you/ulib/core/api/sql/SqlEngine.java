@@ -301,10 +301,8 @@ public class SqlEngine {
 
     /* helper to load the driver libraries only when necessary */
     public abstract static class DriverLoader {
-        private static DriverLoader loader;
-
         private static void load(Driver driver) {
-            loader.load0(driver);
+            ULib.service(DriverLoader.class).load0(driver);
         }
 
         protected abstract void load0(Driver driver);

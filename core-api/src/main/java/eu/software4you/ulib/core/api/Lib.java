@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.api;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
@@ -84,14 +83,4 @@ public interface Lib {
      * @throws IllegalArgumentException if no service is loaded for the specified class
      */
     <S> S getService(Class<S> service) throws IllegalArgumentException;
-
-    /**
-     * Returns a singleton service provider.
-     *
-     * @param service the service base interface / class
-     * @param <S>     the service type
-     * @return the service provider
-     * @throws IllegalArgumentException if no service is loaded for the specified class
-     */
-    <S> ServiceLoader.Provider<S> getProvider(Class<S> service) throws IllegalArgumentException;
 }

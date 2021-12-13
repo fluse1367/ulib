@@ -1,6 +1,6 @@
 package eu.software4you.ulib.impl.spigot.configuration;
 
-import eu.software4you.ulib.impl.configuration.SerializationAdapters;
+import eu.software4you.ulib.core.impl.configuration.SerializationAdapters;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 

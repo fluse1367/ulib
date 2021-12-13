@@ -6,7 +6,7 @@ import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.spigot.plugin.ExtendedJavaPlugin;
 import eu.software4you.ulib.core.api.sql.SqlEngine;
-import eu.software4you.ulib.impl.configuration.yaml.YamlSerializer;
+import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.impl.spigot.configuration.BukkitSerialisationAdapter;
 import eu.software4you.ulib.impl.spigot.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.impl.spigot.usercache.MainUserCacheImpl;

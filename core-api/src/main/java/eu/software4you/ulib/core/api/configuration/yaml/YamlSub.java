@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.ServiceLoader;
 
 /**
  * Representation of a YAML-type configuration sub.
@@ -19,7 +20,10 @@ public interface YamlSub extends Sub {
      * @return the newly created sub
      */
     static ExtYamlSub newYaml() {
-        return ULib.provider(ExtYamlSub.class).get();
+        return ULib.service(Provider.class).get();
+    }
+
+    interface Provider extends ServiceLoader.Provider<ExtYamlSub> {
     }
 
     /**
