@@ -75,26 +75,27 @@ public class Extractor {
     private File extract(String name, File dir, String insideDir) {
         File file = new File(dir, name);
         String location = "META-INF/" + insideDir + "/" + name;
+        var en = jar.getEntry(location);
 
-        try (var in = jar.getInputStream(jar.getEntry(location))) {
+        var in = jar.getInputStream(en);
 
-            if (file.exists()) { // library already exists, check hash
-                if (getCRC32(in) == getCRC32(new FileInputStream(file)))
-                    return file; // same hash, skip extraction
-                in.reset();
-            }
-
-            // extract!
-            try (var out = new FileOutputStream(file, false)) {
-                byte[] buffer = new byte[1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
-                }
-                out.flush();
-            }
-
+        if (file.exists()) { // library already exists, check hash
+            if (getCRC32(in) == getCRC32(new FileInputStream(file)))
+                return file; // same hash, skip extraction
+            in.close();
+            in = jar.getInputStream(en);
         }
+
+        // extract!
+        try (var out = new FileOutputStream(file, false)) {
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            out.flush();
+        }
+
         return file;
     }
 
