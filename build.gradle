@@ -38,7 +38,7 @@ subprojects {
 
     // project meta settings
     {
-        def major = 2, minor = 1, patch = 0
+        def major = 3, minor = 0, patch = 0
         // evaluate variation
         String variation
         switch (ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase()) {

@@ -9,6 +9,8 @@ dependencies {
 }
 
 jar {
+    archiveBaseName.set 'ulib-loader'
+
     def mods = []
     children.each {
         dependsOn ":$it:jar"
