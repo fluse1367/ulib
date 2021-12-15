@@ -13,12 +13,9 @@ import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-final class DependencyLoaderImpl extends DependencyLoader {
+public final class DependencyLoaderImpl extends DependencyLoader {
     private final ClassLoaderHook hook = new ClassLoaderHook();
     private final DependencyInjector injector = new DependencyInjector(hook);
-
-    private DependencyLoaderImpl() {
-    }
 
     private boolean tryUrlLoad(File file, ClassLoader cl, boolean fallback, boolean fallbackWarn) {
         if (!(cl instanceof URLClassLoader)) {

@@ -8,10 +8,10 @@ import org.eclipse.aether.repository.RemoteRepository;
 import java.util.HashMap;
 import java.util.Map;
 
-final class RepositoriesImpl extends Repositories {
+public final class RepositoriesImpl extends Repositories {
     private final Map<String, Repo> repos = new HashMap<>();
 
-    private RepositoriesImpl() {
+    public RepositoriesImpl() {
         // cache default (common) repositories
         cache("central", "https://repo1.maven.org/maven2/");
         cache("jitpack", "https://jitpack.io");

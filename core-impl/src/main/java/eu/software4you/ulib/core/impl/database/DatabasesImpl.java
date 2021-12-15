@@ -5,8 +5,6 @@ import eu.software4you.ulib.core.api.database.Databases;
 import eu.software4you.ulib.core.api.database.sql.SqlDatabase;
 import eu.software4you.ulib.core.impl.database.sql.mysql.MySQLDatabase;
 import eu.software4you.ulib.core.impl.database.sql.sqlite.SQLiteDatabase;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -18,8 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringJoiner;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-final class DatabasesImpl extends Databases {
+public final class DatabasesImpl extends Databases {
     private static final Map<String, Class<? extends Database>> regs = new HashMap<>();
 
     static {

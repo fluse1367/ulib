@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-final class HookInjectorImpl extends eu.software4you.ulib.core.api.transform.HookInjector {
+public final class HookInjectorImpl extends eu.software4you.ulib.core.api.transform.HookInjector {
     private final Map<String, List<String>> injected = new ConcurrentHashMap<>(); // class -> methods
 
     public HookInjectorImpl() {
