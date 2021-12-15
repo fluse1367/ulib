@@ -36,7 +36,7 @@ jar {
     }
 
     manifest.attributes([
-            'Main-Class'             : 'eu.software4you.ulib.launch.Bootstrap',
+            'Main-Class'             : 'eu.software4you.ulib.loader.launch.Main',
             'Premain-Class'          : 'eu.software4you.ulib.loader.agent.AgentMain',
             'Agent-Class'            : 'eu.software4you.ulib.loader.agent.AgentMain',
             'Can-Redefine-Classes'   : true,

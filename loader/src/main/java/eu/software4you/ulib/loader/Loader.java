@@ -1,6 +1,5 @@
 package eu.software4you.ulib.loader;
 
-import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.loader.agent.AgentInstaller;
 import lombok.SneakyThrows;
 
@@ -10,14 +9,21 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 
 public class Loader {
-    public Loader() {
 
+    static {
+        load();
+    }
+
+    public static void $() {
+        // empty
     }
 
     @SneakyThrows
-    public void load() {
+    private static void load() {
         var files = new Extractor().extract();
-        var urls = Arrays.stream(files).map(this::toUrl).toArray(URL[]::new);
+        var urls = Arrays.stream(files)
+                .map(Loader::toUrl)
+                .toArray(URL[]::new);
 
         URLClassLoader classLoader = new URLClassLoader(urls);
 
@@ -25,11 +31,13 @@ public class Loader {
             new AgentInstaller().install();
         }
 
-        ULib.init();
+        Class.forName("eu.software4you.ulib.core.ULib", true, classLoader); // ulib init
+
+        // TODO: make ulib available to other classes: inject ulib loading code into other classloaders (transform parent classloader?)
     }
 
     @SneakyThrows
-    private URL toUrl(File f) {
+    private static URL toUrl(File f) {
         return f.toURI().toURL();
     }
 }

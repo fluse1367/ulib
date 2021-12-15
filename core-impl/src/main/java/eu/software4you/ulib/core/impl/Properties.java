@@ -2,15 +2,12 @@ package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.api.RunMode;
 import eu.software4you.ulib.core.api.common.Keyable;
-import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import lombok.SneakyThrows;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -27,7 +24,6 @@ public final class Properties {
     public final boolean UNSAFE_OPERATIONS;
     public final Level LOG_LEVEL;
     public final String BRAND;
-    public final List<Pair<String, String>> ADDITIONAL_LIBS = new ArrayList<>();
     public final boolean FORCE_SYNC;
 
     private final boolean clOverride;

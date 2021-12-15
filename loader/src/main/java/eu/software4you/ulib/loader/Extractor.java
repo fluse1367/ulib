@@ -1,15 +1,19 @@
 package eu.software4you.ulib.loader;
 
-import eu.software4you.ulib.core.api.utils.ChecksumUtils;
 import lombok.SneakyThrows;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public class Extractor {
 
+    private static final Pattern PATTERN = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
     private final File modsDir;
     private final File libsDir;
     private final JarFile jar;
@@ -34,13 +38,20 @@ public class Extractor {
     }
 
     @SneakyThrows
-    private String[] readManifest(String what) {
-        return jar.getManifest().getMainAttributes().getValue(what + "-Files").split(", ");
+    private Collection<String> readManifest(String what) {
+        var val = jar.getManifest().getMainAttributes().getValue(what + "-Files");
+        var matcher = PATTERN.matcher(val);
+        List<String> matches = new LinkedList<>();
+        while (matcher.find()) {
+            var match = matcher.group();
+            matches.add(match);
+        }
+        return matches;
     }
 
     public File[] extract() {
-        var f1 = extract("Module", "modules");
-        var f2 = extract("Library", "libs");
+        var f1 = extract("Module", "modules", modsDir);
+        var f2 = extract("Library", "libs", libsDir);
         var f = new File[f1.length + f2.length];
         System.arraycopy(f1, 0, f, 0, f1.length);
         System.arraycopy(f2, 0, f, f1.length, f2.length);
@@ -48,12 +59,13 @@ public class Extractor {
     }
 
     @SneakyThrows
-    public File[] extract(String what, String insideDir) {
-        String[] toExtract = readManifest(what);
-        File[] files = new File[toExtract.length];
+    public File[] extract(String what, String insideDir, File dir) {
+        var toExtract = readManifest(what);
+        File[] files = new File[toExtract.size()];
 
-        for (int i = 0; i < toExtract.length; i++) {
-            files[i] = extract(toExtract[i], libsDir, insideDir);
+        int i = 0;
+        for (var elem : toExtract) {
+            files[i++] = extract(elem, dir, insideDir);
         }
 
         return files;
@@ -67,7 +79,7 @@ public class Extractor {
         try (var in = jar.getInputStream(jar.getEntry(location))) {
 
             if (file.exists()) { // library already exists, check hash
-                if (ChecksumUtils.getCRC32(in) == ChecksumUtils.getCRC32(new FileInputStream(file)))
+                if (getCRC32(in) == getCRC32(new FileInputStream(file)))
                     return file; // same hash, skip extraction
                 in.reset();
             }
@@ -86,4 +98,17 @@ public class Extractor {
         return file;
     }
 
+    @SuppressWarnings("DuplicatedCode")
+    private static long getCRC32(InputStream in) throws IOException {
+        Checksum sum = new CRC32();
+
+        byte[] buff = new byte[1024];
+        int len;
+        while ((len = in.read(buff)) != -1) {
+            sum.update(buff, 0, len);
+        }
+        in.close();
+
+        return sum.getValue();
+    }
 }
