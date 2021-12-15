@@ -9,6 +9,7 @@ buildscript {
     }
     dependencies {
         classpath "io.freefair.gradle:lombok-plugin:6.3.0"
+        classpath "de.jjohannes.gradle:extra-java-module-info:0.9"
     }
 }
 
@@ -28,7 +29,7 @@ ext {
 }
 
 //noinspection GrUnnecessarySemicolon
-allprojects {
+subprojects {
     // plugins
     {
         apply plugin: 'java-library'
@@ -76,7 +77,6 @@ allprojects {
     {
         repositories {
             mavenCentral()
-
         }
 
         dependencies {

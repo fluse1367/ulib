@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.launch;
+package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.api.RunMode;
 import eu.software4you.ulib.core.api.common.Keyable;
@@ -7,14 +7,14 @@ import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.Validate;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
-public class Properties {
+public final class Properties {
     private static final Properties instance = new Properties();
 
     public final File DATA_DIR;
@@ -33,7 +33,7 @@ public class Properties {
     private final boolean clOverride;
     private YamlSub yaml;
 
-    RunMode MODE = RunMode.STANDALONE;
+    public RunMode MODE = RunMode.STANDALONE;
 
     @SneakyThrows
     private Properties() {
@@ -133,7 +133,7 @@ public class Properties {
     }
 
     private InputStream getCurrentConfig() {
-        return Validate.notNull(getClass().getResourceAsStream("/META-INF/coreconfig.yml"), "Configuration not found");
+        return Objects.requireNonNull(getClass().getResourceAsStream("/META-INF/coreconfig.yml"), "Configuration not found");
     }
 
     private String get(String yamlPath, String propsKey, String def) {

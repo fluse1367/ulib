@@ -1,11 +1,11 @@
 package eu.software4you.ulib.core.impl.dependencies;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.agent.Agent;
 import eu.software4you.ulib.core.api.dependencies.Dependencies;
 import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.dependencies.Repositories;
 import eu.software4you.ulib.core.api.dependencies.Repository;
+import eu.software4you.ulib.core.impl.Agent;
 import eu.software4you.ulib.core.impl.dependencies.RepositoriesImpl.Repo;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;

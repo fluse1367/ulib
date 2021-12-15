@@ -1,32 +1,19 @@
-package eu.software4you.ulib.core.launch;
+package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.agent.Agent;
-import eu.software4you.ulib.core.agent.AgentInstaller;
 import eu.software4you.ulib.core.api.Lib;
 import eu.software4you.ulib.core.api.RunMode;
 import eu.software4you.ulib.core.api.dependencies.Dependencies;
-import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.dependencies.Repositories;
-import eu.software4you.ulib.core.api.io.IOUtil;
-import eu.software4you.ulib.core.api.utils.ChecksumUtils;
-import eu.software4you.ulib.core.impl.UnsafeOperations;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,21 +31,10 @@ public final class LibImpl implements Lib {
     private static void clinit() {
         long started = System.currentTimeMillis();
 
-
-        try {
-            // load agent
-            AgentInstaller.install();
-            if (!Agent.available()) {
-                throw new IllegalStateException("Agent not loaded");
-            }
-
-            // load libraries
-            extractLibs().forEach(DependencyLoader::load);
-
-        } catch (IOException | URISyntaxException e) {
-            System.err.println("Unable to load libraries");
-            e.printStackTrace();
-            System.exit(1);
+        // init agent
+        Agent.init();
+        if (!Agent.available()) {
+            throw new IllegalStateException("Agent not loaded");
         }
 
         var lib = new LibImpl();
@@ -89,47 +65,6 @@ public final class LibImpl implements Lib {
                                  "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
                                  "Use this at your own risk!");
         }
-    }
-
-    private static Collection<File> extractLibs() throws IOException, URISyntaxException {
-        var dataDir = new File(System.getProperty("ulib.directory.main", ".ulib"), "lib");
-        if (!dataDir.exists())
-            if (!dataDir.mkdirs()) {
-                throw new IOException("Cannot create 'lib' directory!");
-            }
-
-        var coll = new ArrayList<File>();
-
-        // extract libraries
-        JarFile jar = new JarFile(new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
-
-        var it = jar.entries().asIterator();
-        while (it.hasNext()) {
-
-            var en = it.next();
-            var name = en.getName();
-
-            if (name.startsWith("libs/") && name.endsWith(".jar") && !en.isDirectory()) {
-                // cycle through all "libs/" .jar-files
-
-                var in = jar.getInputStream(en);
-                File file = new File(dataDir, "lib_" + name.substring(name.lastIndexOf("/") + 1));
-
-                coll.add(file);
-
-                // library already exists, check hash
-                if (file.exists()) {
-                    if (ChecksumUtils.getCRC32(in) == ChecksumUtils.getCRC32(new FileInputStream(file)))
-                        continue; // same hash, skip extraction
-                    in.reset();
-                }
-
-                // extract
-                IOUtil.write(in, new FileOutputStream(file, false));
-            }
-        }
-
-        return coll;
     }
 
     private final Properties properties;

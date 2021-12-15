@@ -1,0 +1,47 @@
+def children = ['core-api', 'core-impl']
+
+dependencies {
+    children.each {
+        implementation project(":$it")
+    }
+
+    implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+}
+
+jar {
+    def mods = []
+    children.each {
+        dependsOn ":$it:jar"
+
+        var project = project(":$it")
+        var f = ((org.gradle.jvm.tasks.Jar) project.tasks.jar).archiveFile.get().asFile
+        from(f.parentFile) {
+            include f.name
+            into 'META-INF/modules'
+        }
+        mods += f.name
+    }
+
+    def libs = []
+
+    rootProject.subprojects {
+        project.configurations.lib.resolvedConfiguration.resolvedArtifacts
+                .stream().map(ResolvedArtifact::getFile).each { f ->
+            from(f.parentFile) {
+                include f.name
+                into 'META-INF/libs'
+            }
+            libs += f.name
+        }
+    }
+
+    manifest.attributes([
+            'Main-Class'             : 'eu.software4you.ulib.launch.Bootstrap',
+            'Premain-Class'          : 'eu.software4you.ulib.loader.agent.AgentMain',
+            'Agent-Class'            : 'eu.software4you.ulib.loader.agent.AgentMain',
+            'Can-Redefine-Classes'   : true,
+            'Can-Retransform-Classes': true,
+            'Library-Files'          : libs,
+            'Module-Files'           : mods
+    ])
+}

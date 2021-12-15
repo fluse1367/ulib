@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.launch;
+package eu.software4you.ulib.loader.launch;
 
 import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import joptsimple.*;

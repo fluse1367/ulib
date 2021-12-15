@@ -10,12 +10,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public final class ReflectUtilImpl extends ReflectUtil {
-
-    private static final SecurityManager sec = new SecurityManager();
 
     @Override
     @SneakyThrows
@@ -94,7 +93,15 @@ public final class ReflectUtilImpl extends ReflectUtil {
         if (depth < 0)
             throw new IllegalArgumentException("Depth < 0 (" + depth + ")");
 
-        Class<?>[] stack = sec.getClassContext();
+
+        Class<?>[] stack = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                .walk(stream -> stream
+                        .map(StackWalker.StackFrame::getDeclaringClass)
+                        .toArray(Class[]::new)
+                );
+
+        if (true)
+            throw new UnsupportedOperationException("To be analyzed: " + Arrays.toString(stack));
 
         /*
         -2: [0] SecurityManager#getClassContext
@@ -113,13 +120,5 @@ public final class ReflectUtilImpl extends ReflectUtil {
     @Override
     protected Class<?> getCallerClass0(int depth) {
         return retrieveCallerClass(++depth);
-    }
-
-    private static class SecurityManager extends java.lang.SecurityManager {
-        @SuppressWarnings("rawtypes")
-        @Override
-        public Class[] getClassContext() {
-            return super.getClassContext();
-        }
     }
 }

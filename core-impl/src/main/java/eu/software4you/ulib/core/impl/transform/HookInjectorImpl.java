@@ -1,10 +1,10 @@
 package eu.software4you.ulib.core.impl.transform;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.agent.Agent;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.core.api.transform.Hook;
 import eu.software4you.ulib.core.api.transform.HookPoint;
+import eu.software4you.ulib.core.impl.Agent;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;

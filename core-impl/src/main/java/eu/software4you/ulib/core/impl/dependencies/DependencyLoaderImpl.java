@@ -1,10 +1,10 @@
 package eu.software4you.ulib.core.impl.dependencies;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.agent.Agent;
 import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.reflect.Parameter;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.impl.Agent;
 import lombok.SneakyThrows;
 
 import java.io.File;

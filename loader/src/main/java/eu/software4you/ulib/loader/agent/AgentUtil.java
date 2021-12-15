@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.agent;
+package eu.software4you.ulib.loader.agent;
 
 import lombok.SneakyThrows;
 

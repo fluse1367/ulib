@@ -1,7 +1,6 @@
 package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.launch.Properties;
 
 import java.util.function.Supplier;
 

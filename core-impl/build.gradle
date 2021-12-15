@@ -1,3 +1,5 @@
+apply plugin: "de.jjohannes.extra-java-module-info"
+
 dependencies {
     implementation project(':core-api')
 
@@ -9,7 +11,7 @@ dependencies {
     lib 'org.fusesource.jansi:jansi:2.4.0' // jansi (CLI/terminal support)
 
     // maven resolver
-    lib('org.apache.maven:maven-resolver-provider:3.8.1') {
+    lib('org.apache.maven:maven-resolver-provider:3.8.4') {
         exclude group: 'org.slf4j'
     }
     lib('org.apache.maven.resolver:maven-resolver-connector-basic:1.7.2') {
@@ -26,20 +28,10 @@ dependencies {
     }
 
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
 }
 
-repositories {
-    mavenCentral()
-}
-
-jar.manifest.attributes 'Main-Class': 'eu.software4you.ulib.core.launch.Bootstrap'
-
-tasks.withType(JavaCompile) {
-    //options.compilerArgs.addAll(['--module-path', configurations.lib.collect()])
-
-}
-
-compileJava {
-    //options.compilerArgs.addAll(["--add-module", "maven.resolver.provider"])
+extraJavaModuleInfo {
+    failOnMissingModuleInfo = false
+    automaticModule('javassist-3.28.0-GA.jar', 'javassist')
+    automaticModule('maven-resolver-provider-3.8.4.jar', 'maven.resolver.provider')
 }

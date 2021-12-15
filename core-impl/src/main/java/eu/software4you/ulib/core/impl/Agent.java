@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.agent;
+package eu.software4you.ulib.core.impl;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,9 +39,9 @@ public final class Agent {
     }
 
     @SneakyThrows
-    static void init(Consumer<Class<?>> transformClass,
-                     Consumer<ClassFileTransformer> addTransformer,
-                     Consumer<JarFile> appendJar) {
+    private static void init(Consumer<Class<?>> transformClass,
+                             Consumer<ClassFileTransformer> addTransformer,
+                             Consumer<JarFile> appendJar) {
         if (available())
             return;
         instance = new Agent(transformClass, addTransformer, appendJar);
