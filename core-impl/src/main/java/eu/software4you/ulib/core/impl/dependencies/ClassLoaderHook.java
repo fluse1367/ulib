@@ -14,7 +14,7 @@ import java.util.jar.JarFile;
 public final class ClassLoaderHook {
 
     // The register contains the acceptable classes and the respective class loader.
-    private final Map<ClassLoader, Pair<Collection<String>, DependencyClassLoader>> register = new HashMap<>();
+    private final Map<ClassLoader, Pair<Collection<String>, PublicClassLoader>> register = new HashMap<>();
 
     // registers a file to a classloader
     // inits an dependency class loader instance if necessary
@@ -25,7 +25,7 @@ public final class ClassLoaderHook {
         if (!register.containsKey(cl)) {
             // not known yet, init
             var classes = collectClasses(file);
-            var loader = new DependencyClassLoader(new URL[]{file.toURI().toURL()});
+            var loader = new PublicClassLoader(new URL[]{file.toURI().toURL()});
 
             register.put(cl, new Pair<>(classes, loader));
             return;
@@ -34,7 +34,7 @@ public final class ClassLoaderHook {
         // already known, only add file and classes
         var pair = register.get(cl);
         pair.getFirst().addAll(collectClasses(file));
-        pair.getSecond().addFile(file);
+        pair.getSecond().addURL(file.toURI().toURL());
     }
 
     // un-registers the classloader
@@ -64,8 +64,8 @@ public final class ClassLoaderHook {
         return classes;
     }
 
-    // shortcut to receive the dcl instance
-    private DependencyClassLoader loader(Object classLoader, String className) {
+    // shortcut to receive the pcl instance
+    private PublicClassLoader loader(Object classLoader, String className) {
         if (!(classLoader instanceof ClassLoader) || !register.containsKey(classLoader))
             return null;
 

@@ -106,7 +106,7 @@ final class HookInjector implements ClassFileTransformer {
                                       Object[] params = new Object[] {%s.class, %s, %s, %s, caller, "%s", %d, $args};
                                       Object callback = conRunHooks.accept((Object) params);
                                       
-                                      Boolean isReturning = (Boolean) funIsReturning.apply(callback);
+                                      boolean isReturning = (boolean) funIsReturning.apply(callback);
                                       if (isReturning) return%s;
                                     }""",
                             /*Hook call*/ returnType, returnValue, hasReturnValue, self, /*hookId*/ fullDesc, at,

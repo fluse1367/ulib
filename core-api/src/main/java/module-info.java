@@ -28,9 +28,9 @@ open module ulib.core.api {
     uses eu.software4you.ulib.core.api.configuration.yaml.YamlSub.Provider;
     uses eu.software4you.ulib.core.api.database.Databases;
     uses eu.software4you.ulib.core.api.database.sql.ColumnBuilder.Provider;
-    uses eu.software4you.ulib.core.api.dependencies.Repositories;
     uses eu.software4you.ulib.core.api.dependencies.Dependencies;
     uses eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+    uses eu.software4you.ulib.core.api.dependencies.Repositories;
     uses eu.software4you.ulib.core.api.http.HttpUtil;
     uses eu.software4you.ulib.core.api.reflect.ReflectUtil;
     uses eu.software4you.ulib.core.api.transform.HookInjector;

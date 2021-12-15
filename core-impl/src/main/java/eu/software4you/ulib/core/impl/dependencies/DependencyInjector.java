@@ -22,7 +22,7 @@ final class DependencyInjector {
     boolean acceptable(ClassLoader cl) {
         // no check for root CL bc it's abstract
         return cl != ClassLoader.getSystemClassLoader()
-               && !(cl instanceof DependencyClassLoader);
+               && !(cl instanceof PublicClassLoader);
     }
 
     // hooks into a classloader
@@ -67,7 +67,7 @@ final class DependencyInjector {
         Class<?> superclass;
 
         do {
-            if (cl == ClassLoader.class || cl == scl || cl == DependencyClassLoader.class) // do not hook into root CL, system CL or DCL
+            if (cl == ClassLoader.class || cl == scl || cl == PublicClassLoader.class) // do not hook into root CL, system CL or PCL
                 continue;
 
             Method m;
