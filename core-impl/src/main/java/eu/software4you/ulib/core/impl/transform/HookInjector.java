@@ -35,8 +35,7 @@ final class HookInjector implements ClassFileTransformer {
             ClassPool pool = new ClassPool(true);
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
-            pool.importPackage("java.lang");
-            pool.importPackage("java.util.function");
+            pool.importPackage("eu.software4you.ulib.supermodule.hooking");
 
 
             CtClass cc = pool.get(className);
@@ -95,22 +94,11 @@ final class HookInjector implements ClassFileTransformer {
                     int at = hookPoint.ordinal();
                     String src = String.format("""
                                     {
-                                      Object[] arr = (Object[]) System.getProperties().get("ulib.hook_callback_objects");
-                                      Consumer conRunHooks = (Consumer) arr[0];
-                                      Function funIsReturning = (Function) arr[1];
-                                      Function funGetReturnValue = (Function) arr[2];
-                                      
-                                      Supplier supGetCallerClass = (Supplier) arr[3];
-                                      Class caller = supGetCallerClass.get();
-                                      
-                                      Object[] params = new Object[] {%s.class, %s, %s, %s, caller, "%s", %d, $args};
-                                      Object callback = conRunHooks.accept((Object) params);
-                                      
-                                      boolean isReturning = (boolean) funIsReturning.apply(callback);
-                                      if (isReturning) return%s;
+                                      CallbackReference ref = new CallbackReference(%s.class, %s, %s, %s, "%s", %d, $args);
+                                      if (ref.isReturning()) return%s;
                                     }""",
                             /*Hook call*/ returnType, returnValue, hasReturnValue, self, /*hookId*/ fullDesc, at,
-                            /*return*/ hasReturnType ? " ($r) funGetReturnValue.apply(callback)" : ""
+                            /*return*/ hasReturnType ? " ($r) ref.getReturnValue()" : ""
                     );
 
                     logger.finest(() -> "Compiling:\n\t" + src.replace("\n", "\n\t"));

@@ -8,6 +8,7 @@ module ulib.core {
     requires jdk.attach;
 
     requires ulib.core.api;
+    requires ulib.supermodule;
     requires org.apache.commons.lang3;
     requires org.jetbrains.annotations;
 

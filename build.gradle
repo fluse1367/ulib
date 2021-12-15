@@ -90,7 +90,7 @@ subprojects {
 
     // manifest data
     jar.manifest.attributes([
-            'Implementation-Title'  : project.name,
+            'Implementation-Title'  : "ulib-${project.name}",
             'Implementation-Version': "${version}-${gitCommitHash()}",
             'Specification-Version' : version,
             'Implementation-Vendor' : 'Software4You.eu',

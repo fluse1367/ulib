@@ -2,6 +2,7 @@ apply plugin: "de.jjohannes.extra-java-module-info"
 
 dependencies {
     implementation project(':core-api')
+    implementation project(':super-module')
 
     lib 'org.javassist:javassist:3.28.0-GA' // java bytecode generator
     lib 'org.apache.commons:commons-lang3:3.12.0' // apache commons
