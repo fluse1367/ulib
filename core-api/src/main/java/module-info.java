@@ -23,4 +23,6 @@ open module ulib.core.api {
     exports eu.software4you.ulib.core.api.sql;
     exports eu.software4you.ulib.core.api.transform;
     exports eu.software4you.ulib.core.api.utils;
+
+    uses eu.software4you.ulib.core.api.Lib;
 }

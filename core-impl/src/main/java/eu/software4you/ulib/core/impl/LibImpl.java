@@ -28,7 +28,7 @@ public final class LibImpl implements Lib {
     private final String name;
     private final String nameOnly;
 
-    private LibImpl() {
+    public LibImpl() {
         // init agent
         Agent.init();
         if (!Agent.available()) {
@@ -120,7 +120,7 @@ public final class LibImpl implements Lib {
     @Override
     public <S> S getService(Class<S> service) throws IllegalArgumentException {
         if (!SERVICES.containsKey(service)) {
-            var loader = ServiceLoader.load(service);
+            var loader = ServiceLoader.load(service, getClass().getClassLoader());
             var first = loader.findFirst();
             if (first.isEmpty()) {
                 throw new IllegalArgumentException("No service provider found for " + service.getName());
