@@ -1,5 +1,5 @@
 rootProject.name = 'ulib-root'
-files('loader', 'core-api', 'core-impl').each {
+files('super-module', 'loader', 'core-api', 'core-impl').each {
     if (it.directory && new File(it, 'build.gradle').exists()) {
         include ":${it.name}"
     }

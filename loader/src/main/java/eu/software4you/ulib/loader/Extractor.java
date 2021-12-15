@@ -39,7 +39,7 @@ final class Extractor {
 
     @SneakyThrows
     private Collection<String> readManifest(String what) {
-        var val = jar.getManifest().getMainAttributes().getValue(what + "-Files");
+        var val = jar.getManifest().getMainAttributes().getValue(what);
         var matcher = PATTERN.matcher(val);
         List<String> matches = new LinkedList<>();
         while (matcher.find()) {
@@ -49,9 +49,13 @@ final class Extractor {
         return matches;
     }
 
+    File[] extractSuper() {
+        return extract("Super-Modules", modsDir);
+    }
+
     File[] extract() {
-        var f1 = extract("Module", modsDir);
-        var f2 = extract("Library", libsDir);
+        var f1 = extract("Module-Files", modsDir);
+        var f2 = extract("Library-Files", libsDir);
         var f = new File[f1.length + f2.length];
         System.arraycopy(f1, 0, f, 0, f1.length);
         System.arraycopy(f2, 0, f, f1.length, f2.length);

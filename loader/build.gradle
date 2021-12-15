@@ -8,32 +8,51 @@ dependencies {
     implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
 }
 
+//noinspection GrUnnecessarySemicolon
 jar {
     archiveBaseName.set 'ulib-loader'
 
-    def mods = []
-    children.each {
-        dependsOn ":$it:jar"
-
-        var project = project(":$it")
-        var f = ((org.gradle.jvm.tasks.Jar) project.tasks.jar).archiveFile.get().asFile
+    // include super module
+    def sMods = [];
+    {
+        dependsOn ':super-module:jar'
+        var f = ((org.gradle.jvm.tasks.Jar) project(':super-module').tasks.jar).archiveFile.get().asFile
         from(f.parentFile) {
             include f.name
             into 'META-INF/jars'
         }
-        mods += f.name
+        sMods += f.name
     }
 
-    def libs = []
 
-    rootProject.subprojects {
-        project.configurations.lib.resolvedConfiguration.resolvedArtifacts
-                .stream().map(ResolvedArtifact::getFile).each { f ->
+    // include ulib modules
+    def mods = [];
+    {
+        children.each {
+            dependsOn ":$it:jar"
+
+            var project = project(":$it")
+            var f = ((org.gradle.jvm.tasks.Jar) project.tasks.jar).archiveFile.get().asFile
             from(f.parentFile) {
                 include f.name
                 into 'META-INF/jars'
             }
-            libs += f.name
+            mods += f.name
+        }
+    }
+
+    // include libraries
+    def libs = [];
+    {
+        rootProject.subprojects {
+            project.configurations.lib.resolvedConfiguration.resolvedArtifacts
+                    .stream().map(ResolvedArtifact::getFile).each { f ->
+                from(f.parentFile) {
+                    include f.name
+                    into 'META-INF/jars'
+                }
+                libs += f.name
+            }
         }
     }
 
@@ -44,6 +63,7 @@ jar {
             'Can-Redefine-Classes'   : true,
             'Can-Retransform-Classes': true,
             'Library-Files'          : libs,
-            'Module-Files'           : mods
+            'Module-Files'           : mods,
+            'Super-Modules'          : sMods
     ])
 }

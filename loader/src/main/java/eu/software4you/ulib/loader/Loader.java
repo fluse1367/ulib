@@ -25,20 +25,30 @@ public class Loader extends URLClassLoader {
 
     @SneakyThrows
     private static void load() {
-        var files = new Extractor().extract();
+        // extraction
+        var extractor = new Extractor();
+        var files = extractor.extract();
+        var superFiles = extractor.extractSuper();
         var urls = Arrays.stream(files)
                 .map(Loader::toUrl)
                 .toArray(URL[]::new);
 
-        var parent = Loader.class.getClassLoader();
-        var loader = new Loader(urls, parent);
-
+        // agent init
         if (!System.getProperties().containsKey("ulib.javaagent")) {
             new AgentInstaller().install();
         }
 
         // ulib init
+        var parent = Loader.class.getClassLoader();
+        var loader = new Loader(urls, parent);
         loader.loadClass("eu.software4you.ulib.core.ULib");
+
+        // append super files to system classpath
+        var methodSysLoad = loader.loadClass("eu.software4you.ulib.core.api.dependencies.DependencyLoader")
+                .getMethod("sysLoad", File.class);
+        for (File file : superFiles) {
+            methodSysLoad.invoke(null, file);
+        }
 
         // publish ulib API to current class loader
         var cl = loader.loadClass("eu.software4you.ulib.core.impl.dependencies.DelegationInjector");
