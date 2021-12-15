@@ -30,7 +30,7 @@ final class UnsafeUtil {
         ChecksumFile cf = new ChecksumFile("SHA-1", null, root.getParentFile(),
                 root.getName(), Paths.get(request), dest -> generate(dest, url));
         cf.ensure();
-        DependencyLoader.load(cf.getFile(), UnsafeUtil.class.getClassLoader(), false);
+        DependencyLoader.load(cf.getFile(), UnsafeUtil.class.getClassLoader(), false, false);
     }
 
     @SneakyThrows

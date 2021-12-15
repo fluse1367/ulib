@@ -8,4 +8,6 @@ module ulib.loader {
     requires ulib.core.api;
     requires ulib.core;
     requires joptsimple;
+
+    opens eu.software4you.ulib.loader to ulib.core;
 }

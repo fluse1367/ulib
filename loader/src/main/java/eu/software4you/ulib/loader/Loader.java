@@ -8,10 +8,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 
-public class Loader {
+public class Loader extends URLClassLoader {
 
     static {
         load();
+    }
+
+    private Loader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
     }
 
     public static void $() {
@@ -25,7 +29,7 @@ public class Loader {
                 .map(Loader::toUrl)
                 .toArray(URL[]::new);
 
-        URLClassLoader classLoader = new URLClassLoader(urls);
+        var classLoader = new Loader(urls, Loader.class.getClassLoader());
 
         if (!System.getProperties().containsKey("ulib.javaagent")) {
             new AgentInstaller().install();
@@ -39,5 +43,10 @@ public class Loader {
     @SneakyThrows
     private static URL toUrl(File f) {
         return f.toURI().toURL();
+    }
+
+    @Override
+    public void addURL(URL url) { // <- make ulib able to add other jars later on
+        super.addURL(url);
     }
 }

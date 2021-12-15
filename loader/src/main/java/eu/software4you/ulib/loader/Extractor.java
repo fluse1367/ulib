@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-public class Extractor {
+final class Extractor {
 
     private static final Pattern PATTERN = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
     private final File modsDir;
@@ -19,7 +19,7 @@ public class Extractor {
     private final JarFile jar;
 
     @SneakyThrows
-    public Extractor() {
+    Extractor() {
         var dataDir = new File(System.getProperty("ulib.directory.main", ".ulib"));
         this.modsDir = new File(dataDir, "modules");
         this.libsDir = new File(modsDir, "libs");
@@ -49,7 +49,7 @@ public class Extractor {
         return matches;
     }
 
-    public File[] extract() {
+    File[] extract() {
         var f1 = extract("Module", "modules", modsDir);
         var f2 = extract("Library", "libs", libsDir);
         var f = new File[f1.length + f2.length];
