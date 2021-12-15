@@ -50,8 +50,8 @@ final class Extractor {
     }
 
     File[] extract() {
-        var f1 = extract("Module", "modules", modsDir);
-        var f2 = extract("Library", "libs", libsDir);
+        var f1 = extract("Module", modsDir);
+        var f2 = extract("Library", libsDir);
         var f = new File[f1.length + f2.length];
         System.arraycopy(f1, 0, f, 0, f1.length);
         System.arraycopy(f2, 0, f, f1.length, f2.length);
@@ -59,22 +59,22 @@ final class Extractor {
     }
 
     @SneakyThrows
-    public File[] extract(String what, String insideDir, File dir) {
+    public File[] extract(String what, File dir) {
         var toExtract = readManifest(what);
         File[] files = new File[toExtract.size()];
 
         int i = 0;
         for (var elem : toExtract) {
-            files[i++] = extract(elem, dir, insideDir);
+            files[i++] = extractSingle(elem, dir);
         }
 
         return files;
     }
 
     @SneakyThrows
-    private File extract(String name, File dir, String insideDir) {
+    private File extractSingle(String name, File dir) {
         File file = new File(dir, name);
-        String location = "META-INF/" + insideDir + "/" + name;
+        String location = "META-INF/jars/" + name;
         var en = jar.getEntry(location);
 
         var in = jar.getInputStream(en);
