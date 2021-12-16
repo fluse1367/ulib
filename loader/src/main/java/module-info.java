@@ -9,5 +9,5 @@ module ulib.loader {
     requires ulib.core;
     requires joptsimple;
 
-    opens eu.software4you.ulib.loader to ulib.core;
+    opens eu.software4you.ulib.loader.install;
 }

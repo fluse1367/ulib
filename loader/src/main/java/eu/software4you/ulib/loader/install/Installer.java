@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
@@ -12,8 +14,12 @@ import java.util.stream.Stream;
 
 public final class Installer {
 
+    private static final Installer instance;
+    private final Set<ClassLoader> published = new HashSet<>();
+
     static {
-        new Installer().install();
+        instance = new Installer();
+        instance.install();
     }
 
     private final ClassLoader loaderParent;
@@ -28,10 +34,19 @@ public final class Installer {
         this.dependencyProvider = new DependencyProvider();
     }
 
+    @SneakyThrows
     private void install() {
         extract();
         load();
-        publish();
+
+        // prevent circularity error by loading ReflectUtil before publishing
+        {
+            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loader);
+            classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
+            classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
+        }
+
+        publish(loaderParent);
     }
 
     private void extract() {
@@ -68,20 +83,26 @@ public final class Installer {
     }
 
     @SneakyThrows
-    private void publish() {
-        // prevent circularity error by loading ReflectUtil beforehand
-        {
-            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loader);
-            classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
-            classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
-        }
+    private void publish(ClassLoader target) {
+        if (published.contains(target))
+            throw new IllegalArgumentException("The uLib API has already been published to " + target);
 
-        // publish ulib API to current class loader
         var classInjector = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationInjector", true, loader);
         var methodInjectDelegation = classInjector.getMethod("injectDelegation", ClassLoader.class, ClassLoader.class, Predicate.class);
 
         Predicate<String> filter = name -> name.startsWith("eu.software4you.ulib.core.api.") || name.equals("eu.software4you.ulib.core.ULib");
-        methodInjectDelegation.invoke(null, /*target*/loaderParent, /*delegate*/loader, filter);
+        methodInjectDelegation.invoke(null, /*target*/target, /*delegate*/loader, filter);
+        published.add(target);
+    }
+
+    /**
+     * Publishes the uLib API to a class loader by injecting code into it.
+     *
+     * @param target the class loader to publish the API to
+     * @throws IllegalArgumentException If the uLib API has already been published to that class loader
+     */
+    public static void publishTo(ClassLoader target) throws IllegalArgumentException {
+        instance.publish(target);
     }
 
 
