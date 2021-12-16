@@ -9,6 +9,10 @@ import java.util.Collection;
 
 public final class ComponentLoader extends URLClassLoader {
 
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
     @SneakyThrows
     private static URL toUrl(File f) {
         return f.toURI().toURL();
