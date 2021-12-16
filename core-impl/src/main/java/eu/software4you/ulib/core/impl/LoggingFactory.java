@@ -104,11 +104,13 @@ class LoggingFactory {
     }
 
     private String simpleFormat(LogRecord record) {
-        long tid = record.getThreadID();
+        long tid = record.getLongThreadID();
+        var level = record.getLevel();
         String thread = tid == LibImpl.MAIN_THREAD_ID ? "main" : ManagementFactory.getThreadMXBean().getThreadInfo(tid).getThreadName();
-        String prefix = String.format("[%s/%s]", instance.getNameOnly(), thread);
-        return String.format("%-12s %tT %s: %s", prefix,
-                new Date(record.getMillis()), record.getLevel().getName(), record.getMessage());
+        return String.format("[%s/%s] [%tT] %s%s: %s", instance.getNameOnly(), thread,
+                new Date(record.getMillis()),
+                level == Level.INFO ? "" : "[%s %s] ".formatted(record.getSourceClassName(), record.getSourceMethodName()),
+                level.getName(), record.getMessage());
     }
 
     private String getStackTrace(Throwable throwable) {
