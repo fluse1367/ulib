@@ -23,7 +23,7 @@ See "Included Software" (at the bottom) for copyright and license notice of incl
   [ProtocolSupport](https://www.spigotmc.org/resources/protocolsupport.7201).
 
 
-- Minimum Java version is 16.
+- Minimum Java version is 17.
 
 
 - When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io)
@@ -38,13 +38,13 @@ See "Included Software" (at the bottom) for copyright and license notice of incl
   or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
 
-- When launching uLib for the first time (or if the `libraries`/`cache` folder was removed), it will download a few of
-  dependencies/libraries (about 2 MB).
+- When launching uLib for the first time (or if the respective caching folder was removed), it will download a few of
+  dependencies/libraries.
 
 ### Disclaimer
 
-Also, note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The developer(s) /
-contributors of this project do not take any responsibility/liability in any way.
+Note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The contributors of this
+project do not take any responsibility/liability in any way.
 
 
 ---
@@ -125,21 +125,27 @@ dependencies {
 
 </details>
 
-## Main Entry Class
+## The uLib-loader
 
-Before you do anything with uLib, get sure the main class is loaded.
+Before you do anything with uLib, get sure you load the library with its loader.
 
-When using the one of the Plugins implementations, you don't have to take care of loading uLib. Only put it in the
-respective `plugins` folder, but don't forget to declare uLib as dependency!
+When using the one of the Plugins implementations, you don't have to take care of loading it; It's enough to put the
+loader in the respective `plugins` folder, but don't forget to declare uLib as dependency!
 
-When using the standalone implementation, you have to load the main class by yourself. There are several ways how to do
-this.
+When using the standalone implementation, you have to load the library class by yourself. There are several ways how to
+do this.
 
-If you put uLib into your classpath, you can just call `ULib.init();`. Just make sure calling this **before** you do
-something with uLib.
+If you put uLib into your classpath, you can simply load the `Installer` class from the loader:
 
-Another way is to use the launch function. For this, run uLib with java directly. Supply either the
-argument `--launch /path/to/jar/file` (uLib will lookup the main class in the manifest file)
+```java
+Class.forName("eu.software4you.ulib.loader.install.Installer");
+```
+
+Just make sure loading the installer **before** you do _anything_ with uLib (this includes loading one of ulib's
+classes!).
+
+Another way is to use the launch function. For this, run the loader directly. Supply either the
+argument `--launch /path/to/application.jar` (the loader will look up the main class in the manifest file)
 or `--main path.to.MainClass` (here the jar file with this class have to be already in the classpath).
 
 With both options you can also specify arguments that should be passed to the main class, use `:::` as argument
@@ -159,28 +165,34 @@ program like this:
 All in all, your command could look like this:
 
 ```shell
-java -jar ulib-core-VERSION-lib.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
+java -jar ulib-loader-VERSION.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
 ```
 
 or this:
 
 ```shell
-java -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.launch.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
+java -cp ulib-loader-VERSION.jar:my-application.jar eu.software4you.ulib.loader.launch.Main --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
 ```
 
-## About Java 9+ / Javaagent
+## About the Javaagent
 
-If you are using Java 9 or higher and the standalone implementation, **uLib might fail to dynamically load any
-dependencies/libraries**. This is due to the restrictions made from Java 9 onwards.
+ULib realizes several things utilizing a so-called Javaagent. This agent is **crucial** for the library to run.  
+In fact, the loader even depends on it, to properly load it. **Without this agent, uLib will fail in every extend.**
 
-If you still need these functionalities (e.g. the `Dependencies` class), you need to allow uLib to load its so-called
-Javaagent.
+By default, the loader uses a workaround method to self-initialize the Javaagent, however this should be avoided it
+possible.
 
-In order to allow this **on Java 9** (and higher) you need to set the system property `jdk.attach.allowAttachSelf`
-to `true` **within the command line**:
+The best solution is to supply the loader as javaagent to the JVM (with an additional flag):
 
 ```shell
-java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-application.jar eu.software4you.ulib.launch.Bootstrap --main my.application.Main --args "--mode:::simple:::--name:::John Doe" 
+java -javaagent:path/to/ulib-loader.jar ...
+```
+
+If the solution above does not work for you, another thing you can try is to allow the application to self-attach a
+javaagent (again, with an additional flag):
+
+```shell
+java -Djdk.attach.allowAttachSelf=true ... 
 ```
 
 ---
@@ -195,11 +207,10 @@ java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-applicat
    ```shell
    cd ulib
    ```
-3. <details><summary><b>Switch to the <code>develop</code> branch</b> (Optional)</summary>
-   You only need to do this if you want the most recent (unstable) changes.
+3. <details><summary><b>Switch to another branch</b> (Optional)</summary>
 
    ```shell
-   git checkout develop
+   git checkout BRANCH_NAME
    ```
    </details>
 
@@ -209,36 +220,16 @@ java -Djdk.attach.allowAttachSelf=true -cp ulib-core-VERSION-lib.jar:my-applicat
    Linux (bash):
 
    ```shell
-   ./gradlew build shadowJar
+   ./gradlew build
    ```
 
    Windows (cmd):
 
    ```shell
-   ./gradlew.bat build shadowJar
+   ./gradlew.bat build
    ```
 
-    <details><summary>Details</summary>
-
-   -> `build` builds the apis and unready jar files:
-
-    - `ulib-core-VERSION.jar`
-    - `ulib-core-api-VERSION.jar`
-    - `ulib-velocity-VERSION.jar`
-    - `ulib-velocity-api-VERSION.jar`
-    - `ulib-bungeecord-VERSION.jar`
-    - `ulib-bungeecord-api-VERSION.jar`
-    - `ulib-spigot-VERSION.jar`
-    - `ulib-spigot-api-VERSION.jar`
-
-   -> `shadowJar` builds the ready-for-use jar files:
-
-    - `ulib-core-VERSION-lib.jar`
-    - `ulib-velocity-VERSION-plugin.jar`
-    - `ulib-bungeecord-VERSION-plugin.jar`
-    - `ulib-spigot-VERSION-plugin.jar`
-
-    </details>
+   You will find the loader in `loader/build/libs/`.
 
 
 5. <details><summary><b>Build the javadocs webpage</b> (Optional)</summary>
@@ -282,41 +273,5 @@ The following 3rd-party software is included within this project:
       Class ([click](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/cloudnet-common/src/main/java/de/dytanic/cloudnet/common/collection/Pair.java))
     - Triple
       Class ([click](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/cloudnet-common/src/main/java/de/dytanic/cloudnet/common/collection/Triple.java))
-
-The following 3rd-party software is not included within the source code of this project, but redistributed within the
-shadowed build artifacts:
-
-- Commons Lang ([click](https://github.com/apache/commons-lang/tree/LANG_3_8_1)) (Copyright (c)
-  2021 [The Apache Software Foundation](https://github.com/apache), licensed under
-  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)), version 3.8.1
-- [Maven Artifact Resolver](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2) (Copyright (c)
-  2021 [The Apache Software Foundation](https://github.com/apache), licensed under
-  the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)):
-    - Provider ([click](https://github.com/apache/maven/tree/maven-3.8.1/maven-resolver-provider)) version 3.8.1
-    - Connector
-      Basic ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-connector-basic))
-      version 1.6.2
-    - Transport
-      HTTP ([click](https://github.com/apache/maven-resolver/tree/maven-resolver-1.6.2/maven-resolver-transport-http))
-      version 1.6.2
-- Guava ([click](https://github.com/google/guava/tree/v27.0.1)) Copyright (c) 2018 [Google](https://github.com/google),
-  licensed under the [Apache License 2.0](https://github.com/google/guava/blob/v27.0.1/COPYING), version 27.0.1
-- Gson ([click](https://github.com/google/gson/tree/gson-parent-2.8.6)) Copyright (c)
-  2019 [Google](https://github.com/google), licensed under
-  the [Apache License 2.0](https://github.com/google/gson/blob/gson-parent-2.8.6/LICENSE), version 2.8.6
-- SLF4J-Simple ([click](https://github.com/qos-ch/slf4j/tree/v_1.7.32)) Copyright (c)
-  2019 [QOS](https://github.com/qos-ch), licensed under the
-  [MIT license](https://github.com/qos-ch/slf4j/blob/v_1.7.32/LICENSE.txt), version 1.7.32
-- SnakeYAML ([click](https://github.com/asomov/snakeyaml/tree/b28f0b4d87c60ef4dd2aed9188a4c7f7fbb0ae66)) Copyright (c)
-  2018 [Andrey Somov](https://github.com/asomov), licensed under the
-  [Apache License 2.0](https://github.com/asomov/snakeyaml/blob/b28f0b4d87c60ef4dd2aed9188a4c7f7fbb0ae66/LICENSE.txt),
-  version 1.28
-- Jansi ([click](https://github.com/fusesource/jansi/tree/jansi-project-1.18)) Copyright (c)
-  2019 [FuseSource](https://github.com/fusesource), licensed under
-  the [Apache License 2.0](https://github.com/fusesource/jansi/blob/jansi-project-1.18/license.txt), version 1.18
-- Javassist ([click](https://github.com/jboss-javassist/javassist/tree/rel_3_27_0_ga)) Copyright (c)
-  2020 [Shigeru Chiba](https://github.com/jboss-javassist), used under the
-  the [Apache License 2.0](https://github.com/jboss-javassist/javassist/blob/rel_3_27_0_ga/License.html) (see bottom),
-  version 3.27.0-GA
 
 ---
