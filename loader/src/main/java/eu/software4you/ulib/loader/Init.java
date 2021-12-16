@@ -4,24 +4,25 @@ import eu.software4you.ulib.loader.agent.AgentInstaller;
 import lombok.SneakyThrows;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 public class Init {
 
     static {
-        var me = new Init();
-        me.extract();
-        me.load();
-        me.publish();
+        new Init().doInit();
     }
 
     private final ClassLoader loaderParent;
     private final Extractor extractor;
 
-    private File[] files, superFiles;
+    private File[] filesLibrary, filesModule, filesSuper;
     private Loader loader;
+    private ModuleLayer layer;
     private Class<?> classULib;
 
     private Init() {
@@ -29,9 +30,38 @@ public class Init {
         this.extractor = new Extractor();
     }
 
+    private void doInit() {
+        extract();
+        initClassLoader();
+        load();
+        publish();
+    }
+
     private void extract() {
-        this.files = extractor.extract();
-        this.superFiles = extractor.extractSuper();
+        this.filesLibrary = extractor.extractLibrary();
+        this.filesModule = extractor.extractModule();
+        this.filesSuper = extractor.extractSuper();
+    }
+
+    private void initClassLoader() {
+        var files = Stream.concat(Stream.of(filesLibrary), Stream.of(filesModule)).toList();
+        var paths = Stream.of(
+                        Stream.of(filesLibrary),
+                        Stream.of(filesModule),
+                        Stream.of(filesSuper)
+                ).flatMap(s -> s.map(File::toPath))
+                .toList();
+
+        Collection<String> blackList = Arrays.asList(
+                "maven.repository.metadata",
+                "maven.model.builder"
+        );
+
+        var cont = Loader.withModules(files, paths,
+                name -> !blackList.contains(name), loaderParent);
+
+        this.loader = cont.loader;
+        this.layer = cont.layer;
     }
 
     @SneakyThrows
@@ -43,13 +73,14 @@ public class Init {
         var appendToBootstrapClassLoaderSearch = System.getProperties().remove("ulib.loader.javaagent");
 
         // ulib init
-        loader = new Loader(files, loaderParent);
-        classULib = loader.loadClass("eu.software4you.ulib.core.ULib");
+        var mLoader = layer.findLoader("ulib.core.api");
+        classULib = Class.forName("eu.software4you.ulib.core.ULib", true, mLoader);
+        System.out.println("ULib main class loaded: " + classULib + " module " + classULib.getModule());
 
         // append super files to system classpath
         var methodSysLoad = loader.loadClass("eu.software4you.ulib.core.api.dependencies.DependencyLoader")
                 .getMethod("sysLoad", File.class);
-        for (File file : superFiles) {
+        for (File file : filesSuper) {
             methodSysLoad.invoke(null, file);
             ((Consumer<JarFile>) appendToBootstrapClassLoaderSearch).accept(new JarFile(file));
         }

@@ -14,7 +14,7 @@ public final class ULib {
 
     // clinit
     static {
-        var loader = ServiceLoader.load(Lib.class, ULib.class.getClassLoader());
+        var loader = ServiceLoader.load(Lib.class, ULib.class.getClassLoader().getParent());
         var first = loader.findFirst();
         if (first.isEmpty())
             throw new IllegalStateException();
