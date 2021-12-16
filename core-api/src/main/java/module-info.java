@@ -4,7 +4,7 @@ open module ulib.core.api {
 
     requires java.logging;
     requires java.sql;
-    requires org.apache.commons.lang3;
+    requires org.apache.httpcomponents.httpclient;
 
     exports eu.software4you.ulib.core;
     exports eu.software4you.ulib.core.api;

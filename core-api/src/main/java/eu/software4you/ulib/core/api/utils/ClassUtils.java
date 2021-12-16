@@ -2,7 +2,6 @@ package eu.software4you.ulib.core.api.utils;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,13 +192,13 @@ public class ClassUtils {
         Class<?> current = clazz;
         do {
             var cl = current;
-            ULib.logger().finer(() -> String.format("Searching for %s(%s) in %s", methodName, ArrayUtils.toString(parameterTypes), cl));
+            ULib.logger().finer(() -> String.format("Searching for %s(%s) in %s", methodName, Arrays.toString(parameterTypes), cl));
             try {
                 return current.getDeclaredMethod(methodName, parameterTypes);
             } catch (NoSuchMethodException ignored) {
             }
         } while ((current = current.getSuperclass()) != null);
-        ULib.logger().finer(() -> String.format("%s(%s) not found at all", methodName, ArrayUtils.toString(parameterTypes)));
+        ULib.logger().finer(() -> String.format("%s(%s) not found at all", methodName, Arrays.toString(parameterTypes)));
         return null;
     }
 }

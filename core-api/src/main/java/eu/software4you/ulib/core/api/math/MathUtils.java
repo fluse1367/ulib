@@ -1,7 +1,5 @@
 package eu.software4you.ulib.core.api.math;
 
-import org.apache.commons.lang3.Validate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,19 +30,10 @@ public class MathUtils {
     public static List<Coordinate2D> getCircleCoordinates(double radius, int amount, double starting) {
 
         List<Coordinate2D> coordinates = new ArrayList<>();
-        /*for (double d = radius * -1; d <= radius; d += (radius / (double) amount) * 4) {
-
-            Coordinate2D positive = getCircleCoordinateFromKnownX(radius, d);
-            coordinates.add(positive);
-
-            if (positive.getX() == 0)
-                continue;
-
-            Coordinate2D negative = new Coordinate2D(positive.getX(), positive.getY() * -1d);
-            coordinates.add(negative);
-        }*/
-        Validate.isTrue(radius > 0, "Cannot calculate circle with negative radius");
-        Validate.isTrue(amount > 0, "Cannot calculate circle with negative amount of points");
+        if (radius <= 0)
+            throw new IllegalArgumentException("Cannot calculate circle with negative radius (" + radius + ")");
+        if (amount <= 0)
+            throw new IllegalArgumentException("Cannot calculate circle with negative amount of points (" + amount + ")");
 
         double degreeDistance = 360d / (double) amount;
         for (double degree = starting; degree < starting + 360d; degree += degreeDistance) {
