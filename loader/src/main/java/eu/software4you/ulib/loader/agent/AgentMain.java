@@ -29,6 +29,9 @@ public final class AgentMain {
                 (Consumer<ClassFileTransformer>) agent::addTransformer,
                 (Consumer<JarFile>) agent::appendJar
         });
+        System.getProperties().put("ulib.loader.javaagent",
+                (Consumer<JarFile>) inst::appendToBootstrapClassLoaderSearch
+        );
     }
 
     @SneakyThrows

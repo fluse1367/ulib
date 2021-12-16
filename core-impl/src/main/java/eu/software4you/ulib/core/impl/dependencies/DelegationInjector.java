@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.impl.dependencies;
 
+import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.transform.Callback;
 import eu.software4you.ulib.core.api.transform.HookInjector;
 import eu.software4you.ulib.core.api.transform.HookPoint;
@@ -26,6 +27,7 @@ public class DelegationInjector {
         this.delegation = delegation;
         this.hookFindClass = DelegationHook.class.getMethod("findClass", String.class, Callback.class);
         this.hookLoadClass = DelegationHook.class.getMethod("loadClass", String.class, boolean.class, Callback.class);
+        ULib.logger().finer("Delegation Injector init with delegation hook: " + delegation);
     }
 
     public void inject(Class<? extends ClassLoader> clazz) {

@@ -7,7 +7,9 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.jar.JarFile;
 
 public class Loader extends URLClassLoader {
 
@@ -37,17 +39,26 @@ public class Loader extends URLClassLoader {
         if (!System.getProperties().containsKey("ulib.javaagent")) {
             new AgentInstaller().install();
         }
+        var appendToBootstrapClassLoaderSearch = System.getProperties().remove("ulib.loader.javaagent");
 
         // ulib init
         var parent = Loader.class.getClassLoader();
         var loader = new Loader(urls, parent);
-        loader.loadClass("eu.software4you.ulib.core.ULib");
+        var classULib = loader.loadClass("eu.software4you.ulib.core.ULib");
 
         // append super files to system classpath
         var methodSysLoad = loader.loadClass("eu.software4you.ulib.core.api.dependencies.DependencyLoader")
                 .getMethod("sysLoad", File.class);
         for (File file : superFiles) {
             methodSysLoad.invoke(null, file);
+            ((Consumer<JarFile>) appendToBootstrapClassLoaderSearch).accept(new JarFile(file));
+        }
+
+        // prevent circularity error by loading ReflectUtil beforehand
+        {
+            Class<?> classReflectUtil = loader.loadClass("eu.software4you.ulib.core.api.reflect.ReflectUtil");
+            classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
+            classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
         }
 
         // publish ulib API to current class loader
