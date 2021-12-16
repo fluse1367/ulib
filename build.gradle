@@ -108,9 +108,7 @@ subprojects {
         lazyLib = { coords, name ->
             replacementTokens.putIfAbsent(new String("maven.$name"), new String("$coords"))
             dependencies {
-                implementation(coords) {
-                    transitive(false)
-                }
+                implementation(coords)
             }
         }
     }

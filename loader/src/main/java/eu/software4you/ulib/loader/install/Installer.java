@@ -1,55 +1,59 @@
-package eu.software4you.ulib.loader;
+package eu.software4you.ulib.loader.install;
 
 import eu.software4you.ulib.loader.agent.AgentInstaller;
 import lombok.SneakyThrows;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
-public class Init {
+public final class Installer {
 
     static {
-        new Init().doInit();
+        new Installer().install();
     }
 
     private final ClassLoader loaderParent;
-    private final Extractor extractor;
+    private final DependencyProvider dependencyProvider;
 
-    private File[] filesLibrary, filesModule, filesSuper;
-    private Loader loader;
+    private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
+    private ComponentLoader loader;
     private Class<?> classULib;
 
-    private Init() {
+    private Installer() {
         this.loaderParent = getClass().getClassLoader();
-        this.extractor = new Extractor();
+        this.dependencyProvider = new DependencyProvider();
     }
 
-    private void doInit() {
+    private void install() {
         extract();
         load();
         publish();
     }
 
     private void extract() {
-        this.filesLibrary = extractor.extractLibrary();
-        this.filesModule = extractor.extractModule();
-        this.filesSuper = extractor.extractSuper();
+        this.filesLibrary = dependencyProvider.extractLibrary();
+        this.filesModule = dependencyProvider.extractModule();
+        this.filesSuper = dependencyProvider.extractSuper();
+        this.filesAdditional = dependencyProvider.downloadAdditional();
     }
 
     @SneakyThrows
     private void load() {
         // agent init
-        if (!System.getProperties().containsKey("ulib.javaagent")) {
-            new AgentInstaller().install();
+        if (!System.getProperties().containsKey("ulib.javaagent") && !new AgentInstaller().install()) {
+            throw new RuntimeException("Unable to install agent");
         }
         var appendToBootstrapClassLoaderSearch = System.getProperties().remove("ulib.loader.javaagent");
 
         // class loader init
-        var files = Stream.concat(Stream.of(filesLibrary), Stream.of(filesModule)).toList();
-        loader = new Loader(files, loaderParent);
+        var files = Stream.of(filesLibrary.stream(), filesModule.stream(), filesAdditional.stream())
+                .flatMap(s -> s)
+                .toList();
+        loader = new ComponentLoader(files, loaderParent);
 
         // ulib init
         classULib = loader.loadClass("eu.software4you.ulib.core.ULib");

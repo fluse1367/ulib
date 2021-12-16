@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader;
+package eu.software4you.ulib.loader.install;
 
 import lombok.SneakyThrows;
 
@@ -7,15 +7,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
 
-public class Loader extends URLClassLoader {
+public final class ComponentLoader extends URLClassLoader {
 
     @SneakyThrows
     private static URL toUrl(File f) {
         return f.toURI().toURL();
     }
 
-    Loader(Collection<File> files, ClassLoader parent) {
-        super(files.stream().map(Loader::toUrl).toArray(URL[]::new), parent);
+    ComponentLoader(Collection<File> files, java.lang.ClassLoader parent) {
+        super(files.stream().map(ComponentLoader::toUrl).toArray(URL[]::new), parent);
     }
 
     @Override

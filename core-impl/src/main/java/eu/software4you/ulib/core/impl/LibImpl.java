@@ -106,12 +106,6 @@ public final class LibImpl implements Lib {
     }
 
     @Override
-    @NotNull
-    public File getLibrariesUnsafeDir() {
-        return properties.LIBS_UNSAFE_DIR;
-    }
-
-    @Override
     public @NotNull File getCacheDir() {
         return properties.CACHE_DIR;
     }

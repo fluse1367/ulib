@@ -10,6 +10,7 @@ dependencies {
     lib 'com.google.code.gson:gson:2.8.9' // google json
     lib 'org.yaml:snakeyaml:1.29' // (snake)yaml
     lib 'org.fusesource.jansi:jansi:2.4.0' // jansi (CLI/terminal support)
+    lib 'org.apache.httpcomponents:httpclient:4.5.13' // http client
 
     // maven resolver
     lib('org.apache.maven:maven-resolver-provider:3.8.4') {
@@ -19,7 +20,7 @@ dependencies {
         exclude group: 'org.slf4j'
     }
     lib('org.apache.maven.resolver:maven-resolver-transport-http:1.7.2') {
-        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.apache.httpcomponents' // excluded because httpclient is already required
         exclude group: 'org.slf4j'
     }
 
@@ -27,11 +28,6 @@ dependencies {
     libOnly('org.slf4j:slf4j-simple:1.7.32') {
         exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
     }
-
-    // dependency resolution
-    lazyLib('org.apache.httpcomponents:httpcore:4.4.13', 'http-core')
-    lazyLib('org.apache.httpcomponents:httpclient:4.5.13', 'http-client')
-    lazyLib('commons-logging:commons-logging:1.2', 'commons-logging')
 }
 
 extraJavaModuleInfo {

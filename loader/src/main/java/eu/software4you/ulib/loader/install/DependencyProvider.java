@@ -1,28 +1,32 @@
-package eu.software4you.ulib.loader;
+package eu.software4you.ulib.loader.install;
 
 import lombok.SneakyThrows;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
 
-final class Extractor {
+import static eu.software4you.ulib.loader.install.Util.getCRC32;
+import static eu.software4you.ulib.loader.install.Util.write;
+
+final class DependencyProvider {
 
     private static final Pattern PATTERN = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
-    private final File modsDir;
-    private final File libsDir;
+    final File modsDir;
+    final File libsDir;
     private final JarFile jar;
 
     @SneakyThrows
-    Extractor() {
+    DependencyProvider() {
         var dataDir = new File(System.getProperty("ulib.directory.main", ".ulib"));
         this.modsDir = new File(dataDir, "modules");
-        this.libsDir = new File(modsDir, "libs");
+        this.libsDir = new File(modsDir, "libraries");
         this.jar = new JarFile(new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()));
 
         initDir(dataDir);
@@ -38,8 +42,14 @@ final class Extractor {
     }
 
     @SneakyThrows
+    String readManifestRaw(String what) {
+        return jar.getManifest().getMainAttributes().getValue(what);
+    }
+
     private Collection<String> readManifest(String what) {
-        var val = jar.getManifest().getMainAttributes().getValue(what);
+        var val = readManifestRaw(what);
+        if (val == null)
+            return Collections.emptyList();
         var matcher = PATTERN.matcher(val);
         List<String> matches = new LinkedList<>();
         while (matcher.find()) {
@@ -49,29 +59,36 @@ final class Extractor {
         return matches;
     }
 
-    File[] extractLibrary() {
-        return extract("Library-Files", libsDir);
+    Collection<File> extractLibrary() {
+        return extract("Library-Files", modsDir);
     }
 
-    File[] extractModule() {
+    Collection<File> extractModule() {
         return extract("Module-Files", modsDir);
     }
 
-    File[] extractSuper() {
+    Collection<File> extractSuper() {
         return extract("Super-Modules", modsDir);
     }
 
-    @SneakyThrows
-    public File[] extract(String what, File dir) {
-        var toExtract = readManifest(what);
-        File[] files = new File[toExtract.size()];
+    Collection<File> downloadAdditional() {
+        List<File> li = new LinkedList<>();
 
-        int i = 0;
-        for (var elem : toExtract) {
-            files[i++] = extractSingle(elem, dir);
+        var downloader = new DependencyDownloader();
+        var matcher = DependencyDownloader.PATTERN.matcher(readManifestRaw("Libraries"));
+
+        while (matcher.find()) {
+            li.add(downloader.download(matcher.group(), libsDir));
         }
 
-        return files;
+        return li;
+    }
+
+    @SneakyThrows
+    public Collection<File> extract(String what, File dir) {
+        return readManifest(what).stream()
+                .map(elem -> extractSingle(elem, dir))
+                .toList();
     }
 
     @SneakyThrows
@@ -88,31 +105,8 @@ final class Extractor {
             in.close();
             in = jar.getInputStream(en);
         }
-
         // extract!
-        try (var out = new FileOutputStream(file, false)) {
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            out.flush();
-        }
-
+        write(in, new FileOutputStream(file, false));
         return file;
-    }
-
-    @SuppressWarnings("DuplicatedCode")
-    private static long getCRC32(InputStream in) throws IOException {
-        Checksum sum = new CRC32();
-
-        byte[] buff = new byte[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            sum.update(buff, 0, len);
-        }
-        in.close();
-
-        return sum.getValue();
     }
 }

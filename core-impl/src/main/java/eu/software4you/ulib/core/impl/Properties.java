@@ -17,7 +17,6 @@ public final class Properties {
     public final File DATA_DIR;
     public final File LOGS_DIR;
     public final File CACHE_DIR;
-    public final File LIBS_UNSAFE_DIR;
     public final File LIBS_DIR;
     public final boolean QUIET;
     public final boolean NO_SPLASH;
@@ -55,10 +54,6 @@ public final class Properties {
         CACHE_DIR = new File(get("directories.cache", "ulib.directory.cache",
                 String.format("%s%scache", DATA_DIR.getPath(), File.separator)));
         mkdirs(CACHE_DIR);
-
-        LIBS_UNSAFE_DIR = new File(get("directories.libraries_unsafe", "ulib.directory.libraries_unsafe",
-                String.format("%s%slibraries_unsafe", CACHE_DIR.getPath(), File.separator)));
-        mkdirs(LIBS_UNSAFE_DIR);
 
         LIBS_DIR = new File(get("directories.libraries", "ulib.directory.libraries",
                 String.format("%s%slibraries", DATA_DIR.getPath(), File.separator)));

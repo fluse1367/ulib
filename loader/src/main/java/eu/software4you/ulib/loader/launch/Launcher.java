@@ -14,7 +14,7 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class Launcher {
+final class Launcher {
     static Logger logger;
 
     @SneakyThrows

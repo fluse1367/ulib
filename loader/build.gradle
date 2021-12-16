@@ -5,7 +5,7 @@ dependencies {
         implementation project(":$it")
     }
 
-    implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
+    lazyLib('net.sf.jopt-simple:jopt-simple:6.0-alpha-3', 'jopt-simple')
 }
 
 //noinspection GrUnnecessarySemicolon
@@ -41,17 +41,12 @@ jar {
         }
     }
 
-    // include libraries
+    // include library coordinates
     def libs = [];
     {
         rootProject.subprojects {
-            project.configurations.lib.resolvedConfiguration.resolvedArtifacts
-                    .stream().map(ResolvedArtifact::getFile).each { f ->
-                from(f.parentFile) {
-                    include f.name
-                    into 'META-INF/jars'
-                }
-                libs += f.name
+            project.configurations.lib.resolvedConfiguration.resolvedArtifacts.each { f ->
+                libs += f.moduleVersion.id.toString()
             }
         }
     }
@@ -62,7 +57,7 @@ jar {
             'Agent-Class'            : 'eu.software4you.ulib.loader.agent.AgentMain',
             'Can-Redefine-Classes'   : true,
             'Can-Retransform-Classes': true,
-            'Library-Files'          : libs,
+            'Libraries'              : libs,
             'Module-Files'           : mods,
             'Super-Modules'          : sMods
     ])

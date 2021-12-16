@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 This class is designed to be started in a dedicated java process.
 It loads the AgentMain and attaches it to the original java instance.
  */
-public class LoaderExternal {
+public final class LoaderExternal {
     @SneakyThrows
     public static void main(String[] args) {
         String pid = args[0];

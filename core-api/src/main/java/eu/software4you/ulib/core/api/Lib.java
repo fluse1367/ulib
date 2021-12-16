@@ -62,13 +62,6 @@ public interface Lib {
     File getCacheDir();
 
     /**
-     * Returns the local unsafe repository directory.
-     * Usually this is ".ulib/libraries_unsafe"
-     */
-    @NotNull
-    File getLibrariesUnsafeDir();
-
-    /**
      * Returns the main logger instance of the library.
      */
     @NotNull

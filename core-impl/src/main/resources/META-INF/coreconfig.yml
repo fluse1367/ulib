@@ -60,12 +60,6 @@ directories:
   # Command line equivalent: -Dulib.directory.cache=YOUR_VALUE
   cache: ''
 
-  # Where not further resolved maven artifacts will be stored.
-  # If the value is '' the 'libraries_unsafe' directory will be placed inside the cache-directory.
-  # Default: ''
-  # Command line equivalent: -Dulib.directory.libraries_unsafe=YOUR_VALUE
-  libraries_unsafe: ''
-
   # Where fully-resolved maven artifacts will be stored.
   # If the value is '' the 'libraries' directory will be placed inside the ulib-data-directory.
   # Default: ''
