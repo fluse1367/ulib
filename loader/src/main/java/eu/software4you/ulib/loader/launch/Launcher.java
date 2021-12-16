@@ -5,6 +5,7 @@ import joptsimple.*;
 import lombok.SneakyThrows;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,6 +17,13 @@ import java.util.logging.Logger;
 
 final class Launcher {
     static Logger logger;
+    private static final StringWriter logWriter = new StringWriter() {
+        @Override
+        public void flush() {
+            logger.info(System.lineSeparator() + this);
+            getBuffer().setLength(0);
+        }
+    };
 
     @SneakyThrows
     static void launch(String... args) {
@@ -41,20 +49,20 @@ final class Launcher {
             options = parser.parse(args);
         } catch (OptionException e) {
             logger.warning(e::getMessage);
-            parser.printHelpOn(System.out);
+            parser.printHelpOn(logWriter);
             return;
         }
 
         if (!options.hasOptions()) {
             logger.info(() -> "This is a library, so it's not designed to run stand-alone.");
             logger.info(() -> "https://software4you.eu");
-            parser.printHelpOn(System.out);
+            parser.printHelpOn(logWriter);
             System.exit(0);
             return;
         }
 
         if (options.has("help")) {
-            parser.printHelpOn(System.out);
+            parser.printHelpOn(logWriter);
             return;
         }
         if (!(options.has(launch) || options.has(main)))
