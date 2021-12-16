@@ -29,7 +29,9 @@ dependencies {
     }
 
     // dependency resolution
-    lib 'org.apache.httpcomponents:httpclient:4.5.13'
+    lazyLib('org.apache.httpcomponents:httpcore:4.4.13', 'http-core')
+    lazyLib('org.apache.httpcomponents:httpclient:4.5.13', 'http-client')
+    lazyLib('commons-logging:commons-logging:1.2', 'commons-logging')
 }
 
 extraJavaModuleInfo {

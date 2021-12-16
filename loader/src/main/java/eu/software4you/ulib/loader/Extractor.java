@@ -49,16 +49,17 @@ final class Extractor {
         return matches;
     }
 
-    File[] extractLibrary() {
-        return extract("Library-Files", libsDir);
-    }
-
-    File[] extractModule() {
-        return extract("Module-Files", modsDir);
-    }
-
     File[] extractSuper() {
         return extract("Super-Modules", modsDir);
+    }
+
+    File[] extract() {
+        var f1 = extract("Module-Files", modsDir);
+        var f2 = extract("Library-Files", libsDir);
+        var f = new File[f1.length + f2.length];
+        System.arraycopy(f1, 0, f, 0, f1.length);
+        System.arraycopy(f2, 0, f, f1.length, f2.length);
+        return f;
     }
 
     @SneakyThrows
