@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -100,19 +99,16 @@ public final class ReflectUtilImpl extends ReflectUtil {
                         .toArray(Class[]::new)
                 );
 
-        if (true)
-            throw new UnsupportedOperationException("To be analyzed: " + Arrays.toString(stack));
-
         /*
-        -2: [0] SecurityManager#getClassContext
-        -1: [1] #printStackContext
-         0: [2] caller
+        -1: [0] this
+         0: [1] caller
         ...
          */
 
-        int i = depth + 2;
+        int offset = 1;
+        int i = depth + offset;
         if (i >= stack.length)
-            throw new IllegalArgumentException("Depth ( " + depth + ") > Stack (" + (stack.length - 3) + ")");
+            throw new IllegalArgumentException("Depth ( " + depth + ") > Stack (" + (stack.length - (offset + 1)) + ")");
 
         return stack[i];
     }
