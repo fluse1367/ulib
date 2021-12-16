@@ -48,7 +48,7 @@ public interface YamlSub extends Sub {
      * @throws IOException If an I/O error occurs
      */
     @NotNull
-    static YamlSub loadYaml(@NotNull InputStream in) throws IOException {
+    static ExtYamlSub loadYaml(@NotNull InputStream in) throws IOException {
         return loadYaml(new InputStreamReader(in));
     }
 
@@ -61,7 +61,7 @@ public interface YamlSub extends Sub {
      * @throws FileNotFoundException see {@link FileInputStream#FileInputStream(File) FileInputStream(File)}
      */
     @NotNull
-    static YamlSub loadYaml(@NotNull File file) throws IOException {
+    static ExtYamlSub loadYaml(@NotNull File file) throws IOException {
         return loadYaml(new FileInputStream(file));
     }
 
