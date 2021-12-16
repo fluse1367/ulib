@@ -56,10 +56,10 @@ public final class Installer {
         loader = new ComponentLoader(files, loaderParent);
 
         // ulib init
-        classULib = loader.loadClass("eu.software4you.ulib.core.ULib");
+        classULib = Class.forName("eu.software4you.ulib.core.ULib", true, loader);
 
         // append super files to system classpath
-        var methodSysLoad = loader.loadClass("eu.software4you.ulib.core.api.dependencies.DependencyLoader")
+        var methodSysLoad = Class.forName("eu.software4you.ulib.core.api.dependencies.DependencyLoader", true, loader)
                 .getMethod("sysLoad", File.class);
         for (File file : filesSuper) {
             methodSysLoad.invoke(null, file);
@@ -71,17 +71,17 @@ public final class Installer {
     private void publish() {
         // prevent circularity error by loading ReflectUtil beforehand
         {
-            Class<?> classReflectUtil = loader.loadClass("eu.software4you.ulib.core.api.reflect.ReflectUtil");
+            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loader);
             classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
             classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
         }
 
         // publish ulib API to current class loader
-        var classInjector = loader.loadClass("eu.software4you.ulib.core.impl.dependencies.DelegationInjector");
-        var methodDelegate = classInjector.getMethod("delegate", ClassLoader.class, ClassLoader.class, Predicate.class);
+        var classInjector = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationInjector", true, loader);
+        var methodInjectDelegation = classInjector.getMethod("injectDelegation", ClassLoader.class, ClassLoader.class, Predicate.class);
 
         Predicate<String> filter = name -> name.startsWith("eu.software4you.ulib.core.api.") || name.equals("eu.software4you.ulib.core.ULib");
-        methodDelegate.invoke(null, /*target*/loaderParent, /*delegate*/loader, filter);
+        methodInjectDelegation.invoke(null, /*target*/loaderParent, /*delegate*/loader, filter);
     }
 
 

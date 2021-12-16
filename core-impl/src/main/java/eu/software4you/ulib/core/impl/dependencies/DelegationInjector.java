@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class DelegationInjector {
 
-    public static void delegate(ClassLoader target, ClassLoader delegate, Predicate<String> filter) {
+    public static void injectDelegation(ClassLoader target, ClassLoader delegate, Predicate<String> filter) {
         var hook = new DelegationHook(delegate, (loader, name) -> loader == target && filter.test(name));
         var injector = new DelegationInjector(hook);
         injector.inject(target.getClass());
