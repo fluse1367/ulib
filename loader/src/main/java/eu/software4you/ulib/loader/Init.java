@@ -7,20 +7,18 @@ import java.io.File;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 public class Init {
 
     static {
-        var me = new Init();
-        me.extract();
-        me.load();
-        me.publish();
+        new Init().doInit();
     }
 
     private final ClassLoader loaderParent;
     private final Extractor extractor;
 
-    private File[] files, superFiles;
+    private File[] filesLibrary, filesModule, filesSuper;
     private Loader loader;
     private Class<?> classULib;
 
@@ -29,9 +27,16 @@ public class Init {
         this.extractor = new Extractor();
     }
 
+    private void doInit() {
+        extract();
+        load();
+        publish();
+    }
+
     private void extract() {
-        this.files = extractor.extract();
-        this.superFiles = extractor.extractSuper();
+        this.filesLibrary = extractor.extractLibrary();
+        this.filesModule = extractor.extractModule();
+        this.filesSuper = extractor.extractSuper();
     }
 
     @SneakyThrows
@@ -42,14 +47,17 @@ public class Init {
         }
         var appendToBootstrapClassLoaderSearch = System.getProperties().remove("ulib.loader.javaagent");
 
-        // ulib init
+        // class loader init
+        var files = Stream.concat(Stream.of(filesLibrary), Stream.of(filesModule)).toList();
         loader = new Loader(files, loaderParent);
+
+        // ulib init
         classULib = loader.loadClass("eu.software4you.ulib.core.ULib");
 
         // append super files to system classpath
         var methodSysLoad = loader.loadClass("eu.software4you.ulib.core.api.dependencies.DependencyLoader")
                 .getMethod("sysLoad", File.class);
-        for (File file : superFiles) {
+        for (File file : filesSuper) {
             methodSysLoad.invoke(null, file);
             ((Consumer<JarFile>) appendToBootstrapClassLoaderSearch).accept(new JarFile(file));
         }

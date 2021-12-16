@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
+import java.util.Collection;
 
 public class Loader extends URLClassLoader {
 
@@ -14,8 +14,8 @@ public class Loader extends URLClassLoader {
         return f.toURI().toURL();
     }
 
-    Loader(File[] files, ClassLoader parent) {
-        super(Arrays.stream(files).map(Loader::toUrl).toArray(URL[]::new), parent);
+    Loader(Collection<File> files, ClassLoader parent) {
+        super(files.stream().map(Loader::toUrl).toArray(URL[]::new), parent);
     }
 
     @Override
