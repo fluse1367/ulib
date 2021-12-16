@@ -96,7 +96,7 @@ public final class DependencyLoaderImpl extends DependencyLoader {
     @SneakyThrows
     @Override
     protected void load0(URL url, URLClassLoader classLoader) {
-        ReflectUtil.forceCall(URLClassLoader.class, classLoader, "addURL()",
+        ReflectUtil.forceCall(classLoader.getClass(), classLoader, "addURL()",
                 Parameter.single(URL.class, url));
     }
 }
