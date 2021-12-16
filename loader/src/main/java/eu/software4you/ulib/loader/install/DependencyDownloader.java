@@ -34,8 +34,8 @@ final class DependencyDownloader {
         String name = matcher.group(2);
         String version = matcher.group(3);
 
-        String request = String.format("%s/%s/%s/%s-%s.jar",
-                group.replace(".", "/"), name, version, name, version);
+        String request = String.format("%s/%s/%s/%2$s-%3$s.jar",
+                group.replace(".", "/"), name, version);
 
         File dest = new File(dir, request);
 
