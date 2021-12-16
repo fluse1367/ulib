@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 import static java.util.Optional.ofNullable
 
 // plugin support
@@ -26,6 +28,8 @@ ext {
             return "unknown"
         }
     }
+
+    replacementTokens = new Properties()
 }
 
 //noinspection GrUnnecessarySemicolon
@@ -98,4 +102,28 @@ subprojects {
             'Build-Jdk'             : "${System.getProperty('java.vendor')} ${System.getProperty('java.version')}",
             'Created-By'            : "Gradle ${gradle.gradleVersion}",
     ])
+
+    // lazyLib
+    ext {
+        lazyLib = { coords, name ->
+            replacementTokens.putIfAbsent(new String("maven.$name"), new String("$coords"))
+            dependencies {
+                implementation(coords) {
+                    transitive(false)
+                }
+            }
+        }
+    }
+
+    // replace tokens
+    task processSources(type: Sync) {
+        from sourceSets.main.java.srcDirs
+        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
+        into "$buildDir/src"
+    }
+    compileJava.source = processSources.outputs
+
+    processResources {
+        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
+    }
 }
