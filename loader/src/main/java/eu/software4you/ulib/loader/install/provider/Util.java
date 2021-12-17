@@ -10,6 +10,10 @@ import java.util.zip.Checksum;
 
 @SuppressWarnings("DuplicatedCode")
 final class Util {
+    static String classify(String name) {
+        return name.replace('.', '/').concat(".class");
+    }
+
     @SneakyThrows
     static void write(InputStream in, OutputStream out) {
         try (var is = in; var os = out) {
