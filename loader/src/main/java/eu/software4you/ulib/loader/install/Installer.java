@@ -27,7 +27,6 @@ public final class Installer {
     static {
         instance = new Installer();
         instance.init();
-        instance.installLoaders(instance.getClass().getClassLoader());
     }
 
     private final DependencyProvider dependencyProvider = new DependencyProvider();

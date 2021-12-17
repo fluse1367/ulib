@@ -135,14 +135,15 @@ loader in the respective `plugins` folder, but don't forget to declare uLib as d
 When using the standalone implementation, you have to load the library class by yourself. There are several ways how to
 do this.
 
-If you put uLib into your classpath, you can simply load the `Installer` class from the loader:
+If you put uLib into your classpath, you can use the `Installer` class from the loader and load uLib into your current
+class loader:
 
 ```java
-Class.forName("eu.software4you.ulib.loader.install.Installer");
+// eu.software4you.ulib.loader.install.Installer
+Installer.installTo(getClass().getClassLoader());
 ```
 
-Just make sure loading the installer **before** you do _anything_ with uLib (this includes loading one of ulib's
-classes!).
+Just make sure loading it **before** you do _anything_ with uLib (this includes loading one of ulib's classes!).
 
 Another way is to use the launch function. For this, run the loader directly. Supply either the
 argument `--launch /path/to/application.jar` (the loader will look up the main class in the manifest file)
