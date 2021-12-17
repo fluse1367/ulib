@@ -67,4 +67,12 @@ public interface Callback<T> {
      * @throws IllegalStateException if no return value is provided and the method returns a non-void type
      */
     void cancel();
+
+    /**
+     * Immediately throws the provided throwable object.<p>
+     * The current and all future hook processing is stopped as well as the hooked method.
+     *
+     * @param t the object to throw
+     */
+    void throwNow(Throwable t);
 }

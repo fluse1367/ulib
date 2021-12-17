@@ -65,6 +65,11 @@ final class Callback<T> implements eu.software4you.ulib.core.api.transform.Callb
         canceled = true;
     }
 
+    @Override
+    public void throwNow(Throwable t) {
+        throw new HookException(t);
+    }
+
     boolean isReturning() {
         return canceled || hasReturnValue;
     }

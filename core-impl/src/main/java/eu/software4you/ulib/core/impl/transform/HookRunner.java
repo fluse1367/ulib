@@ -1,11 +1,14 @@
 package eu.software4you.ulib.core.impl.transform;
 
+import eu.software4you.ulib.core.ULib;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 final class HookRunner {
     private static final Map<String, Map<Integer, List<Entry<Object, Method>>>> hooks = new ConcurrentHashMap<>();
@@ -136,7 +139,14 @@ final class HookRunner {
         System.arraycopy(params, 0, args, 0, params.length);
 
         for (Entry<Object, Method> hook : map.get(at)) {
-            hook.getValue().invoke(hook.getKey(), args);
+            try {
+                hook.getValue().invoke(hook.getKey(), args);
+            } catch (InvocationTargetException e) {
+                ULib.logger().log(Level.WARNING, e.getTargetException(),
+                        () -> "Hook " + hook.getValue() + " threw an exception while being called from " + caller);
+            } catch (HookException e) {
+                throw e.getCause();
+            }
             if (cb.isCanceled())
                 break; // cancel all future hook processing
         }
