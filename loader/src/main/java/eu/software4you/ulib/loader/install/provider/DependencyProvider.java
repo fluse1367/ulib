@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader.install;
+package eu.software4you.ulib.loader.install.provider;
 
 import lombok.SneakyThrows;
 
@@ -9,13 +9,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
-import static eu.software4you.ulib.loader.install.Util.getCRC32;
-import static eu.software4you.ulib.loader.install.Util.write;
+import static eu.software4you.ulib.loader.install.provider.Util.getCRC32;
+import static eu.software4you.ulib.loader.install.provider.Util.write;
 
-final class DependencyProvider {
+public final class DependencyProvider {
 
     private static final Pattern PATTERN = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
     final File modsDir;
@@ -23,7 +24,7 @@ final class DependencyProvider {
     private final JarFile jar;
 
     @SneakyThrows
-    DependencyProvider() {
+    public DependencyProvider() {
         var dataDir = new File(System.getProperty("ulib.directory.main", ".ulib"));
         this.modsDir = new File(dataDir, "modules");
         this.libsDir = new File(modsDir, "libraries");
@@ -59,33 +60,35 @@ final class DependencyProvider {
         return matches;
     }
 
-    Collection<File> extractLibrary() {
+    public Collection<File> extractLibrary() {
         return extract("Library-Files", modsDir);
     }
 
-    Collection<File> extractModule() {
+    public Collection<File> extractModule() {
         return extract("Module-Files", modsDir);
     }
 
-    Collection<File> extractSuper() {
+    public Collection<File> extractSuper() {
         return extract("Super-Modules", modsDir);
     }
 
-    Collection<File> downloadAdditional() {
+    public Collection<File> downloadAdditional(BiConsumer<String, File> callback) {
         List<File> li = new LinkedList<>();
 
         var downloader = new DependencyDownloader();
         var matcher = DependencyDownloader.PATTERN.matcher(readManifestRaw("Libraries"));
 
         while (matcher.find()) {
-            li.add(downloader.download(matcher.group(), libsDir));
+            var coords = matcher.group();
+            li.add(downloader.download(coords, libsDir,
+                    f -> callback.accept(coords, f)));
         }
 
         return li;
     }
 
     @SneakyThrows
-    public Collection<File> extract(String what, File dir) {
+    Collection<File> extract(String what, File dir) {
         return readManifest(what).stream()
                 .map(elem -> extractSingle(elem, dir))
                 .toList();

@@ -1,109 +1,175 @@
 package eu.software4you.ulib.loader.install;
 
 import eu.software4you.ulib.loader.agent.AgentInstaller;
+import eu.software4you.ulib.loader.install.provider.DependencyProvider;
+import eu.software4you.ulib.loader.install.provider.DependencyTransformer;
+import eu.software4you.ulib.loader.install.provider.ModuleClassProvider;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Installer {
 
     private static final Installer instance;
     private final Set<ClassLoader> published = new HashSet<>();
+    private final Set<Class<? extends ClassLoader>> injected = new HashSet<>();
 
     static {
         instance = new Installer();
-        instance.install();
+        instance.init();
+        instance.installLoaders(instance.getClass().getClassLoader());
     }
 
-    private final ClassLoader loaderParent;
-    private final DependencyProvider dependencyProvider;
+    private final DependencyProvider dependencyProvider = new DependencyProvider();
 
     private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
-    private ComponentLoader loader;
+    private ModuleClassProvider classProviderSuper, classProvider;
     private Class<?> classULib;
 
-    private Installer() {
-        this.loaderParent = getClass().getClassLoader();
-        this.dependencyProvider = new DependencyProvider();
-    }
+    private Object delegationInjector;
 
     @SneakyThrows
-    private void install() {
-        extract();
-        load();
+    private void init() {
+        provideDependencies();
+        initAgent();
+        initLoaders();
+        loadULib();
 
         // prevent circularity error by loading ReflectUtil before publishing
+        // TODO: this should be already prevented by the injector checker that does not delegate inner requests
         {
-            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loader);
+            var loaderCoreApi = classProvider.getLayer().findLoader("ulib.core.api");
+            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loaderCoreApi);
             classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
             classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
         }
 
-        publish(loaderParent);
+        initInjector();
     }
 
-    private void extract() {
+    private void provideDependencies() {
         this.filesLibrary = dependencyProvider.extractLibrary();
         this.filesModule = dependencyProvider.extractModule();
         this.filesSuper = dependencyProvider.extractSuper();
-        this.filesAdditional = dependencyProvider.downloadAdditional();
+        var transformer = new DependencyTransformer();
+        this.filesAdditional = dependencyProvider.downloadAdditional(transformer::transform);
     }
 
     @SneakyThrows
-    private void load() {
+    @SuppressWarnings("unchecked")
+    private void initAgent() {
         // agent init
         if (!System.getProperties().containsKey("ulib.javaagent") && !new AgentInstaller().install()) {
             throw new RuntimeException("Unable to install agent");
         }
-        var appendToBootstrapClassLoaderSearch = System.getProperties().remove("ulib.loader.javaagent");
 
-        // class loader init
-        var files = Stream.of(filesLibrary.stream(), filesModule.stream(), filesAdditional.stream())
-                .flatMap(s -> s)
-                .toList();
-        loader = new ComponentLoader(files, loaderParent);
+        // append super files to system & bootstrap classpath
+        var consumer = System.getProperties().remove("ulib.loader.javaagent");
+        if (!(consumer instanceof Consumer con))
+            throw new RuntimeException("Javaagent provided property is invalid");
 
-        // ulib init
-        classULib = Class.forName("eu.software4you.ulib.core.ULib", true, loader);
-
-        // append super files to system classpath
-        var methodSysLoad = Class.forName("eu.software4you.ulib.core.api.dependencies.DependencyLoader", true, loader)
-                .getMethod("sysLoad", File.class);
         for (File file : filesSuper) {
-            methodSysLoad.invoke(null, file);
-            ((Consumer<JarFile>) appendToBootstrapClassLoaderSearch).accept(new JarFile(file));
+            con.accept(new JarFile(file));
         }
     }
 
+    private void initLoaders() {
+        // init loader for super files
+        classProviderSuper = new ModuleClassProvider(null, filesSuper, ClassLoader.getSystemClassLoader(), ModuleLayer.boot());
+        var layerSuper = classProviderSuper.getLayer();
+
+        // init loader for ulib regular layer
+        var files = Stream.of(filesLibrary.stream(), filesModule.stream(), filesAdditional.stream())
+                .flatMap(s -> s)
+                .toList();
+        var layerParent = Optional.ofNullable(getClass().getModule().getLayer())
+                .orElseGet(ModuleLayer::boot);
+        classProvider = new ModuleClassProvider(classProviderSuper, files, getClass().getClassLoader(), layerParent, layerSuper);
+    }
+
     @SneakyThrows
-    private void publish(ClassLoader target) {
+    private void loadULib() {
+        var loaderCoreApi = classProvider.getLayer().findLoader("ulib.core.api");
+        classULib = Class.forName("eu.software4you.ulib.core.ULib", true, loaderCoreApi);
+    }
+
+    @SneakyThrows
+    private void initInjector() {
+        BiPredicate<Class<?>, String> checkLoadingRequest = (requester, request) -> {
+            var requestingLayer = requester.getModule().getLayer();
+
+            if (request.startsWith("eu.software4you.ulib.supermodule.")) {
+                return requestingLayer != classProviderSuper.getLayer();
+            }
+
+            // do not delegate other inner requests
+            if (requestingLayer != null && requestingLayer == classProvider.getLayer())
+                return false;
+
+            // only access to the core API
+            return request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib");
+        };
+        this.delegationInjector = constructInjector(classProvider, published::contains, checkLoadingRequest);
+    }
+
+    @SneakyThrows
+    private Object constructInjector(ModuleClassProvider provider,
+                                     Predicate<ClassLoader> checkClassLoader,
+                                     BiPredicate<Class<?>, String> checkLoadingRequest) {
+
+        BiFunction<String, Boolean, Class<?>> delegateLoadClass = provider::loadClass;
+        Function<String, Class<?>> delegateFindClass = provider::findClass;
+        BiFunction<String, String, Class<?>> delegateFindModuleClass = provider::findClass;
+
+        // construct hook instance
+        var loaderCoreImpl = classProvider.getLayer().findLoader("ulib.core");
+        var classHook = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationHook", true, loaderCoreImpl);
+        var constructorHook = classHook.getConstructor(BiFunction.class, Function.class, BiFunction.class, Predicate.class, BiPredicate.class);
+        var hook = constructorHook.newInstance(delegateLoadClass, delegateFindClass, delegateFindModuleClass, checkClassLoader, checkLoadingRequest);
+
+        // construct injector instance
+        var classInjector = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationInjector", true, loaderCoreImpl);
+        var constructorInjector = classInjector.getConstructor(classHook);
+        return constructorInjector.newInstance(hook);
+    }
+
+    @SneakyThrows
+    private void inject(Object injector, ClassLoader target) {
+        var cl = target.getClass();
+        var methodInject = delegationInjector.getClass().getMethod("inject", Class.class);
+        methodInject.invoke(injector, cl);
+    }
+
+    private void installLoaders(ClassLoader target) {
         if (published.contains(target))
-            throw new IllegalArgumentException("The uLib API has already been published to " + target);
-
-        var classInjector = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationInjector", true, loader);
-        var methodInjectDelegation = classInjector.getMethod("injectDelegation", ClassLoader.class, ClassLoader.class, Predicate.class);
-
-        Predicate<String> filter = name -> name.startsWith("eu.software4you.ulib.core.api.") || name.equals("eu.software4you.ulib.core.ULib");
-        methodInjectDelegation.invoke(null, /*target*/target, /*delegate*/loader, filter);
+            throw new IllegalArgumentException("The API has already been installed to " + target);
         published.add(target);
+
+        var cl = target.getClass();
+        if (injected.contains(cl))
+            return;
+
+        inject(delegationInjector, target);
+        injected.add(cl);
     }
 
     /**
-     * Publishes the uLib API to a class loader by injecting code into it.
+     * Installs the uLib API to a class loader by injecting code into it.
      *
-     * @param target the class loader to publish the API to
-     * @throws IllegalArgumentException If the uLib API has already been published to that class loader
+     * @param target the class loader to install the API to
+     * @throws IllegalArgumentException If the uLib API has already been installed to that class loader
      */
-    public static void publishTo(ClassLoader target) throws IllegalArgumentException {
-        instance.publish(target);
+    public static void installTo(ClassLoader target) throws IllegalArgumentException {
+        instance.installLoaders(target);
     }
-
-
 }

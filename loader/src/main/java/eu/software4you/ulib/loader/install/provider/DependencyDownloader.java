@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader.install;
+package eu.software4you.ulib.loader.install.provider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -7,9 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-import static eu.software4you.ulib.loader.install.Util.write;
+import static eu.software4you.ulib.loader.install.provider.Util.write;
 
 @RequiredArgsConstructor
 final class DependencyDownloader {
@@ -21,7 +22,7 @@ final class DependencyDownloader {
     }
 
     @SneakyThrows
-    public File download(String coords, File dir) {
+    File download(String coords, File dir, Consumer<File> callback) {
         if (!Objects.requireNonNull(coords).matches(PATTERN.pattern()))
             throw new IllegalArgumentException("Malformed coords: " + coords);
 
@@ -43,6 +44,7 @@ final class DependencyDownloader {
             dest.getParentFile().mkdirs();
 
             write(new URL(url + request).openStream(), new FileOutputStream(dest));
+            callback.accept(dest);
         }
 
         return dest;

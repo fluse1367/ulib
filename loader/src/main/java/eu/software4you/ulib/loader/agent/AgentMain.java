@@ -30,7 +30,10 @@ public final class AgentMain {
                 (Consumer<JarFile>) agent::appendJar
         });
         System.getProperties().put("ulib.loader.javaagent",
-                (Consumer<JarFile>) inst::appendToBootstrapClassLoaderSearch
+                (Consumer<JarFile>) file -> {
+                    inst.appendToSystemClassLoaderSearch(file);
+                    inst.appendToBootstrapClassLoaderSearch(file);
+                }
         );
     }
 

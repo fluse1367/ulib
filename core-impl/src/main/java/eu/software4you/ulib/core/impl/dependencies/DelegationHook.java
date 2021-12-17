@@ -2,66 +2,61 @@ package eu.software4you.ulib.core.impl.dependencies;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.transform.Callback;
-import eu.software4you.ulib.core.api.utils.ClassUtils;
 import lombok.SneakyThrows;
 
-import java.lang.reflect.Method;
-import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class DelegationHook {
 
     private final Logger logger;
-    private final ClassLoader loaderDelegate;
-    private final Method methodFindClass, methodLoadClass;
-    private final BiPredicate<ClassLoader, String> filter;
+    private final BiFunction<String, Boolean, Class<?>> delegateLoadClass;
+    private final Function<String, Class<?>> delegateFindClass;
+    private final BiFunction<String, String, Class<?>> delegateFindModuleClass;
+    private final Predicate<ClassLoader> filterClassLoader; // check class loader delegated
+    private final BiPredicate<Class<?>, String> filterLoadingRequest; // requesting class, requested name
 
     @SneakyThrows
-    public DelegationHook(ClassLoader delegate, BiPredicate<ClassLoader, String> filter) {
-        (this.logger = ULib.logger()).finest("Delegation hook init with delegate: " + delegate);
+    public DelegationHook(BiFunction<String, Boolean, Class<?>> delegateLoadClass,
+                          Function<String, Class<?>> delegateFindClass,
+                          BiFunction<String, String, Class<?>> delegateFindModuleClass,
+                          Predicate<ClassLoader> filterClassLoader,
+                          BiPredicate<Class<?>, String> filterLoadingRequest
+    ) {
+        this.delegateLoadClass = delegateLoadClass;
+        this.delegateFindClass = delegateFindClass;
+        this.delegateFindModuleClass = delegateFindModuleClass;
+        this.filterClassLoader = filterClassLoader;
+        this.filterLoadingRequest = filterLoadingRequest;
 
-        this.loaderDelegate = delegate;
-        this.filter = filter;
-
-        var cl = delegate.getClass();
-        this.methodFindClass = ClassUtils.findUnderlyingDeclaredMethod(cl, "findClass", String.class);
-        this.methodLoadClass = ClassUtils.findUnderlyingDeclaredMethod(cl, "loadClass", String.class, boolean.class);
-
-        if (!Objects.requireNonNull(methodFindClass, "findClass(String) not found on " + cl)
-                .trySetAccessible())
-            throw new IllegalArgumentException("No access to " + methodFindClass);
-
-        if (!Objects.requireNonNull(methodLoadClass, "loadClass(String, boolean) not found on " + cl)
-                .trySetAccessible())
-            throw new IllegalArgumentException("No access to " + methodLoadClass);
+        this.logger = ULib.logger();
+        logger.finest("Delegation hook init: " + this);
     }
 
-    private boolean check(Object source, String name) {
-        return source != loaderDelegate
-               && source instanceof ClassLoader cl
-               && this.filter.test(cl, name);
-    }
-
-    @SneakyThrows
     private Class<?> delegationFindClass(String name) {
         logger.finest("Finding delegated class: " + name);
-        return (Class<?>) methodFindClass.invoke(loaderDelegate, name);
+        return delegateFindClass.apply(name);
+    }
+
+    private Class<?> delegationFindClass(String module, String name) {
+        logger.finest("Finding delegated class: " + name + " from module " + module);
+        return delegateFindModuleClass.apply(module, name);
     }
 
     @SneakyThrows
     private Class<?> delegationLoadClassClass(String name, boolean resolve) {
         logger.finest("Loading delegated class: " + name);
-        return (Class<?>) methodLoadClass.invoke(loaderDelegate, name, resolve);
+        return delegateLoadClass.apply(name, resolve);
     }
 
     private Class<?> identifyClassLoadingRequestSource() {
         // walk through stack and find first class that is not a class loader anymore
         var frames = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
                 .walk(Stream::toList);
-
-        //if (true) throw new UnsupportedOperationException("TBD: " + Arrays.toString(frames.toArray()));
 
         logger.finest("Walking stack");
         boolean walkingClassLoaderChain = false;
@@ -76,32 +71,49 @@ public class DelegationHook {
             } else if (walkingClassLoaderChain && !isClassLoader) {
                 // found class that is nod a class loader
                 logger.finest("Class is NOT a class loader anymore");
+                logger.finest("Source is " + cl + " loaded by " + cl.getClassLoader());
                 return cl;
             }
         }
         throw new IllegalStateException(); // a class loader cannot be the source of the class loading request
     }
 
-    private boolean verifyLoadingRequest() {
-        var source = identifyClassLoadingRequestSource();
-        var loader = source.getClassLoader();
-        logger.finest("Source is " + source + " loaded by " + loader);
-        return loader != loaderDelegate;
+    private boolean check(Object source, String name) {
+        return source instanceof ClassLoader cl && filterClassLoader.test(cl)
+               && filterLoadingRequest.test(identifyClassLoadingRequestSource(), name);
     }
 
     /* actual hooks */
 
     // hooks into the findClass method of the target loader
-    public void findClass(String name, Callback<Class<?>> cb) throws ClassNotFoundException {
+    public void hookFindClass(String name, Callback<Class<?>> cb) {
         logger.finest("Class finding request: " + name);
-        if (verifyLoadingRequest() && check(cb.self(), name))
-            cb.setReturnValue(delegationFindClass(name));
+        if (check(cb.self(), name)) {
+            var cl = delegationFindClass(name);
+            if (cl != null) {
+                cb.setReturnValue(cl);
+            }
+        }
+    }
+
+    public void hookFindClass(String module, String name, Callback<Class<?>> cb) {
+        logger.finest("Class finding request: " + name + " from module " + module);
+        if (check(cb.self(), name)) {
+            var cl = delegationFindClass(module, name);
+            if (cl != null) {
+                cb.setReturnValue(cl);
+            }
+        }
     }
 
     // hooks into the loadClass method of the target loader
-    public void loadClass(String name, boolean resolve, Callback<Class<?>> cb) throws ClassNotFoundException {
+    public void hookLoadClass(String name, boolean resolve, Callback<Class<?>> cb) {
         logger.finest("Class loading request: " + name);
-        if (verifyLoadingRequest() && check(cb.self(), name))
-            cb.setReturnValue(delegationLoadClassClass(name, resolve));
+        if (check(cb.self(), name)) {
+            var cl = delegationLoadClassClass(name, resolve);
+            if (cl != null) {
+                cb.setReturnValue(cl);
+            }
+        }
     }
 }

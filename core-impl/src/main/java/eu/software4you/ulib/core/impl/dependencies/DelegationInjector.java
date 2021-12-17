@@ -9,30 +9,27 @@ import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public class DelegationInjector {
 
-    public static void injectDelegation(ClassLoader target, ClassLoader delegate, Predicate<String> filter) {
-        var hook = new DelegationHook(delegate, (loader, name) -> loader == target && filter.test(name));
-        var injector = new DelegationInjector(hook);
-        injector.inject(target.getClass());
-    }
-
     private final DelegationHook delegation;
-    private final Method hookFindClass, hookLoadClass;
+    private final Method hookFindClass, hookFindModuleClass, hookLoadClass;
 
     @SneakyThrows
     public DelegationInjector(DelegationHook delegation) {
         this.delegation = delegation;
-        this.hookFindClass = DelegationHook.class.getMethod("findClass", String.class, Callback.class);
-        this.hookLoadClass = DelegationHook.class.getMethod("loadClass", String.class, boolean.class, Callback.class);
+        var c = DelegationHook.class;
+        this.hookFindClass = c.getMethod("hookFindClass", String.class, Callback.class);
+        this.hookFindModuleClass = c.getMethod("hookFindClass", String.class, String.class, Callback.class);
+        this.hookLoadClass = c.getMethod("hookLoadClass", String.class, boolean.class, Callback.class);
         ULib.logger().finer("Delegation Injector init with delegation hook: " + delegation);
     }
 
     public void inject(Class<? extends ClassLoader> clazz) {
         Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "findClass", String.class))
                 .ifPresent(into -> inject(hookFindClass, into));
+        Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "findClass", String.class, String.class))
+                .ifPresent(into -> inject(hookFindModuleClass, into));
         Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "loadClass", String.class, boolean.class))
                 .ifPresent(into -> inject(hookLoadClass, into));
     }

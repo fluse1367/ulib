@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader.install;
+package eu.software4you.ulib.loader.install.provider;
 
 import lombok.SneakyThrows;
 
@@ -15,10 +15,10 @@ final class Util {
         try (var is = in; var os = out) {
             byte[] buffer = new byte[1024];
             int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
+            while ((read = is.read(buffer)) != -1) {
+                os.write(buffer, 0, read);
             }
-            out.flush();
+            os.flush();
         }
     }
 
