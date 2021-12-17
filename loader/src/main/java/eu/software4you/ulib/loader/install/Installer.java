@@ -34,7 +34,6 @@ public final class Installer {
 
     private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
     private ModuleClassProvider classProviderSuper, classProvider;
-    private Class<?> classULib;
 
     private Object delegationInjector;
 
@@ -44,16 +43,6 @@ public final class Installer {
         initAgent();
         initLoaders();
         loadULib();
-
-        // prevent circularity error by loading ReflectUtil before publishing
-        // TODO: this should be already prevented by the injector checker that does not delegate inner requests
-        {
-            var loaderCoreApi = classProvider.getLayer().findLoader("ulib.core.api");
-            Class<?> classReflectUtil = Class.forName("eu.software4you.ulib.core.api.reflect.ReflectUtil", true, loaderCoreApi);
-            classULib.getMethod("service", Class.class).invoke(null, classReflectUtil);
-            classReflectUtil.getMethod("getCallerClass", int.class).invoke(null, 0);
-        }
-
         initInjector();
     }
 
@@ -73,13 +62,15 @@ public final class Installer {
             throw new RuntimeException("Unable to install agent");
         }
 
-        // append super files to system & bootstrap classpath
+        // append super files to system classpath
         var consumer = System.getProperties().remove("ulib.loader.javaagent");
-        if (!(consumer instanceof Consumer con))
+        try {
+            var con = (Consumer<JarFile>) consumer;
+            for (File file : filesSuper) {
+                con.accept(new JarFile(file));
+            }
+        } catch (ClassCastException e) {
             throw new RuntimeException("Javaagent provided property is invalid");
-
-        for (File file : filesSuper) {
-            con.accept(new JarFile(file));
         }
     }
 
@@ -100,7 +91,7 @@ public final class Installer {
     @SneakyThrows
     private void loadULib() {
         var loaderCoreApi = classProvider.getLayer().findLoader("ulib.core.api");
-        classULib = Class.forName("eu.software4you.ulib.core.ULib", true, loaderCoreApi);
+        Class.forName("eu.software4you.ulib.core.ULib", true, loaderCoreApi);
     }
 
     @SneakyThrows
@@ -113,8 +104,9 @@ public final class Installer {
             }
 
             // do not delegate other inner requests
-            if (requestingLayer != null && requestingLayer == classProvider.getLayer())
+            if (requestingLayer != null && requestingLayer == classProvider.getLayer()) {
                 return false;
+            }
 
             // only access to the core API
             return request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib");

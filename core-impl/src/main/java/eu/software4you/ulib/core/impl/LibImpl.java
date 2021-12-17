@@ -6,14 +6,10 @@ import eu.software4you.ulib.core.api.RunMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public final class LibImpl implements Lib {
 
-    private static final Map<Class<?>, Object> SERVICES = new ConcurrentHashMap<>();
     final static long MAIN_THREAD_ID;
     private final Logger logger;
 
@@ -108,20 +104,5 @@ public final class LibImpl implements Lib {
     @Override
     public @NotNull File getCacheDir() {
         return properties.CACHE_DIR;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <S> S getService(Class<S> service) throws IllegalArgumentException {
-        if (!SERVICES.containsKey(service)) {
-            var loader = ServiceLoader.load(service, getClass().getClassLoader());
-            var first = loader.findFirst();
-            if (first.isEmpty()) {
-                throw new IllegalArgumentException("No service provider found for " + service.getName());
-            }
-            SERVICES.put(service, first.get());
-        }
-
-        return (S) SERVICES.get(service);
     }
 }

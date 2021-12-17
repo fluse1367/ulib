@@ -66,14 +66,4 @@ public interface Lib {
      */
     @NotNull
     Logger getLogger();
-
-    /**
-     * Returns a singleton service.
-     *
-     * @param service the service base interface / class
-     * @param <S>     the service type
-     * @return the service
-     * @throws IllegalArgumentException if no service is loaded for the specified class
-     */
-    <S> S getService(Class<S> service) throws IllegalArgumentException;
 }
