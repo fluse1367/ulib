@@ -5,7 +5,6 @@ import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.core.api.transform.Hook;
 import eu.software4you.ulib.core.api.transform.HookPoint;
 import eu.software4you.ulib.core.impl.Agent;
-import eu.software4you.ulib.supermodule.hooking.CallbackReference;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
@@ -15,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public final class HookInjectorImpl extends eu.software4you.ulib.core.api.transform.HookInjector {
@@ -23,9 +23,9 @@ public final class HookInjectorImpl extends eu.software4you.ulib.core.api.transf
     public HookInjectorImpl() {
         if (!Agent.available())
             return;
-        CallbackReference.put(
+        System.getProperties().put("ulib.hooking", new Object[]{
                 /* [0] Hook runner */
-                HookRunner::runHooks,
+                (Function<Object[], ?>) HookRunner::runHooks,
 
                 /* [1] Callback#isReturning() */
                 (Function<Callback<?>, Boolean>) Callback::isReturning,
@@ -34,8 +34,8 @@ public final class HookInjectorImpl extends eu.software4you.ulib.core.api.transf
                 (Function<Callback<?>, ?>) Callback::getReturnValue,
 
                 /* [3] caller class determination */
-                () -> ReflectUtil.getCallerClass(4)
-        );
+                (Supplier<Class<?>>) () -> ReflectUtil.getCallerClass(4)
+        });
         Agent.getInstance().addTransformer(new HookInjector(ULib.logger(), injected));
     }
 

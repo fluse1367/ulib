@@ -12,8 +12,19 @@ public class CallbackReference<T> {
     private final Object callback;
 
     public CallbackReference(Class<T> returnType, T returnValue, boolean hasReturnValue, Object self, String hookId, int at, Object[] params) {
+        if (runner == null || funcIsReturning == null || funcGetReturnValue == null || funcDetermineCaller == null)
+            putSelf();
         Class<?> caller = funcDetermineCaller.get();
         this.callback = runner.apply(new Object[]{returnType, returnValue, hasReturnValue, self, caller, hookId, at, params});
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void putSelf() {
+        Object[] arr = (Object[]) System.getProperties().remove("ulib.hooking");
+        runner = (Function<Object[], ?>) arr[0];
+        funcIsReturning = (Function<Object, Boolean>) arr[1];
+        funcGetReturnValue = (Function<Object, ?>) arr[2];
+        funcDetermineCaller = (Supplier<Class<?>>) arr[3];
     }
 
     @SuppressWarnings("unchecked")
