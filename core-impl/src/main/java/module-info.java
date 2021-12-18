@@ -17,7 +17,7 @@ module ulib.core {
     requires javassist;
 
     exports eu.software4you.ulib.core.impl to ulib.loader, ulib.core.api;
-    exports eu.software4you.ulib.core.impl.dependencies to ulib.loader;
+    exports eu.software4you.ulib.core.impl.dependencies;
 
     provides eu.software4you.ulib.core.api.Lib with eu.software4you.ulib.core.impl.LibImpl;
     provides eu.software4you.ulib.core.api.configuration.yaml.YamlSub.Provider with eu.software4you.ulib.core.impl.configuration.yaml.YamlSubProvider;

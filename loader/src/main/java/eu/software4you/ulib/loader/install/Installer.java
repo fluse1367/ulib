@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.*;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
@@ -82,9 +79,28 @@ public final class Installer {
         var files = Stream.of(filesLibrary.stream(), filesModule.stream(), filesAdditional.stream())
                 .flatMap(s -> s)
                 .toList();
-        var layerParent = Optional.ofNullable(getClass().getModule().getLayer())
-                .orElseGet(ModuleLayer::boot);
-        classProvider = new ModuleClassProvider(classProviderSuper, files, getClass().getClassLoader(), layerParent, layerSuper);
+
+        var directParent = Optional.ofNullable(getClass().getModule().getLayer()).orElseGet(ModuleLayer::boot);
+
+        List<ModuleLayer> parentLayers = new ArrayList<>(2);
+        parentLayers.add(layerSuper);
+
+        boolean comply = false;
+        switch (System.getProperty("ulib.install.module_layer", "default")) {
+            case "boot":
+                System.err.println("[ulib-loader] Ignoring parent module layer");
+                break;
+            case "comply":
+                System.err.println("[ulib-loader] Respecting parent modules");
+                comply = true;
+                // fallthrough
+            case "default":
+                // fallthrough
+            default:
+                parentLayers.add(directParent);
+        }
+
+        classProvider = new ModuleClassProvider(null, files, getClass().getClassLoader(), parentLayers, comply);
     }
 
     @SneakyThrows

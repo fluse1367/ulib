@@ -9,10 +9,8 @@ import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ModuleClassProvider {
 
@@ -22,25 +20,58 @@ public final class ModuleClassProvider {
     @Getter
     private final ModuleLayer layer;
 
-    public ModuleClassProvider(ModuleClassProvider providerParent, Collection<File> files, ClassLoader loaderParent, ModuleLayer layerParent, ModuleLayer... otherParents) {
+    public ModuleClassProvider(ModuleClassProvider providerParent, Collection<File> files, ClassLoader loaderParent, ModuleLayer parentLayer) {
+        this(providerParent, files, loaderParent, parentLayer, false);
+    }
+
+    public ModuleClassProvider(ModuleClassProvider providerParent, Collection<File> files, ClassLoader loaderParent, ModuleLayer parentLayer, boolean comply) {
+        this(providerParent, files, loaderParent, List.of(parentLayer), comply);
+    }
+
+    public ModuleClassProvider(ModuleClassProvider providerParent, Collection<File> files, ClassLoader loaderParent, List<ModuleLayer> parentLayers, boolean comply) {
         this.providerParent = providerParent;
 
-        var finder = ModuleFinder.of(files.stream().map(File::toPath).toArray(Path[]::new));
+        var finder = makeFinder(files, parentLayers, comply);
         var emptyFinder = ModuleFinder.of();
         var roots = finder.findAll().stream()
                 .map(ModuleReference::descriptor)
                 .map(ModuleDescriptor::name)
                 .toList();
 
-        var parentLayers = new ArrayList<ModuleLayer>(otherParents.length + 1);
-        parentLayers.add(layerParent);
-        parentLayers.addAll(Arrays.asList(otherParents));
+
         var parents = parentLayers.stream().map(ModuleLayer::configuration).toList();
 
         var conf = Configuration.resolve(finder, parents, emptyFinder, roots);
 
         this.controller = ModuleLayer.defineModulesWithOneLoader(conf, parentLayers, loaderParent);
         this.layer = controller.layer();
+    }
+
+    private ModuleFinder makeFinder(Collection<File> files, List<ModuleLayer> parentLayers, boolean comply) {
+        List<Path> paths = new ArrayList<>(files.stream().map(File::toPath).toList());
+
+        ModuleFinder finder;
+        do {
+            finder = ModuleFinder.of(paths.toArray(Path[]::new));
+        } while (comply && (paths = checkComply(finder, parentLayers)) != null);
+
+        return finder;
+    }
+
+    private List<Path> checkComply(ModuleFinder finder, List<ModuleLayer> parentLayers) {
+        AtomicBoolean foundInvalid = new AtomicBoolean(false);
+        List<Path> leftOver = new LinkedList<>();
+
+        finder.findAll().forEach(ref -> {
+            boolean invalid = parentLayers.stream().anyMatch(layer -> layer.findModule(ref.descriptor().name()).isPresent());
+            if (!invalid) {
+                leftOver.add(Path.of(ref.location().orElseThrow()));
+                return;
+            }
+            foundInvalid.set(true);
+        });
+
+        return foundInvalid.get() ? leftOver : null;
     }
 
     private ClassLoader findLoaderFor(String name) {
