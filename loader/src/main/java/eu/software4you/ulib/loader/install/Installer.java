@@ -7,6 +7,7 @@ import eu.software4you.ulib.loader.install.provider.ModuleClassProvider;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 
 import java.io.File;
 import java.util.*;
@@ -17,16 +18,12 @@ import java.util.stream.Stream;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Installer {
 
-    private static final Installer instance;
+    private static final Installer instance = new Installer();
     private final Set<ClassLoader> published = new HashSet<>();
     private final Set<Class<? extends ClassLoader>> injected = new HashSet<>();
-
-    static {
-        instance = new Installer();
-        instance.init();
-    }
-
     private final DependencyProvider dependencyProvider = new DependencyProvider();
+
+    private boolean init;
 
     private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
     private ModuleClassProvider classProviderSuper, classProvider;
@@ -35,6 +32,10 @@ public final class Installer {
 
     @SneakyThrows
     private void init() {
+        if (init)
+            return;
+        init = true;
+
         provideDependencies();
         initAgent();
         initLoaders();
@@ -176,7 +177,10 @@ public final class Installer {
      * @param target the class loader to install the API to
      * @throws IllegalArgumentException If the uLib API has already been installed to that class loader
      */
+    @Synchronized
     public static void installTo(ClassLoader target) throws IllegalArgumentException {
+        if (!instance.init)
+            instance.init();
         instance.installLoaders(target);
     }
 }
