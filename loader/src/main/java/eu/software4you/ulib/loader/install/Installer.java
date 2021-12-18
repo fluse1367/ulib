@@ -141,12 +141,12 @@ public final class Installer {
 
         // construct hook instance
         var loaderCoreImpl = classProvider.getLayer().findLoader("ulib.core");
-        var classHook = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationHook", true, loaderCoreImpl);
+        var classHook = Class.forName("eu.software4you.ulib.core.impl.delegation.DelegationHook", true, loaderCoreImpl);
         var constructorHook = classHook.getConstructor(BiFunction.class, Function.class, BiFunction.class, Predicate.class, BiPredicate.class);
         var hook = constructorHook.newInstance(delegateLoadClass, delegateFindClass, delegateFindModuleClass, checkClassLoader, checkLoadingRequest);
 
         // construct injector instance
-        var classInjector = Class.forName("eu.software4you.ulib.core.impl.dependencies.DelegationInjector", true, loaderCoreImpl);
+        var classInjector = Class.forName("eu.software4you.ulib.core.impl.delegation.DelegationInjector", true, loaderCoreImpl);
         var constructorInjector = classInjector.getConstructor(classHook);
         return constructorInjector.newInstance(hook);
     }

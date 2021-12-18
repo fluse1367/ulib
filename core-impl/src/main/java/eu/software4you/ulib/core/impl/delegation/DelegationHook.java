@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.impl.dependencies;
+package eu.software4you.ulib.core.impl.delegation;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.transform.Callback;
@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class DelegationHook {
+public final class DelegationHook {
 
     private final Logger logger;
     private final BiFunction<String, Boolean, Class<?>> delegateLoadClass;

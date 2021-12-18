@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.impl.dependencies;
+package eu.software4you.ulib.core.impl.delegation;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.transform.Callback;
@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class DelegationInjector {
+public final class DelegationInjector {
 
     private final DelegationHook delegation;
     private final Method hookFindClass, hookFindModuleClass, hookLoadClass;
