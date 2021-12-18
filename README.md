@@ -125,7 +125,7 @@ dependencies {
 
 </details>
 
-## The uLib-loader
+## Loading uLib into the Runtime
 
 Before you do anything with uLib, get sure you load the library with its loader.
 
@@ -143,7 +143,17 @@ class loader:
 Installer.installTo(getClass().getClassLoader());
 ```
 
-Just make sure loading it **before** you do _anything_ with uLib (this includes loading one of ulib's classes!).
+Also, if you are installing it into a modular context, you have to add a `reads` record to that module before using
+uLib. Otherwise, your module won't have access to the uLib API. This example shows how it can be done easily:
+
+```java
+getClass().getModule().addReads(Installer.getModule());
+```
+
+Make sure installing uLib properly into the runtime **before** you do _anything_ with uLib (this includes loading one of
+ulib's classes!).
+
+### Alternatives
 
 Another way is to use the launch function. For this, run the loader directly. Supply either the
 argument `--launch /path/to/application.jar` (the loader will look up the main class in the manifest file)
@@ -195,6 +205,29 @@ javaagent (again, with an additional flag):
 ```shell
 java -Djdk.attach.allowAttachSelf=true ... 
 ```
+
+## Troubleshooting
+
+Because ulib uses complex mechanics to inject itself into your desired class loader context, it is fairly easy for it to
+fail. Analyzing and understanding what went wrong can be pretty tough. Common malfunctions and possible fixes listed are
+listed below.
+
+- ```
+  Module ulib.core.api not found, required by mymodule
+  ```
+  Because uLib is loaded by the installer **after** the initialization of the boot layer, the uLib API module is not
+  available at the time of initialization. Change the `requires ulib.core.api;` record in your module info file
+  to `requires static`.
+- ```
+  class myclass (in module mymodule) cannot access class ulibclass (in module ulib.core.api) ...
+  ```
+  Because the `reads` record in your module info file is declared as static, you must add a `reads` record to your
+  module manually before you can access the uLib API: `getClass().getModule().addReads(Installer.getModule());`
+- ```
+  Module some-module reads more than one module named other-module
+  ```
+  Some of uLib's dependencies are already loaded by a higher module layer of your runtime. Try to add the java startup
+  flag `-Dulib.install.module_layer=boot`. If that doesn't work try `-Dulib.install.module_layer=comply`.
 
 ---
 

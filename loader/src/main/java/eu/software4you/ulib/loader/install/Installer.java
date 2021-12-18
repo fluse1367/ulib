@@ -27,6 +27,7 @@ public final class Installer {
 
     private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
     private ModuleClassProvider classProviderSuper, classProvider;
+    private Module moduleCoreApi;
 
     private Object delegationInjector;
 
@@ -101,13 +102,14 @@ public final class Installer {
                 parentLayers.add(directParent);
         }
 
-        classProvider = new ModuleClassProvider(null, files, getClass().getClassLoader(), parentLayers, comply);
+        this.classProvider = new ModuleClassProvider(null, files, getClass().getClassLoader(), parentLayers, comply);
+        this.moduleCoreApi = this.classProvider.getLayer().findModule("ulib.core.api")
+                .orElseThrow(IllegalStateException::new);
     }
 
     @SneakyThrows
     private void loadULib() {
-        var loaderCoreApi = classProvider.getLayer().findLoader("ulib.core.api");
-        Class.forName("eu.software4you.ulib.core.ULib", true, loaderCoreApi);
+        Class.forName("eu.software4you.ulib.core.ULib", true, moduleCoreApi.getClassLoader());
     }
 
     @SneakyThrows
@@ -176,11 +178,23 @@ public final class Installer {
      *
      * @param target the class loader to install the API to
      * @throws IllegalArgumentException If the uLib API has already been installed to that class loader
+     * @implNote If the target is the loader of a named module, an {@link Module#addReads(Module) reads} record must be
+     * added by that module manually in order for that module to be able to interact with the uLib API.
+     * Its {@link Module module object} can be obtained with {@link #getModule()}.
      */
     @Synchronized
     public static void installTo(ClassLoader target) throws IllegalArgumentException {
         if (!instance.init)
             instance.init();
         instance.installLoaders(target);
+    }
+
+    /**
+     * Returns the module object from the uLib API.
+     *
+     * @return the module object
+     */
+    public static Module getModule() {
+        return instance.moduleCoreApi;
     }
 }
