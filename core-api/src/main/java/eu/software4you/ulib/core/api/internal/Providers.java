@@ -18,6 +18,10 @@ public final class Providers {
 
     public static <S> S get(Class<S> service, ClassLoader cl) throws IllegalArgumentException {
         if (!SERVICES.containsKey(service)) {
+            var module = Providers.class.getModule();
+            if (!module.canUse(service))
+                module.addUses(service);
+
             var loader = ServiceLoader.load(service, cl);
             var first = loader.findFirst();
             if (first.isEmpty()) {

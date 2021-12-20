@@ -7,6 +7,6 @@ module ulib.velocity.api {
 
     requires static net.kyori.adventure;
 
-    exports eu.software4you.ulib.velocity.api.internal to ulib.velocity;
+    exports eu.software4you.ulib.velocity.api.internal to ulib.velocity, ulib.core.api;
     exports eu.software4you.ulib.velocity.api.plugin;
 }
