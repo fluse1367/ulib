@@ -7,7 +7,7 @@ config-version: 2
 # The ulib-data-directory is uLib's main directory for all it's files.
 # This directory can only be changed via command-line options.
 # To change it, add this to the command-line (before the -jar):
-#   -Dulib.ulib.directory.main=YOUR_VALUE
+#   -Dulib.directory.main=YOUR_VALUE
 # Defaults to '.ulib'
 
 # Switch to override properties set via the command line.
