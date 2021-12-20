@@ -26,7 +26,7 @@ public final class Installer {
 
     private boolean init;
 
-    private Collection<File> filesLibrary, filesModule, filesSuper, filesAdditional;
+    private Collection<File> filesSuper, filesModules, filesAdditional;
     private ModuleClassProvider classProviderSuper, classProvider;
     private Module moduleCoreApi;
 
@@ -46,9 +46,8 @@ public final class Installer {
     }
 
     private void provideDependencies() {
-        this.filesLibrary = dependencyProvider.extractLibrary();
-        this.filesModule = dependencyProvider.extractModule();
-        this.filesSuper = dependencyProvider.extractSuper();
+        this.filesSuper = dependencyProvider.extractModule("super");
+        this.filesModules = dependencyProvider.extractModules("core");
         var transformer = new DependencyTransformer();
         this.filesAdditional = dependencyProvider.downloadAdditional(transformer::transform);
     }
@@ -79,7 +78,7 @@ public final class Installer {
         var layerSuper = classProviderSuper.getLayer();
 
         // init loader for ulib regular layer
-        var files = Stream.of(filesLibrary.stream(), filesModule.stream(), filesAdditional.stream())
+        var files = Stream.of(filesModules.stream(), filesAdditional.stream())
                 .flatMap(s -> s)
                 .toList();
 

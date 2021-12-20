@@ -5,10 +5,7 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -18,10 +15,13 @@ import static eu.software4you.ulib.loader.install.provider.Util.write;
 
 public final class DependencyProvider {
 
-    private static final Pattern PATTERN = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
+    private static final Pattern LAYER_1 = Pattern.compile("(\\w+)\\b=\\[([^=]*)]", Pattern.MULTILINE);
+    private static final Pattern LAYER_2 = Pattern.compile("[a-zA-Z-0-9._]+\\.jar\\b", Pattern.MULTILINE);
+
     final File modsDir;
     final File libsDir;
     private final JarFile jar;
+    private final Map<String, Collection<String>> modulesMap;
 
     @SneakyThrows
     public DependencyProvider() {
@@ -33,6 +33,8 @@ public final class DependencyProvider {
         initDir(dataDir);
         initDir(modsDir);
         initDir(libsDir);
+
+        this.modulesMap = readModules();
     }
 
     private void initDir(File f) {
@@ -42,41 +44,49 @@ public final class DependencyProvider {
             }
     }
 
+    private Map<String, Collection<String>> readModules() {
+        var val = readManifest("Modules");
+        if (val == null)
+            throw new IllegalArgumentException("Modules key not found");
+
+        Map<String, Collection<String>> map = new HashMap<>();
+        var l1Matcher = LAYER_1.matcher(val);
+        while (l1Matcher.find()) {
+            String group = l1Matcher.group(1);
+
+            var l2Matcher = LAYER_2.matcher(l1Matcher.group(2));
+            List<String> modules = new LinkedList<>();
+            while (l2Matcher.find()) {
+                modules.add(l2Matcher.group());
+            }
+
+            map.putIfAbsent(group, modules);
+        }
+
+        return map;
+    }
+
     @SneakyThrows
-    String readManifestRaw(String what) {
+    private String readManifest(String what) {
         return jar.getManifest().getMainAttributes().getValue(what);
     }
 
-    private Collection<String> readManifest(String what) {
-        var val = readManifestRaw(what);
-        if (val == null)
-            return Collections.emptyList();
-        var matcher = PATTERN.matcher(val);
-        List<String> matches = new LinkedList<>();
-        while (matcher.find()) {
-            var match = matcher.group();
-            matches.add(match);
-        }
-        return matches;
+    public Collection<File> extractModules(String... what) {
+        return Arrays.stream(what)
+                .map(this::extractModule)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
-    public Collection<File> extractLibrary() {
-        return extract("Library-Files", modsDir);
-    }
-
-    public Collection<File> extractModule() {
-        return extract("Module-Files", modsDir);
-    }
-
-    public Collection<File> extractSuper() {
-        return extract("Super-Modules", modsDir);
+    public Collection<File> extractModule(String what) {
+        return extract(what, modsDir);
     }
 
     public Collection<File> downloadAdditional(BiConsumer<String, File> callback) {
         List<File> li = new LinkedList<>();
 
         var downloader = new DependencyDownloader();
-        var matcher = DependencyDownloader.PATTERN.matcher(readManifestRaw("Libraries"));
+        var matcher = DependencyDownloader.PATTERN.matcher(readManifest("Libraries"));
 
         while (matcher.find()) {
             var coords = matcher.group();
@@ -89,13 +99,16 @@ public final class DependencyProvider {
 
     @SneakyThrows
     Collection<File> extract(String what, File dir) {
-        return readManifest(what).stream()
-                .map(elem -> extractSingle(elem, dir))
+        if (!modulesMap.containsKey(what))
+            return List.of();
+
+        return modulesMap.get(what).stream()
+                .map(elem -> extractJar(elem, dir))
                 .toList();
     }
 
     @SneakyThrows
-    private File extractSingle(String name, File dir) {
+    private File extractJar(String name, File dir) {
         File file = new File(dir, name);
         String location = "META-INF/jars/" + name;
         var en = jar.getEntry(location);
