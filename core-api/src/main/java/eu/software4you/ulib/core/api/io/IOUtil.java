@@ -36,7 +36,7 @@ public class IOUtil {
     }
 
     /**
-     * Writes an reader into a writer. This method closes the objects.
+     * Writes a reader into a writer. This method closes the objects.
      *
      * @param reader the reader to read from
      * @param writer the writer to write to
@@ -74,7 +74,7 @@ public class IOUtil {
     }
 
     /**
-     * Reads all chars from an reader.
+     * Reads all chars from a reader.
      *
      * @param reader the reader to read from
      * @return the bytes read
