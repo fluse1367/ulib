@@ -136,8 +136,14 @@ public final class Installer {
                 return false;
             }
 
-            // only access to the core API
-            return request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib");
+            return
+                    // access to core API
+                    request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib")
+                    // access to minecraft api
+                    || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
+                    // access to velocity api
+                    || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
+                    ;
         };
         this.delegationInjector = constructInjector(classProvider, published::contains, checkLoadingRequest);
     }
