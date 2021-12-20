@@ -1,28 +1,10 @@
-repositories {
-    // spigot repo
-    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-
-    // bungeecord repo
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-
-    // velocity repo
-    maven { url 'https://nexus.velocitypowered.com/repository/maven-public/' }
-
-}
+//file:noinspection GroovyAssignabilityCheck
+dependencyBungee()
+dependencySpigot()
+dependencyVelocity()
 
 dependencies {
-    //noinspection GroovyAssignabilityCheck
     lazyLib('net.sf.jopt-simple:jopt-simple:6.0-alpha-3', 'jopt-simple')
-
-    // spigot
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
-
-    // bungeecord
-    compileOnly 'net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT'
-
-    // velocity
-    compileOnly 'com.velocitypowered:velocity-api:3.0.1'
-    annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
 }
 
 ext {
@@ -65,6 +47,7 @@ jar {
     // include modules
     inclModule('core')
     inclModule('minecraft')
+    inclModule('velocity')
 
     // include library coordinates
     def libs = [];
@@ -86,8 +69,4 @@ jar {
             'Libraries'              : libs,
             'Modules'                : manifestModules
     ])
-}
-
-extraJavaModuleInfo {
-    automaticModule('bungeecord-api-1.17-R0.1-SNAPSHOT.jar', 'bungeecord.api')
 }

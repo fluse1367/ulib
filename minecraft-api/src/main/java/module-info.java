@@ -1,6 +1,6 @@
 module ulib.minecraft.api {
-    requires static lombok;
     requires static org.jetbrains.annotations;
+    requires static lombok;
 
     requires ulib.core.api;
     requires java.logging;
@@ -13,4 +13,6 @@ module ulib.minecraft.api {
     exports eu.software4you.ulib.minecraft.api.proxybridge;
     exports eu.software4you.ulib.minecraft.api.usercache;
     exports eu.software4you.ulib.minecraft.api.util;
+
+    exports eu.software4you.ulib.minecraft.api.internal to ulib.velocity;
 }

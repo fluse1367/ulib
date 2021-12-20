@@ -5,6 +5,7 @@ module ulib.loader {
     // loaded later
     requires static ulib.core.api;
     requires static ulib.core;
+    requires static ulib.velocity;
 
     // for launch function
     requires static joptsimple;
@@ -13,6 +14,8 @@ module ulib.loader {
     requires static bungeecord.api; // bungeecord
     requires static org.bukkit; // spigot
     requires static com.velocitypowered.api; // velocity
+    requires static org.slf4j;
+    requires static com.google.guice;
 
     requires java.instrument;
     requires java.logging;
