@@ -43,6 +43,14 @@ ext {
             update.add(f.name)
         }
     }
+
+    manifestModules = new HashMap<String, List<String>>()
+
+    inclModule = { String baseName ->
+        def list = []
+        ["$baseName-api", "$baseName-impl"].each { projInclude(list, it) }
+        manifestModules.put(baseName, list)
+    }
 }
 
 //noinspection GrUnnecessarySemicolon
@@ -52,15 +60,11 @@ jar {
     // include super module
     def modulesSuper = [];
     projInclude(modulesSuper, "super-module")
+    manifestModules.put('super', modulesSuper)
 
-
-    // include ulib core modules
-    def modulesCore = [];
-    ['core-api', 'core-impl'].each { projInclude(modulesCore, it) }
-
-    // include ulib minecraft modules
-    def modulesMinecraft = []
-    ['minecraft-api'].each { projInclude(modulesMinecraft, it) }
+    // include modules
+    inclModule('core')
+    inclModule('minecraft')
 
     // include library coordinates
     def libs = [];
@@ -72,6 +76,7 @@ jar {
         }
     }
 
+
     manifest.attributes([
             'Main-Class'             : 'eu.software4you.ulib.loader.launch.Main',
             'Premain-Class'          : 'eu.software4you.ulib.loader.agent.AgentMain',
@@ -79,12 +84,7 @@ jar {
             'Can-Redefine-Classes'   : true,
             'Can-Retransform-Classes': true,
             'Libraries'              : libs,
-            'Modules'                :
-                    [
-                            'super'    : modulesSuper,
-                            'core'     : modulesCore,
-                            'minecraft': modulesMinecraft,
-                    ]
+            'Modules'                : manifestModules
     ])
 }
 
