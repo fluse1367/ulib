@@ -58,7 +58,10 @@ public final class Installer {
         this.filesModules = dependencyProvider.extractModules(modules);
 
         var transformer = new DependencyTransformer();
-        this.filesAdditional = dependencyProvider.downloadAdditional(transformer::transform);
+
+        Predicate<String> filter = coords ->
+                !(env == EnvironmentProvider.Environment.VELOCITY && coords.startsWith("org.slf4j:"));
+        this.filesAdditional = dependencyProvider.downloadAdditional(filter, transformer::transform);
     }
 
     @SneakyThrows

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
@@ -82,7 +83,7 @@ public final class DependencyProvider {
         return extract(what, modsDir);
     }
 
-    public Collection<File> downloadAdditional(BiConsumer<String, File> callback) {
+    public Collection<File> downloadAdditional(Predicate<String> coordsFilter, BiConsumer<String, File> callback) {
         List<File> li = new LinkedList<>();
 
         var downloader = new DependencyDownloader();
@@ -90,6 +91,8 @@ public final class DependencyProvider {
 
         while (matcher.find()) {
             var coords = matcher.group();
+            if (!coordsFilter.test(coords))
+                continue;
             li.add(downloader.download(coords, libsDir,
                     f -> callback.accept(coords, f)));
         }
