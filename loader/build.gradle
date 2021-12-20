@@ -22,7 +22,7 @@ dependencies {
     lazyLib('net.sf.jopt-simple:jopt-simple:6.0-alpha-3', 'jopt-simple')
 
     // spigot
-    compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
 
     // bungeecord
     compileOnly 'net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT'
