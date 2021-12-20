@@ -58,6 +58,10 @@ jar {
     def modulesCore = [];
     ['core-api', 'core-impl'].each { projInclude(modulesCore, it) }
 
+    // include ulib minecraft modules
+    def modulesMinecraft = []
+    ['minecraft-api'].each { projInclude(modulesMinecraft, it) }
+
     // include library coordinates
     def libs = [];
     {
@@ -77,8 +81,9 @@ jar {
             'Libraries'              : libs,
             'Modules'                :
                     [
-                            'super': modulesSuper,
-                            'core' : modulesCore
+                            'super'    : modulesSuper,
+                            'core'     : modulesCore,
+                            'minecraft': modulesMinecraft,
                     ]
     ])
 }

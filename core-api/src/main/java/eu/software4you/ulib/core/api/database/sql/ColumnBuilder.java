@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.database.sql;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ColumnBuilder<T> {
     static <T> ColumnBuilder<T> of(Class<T> t, String name, DataType dataType) {
-        return ULib.service(Provider.class).provide(t, name, dataType);
+        return Providers.get(Providers.ProviderColumnBuilder.class).provide(t, name, dataType);
     }
 
     static ColumnBuilder<Object> of(String name, DataType dataType) {
@@ -122,8 +122,4 @@ public interface ColumnBuilder<T> {
      * @return the instance
      */
     @NotNull Column<T> build();
-
-    interface Provider {
-        <T> ColumnBuilder<T> provide(Class<T> t, String name, DataType dataType);
-    }
 }

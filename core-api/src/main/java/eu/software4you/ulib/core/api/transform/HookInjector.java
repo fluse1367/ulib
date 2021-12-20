@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.transform;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,15 +11,15 @@ import java.lang.reflect.Method;
  * Injects methods marked with {@link Hook}.
  */
 public abstract class HookInjector {
-    private static HookInjector impl() {
-        return ULib.service(HookInjector.class);
+    private static HookInjector getInstance() {
+        return Providers.get(HookInjector.class);
     }
 
     /**
      * Searches a class for any static hooks and tries to inject them.
      */
     public static void hookStatic(@NotNull Class<?> clazz) {
-        impl().hookStatic0(clazz);
+        getInstance().hookStatic0(clazz);
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class HookInjector {
      * Searches a class for any active static hooks and removes them.
      */
     public static void unhookStatic(@NotNull Class<?> clazz) {
-        impl().unhookStatic0(clazz);
+        getInstance().unhookStatic0(clazz);
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class HookInjector {
      * @param hookStatic if static hooks should also be injected
      */
     public static void hook(@NotNull Object inst, boolean hookStatic) {
-        impl().hook0(inst, hookStatic);
+        getInstance().hook0(inst, hookStatic);
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class HookInjector {
      * @param unhookStatic if static hooks should also be removed
      */
     public static void unhook(@NotNull Object inst, boolean unhookStatic) {
-        impl().unhook0(inst, unhookStatic);
+        getInstance().unhook0(inst, unhookStatic);
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class HookInjector {
      * @param at         the point where to hook
      */
     public static void directHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull Method into, @NotNull HookPoint at) {
-        impl().directHook0(source, sourceInst, into, at);
+        getInstance().directHook0(source, sourceInst, into, at);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class HookInjector {
      * @param at               the point where to hook
      */
     public static void directHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
-        impl().directHook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().directHook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class HookInjector {
      * @param at         the point from where to remove the hook
      */
     public static void directUnHook(@NotNull Method source, @Nullable Object sourceInst, @NotNull Method into, @NotNull HookPoint at) {
-        impl().directUnhook0(source, sourceInst, into, at);
+        getInstance().directUnhook0(source, sourceInst, into, at);
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class HookInjector {
      * @param at               the point from where to remove the hook
      */
     public static void directUnhook(@NotNull Method source, @Nullable Object sourceInst, @NotNull String className, @NotNull String methodName, @NotNull String methodDescriptor, @NotNull HookPoint at) {
-        impl().directUnhook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().directUnhook0(source, sourceInst, className, methodName, methodDescriptor, at, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     protected abstract void hookStatic0(Class<?> clazz);

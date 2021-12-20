@@ -1,9 +1,9 @@
 package eu.software4you.ulib.core.api.database;
 
-import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.database.sql.MySQLDatabase;
 import eu.software4you.ulib.core.api.database.sql.SQLiteDatabase;
 import eu.software4you.ulib.core.api.database.sql.SqlDatabase;
+import eu.software4you.ulib.core.api.internal.Providers;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -16,8 +16,8 @@ import java.util.Properties;
  * Access point for all database related classes.
  */
 public abstract class Databases {
-    private static Databases impl() {
-        return ULib.service(Databases.class);
+    private static Databases getInstance() {
+        return Providers.get(Databases.class);
     }
 
     /**
@@ -29,7 +29,7 @@ public abstract class Databases {
      */
     @NotNull
     public static SqlDatabase wrap(@NotNull Connection connection) throws IllegalArgumentException {
-        return impl().wrap0(connection);
+        return getInstance().wrap0(connection);
     }
 
     /**
@@ -54,7 +54,7 @@ public abstract class Databases {
      */
     @NotNull
     public static Database prepare(@NotNull String url, @NotNull Properties info) {
-        return impl().prepare0(url, info);
+        return getInstance().prepare0(url, info);
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class Databases {
      */
     @NotNull
     public static SQLiteDatabase prepare(@NotNull File file) {
-        return impl().prepare0(file);
+        return getInstance().prepare0(file);
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class Databases {
      */
     @NotNull
     public static MySQLDatabase prepare(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
-        return impl().prepare0(host, port, database, user, password, parameters);
+        return getInstance().prepare0(host, port, database, user, password, parameters);
     }
 
     /**

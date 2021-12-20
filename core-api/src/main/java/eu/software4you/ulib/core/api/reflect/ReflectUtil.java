@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.reflect;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Modifier;
@@ -10,9 +10,6 @@ import java.util.List;
  * Useful shortcuts for the Java Reflection API.<br>
  */
 public abstract class ReflectUtil {
-    private static ReflectUtil impl() {
-        return ULib.service(ReflectUtil.class);
-    }
 
     /**
      * @see #call(Class, Object, String, boolean, List[])
@@ -90,7 +87,7 @@ public abstract class ReflectUtil {
      */
     @SafeVarargs
     public static Object call(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>... parameters) {
-        return impl().call0(clazz, invoker, call, forced, parameters);
+        return Providers.get(ReflectUtil.class).call0(clazz, invoker, call, forced, parameters);
     }
 
     /**
@@ -131,7 +128,7 @@ public abstract class ReflectUtil {
      * @throws IllegalArgumentException if {@code depth} is invalid
      */
     public static Class<?> getCallerClass(int depth) {
-        return impl().getCallerClass0(++depth);
+        return Providers.get(ReflectUtil.class).getCallerClass0(++depth);
     }
 
     protected abstract Object call0(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>[] parameters);

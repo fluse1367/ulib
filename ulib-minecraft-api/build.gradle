@@ -1,4 +1,0 @@
-dependencies {
-    api project(':ulib-core-api')
-    api files(project(':ulib-core-api').configurations.compileClasspath)
-}

@@ -1,14 +1,13 @@
 package eu.software4you.ulib.core.api.configuration.yaml;
 
-import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.configuration.Sub;
+import eu.software4you.ulib.core.api.internal.Providers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * Representation of a YAML-type configuration sub.
@@ -20,11 +19,9 @@ public interface YamlSub extends Sub {
      * @return the newly created sub
      */
     static ExtYamlSub newYaml() {
-        return ULib.service(Provider.class).get();
+        return Providers.get(Providers.ProviderExtYamlSub.class).get();
     }
 
-    interface Provider extends ServiceLoader.Provider<ExtYamlSub> {
-    }
 
     /**
      * Loads a YAML-Typed {@link Sub} from a reader.

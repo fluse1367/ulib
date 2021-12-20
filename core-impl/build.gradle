@@ -1,8 +1,8 @@
 //file:noinspection GroovyAssignabilityCheck
 
 dependencies {
-    implementation project(':core-api')
-    implementation project(':super-module')
+    api project(':core-api')
+    api project(':super-module')
 
     lib 'org.javassist:javassist:3.28.0-GA' // java bytecode generator
     lib 'com.google.guava:guava:31.0.1-jre' // google commons

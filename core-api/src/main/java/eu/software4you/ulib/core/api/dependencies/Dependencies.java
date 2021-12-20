@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.dependencies;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 
 import java.io.File;
@@ -14,15 +14,15 @@ import static eu.software4you.ulib.core.api.dependencies.Repositories.mavenCentr
  * By default the fallback policy is set to {@code true}.
  */
 public abstract class Dependencies {
-    private static Dependencies impl() {
-        return ULib.service(Dependencies.class);
+    private static Dependencies getInstance() {
+        return Providers.get(Dependencies.class);
     }
 
     /**
      * Resets the fallback policy to the implementation default.
      */
     public static void resetFallbackPolicy() {
-        impl().resetFallbackPolicy0();
+        getInstance().resetFallbackPolicy0();
     }
 
     /**
@@ -31,7 +31,7 @@ public abstract class Dependencies {
      * @param fallback {@code true}, if the dependency should be loaded via the system class loader instead
      */
     public static void setFallbackPolicy(boolean fallback) {
-        impl().setFallbackPolicy0(fallback);
+        getInstance().setFallbackPolicy0(fallback);
     }
 
     /**
@@ -42,7 +42,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository)
      */
     public static void depend(String coords) {
-        impl().depend0(coords, mavenCentral(), ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().depend0(coords, mavenCentral(), ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -54,7 +54,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository, Consumer)
      */
     public static void depend(String coords, Consumer<File> loader) {
-        impl().depend0(coords, mavenCentral(), loader);
+        getInstance().depend0(coords, mavenCentral(), loader);
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository, ClassLoader)
      */
     public static void depend(String coords, Repository repository) {
-        impl().depend0(coords, repository, ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().depend0(coords, repository, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class Dependencies {
      * @see eu.software4you.ulib.core.api.transform.HookInjector
      */
     public static void depend(String coords, Repository repository, ClassLoader source) {
-        impl().depend0(coords, repository, source);
+        getInstance().depend0(coords, repository, source);
     }
 
     /**
@@ -94,7 +94,7 @@ public abstract class Dependencies {
      * @see Repositories
      */
     public static void depend(String coords, Repository repository, Consumer<File> loader) {
-        impl().depend0(coords, repository, loader);
+        getInstance().depend0(coords, repository, loader);
     }
 
     /**
@@ -107,7 +107,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository)
      */
     public static void depend(String coords, String testClass) {
-        impl().depend0(coords, testClass, mavenCentral(), ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().depend0(coords, testClass, mavenCentral(), ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository, Consumer)
      */
     public static void depend(String coords, String testClass, Consumer<File> loader) {
-        impl().depend0(coords, testClass, ReflectUtil.getCallerClass().getClassLoader(), mavenCentral(), loader);
+        getInstance().depend0(coords, testClass, ReflectUtil.getCallerClass().getClassLoader(), mavenCentral(), loader);
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class Dependencies {
      * @see #depend(String, Repository, ClassLoader)
      */
     public static void depend(String coords, String testClass, Repository repository) {
-        impl().depend0(coords, testClass, repository, ReflectUtil.getCallerClass().getClassLoader());
+        getInstance().depend0(coords, testClass, repository, ReflectUtil.getCallerClass().getClassLoader());
     }
 
     /**
@@ -152,7 +152,7 @@ public abstract class Dependencies {
      * @see eu.software4you.ulib.core.api.transform.HookInjector
      */
     public static void depend(String coords, String testClass, Repository repository, ClassLoader source) {
-        impl().depend0(coords, testClass, repository, source);
+        getInstance().depend0(coords, testClass, repository, source);
     }
 
     // basically the same as above, but with class-testing
@@ -169,7 +169,7 @@ public abstract class Dependencies {
      * @see Repositories
      */
     public static void depend(String coords, String testClass, ClassLoader testLoader, Repository repository, Consumer<File> loader) {
-        impl().depend0(coords, testClass, testLoader, repository, loader);
+        getInstance().depend0(coords, testClass, testLoader, repository, loader);
     }
 
     protected abstract void resetFallbackPolicy0();

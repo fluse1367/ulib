@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.dependencies;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 
 /**
  * Collection of common maven repositories.
@@ -8,8 +8,8 @@ import eu.software4you.ulib.core.ULib;
  * @see #of(String, String)
  */
 public abstract class Repositories {
-    private static Repositories impl() {
-        return ULib.service(Repositories.class);
+    private static Repositories getInstance() {
+        return Providers.get(Repositories.class);
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class Repositories {
      * @return the newly created (or cached) repository
      */
     public static Repository of(String id, String url) {
-        return impl().of0(id, url);
+        return getInstance().of0(id, url);
     }
 
     /**
@@ -67,7 +67,7 @@ public abstract class Repositories {
      * @return the or cached repository, or {@code null} if the {@code id} is not cached
      */
     public static Repository of(String id) {
-        return impl().of0(id);
+        return getInstance().of0(id);
     }
 
     public abstract Repository of0(String id, String url);

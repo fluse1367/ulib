@@ -1,3 +1,23 @@
+import eu.software4you.ulib.core.api.Lib;
+import eu.software4you.ulib.core.api.database.Databases;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.dependencies.Repositories;
+import eu.software4you.ulib.core.api.http.HttpUtil;
+import eu.software4you.ulib.core.api.internal.Providers;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.transform.HookInjector;
+import eu.software4you.ulib.core.impl.LibImpl;
+import eu.software4you.ulib.core.impl.configuration.yaml.YamlSubProvider;
+import eu.software4you.ulib.core.impl.database.DatabasesImpl;
+import eu.software4you.ulib.core.impl.database.sql.ColumnBuilderProvider;
+import eu.software4you.ulib.core.impl.dependencies.DependenciesImpl;
+import eu.software4you.ulib.core.impl.dependencies.DependencyLoaderImpl;
+import eu.software4you.ulib.core.impl.dependencies.RepositoriesImpl;
+import eu.software4you.ulib.core.impl.http.HttpUtilImpl;
+import eu.software4you.ulib.core.impl.reflect.ReflectUtilImpl;
+import eu.software4you.ulib.core.impl.transform.HookInjectorImpl;
+
 module ulib.core {
     requires static lombok;
     requires static org.jetbrains.annotations;
@@ -20,14 +40,16 @@ module ulib.core {
     exports eu.software4you.ulib.core.impl to ulib.core.api;
     exports eu.software4you.ulib.core.impl.delegation;
 
-    provides eu.software4you.ulib.core.api.Lib with eu.software4you.ulib.core.impl.LibImpl;
-    provides eu.software4you.ulib.core.api.configuration.yaml.YamlSub.Provider with eu.software4you.ulib.core.impl.configuration.yaml.YamlSubProvider;
-    provides eu.software4you.ulib.core.api.database.Databases with eu.software4you.ulib.core.impl.database.DatabasesImpl;
-    provides eu.software4you.ulib.core.api.database.sql.ColumnBuilder.Provider with eu.software4you.ulib.core.impl.database.sql.ColumnBuilderProvider;
-    provides eu.software4you.ulib.core.api.dependencies.Dependencies with eu.software4you.ulib.core.impl.dependencies.DependenciesImpl;
-    provides eu.software4you.ulib.core.api.dependencies.DependencyLoader with eu.software4you.ulib.core.impl.dependencies.DependencyLoaderImpl;
-    provides eu.software4you.ulib.core.api.dependencies.Repositories with eu.software4you.ulib.core.impl.dependencies.RepositoriesImpl;
-    provides eu.software4you.ulib.core.api.http.HttpUtil with eu.software4you.ulib.core.impl.http.HttpUtilImpl;
-    provides eu.software4you.ulib.core.api.reflect.ReflectUtil with eu.software4you.ulib.core.impl.reflect.ReflectUtilImpl;
-    provides eu.software4you.ulib.core.api.transform.HookInjector with eu.software4you.ulib.core.impl.transform.HookInjectorImpl;
+    exports eu.software4you.ulib.core.impl.configuration.yaml to ulib.minecraft;
+
+    provides Lib with LibImpl;
+    provides Providers.ProviderExtYamlSub with YamlSubProvider;
+    provides Databases with DatabasesImpl;
+    provides Providers.ProviderColumnBuilder with ColumnBuilderProvider;
+    provides Dependencies with DependenciesImpl;
+    provides DependencyLoader with DependencyLoaderImpl;
+    provides Repositories with RepositoriesImpl;
+    provides HttpUtil with HttpUtilImpl;
+    provides ReflectUtil with ReflectUtilImpl;
+    provides HookInjector with HookInjectorImpl;
 }

@@ -70,7 +70,7 @@ subprojects {
             canBeResolved = true
             extendsFrom libOnly
         }
-        implementation {
+        api {
             extendsFrom lib
         }
     }; // <- for somewhat reason the build fails without this semicolon

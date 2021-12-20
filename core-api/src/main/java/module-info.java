@@ -1,10 +1,21 @@
-open module ulib.core.api {
+import eu.software4you.ulib.core.api.Lib;
+import eu.software4you.ulib.core.api.database.Databases;
+import eu.software4you.ulib.core.api.dependencies.Dependencies;
+import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
+import eu.software4you.ulib.core.api.dependencies.Repositories;
+import eu.software4you.ulib.core.api.http.HttpUtil;
+import eu.software4you.ulib.core.api.internal.Providers;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.transform.HookInjector;
+
+module ulib.core.api {
     requires static lombok;
     requires static org.jetbrains.annotations;
 
     requires java.logging;
     requires java.sql;
     requires org.apache.httpcomponents.httpclient;
+    requires org.apache.httpcomponents.httpcore;
 
     exports eu.software4you.ulib.core;
     exports eu.software4you.ulib.core.api;
@@ -24,14 +35,16 @@ open module ulib.core.api {
     exports eu.software4you.ulib.core.api.transform;
     exports eu.software4you.ulib.core.api.utils;
 
-    uses eu.software4you.ulib.core.api.Lib;
-    uses eu.software4you.ulib.core.api.configuration.yaml.YamlSub.Provider;
-    uses eu.software4you.ulib.core.api.database.Databases;
-    uses eu.software4you.ulib.core.api.database.sql.ColumnBuilder.Provider;
-    uses eu.software4you.ulib.core.api.dependencies.Dependencies;
-    uses eu.software4you.ulib.core.api.dependencies.DependencyLoader;
-    uses eu.software4you.ulib.core.api.dependencies.Repositories;
-    uses eu.software4you.ulib.core.api.http.HttpUtil;
-    uses eu.software4you.ulib.core.api.reflect.ReflectUtil;
-    uses eu.software4you.ulib.core.api.transform.HookInjector;
+    exports eu.software4you.ulib.core.api.internal to ulib.core, ulib.minecraft.api;
+
+    uses Lib;
+    uses Providers.ProviderExtYamlSub;
+    uses Databases;
+    uses Providers.ProviderColumnBuilder;
+    uses Dependencies;
+    uses DependencyLoader;
+    uses Repositories;
+    uses HttpUtil;
+    uses ReflectUtil;
+    uses HookInjector;
 }

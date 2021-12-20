@@ -1,4 +1,0 @@
-dependencies {
-    api project(':ulib-minecraft-api')
-    api project(':ulib-core')
-}

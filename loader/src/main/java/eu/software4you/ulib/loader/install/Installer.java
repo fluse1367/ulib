@@ -47,7 +47,16 @@ public final class Installer {
 
     private void provideDependencies() {
         this.filesSuper = dependencyProvider.extractModule("super");
-        this.filesModules = dependencyProvider.extractModules("core");
+
+        List<String> modules = new ArrayList<>(1);
+        modules.add("core");
+        var env = EnvironmentProvider.get();
+        if (env != EnvironmentProvider.Environment.STANDALONE) {
+            modules.add("minecraft");
+            modules.add(env.name().toLowerCase());
+        }
+        this.filesModules = dependencyProvider.extractModules(modules);
+
         var transformer = new DependencyTransformer();
         this.filesAdditional = dependencyProvider.downloadAdditional(transformer::transform);
     }

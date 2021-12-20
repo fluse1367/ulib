@@ -1,6 +1,6 @@
 package eu.software4you.ulib.core.api.dependencies;
 
-import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +12,9 @@ import java.net.URLClassLoader;
  * A utility to load (jar-) files.
  */
 public abstract class DependencyLoader {
-    private static DependencyLoader impl() {
-        return ULib.service(DependencyLoader.class);
+
+    private static DependencyLoader getInstance() {
+        return Providers.get(DependencyLoader.class);
     }
 
     /**
@@ -25,7 +26,7 @@ public abstract class DependencyLoader {
      * @param classLoader the class loader
      */
     public static void free(ClassLoader classLoader) {
-        impl().free0(classLoader);
+        getInstance().free0(classLoader);
     }
 
     /**
@@ -34,7 +35,7 @@ public abstract class DependencyLoader {
      * @param file the jar file to load
      */
     public static void sysLoad(@NotNull File file) {
-        impl().sysLoad0(file);
+        getInstance().sysLoad0(file);
     }
 
     /**
@@ -47,7 +48,7 @@ public abstract class DependencyLoader {
      * @see Dependencies#depend(String, Repository, ClassLoader)
      */
     public static void load(@NotNull File file) {
-        impl().load0(file, ReflectUtil.getCallerClass().getClassLoader(), false, true);
+        getInstance().load0(file, ReflectUtil.getCallerClass().getClassLoader(), false, true);
     }
 
     /**
@@ -60,7 +61,7 @@ public abstract class DependencyLoader {
      * @see Dependencies#depend(String, Repository, ClassLoader)
      */
     public static void load(@NotNull File file, boolean fallback) {
-        impl().load0(file, ReflectUtil.getCallerClass().getClassLoader(), fallback, true);
+        getInstance().load0(file, ReflectUtil.getCallerClass().getClassLoader(), fallback, true);
     }
 
     /**
@@ -73,7 +74,7 @@ public abstract class DependencyLoader {
      * @see Dependencies#depend(String, Repository, ClassLoader)
      */
     public static void load(@NotNull File file, @NotNull ClassLoader classLoader) {
-        impl().load0(file, classLoader, false, true);
+        getInstance().load0(file, classLoader, false, true);
     }
 
     /**
@@ -86,7 +87,7 @@ public abstract class DependencyLoader {
      * @see Dependencies#depend(String, Repository, ClassLoader)
      */
     public static void load(@NotNull File file, @NotNull ClassLoader classLoader, boolean fallback) {
-        impl().load0(file, classLoader, fallback, true);
+        getInstance().load0(file, classLoader, fallback, true);
     }
 
     /**
@@ -100,7 +101,7 @@ public abstract class DependencyLoader {
      * @see Dependencies#depend(String, Repository, ClassLoader)
      */
     public static void load(@NotNull File file, @NotNull ClassLoader classLoader, boolean fallback, boolean exclusive) {
-        impl().load0(file, classLoader, fallback, exclusive);
+        getInstance().load0(file, classLoader, fallback, exclusive);
     }
 
     /**
@@ -110,7 +111,7 @@ public abstract class DependencyLoader {
      * @param url the {@link URL} to load
      */
     public static void load(@NotNull URL url) {
-        impl().load0(url);
+        getInstance().load0(url);
     }
 
     /**
@@ -120,7 +121,7 @@ public abstract class DependencyLoader {
      * @param classLoader the {@link URLClassLoader} to load the jar file with
      */
     public static void load(@NotNull URL url, @NotNull URLClassLoader classLoader) {
-        impl().load0(url, classLoader);
+        getInstance().load0(url, classLoader);
     }
 
     protected abstract void free0(ClassLoader classLoader);

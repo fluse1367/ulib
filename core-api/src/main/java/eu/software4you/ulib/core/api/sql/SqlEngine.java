@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.api.sql;
 
 import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.internal.Providers;
 
 import java.io.File;
 import java.sql.*;
@@ -302,7 +303,7 @@ public class SqlEngine {
     /* helper to load the driver libraries only when necessary */
     public abstract static class DriverLoader {
         private static void load(Driver driver) {
-            ULib.service(DriverLoader.class).load0(driver);
+            Providers.get(DriverLoader.class).load0(driver);
         }
 
         protected abstract void load0(Driver driver);

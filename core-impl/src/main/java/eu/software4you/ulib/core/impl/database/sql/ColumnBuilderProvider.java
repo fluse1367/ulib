@@ -3,13 +3,14 @@ package eu.software4you.ulib.core.impl.database.sql;
 import eu.software4you.ulib.core.api.database.sql.Column;
 import eu.software4you.ulib.core.api.database.sql.ColumnBuilder;
 import eu.software4you.ulib.core.api.database.sql.DataType;
+import eu.software4you.ulib.core.api.internal.Providers;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class ColumnBuilderProvider implements ColumnBuilder.Provider {
+public class ColumnBuilderProvider implements Providers.ProviderColumnBuilder {
     @Override
     public <T> ColumnBuilder<T> provide(Class<T> t, String name, DataType dataType) {
         return new Builder<>(t, name, dataType);

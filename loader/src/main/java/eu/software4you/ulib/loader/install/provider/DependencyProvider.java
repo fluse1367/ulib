@@ -71,8 +71,8 @@ public final class DependencyProvider {
         return jar.getManifest().getMainAttributes().getValue(what);
     }
 
-    public Collection<File> extractModules(String... what) {
-        return Arrays.stream(what)
+    public Collection<File> extractModules(Collection<String> what) {
+        return what.stream()
                 .map(this::extractModule)
                 .flatMap(Collection::stream)
                 .toList();
