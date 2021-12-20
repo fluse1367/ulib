@@ -28,13 +28,6 @@ ext {
             return "unknown"
         }
     }
-
-    replacementTokens = new Properties()
-    replacementTokens.putAll([
-            'version'     : version.toString(),
-            'maven.mysql' : 'mysql:mysql-connector-java:8.0.23',
-            'maven.sqlite': 'org.xerial:sqlite-jdbc:3.25.2',
-    ])
 }
 
 //noinspection GrUnnecessarySemicolon
@@ -119,14 +112,34 @@ subprojects {
     }
 
     // replace tokens
-    task processSources(type: Sync) {
-        from sourceSets.main.java.srcDirs
-        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
-        into "$buildDir/src"
-    }
-    compileJava.source = processSources.outputs
+    {
+        ext {
+            replacementTokens = new Properties()
+            replacementTokens.putAll([
+                    'maven.mysql' : 'mysql:mysql-connector-java:8.0.23',
+                    'maven.sqlite': 'org.xerial:sqlite-jdbc:3.25.2',
+            ])
+        }
 
-    processResources {
-        filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
-    }
+        // make all project properties available
+        project.properties.forEach({ k, v ->
+            if (k == null || v == null)
+                return
+            replacementTokens.put('project.' + k, (String) v)
+        })
+
+        // replace patterns in source code
+        task processSources(type: Sync) {
+            from sourceSets.main.java.srcDirs
+            filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
+            into "$buildDir/src"
+        }
+        compileJava.source = processSources.outputs
+
+        // replace patterns in resource files
+        processResources {
+            filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
+        }
+    };
+
 }
