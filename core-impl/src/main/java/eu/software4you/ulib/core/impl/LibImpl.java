@@ -1,6 +1,5 @@
 package eu.software4you.ulib.core.impl;
 
-import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.Lib;
 import eu.software4you.ulib.core.api.RunMode;
 import org.jetbrains.annotations.NotNull;
@@ -10,14 +9,10 @@ import java.util.logging.Logger;
 
 public final class LibImpl implements Lib {
 
-    final static long MAIN_THREAD_ID;
+    final static long MAIN_THREAD_ID = Thread.currentThread().getId();
+
+
     private final Logger logger;
-
-    static {
-        MAIN_THREAD_ID = Thread.currentThread().getId();
-    }
-
-
     private final Properties properties;
     private final String version;
     private final RunMode runMode;
@@ -32,9 +27,9 @@ public final class LibImpl implements Lib {
         }
 
         properties = Properties.getInstance();
-        version = ULib.class.getPackage().getImplementationVersion();
+        version = getClass().getPackage().getImplementationVersion();
 
-        runMode = properties.MODE;
+        runMode = RunMode.values()[(int) System.getProperties().remove("ulib.environment")];
 
         nameOnly = "uLib";
         name = String.format("%s-%s", nameOnly, runMode.getName());

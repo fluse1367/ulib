@@ -1,11 +1,35 @@
 def children = ['core-api', 'core-impl']
 
+
+repositories {
+    // spigot repo
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+
+    // bungeecord repo
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+    // velocity repo
+    maven { url 'https://nexus.velocitypowered.com/repository/maven-public/' }
+
+}
+
 dependencies {
     children.each {
         implementation project(":$it")
     }
 
+    //noinspection GroovyAssignabilityCheck
     lazyLib('net.sf.jopt-simple:jopt-simple:6.0-alpha-3', 'jopt-simple')
+
+    // spigot
+    compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
+
+    // bungeecord
+    compileOnly 'net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT'
+
+    // velocity
+    compileOnly 'com.velocitypowered:velocity-api:3.0.1'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
 }
 
 //noinspection GrUnnecessarySemicolon
@@ -61,4 +85,8 @@ jar {
             'Module-Files'           : mods,
             'Super-Modules'          : sMods
     ])
+}
+
+extraJavaModuleInfo {
+    automaticModule('bungeecord-api-1.17-R0.1-SNAPSHOT.jar', 'bungeecord.api')
 }

@@ -1,0 +1,7 @@
+main: eu.software4you.ulib.loader.minecraft.PluginSpigot
+name: ulib3
+version: {{project.version}}
+author: fluse1367
+website: https://software4you.eu
+load: STARTUP
+api-version: 1.13

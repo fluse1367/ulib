@@ -11,6 +11,7 @@ module ulib.core {
     requires ulib.core.api;
     requires ulib.supermodule;
     requires org.apache.commons.lang3;
+    requires org.yaml.snakeyaml;
 
     // via extra-java-module-info
     requires maven.resolver.provider;

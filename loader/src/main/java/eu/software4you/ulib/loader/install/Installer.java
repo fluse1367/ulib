@@ -3,6 +3,7 @@ package eu.software4you.ulib.loader.install;
 import eu.software4you.ulib.loader.agent.AgentInstaller;
 import eu.software4you.ulib.loader.install.provider.DependencyProvider;
 import eu.software4you.ulib.loader.install.provider.DependencyTransformer;
+import eu.software4you.ulib.loader.install.provider.EnvironmentProvider;
 import eu.software4you.ulib.loader.install.provider.ModuleClassProvider;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -109,6 +110,7 @@ public final class Installer {
 
     @SneakyThrows
     private void loadULib() {
+        System.getProperties().put("ulib.environment", EnvironmentProvider.get().ordinal());
         Class.forName("eu.software4you.ulib.core.ULib", true, moduleCoreApi.getClassLoader());
     }
 

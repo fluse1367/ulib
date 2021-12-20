@@ -36,6 +36,7 @@ subprojects {
     {
         apply plugin: 'java-library'
         apply plugin: "io.freefair.lombok"
+        apply plugin: "de.jjohannes.extra-java-module-info"
     }
 
     // project meta settings
@@ -110,6 +111,11 @@ subprojects {
             }
         }
     }
+
+    // legacy dependencies
+    extraJavaModuleInfo {
+        failOnMissingModuleInfo = false
+    };
 
     // replace tokens
     {

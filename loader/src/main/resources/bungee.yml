@@ -1,0 +1,5 @@
+main: eu.software4you.ulib.loader.minecraft.PluginBungeecord
+name: ulib3
+version: {{project.version}}
+author: fluse1367
+website: https://software4you.eu

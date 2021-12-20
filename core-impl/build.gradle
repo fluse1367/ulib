@@ -1,5 +1,4 @@
 //file:noinspection GroovyAssignabilityCheck
-apply plugin: "de.jjohannes.extra-java-module-info"
 
 dependencies {
     implementation project(':core-api')
@@ -31,7 +30,6 @@ dependencies {
 }
 
 extraJavaModuleInfo {
-    failOnMissingModuleInfo = false
     automaticModule('javassist-3.28.0-GA.jar', 'javassist')
     automaticModule('maven-resolver-provider-3.8.4.jar', 'maven.resolver.provider')
 }

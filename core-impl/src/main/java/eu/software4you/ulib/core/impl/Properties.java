@@ -1,6 +1,5 @@
 package eu.software4you.ulib.core.impl;
 
-import eu.software4you.ulib.core.api.RunMode;
 import eu.software4you.ulib.core.api.common.Keyable;
 import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import eu.software4you.ulib.core.api.io.IOUtil;
@@ -27,8 +26,6 @@ public final class Properties {
 
     private final boolean clOverride;
     private YamlSub yaml;
-
-    public RunMode MODE = RunMode.STANDALONE;
 
     @SneakyThrows
     private Properties() {

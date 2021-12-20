@@ -9,23 +9,22 @@ public enum RunMode {
     /**
      * A spigot (or fork) plugin implementation.
      */
-    SPIGOT("spigot", true, false),
+    SPIGOT("spigot", true, false), // 0
 
     /**
      * A bungeecord (or fork) plugin implementation.
      */
-    BUNGEECORD("bungeecord"),
+    BUNGEECORD("bungeecord"), // 1
 
     /**
      * A velocity (or fork) plugin implementation.
      */
-    VELOCITY("velocity"),
+    VELOCITY("velocity"), // 2
 
     /**
      * A standalone implementation.
      */
-    STANDALONE("standalone", false, false),
-
+    STANDALONE("standalone", false, false), // 3
     ;
 
 
