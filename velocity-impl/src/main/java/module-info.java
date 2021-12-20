@@ -15,7 +15,7 @@ module ulib.velocity {
     requires ulib.minecraft;
     requires ulib.minecraft.api;
 
-    requires com.velocitypowered.api;
+    requires static com.velocitypowered.api;
     requires com.google.gson;
 
     provides MainUserCache with MainUserCacheImpl;
