@@ -2,9 +2,11 @@ package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.api.Lib;
 import eu.software4you.ulib.core.api.RunMode;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public final class LibImpl implements Lib {
@@ -19,6 +21,7 @@ public final class LibImpl implements Lib {
     private final String name;
     private final String nameOnly;
 
+    @SneakyThrows
     public LibImpl() {
         // init agent
         Agent.init();
@@ -27,7 +30,10 @@ public final class LibImpl implements Lib {
         }
 
         properties = Properties.getInstance();
-        version = getClass().getPackage().getImplementationVersion();
+
+        var thisJar = new JarFile(new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()));
+        version = thisJar.getManifest().getMainAttributes().getValue("Implementation-Version");
+        thisJar.close();
 
         runMode = RunMode.values()[(int) System.getProperties().remove("ulib.environment")];
 
