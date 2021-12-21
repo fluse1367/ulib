@@ -36,7 +36,6 @@ public class PluginSubst extends VelocityJavaPlugin {
         MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
     }
 
-
     @SneakyThrows
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent e) {
@@ -47,5 +46,20 @@ public class PluginSubst extends VelocityJavaPlugin {
             getProxyServer().getChannelRegistrar().unregister(ProxyServerBridgeImpl.IDENTIFIER);
             unregisterEvents(proxyServerBridge);
         }
+    }
+
+    @Override
+    public void registerEvents(Object listener) {
+        getProxyServer().getEventManager().register(getPlugin(), listener);
+    }
+
+    @Override
+    public void unregisterEvents(Object listener) {
+        getProxyServer().getEventManager().unregisterListener(getPlugin(), listener);
+    }
+
+    @Override
+    public void unregisterAllEvents() {
+        getProxyServer().getEventManager().unregisterListeners(getPlugin());
     }
 }
