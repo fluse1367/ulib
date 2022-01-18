@@ -5,3 +5,7 @@ author: fluse1367
 website: https://software4you.eu
 load: STARTUP
 api-version: 1.13
+
+commands:
+  ulib:
+    description: Main command for the ulib library.
