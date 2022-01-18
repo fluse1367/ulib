@@ -3,6 +3,7 @@ package eu.software4you.ulib.loader.agent;
 import com.sun.tools.attach.VirtualMachine;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ public final class AgentInstaller {
 
     @SneakyThrows
     public AgentInstaller() {
-        this.path = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        this.path = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
     }
 
     private String pid;
