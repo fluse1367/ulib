@@ -34,6 +34,10 @@ final class HookInjector implements ClassFileTransformer {
         try {
             ClassPool pool = new ClassPool(true);
             pool.appendClassPath(new LoaderClassPath(loader));
+
+            // shouldnt be able to fail because this class is always loaded in a modular context
+            pool.appendClassPath(new LoaderClassPath(getClass().getModule().getLayer().findLoader("ulib.supermodule")));
+
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
             pool.importPackage("eu.software4you.ulib.supermodule.hooking");
 
