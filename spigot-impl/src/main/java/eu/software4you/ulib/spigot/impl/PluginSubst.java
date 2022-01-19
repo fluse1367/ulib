@@ -1,7 +1,6 @@
 package eu.software4you.ulib.spigot.impl;
 
 import eu.software4you.ulib.core.api.configuration.ConversionPolicy;
-import eu.software4you.ulib.core.api.dependencies.Dependencies;
 import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.core.api.sql.SqlEngine;
@@ -20,8 +19,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 public class PluginSubst extends ExtendedJavaPlugin implements Listener {
     private static final LazyValue<String> PLAIN_MC_VERSION;
@@ -39,8 +42,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
         var server = Bukkit.getServer();
         PLAIN_MC_VERSION = new LazyValue<>(() -> (String) ReflectUtil.call(server.getClass(), server, "getServer().getVersion()"));
 
-        Dependencies.depend("{{maven.xseries}}");
-
         YamlSerializer.getInstance().getAdapters().registerAdapter(ConfigurationSerializable.class, new BukkitSerialisationAdapter());
 
         System.setProperty(PROP_KEY, "cinit");
@@ -48,7 +49,8 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
 
     private final Plugin plugin;
 
-    public PluginSubst(Plugin plugin) {
+    public PluginSubst(Plugin plugin, JavaPluginLoader loader, PluginDescriptionFile descriptionFile, File dataFolder, File file) {
+        super(loader, descriptionFile, dataFolder, file);
         this.plugin = plugin;
     }
 

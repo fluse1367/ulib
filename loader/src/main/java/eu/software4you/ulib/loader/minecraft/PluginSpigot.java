@@ -24,7 +24,7 @@ public class PluginSpigot extends JavaPlugin {
 
         var loader = Installer.getModule().getLayer().findLoader("ulib.spigot");
         var cl = Class.forName("eu.software4you.ulib.spigot.impl.PluginSubst", true, loader);
-        this.pluginSubstitute = (Plugin) cl.getConstructors()[0].newInstance(this);
+        this.pluginSubstitute = (Plugin) cl.getConstructors()[0].newInstance(this, getPluginLoader(), getDescription(), getDataFolder(), getFile());
     }
 
     @Override
