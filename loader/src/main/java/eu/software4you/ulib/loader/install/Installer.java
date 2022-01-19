@@ -146,6 +146,8 @@ public final class Installer {
                             || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
                             // access to velocity api
                             || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
+                            // access to spigot api
+                            || request.startsWith("eu.software4you.ulib.spigot.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.SPIGOT
                     ;
         };
         this.delegationInjector = constructInjector(classProvider, published::contains, checkLoadingRequest);
