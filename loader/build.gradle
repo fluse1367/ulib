@@ -48,6 +48,7 @@ jar {
     inclModule('core')
     inclModule('minecraft')
     inclModule('velocity')
+    inclModule('spigot')
 
     // include library coordinates
     def libs = [];

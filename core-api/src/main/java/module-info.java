@@ -34,8 +34,9 @@ module ulib.core.api {
     exports eu.software4you.ulib.core.api.sql;
     exports eu.software4you.ulib.core.api.transform;
     exports eu.software4you.ulib.core.api.utils;
+    exports eu.software4you.ulib.core.api.math;
 
-    exports eu.software4you.ulib.core.api.internal to ulib.core, ulib.minecraft.api, ulib.velocity.api;
+    exports eu.software4you.ulib.core.api.internal to ulib.core, ulib.minecraft.api, ulib.velocity.api, ulib.spigot.api;
 
     uses Lib;
     uses Providers.ProviderExtYamlSub;

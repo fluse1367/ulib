@@ -20,6 +20,15 @@ public interface PluginBase<L, R, E> extends EventController<L>, ASyncSchedulerC
     String LAYOUT_FILE_EXTENSION = "yml";
     String DEFAULT_LAYOUT_FILE_NAME = String.format("%s.%s", LAYOUT_BASE_NAME, LAYOUT_FILE_EXTENSION);
 
+
+    /**
+     * This method returns the plugin object. Can be useful if this object is only a substitute.
+     *
+     * @return the plugin object
+     */
+    @NotNull
+    Object getPluginObject();
+
     /**
      * Returns the name of the plugin.
      *

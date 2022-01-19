@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class Providers {
     private static final Map<Class<?>, Object> SERVICES = new ConcurrentHashMap<>();
 
-    @SuppressWarnings("unchecked")
     public static <S> S get(Class<S> service) throws IllegalArgumentException {
         return get(service, Providers.class.getClassLoader());
     }
 
+    @SuppressWarnings("unchecked")
     public static <S> S get(Class<S> service, ClassLoader cl) throws IllegalArgumentException {
         if (!SERVICES.containsKey(service)) {
             var module = Providers.class.getModule();

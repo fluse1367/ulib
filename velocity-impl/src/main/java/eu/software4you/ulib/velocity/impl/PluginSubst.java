@@ -8,15 +8,14 @@ import eu.software4you.ulib.minecraft.api.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.velocity.api.plugin.VelocityJavaPlugin;
 import eu.software4you.ulib.velocity.impl.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.velocity.impl.usercache.MainUserCacheImpl;
-import lombok.Getter;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
 
 public class PluginSubst extends VelocityJavaPlugin {
 
-    @Getter
     private final Object plugin;
     private final ProxyServerBridgeImpl proxyServerBridge;
     private final SqlEngine mainUserCacheEngine;
@@ -36,6 +35,11 @@ public class PluginSubst extends VelocityJavaPlugin {
         MainUserCacheImpl.init(this, mainUserCacheEngine = new SqlEngine());
     }
 
+    @Override
+    public @NotNull Object getPluginObject() {
+        return plugin;
+    }
+
     @SneakyThrows
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent e) {
@@ -46,20 +50,5 @@ public class PluginSubst extends VelocityJavaPlugin {
             getProxyServer().getChannelRegistrar().unregister(ProxyServerBridgeImpl.IDENTIFIER);
             unregisterEvents(proxyServerBridge);
         }
-    }
-
-    @Override
-    public void registerEvents(Object listener) {
-        getProxyServer().getEventManager().register(getPlugin(), listener);
-    }
-
-    @Override
-    public void unregisterEvents(Object listener) {
-        getProxyServer().getEventManager().unregisterListener(getPlugin(), listener);
-    }
-
-    @Override
-    public void unregisterAllEvents() {
-        getProxyServer().getEventManager().unregisterListeners(getPlugin());
     }
 }

@@ -71,6 +71,11 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
+    public @NotNull Object getPluginObject() {
+        return this;
+    }
+
+    @Override
     public @NotNull String getName() {
         return getPlugin().getDescription().getName().orElse("");
     }
@@ -169,19 +174,19 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
     @Override
     public ScheduledTask async(Runnable runnable) {
-        return proxyServer.getScheduler().buildTask(this, runnable).schedule();
+        return proxyServer.getScheduler().buildTask(getPluginObject(), runnable).schedule();
     }
 
     @Override
     public ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
-        return proxyServer.getScheduler().buildTask(this, runnable)
+        return proxyServer.getScheduler().buildTask(getPluginObject(), runnable)
                 .delay(delay, unit)
                 .schedule();
     }
 
     @Override
     public ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
-        return proxyServer.getScheduler().buildTask(this, runnable)
+        return proxyServer.getScheduler().buildTask(getPluginObject(), runnable)
                 .delay(delay, unit)
                 .repeat(period, unit)
                 .schedule();
@@ -191,21 +196,21 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @Override
     public void cancelAllTasks() {
         ((Multimap<Object, ScheduledTask>) ReflectUtil.forceCall(getProxyServer().getScheduler().getClass(),
-                proxyServer.getScheduler(), "tasksByPlugin")).get(this).forEach(ScheduledTask::cancel);
+                proxyServer.getScheduler(), "tasksByPlugin")).get(getPluginObject()).forEach(ScheduledTask::cancel);
     }
 
     @Override
     public void registerEvents(Object listener) {
-        proxyServer.getEventManager().register(this, listener);
+        proxyServer.getEventManager().register(getPluginObject(), listener);
     }
 
     @Override
     public void unregisterEvents(Object listener) {
-        proxyServer.getEventManager().unregisterListener(this, listener);
+        proxyServer.getEventManager().unregisterListener(getPluginObject(), listener);
     }
 
     @Override
     public void unregisterAllEvents() {
-        proxyServer.getEventManager().unregisterListeners(this);
+        proxyServer.getEventManager().unregisterListeners(getPluginObject());
     }
 }

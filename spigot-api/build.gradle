@@ -1,0 +1,16 @@
+//file:noinspection GroovyAssignabilityCheck
+dependencySpigot()
+
+dependencies {
+    api project(':minecraft-api')
+
+    lazyLib('com.github.cryptomorin:XSeries:8.6.0.0.1', 'xseries')
+
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.13'
+}
+
+extraJavaModuleInfo {
+    automaticModule('commons-lang-2.6.jar', 'commons.lang')
+    automaticModule('guava-21.0.jar', 'guava')
+    automaticModule('XSeries-8.6.0.0.1.jar', 'xseries')
+}

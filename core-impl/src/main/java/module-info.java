@@ -37,10 +37,11 @@ module ulib.core {
     requires maven.resolver.provider;
     requires javassist;
 
-    exports eu.software4you.ulib.core.impl to ulib.core.api;
+    exports eu.software4you.ulib.core.impl to ulib.core.api, ulib.spigot;
     exports eu.software4you.ulib.core.impl.delegation;
 
-    exports eu.software4you.ulib.core.impl.configuration.yaml to ulib.minecraft, ulib.velocity;
+    exports eu.software4you.ulib.core.impl.configuration.yaml to ulib.minecraft, ulib.velocity, ulib.spigot;
+    exports eu.software4you.ulib.core.impl.configuration to ulib.spigot;
 
     provides Lib with LibImpl;
     provides Providers.ProviderExtYamlSub with YamlSubProvider;

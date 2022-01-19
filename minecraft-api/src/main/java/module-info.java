@@ -14,5 +14,5 @@ module ulib.minecraft.api {
     exports eu.software4you.ulib.minecraft.api.usercache;
     exports eu.software4you.ulib.minecraft.api.util;
 
-    exports eu.software4you.ulib.minecraft.api.internal to ulib.velocity;
+    exports eu.software4you.ulib.minecraft.api.internal to ulib.velocity, ulib.spigot;
 }

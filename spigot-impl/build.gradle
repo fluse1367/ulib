@@ -1,0 +1,13 @@
+//file:noinspection GroovyAssignabilityCheck
+dependencySpigot()
+
+dependencies {
+    api project(':spigot-api')
+    api project(':minecraft-impl')
+
+    compileOnly 'com.github.cryptomorin:XSeries:8.6.0.0.1'
+}
+
+extraJavaModuleInfo {
+    automaticModule('XSeries-8.6.0.0.1.jar', 'xseries')
+}

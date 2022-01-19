@@ -12,6 +12,8 @@ public class PluginSpigot extends JavaPlugin {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.SPIGOT);
     }
 
+    private Object pluginSubstitute;
+
     @Override
     public void onLoad() {
         Init.init(getClass());
