@@ -1,10 +1,15 @@
 //file:noinspection GroovyAssignabilityCheck
 dependencySpigot()
 
+ext {
+    coordsXSeries = 'com.github.cryptomorin:XSeries:8.6.0.0.1'
+    project(':loader').ext.replacementTokens.putIfAbsent('maven.xseries', new String("$coordsXSeries"))
+}
+
 dependencies {
     api project(':minecraft-api')
 
-    lazyLib('com.github.cryptomorin:XSeries:8.6.0.0.1', 'xseries')
+    lib(coordsXSeries)
 
     compileOnly 'org.apache.httpcomponents:httpclient:4.5.13'
 }

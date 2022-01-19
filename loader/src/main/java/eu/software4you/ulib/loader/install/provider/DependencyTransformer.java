@@ -5,16 +5,17 @@ import lombok.SneakyThrows;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
+import java.util.jar.*;
 
 import static eu.software4you.ulib.loader.install.provider.Util.classify;
 
@@ -28,9 +29,15 @@ public final class DependencyTransformer {
         add2Transformer("org.apache.maven:maven-model-builder:3.8.4", "org.apache.maven:maven-model:3.8.4",
                 s -> s.equals(classify("org.apache.maven.model.merge.MavenModelMerger")),
                 s -> false);
+
+        // org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException in maven-artifact -> maven-repository-metadata
         add2Transformer("org.apache.maven:maven-artifact:3.8.4", "org.apache.maven:maven-repository-metadata:3.8.4",
                 s -> s.equals(classify("org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException")),
                 s -> false);
+
+        // add 'Automatic-Module-Name' entry to manifest file for xseries
+        addManifestTransformer("{{maven.xseries}}", (Consumer<Manifest>) man ->
+                man.getMainAttributes().putValue("Automatic-Module-Name", "xseries"));
     }
 
     public void transform(String coords, File targetFile) {
@@ -39,6 +46,36 @@ public final class DependencyTransformer {
         transformers.forEach((p, t) -> {
             if (p.test(set))
                 t.run();
+        });
+    }
+
+    public void addManifestTransformer(String coords, Consumer<Manifest> visitor) {
+        addManifestTransformer(coords, man -> {
+            visitor.accept(man);
+            return man;
+        });
+    }
+
+    public void addManifestTransformer(String coords, Function<Manifest, Manifest> transformer) {
+        addTransformer(set -> set.contains(coords), () -> {
+            try {
+                var f = cached.get(coords);
+                var tmp = Files.move(f.toPath(), Files.createTempFile(f.getName(), null),
+                        StandardCopyOption.REPLACE_EXISTING).toFile();
+                tmp.deleteOnExit();
+
+                var jf = new JarFile(tmp);
+                var man = transformer.apply(jf.getManifest());
+                jf.close();
+
+                try (var jin = new JarInputStream(new FileInputStream(tmp));
+                     var jout = new JarOutputStream(new FileOutputStream(f), man)) {
+                    iterate(jin, jout, null, je -> false);
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 

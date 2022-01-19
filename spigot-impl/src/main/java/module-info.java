@@ -9,11 +9,13 @@ module ulib.spigot {
     requires ulib.minecraft.api;
 
     requires org.yaml.snakeyaml;
-    requires org.bukkit;
-    requires com.google.gson;
-    requires com.google.common;
     requires java.logging;
+    requires static org.bukkit;
+    requires static com.google.gson;
+    requires static com.google.common;
 
     // via extra-java-module-info
     requires xseries;
+
+    opens eu.software4you.ulib.spigot.impl;
 }

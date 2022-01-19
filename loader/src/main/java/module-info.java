@@ -6,6 +6,7 @@ module ulib.loader {
     requires static ulib.core.api;
     requires static ulib.core;
     requires static ulib.velocity;
+    requires static ulib.spigot;
 
     // for launch function
     requires static joptsimple;

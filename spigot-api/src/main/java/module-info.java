@@ -4,13 +4,14 @@ module ulib.spigot.api {
 
     requires ulib.core.api;
     requires ulib.minecraft.api;
+
     requires java.logging;
-    requires org.bukkit;
-    requires com.google.common;
+    requires static org.bukkit;
+    requires static com.google.common;
 
     // via extra-java-module-info
     requires xseries;
-    requires commons.lang;
+    requires static commons.lang;
 
     exports eu.software4you.ulib.spigot.api.internal to ulib.spigot;
 
