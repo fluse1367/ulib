@@ -11,7 +11,7 @@ public final class MenuManagerImpl extends MenuManager {
         handler = new MenuManagerListener(this);
     }
 
-    public static class ProviderMenuManager implements Providers.ProviderMenuManager {
+    public static class MenuManagerProvider implements Providers.ProviderMenuManager {
 
         @Override
         public MenuManager provide(Plugin plugin) {

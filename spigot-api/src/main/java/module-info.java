@@ -13,7 +13,7 @@ module ulib.spigot.api {
     requires xseries;
     requires static commons.lang;
 
-    exports eu.software4you.ulib.spigot.api.internal to ulib.spigot;
+    exports eu.software4you.ulib.spigot.api.internal to ulib.spigot, ulib.core.api;
 
     exports eu.software4you.ulib.spigot.api;
     exports eu.software4you.ulib.spigot.api.enchantment;
