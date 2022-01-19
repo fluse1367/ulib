@@ -8,6 +8,7 @@ dependencies {
 }
 
 ext {
+    // include project jar into "META-INF/jars" folder
     projInclude = { List update, String projName ->
         var project = project(":$projName")
         dependencies {
@@ -26,12 +27,28 @@ ext {
         }
     }
 
-    manifestModules = new HashMap<String, List<String>>()
+    modulesGraph = new LinkedHashMap<String, List<String>>()
 
+    // include module into module graph
     inclModule = { String baseName ->
-        def list = []
-        ["$baseName-api", "$baseName-impl"].each { projInclude(list, it) }
-        manifestModules.put(baseName, list)
+        def map = new LinkedHashMap<String, List<String>>()
+
+        // include module jar files
+        def jars = []
+        ["$baseName-api", "$baseName-impl"].each { projInclude(jars, it) }
+        map.put("jars", jars)
+
+        // include module library coordinates
+        def libraries = []
+        ["$baseName-api", "$baseName-impl"].each {
+            evaluationDependsOn ":$it" // let gradle finish the project configuration first
+            project(":$it").configurations.lib.resolvedConfiguration.resolvedArtifacts.each { f ->
+                libraries += f.moduleVersion.id.toString()
+            }
+        }
+        map.put("libraries", libraries)
+
+        modulesGraph.put(baseName, map)
     }
 }
 
@@ -42,7 +59,7 @@ jar {
     // include super module
     def modulesSuper = [];
     projInclude(modulesSuper, "super-module")
-    manifestModules.put('super', modulesSuper)
+    modulesGraph.put('super', ['jars': modulesSuper])
 
     // include modules
     inclModule('core')
@@ -50,24 +67,24 @@ jar {
     inclModule('velocity')
     inclModule('spigot')
 
-    // include library coordinates
-    def libs = [];
+    // serialize modules graph
+    byte[] modulesGraphSerialized;
     {
-        rootProject.subprojects {
-            project.configurations.lib.resolvedConfiguration.resolvedArtifacts.each { f ->
-                libs += f.moduleVersion.id.toString()
-            }
+        var bout = new ByteArrayOutputStream()
+        try (var out = new ObjectOutputStream(bout)) {
+            out.writeObject(modulesGraph)
         }
-    }
-
+        modulesGraphSerialized = bout.toByteArray()
+    };
 
     manifest.attributes([
+            'Automatic-Module-Name'  : 'ulib.loader',
             'Main-Class'             : 'eu.software4you.ulib.loader.launch.Main',
             'Premain-Class'          : 'eu.software4you.ulib.loader.agent.AgentMain',
             'Agent-Class'            : 'eu.software4you.ulib.loader.agent.AgentMain',
             'Can-Redefine-Classes'   : true,
             'Can-Retransform-Classes': true,
-            'Libraries'              : libs,
-            'Modules'                : manifestModules
+            'Modules'                : Base64.encoder.encodeToString(modulesGraphSerialized),
+            'Modules-Readable'       : modulesGraph,
     ])
 }

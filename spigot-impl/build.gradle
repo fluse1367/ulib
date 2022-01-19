@@ -2,10 +2,11 @@
 dependencySpigot()
 
 dependencies {
-    api project(':spigot-api')
+    def projApi = project(':spigot-api')
+    api projApi
     api project(':minecraft-impl')
 
-    compileOnly 'com.github.cryptomorin:XSeries:8.6.0.0.1'
+    compileOnly projApi.ext.coordsXSeries
 }
 
 extraJavaModuleInfo {

@@ -61,7 +61,7 @@ public final class Installer {
 
         Predicate<String> filter = coords ->
                 !(env == EnvironmentProvider.Environment.VELOCITY && coords.startsWith("org.slf4j:"));
-        this.filesAdditional = dependencyProvider.downloadAdditional(filter, transformer::transform);
+        this.filesAdditional = dependencyProvider.downloadLibraries(modules, filter, transformer::transform);
     }
 
     @SneakyThrows
@@ -142,10 +142,10 @@ public final class Installer {
             return
                     // access to core API
                     request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib")
-                    // access to minecraft api
-                    || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
-                    // access to velocity api
-                    || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
+                            // access to minecraft api
+                            || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
+                            // access to velocity api
+                            || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
                     ;
         };
         this.delegationInjector = constructInjector(classProvider, published::contains, checkLoadingRequest);
