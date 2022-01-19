@@ -17,18 +17,18 @@ public class PluginSpigot extends JavaPlugin {
 
     private Plugin pluginSubstitute;
 
+    @SneakyThrows
     @Override
     public void onLoad() {
         Init.init(getClass());
-    }
 
-    @SneakyThrows
-    @Override
-    public void onEnable() {
         var loader = Installer.getModule().getLayer().findLoader("ulib.spigot");
         var cl = Class.forName("eu.software4you.ulib.spigot.impl.PluginSubst", true, loader);
         this.pluginSubstitute = (Plugin) cl.getConstructors()[0].newInstance(this);
+    }
 
+    @Override
+    public void onEnable() {
         pluginSubstitute.onEnable();
 
         Optional.ofNullable(getCommand("ulib"))
