@@ -18,7 +18,6 @@ module ulib.bungeecord {
     requires ulib.bungeecord.api;
 
     requires static bungeecord.api;
-    requires static bungeecord.event;
     requires static com.google.gson;
     requires org.yaml.snakeyaml;
 

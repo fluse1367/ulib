@@ -6,7 +6,6 @@ module ulib.bungeecord.api {
     requires ulib.minecraft.api;
 
     requires static bungeecord.api;
-    requires static bungeecord.chat;
     requires java.logging;
 
     exports eu.software4you.ulib.bungeecord.api.internal to ulib.bungeecord;

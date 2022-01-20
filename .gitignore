@@ -114,3 +114,6 @@ gradle-app.setting
 
 # javadocs webpage build
 public/
+
+# manuel dependencies
+.libs

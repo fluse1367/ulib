@@ -2,6 +2,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 import static java.util.Optional.ofNullable
 
+apply from: 'manual-dependencies.gradle'
+
 // plugin support
 buildscript {
     repositories {
@@ -96,21 +98,6 @@ subprojects {
                 }
                 dependencies {
                     compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
-                }
-            }
-
-            // bungeecord
-            dependencyBungeecord = {
-                repositories {
-                    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-                }
-                dependencies {
-                    compileOnly 'net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT'
-                }
-                extraJavaModuleInfo {
-                    automaticModule('bungeecord-api-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.api')
-                    automaticModule('bungeecord-chat-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.chat')
-                    automaticModule('bungeecord-event-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.event')
                 }
             }
 

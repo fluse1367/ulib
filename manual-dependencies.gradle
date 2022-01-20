@@ -1,0 +1,97 @@
+import java.nio.channels.Channels
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.util.function.Consumer
+import java.util.function.Predicate
+import java.util.jar.JarFile
+import java.util.jar.JarOutputStream
+
+task downloadManualDependencies() {
+    downloadLib "BungeeCord.jar", "https://ci.md-5.net/job/BungeeCord/1628/artifact/bootstrap/target/BungeeCord.jar",
+            jarFilterTransformer(true, startsWithFilter("net/md_5/bungee/", "gnu/trove/", "META-INF/"))
+}
+
+private void downloadLib(String name, String href, Consumer<File> transformer) {
+    def file = new File("$rootProject.rootDir/.libs/$name");
+
+    if (file.exists())
+        return
+
+    if (!file.parentFile.exists() && !file.parentFile.mkdirs())
+        throw new IOException("Cannot create $file.parentFile")
+
+    var url = new URL(href)
+    try (var uin = url.openStream()
+         var fout = new FileOutputStream(file)) {
+        fout.channel.transferFrom(Channels.newChannel(uin), 0, Long.MAX_VALUE)
+    }
+
+    transformer.accept(file)
+}
+
+private static Consumer<File> jarFilterTransformer(boolean copyManifest, Predicate<String> filter) {
+    return new Consumer<File>() {
+        @Override
+        void accept(File it) {
+            var tmp = Files.createTempFile(it.name, null)
+            tmp.toFile().deleteOnExit()
+            var jit = new JarFile(Files.move(it.toPath(), tmp, StandardCopyOption.REPLACE_EXISTING).toFile())
+
+            var fout = new FileOutputStream(it)
+
+            try (var jout = copyManifest ? new JarOutputStream(fout, jit.manifest) : new JarOutputStream(fout)) {
+                var enIt = jit.entries().asIterator();
+                while (enIt.hasNext()) {
+                    var en = enIt.next()
+                    var name = en.name
+
+                    if (copyManifest && name == "META-INF/MANIFEST.MF")
+                        continue
+
+                    if (!filter.test(name))
+                        continue
+
+                    jout.putNextEntry(en)
+
+                    try (var is = jit.getInputStream(en)) {
+                        byte[] buf = new byte[1024]
+                        int len
+                        while ((len = is.read(buf)) != -1) {
+                            jout.write(buf, 0, len)
+                        }
+                    }
+
+                    jout.closeEntry()
+                }
+            }
+        }
+    }
+}
+
+private static Predicate<String> startsWithFilter(String... whitelisted) {
+    new Predicate<String>() {
+        @Override
+        boolean test(String s) {
+            for (String elem : whitelisted) {
+                if (s.startsWith(elem))
+                    return true
+            }
+            return false
+        }
+    }
+}
+
+subprojects {
+    ext {
+        // manual dependencies
+        manualDependency = { String name, String modName ->
+            rootProject.downloadManualDependencies
+            dependencies {
+                compileOnly files("$rootProject.rootDir/.libs/${name}.jar")
+            }
+            extraJavaModuleInfo {
+                automaticModule("${name}.jar", modName)
+            }
+        }
+    }
+}
