@@ -1,0 +1,7 @@
+//file:noinspection GroovyAssignabilityCheck
+dependencyBungeecord()
+
+dependencies {
+    api project(':bungeecord-api')
+    api project(':minecraft-impl')
+}

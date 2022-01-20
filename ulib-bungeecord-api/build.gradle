@@ -1,5 +1,0 @@
-dependencies {
-    api project(':ulib-minecraft-api')
-
-    implementation coordsWaterfall
-}

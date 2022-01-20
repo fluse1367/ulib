@@ -2,6 +2,7 @@ rootProject.name = 'ulib-root'
 files('super-module', 'loader',
         'core-api', 'core-impl',
         'minecraft-api', 'minecraft-impl',
+        'bungeecord-api', 'bungeecord-impl',
         'velocity-api', 'velocity-impl',
         'spigot-api', 'spigot-impl',
 ).each {

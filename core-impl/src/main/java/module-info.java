@@ -40,7 +40,8 @@ module ulib.core {
     exports eu.software4you.ulib.core.impl to ulib.core.api, ulib.spigot;
     exports eu.software4you.ulib.core.impl.delegation;
 
-    exports eu.software4you.ulib.core.impl.configuration.yaml to ulib.minecraft, ulib.velocity, ulib.spigot;
+    exports eu.software4you.ulib.core.impl.configuration.yaml to
+            ulib.minecraft, ulib.bungeecord, ulib.velocity, ulib.spigot;
     exports eu.software4you.ulib.core.impl.configuration to ulib.spigot;
 
     provides Lib with LibImpl;

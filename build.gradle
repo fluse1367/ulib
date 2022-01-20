@@ -100,15 +100,17 @@ subprojects {
             }
 
             // bungeecord
-            dependencyBungee = {
+            dependencyBungeecord = {
                 repositories {
                     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
                 }
                 dependencies {
-                    compileOnly 'net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT'
+                    compileOnly 'net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT'
                 }
                 extraJavaModuleInfo {
-                    automaticModule('bungeecord-api-1.17-R0.1-SNAPSHOT.jar', 'bungeecord.api')
+                    automaticModule('bungeecord-api-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.api')
+                    automaticModule('bungeecord-chat-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.chat')
+                    automaticModule('bungeecord-event-1.18-R0.1-SNAPSHOT.jar', 'bungeecord.event')
                 }
             }
 

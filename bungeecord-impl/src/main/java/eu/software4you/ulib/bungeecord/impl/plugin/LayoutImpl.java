@@ -1,19 +1,19 @@
-package eu.software4you.ulib.spigot.impl.plugin;
+package eu.software4you.ulib.bungeecord.impl.plugin;
 
+import eu.software4you.ulib.bungeecord.api.internal.Providers;
+import eu.software4you.ulib.bungeecord.api.plugin.Layout;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlDocument;
 import eu.software4you.ulib.minecraft.impl.plugin.YamlLayout;
-import eu.software4you.ulib.spigot.api.internal.Providers;
-import eu.software4you.ulib.spigot.api.plugin.Layout;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.nodes.Node;
 
 import java.util.Collection;
 
-public final class LayoutImpl extends YamlLayout<CommandSender> implements eu.software4you.ulib.spigot.api.plugin.Layout {
+public final class LayoutImpl extends YamlLayout<CommandSender> implements eu.software4you.ulib.bungeecord.api.plugin.Layout {
 
-    LayoutImpl() {
+    private LayoutImpl() {
         // empty root
     }
 
@@ -47,6 +47,7 @@ public final class LayoutImpl extends YamlLayout<CommandSender> implements eu.so
     }
 
     public static final class LayoutProvider implements Providers.ProviderLayout {
+
         @Override
         public Class<? extends Layout> type() {
             return LayoutImpl.class;
@@ -57,5 +58,4 @@ public final class LayoutImpl extends YamlLayout<CommandSender> implements eu.so
             return new LayoutImpl();
         }
     }
-
 }

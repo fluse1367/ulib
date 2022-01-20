@@ -14,9 +14,9 @@ module ulib.minecraft {
     requires ulib.core.api;
     requires ulib.core;
 
-    exports eu.software4you.ulib.minecraft.impl.usercache to ulib.velocity, ulib.spigot;
-    exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.velocity, ulib.spigot;
-    exports eu.software4you.ulib.minecraft.impl.plugin to ulib.velocity, ulib.spigot;
+    exports eu.software4you.ulib.minecraft.impl.usercache to ulib.bungeecord, ulib.velocity, ulib.spigot;
+    exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.bungeecord, ulib.velocity, ulib.spigot;
+    exports eu.software4you.ulib.minecraft.impl.plugin to ulib.bungeecord, ulib.velocity, ulib.spigot;
 
     provides LauncherMeta with LauncherMetaImpl;
 }

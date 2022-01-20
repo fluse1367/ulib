@@ -1,5 +1,5 @@
 //file:noinspection GroovyAssignabilityCheck
-dependencyBungee()
+dependencyBungeecord()
 dependencySpigot()
 dependencyVelocity()
 
@@ -65,6 +65,7 @@ jar {
     inclModule('core')
     inclModule('minecraft')
     inclModule('velocity')
+    inclModule('bungeecord')
     inclModule('spigot')
 
     // serialize modules graph
