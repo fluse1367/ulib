@@ -6,11 +6,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ServiceLoader;
 
-public final class Providers {
-    public interface ProviderMenuManager {
+public interface Providers {
+    interface ProviderMenuManager {
         MenuManager provide(Plugin plugin);
     }
 
-    public interface ProviderLayout extends ServiceLoader.Provider<Layout> {
+    interface ProviderLayout extends ServiceLoader.Provider<Layout> {
     }
 }
