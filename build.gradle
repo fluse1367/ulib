@@ -107,7 +107,7 @@ allprojects {
             }
         }
 
-        def release = project.hasProperty('release')
+        def release = ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase() == 'release'
 
         deployRepoUrl = "https://gitlab.com/api/v4/projects/${release ? /*ulib*/ '19415500' : /*ulib-snapshots*/ '26647460'}/packages/maven"
         deployRepoCredentialMethod = "${release ? 'Job' : 'Deploy'}-Token"
@@ -190,11 +190,11 @@ subprojects {
                 for (String dependency : depList) {
                     // exclusion
                     if (dependency.startsWith('!(') && dependency.contains("):")) {
-                        int i;
+                        int i
                         String[] excl = dependency.substring(2, i = dependency.indexOf("):")).split(",")
 
 
-                        dependency = dependency.substring(i + 2);
+                        dependency = dependency.substring(i + 2)
 
                         implementation(dependency) {
                             for (String exclusion : excl) {
