@@ -1,6 +1,6 @@
 package eu.software4you.ulib;
 
-import eu.software4you.utils.ClassPathHacker;
+import eu.software4you.dependencies.DependencyLoader;
 import joptsimple.*;
 import lombok.SneakyThrows;
 
@@ -11,16 +11,14 @@ import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class Launcher {
-    private final Lib instance;
-
-    public Launcher(Lib instance) {
-        this.instance = instance;
-    }
+    static Logger logger;
 
     @SneakyThrows
-    void launch(String... args) {
+    static void launch(String... args) {
         OptionParser parser = new OptionParser();
         parser.accepts("help", "Shows the help message")
                 .forHelp();
@@ -42,14 +40,14 @@ class Launcher {
         try {
             options = parser.parse(args);
         } catch (OptionException e) {
-            instance.error(e.getMessage());
+            logger.warning(e::getMessage);
             parser.printHelpOn(System.out);
             return;
         }
 
         if (!options.hasOptions()) {
-            instance.info("This is a library, so it's not designed to run stand-alone.");
-            instance.info("https://software4you.eu");
+            logger.info(() -> "This is a library, so it's not designed to run stand-alone.");
+            logger.info(() -> "https://software4you.eu");
             parser.printHelpOn(System.out);
             System.exit(0);
             return;
@@ -62,19 +60,19 @@ class Launcher {
         if (!(options.has(launch) || options.has(main)))
             return;
 
-        Class<?> mainClass = null;
+        final Class<?> mainClass;
         if (options.has(launch)) {
             String launchFilePath = options.valueOf(launch);
             File launchFile = new File(launchFilePath);
             if (!launchFile.exists()) {
-                instance.warn(String.format("Cannot launch specified file: File %s does not exist.", launchFilePath));
+                logger.warning(() -> String.format("Cannot launch specified file: File %s does not exist.", launchFilePath));
                 return;
             }
 
             JarFile jar = new JarFile(launchFile);
             Manifest manifest = jar.getManifest();
             if (manifest == null) {
-                instance.warn(String.format("%s does not have a manifest.", launchFile.getName()));
+                logger.warning(() -> String.format("%s does not have a manifest.", launchFile.getName()));
                 return;
             }
 
@@ -83,46 +81,44 @@ class Launcher {
             String mainClassName = mainAttr.getValue("Main-Class");
 
             if (mainClassName == null) {
-                instance.warn(String.format("%s does not have a main class.", launchFile.getName()));
+                logger.warning(() -> String.format("%s does not have a main class.", launchFile.getName()));
                 return;
             }
 
-            instance.info(String.format("Launching %s ...", launchFile.getName()));
+            logger.warning(() -> String.format("Launching %s ...", launchFile.getName()));
 
             try {
-                ClassPathHacker.addFile(launchFile);
+                DependencyLoader.load(launchFile);
             } catch (Exception e) {
-                instance.exception(e, String.format("Could not load %s", launchFile.getName()));
+                logger.log(Level.SEVERE, e, () -> String.format("Could not load %s", launchFile.getName()));
                 return;
             }
 
             try {
                 mainClass = Class.forName(mainClassName);
             } catch (ClassNotFoundException e) {
-                instance.warn(String.format("Main class %s not found in %s", mainClassName, launchFile.getName()));
+                logger.warning(() -> String.format("Main class %s not found in %s", mainClassName, launchFile.getName()));
                 return;
             } catch (Exception e) {
-                instance.exception(e, String.format("Could not load main class %s of %s", mainClassName, launchFile.getName()));
+                logger.log(Level.SEVERE, e, () -> String.format("Could not load main class %s of %s",
+                        mainClassName, launchFile.getName()));
                 return;
             }
 
-        }
-
-        if (options.has(main)) {
+        } else { // implicit option.has(main) == true
             String mainClassName = options.valueOf(main);
 
-            instance.info(String.format("Launching main class %s ...", mainClassName));
+            logger.info(() -> String.format("Launching main class %s ...", mainClassName));
 
             try {
                 mainClass = Class.forName(mainClassName);
             } catch (ClassNotFoundException e) {
-                instance.warn(String.format("Main class %s not found in classpath", mainClassName));
+                logger.warning(() -> String.format("Main class %s not found in classpath", mainClassName));
                 return;
             } catch (Exception e) {
-                instance.exception(e, String.format("Could not load main class %s", mainClassName));
+                logger.log(Level.SEVERE, e, () -> String.format("Could not load main class %s", mainClassName));
                 return;
             }
-
         }
 
 
@@ -130,7 +126,7 @@ class Launcher {
         try {
             mainMethod = mainClass.getMethod("main", String[].class);
         } catch (NoSuchMethodException e) {
-            instance.warn(String.format("Could not find main method in main class %s", mainClass.getName()));
+            logger.warning(() -> String.format("Could not find main method in main class %s", mainClass.getName()));
             return;
         }
 
@@ -138,13 +134,13 @@ class Launcher {
             List<String> mainArgsList = options.valuesOf(mainArgs);
             String[] invokeArgs = mainArgsList.toArray(new String[0]);
 
-            instance.info(String.format("Invoking %s.%s with %s", mainClass.getName(), mainMethod.getName(), mainArgsList.toString()));
+            logger.info(() -> String.format("Invoking %s.%s with %s", mainClass.getName(), mainMethod.getName(), mainArgsList.toString()));
 
             mainMethod.invoke(null, (Object) invokeArgs);
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
         } catch (IllegalAccessException e) {
-            instance.warn(String.format("Main method in main class %s is not accessible", mainClass.getName()));
+            logger.warning(() -> String.format("Main method in main class %s is not accessible", mainClass.getName()));
         }
     }
 }

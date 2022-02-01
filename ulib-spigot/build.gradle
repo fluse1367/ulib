@@ -1,35 +1,14 @@
 dependencies {
-    compile project(':ulib-spigot-api')
-    compileOnly coordsPaper
+    api project(':ulib-spigot-api')
+    api project(':ulib-minecraft')
 
-    // annotation
-    annotationProcessor coordsLombok
+    implementation coordsPaper
+    implementation coordsXSeries
 }
 
-def projects = ['core', 'spigot-api', 'spigot-bungeecord-api']
-jar {
-    for (String sub : projects) {
-        def proj = ':ulib-' + sub
-
-        dependsOn "$proj:build"
-
-        def buildDir = project(proj).buildDir.path
-        from("$buildDir/classes/java/main") {
-            include '**'
-        }
-        from("$buildDir/resources/main") {
-            include '**'
-        }
-    }
-}
-
-processResources {
-    eachFile {
-        copyDetails ->
-            if (copyDetails.path == 'plugin.yml') {
-                filter { line ->
-                    line.replace('{{version}}', project.version)
-                }
-            }
-    }
+//shadowing
+shadowJar {
+    configurations = [project(':ulib-core').configurations.shade]
+    //noinspection GroovyAssignabilityCheck
+    shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'spigot-api'])
 }

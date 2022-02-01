@@ -1,44 +1,21 @@
 dependencies {
-    compile 'commons-io:commons-io:2.8.0'
-    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.4'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    implementation project(':ulib-core-api')
+    implementation project(':ulib-libex')
 
-    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
-    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
-    compile group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
-    compile 'com.google.code.gson:gson:2.8.6'
-    compileOnly group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
-    compileOnly group: 'com.sun.mail', name: 'smtp', version: '1.6.3'
-    compileOnly group: 'org.yaml', name: 'snakeyaml', version: '1.23'
-    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
-    compileOnly group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.8'
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
-    compileOnly group: 'com.github.oshi', name: 'oshi-core', version: '4.2.0'
+    api files(project(':ulib-core-api').configurations.compileClasspath)
+    shade files(project(':ulib-core-api').configurations.shade)
 
-    compile 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
-    compile 'org.apache.httpcomponents:httpclient:4.5.10'
-
-    compile 'org.fusesource.jansi:jansi:1.18'
-
-    // aether; see https://wiki.eclipse.org/Aether
-    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-util', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-impl', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-file', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.1.0'
-    compileOnly group: 'org.eclipse.aether', name: 'aether-transport-wagon', version: '1.1.0'
-    compileOnly group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.9'
-    compileOnly group: 'org.apache.maven.wagon', name: 'wagon-ssh', version: '3.3.4'
-
-    // annotation
-
-    compile coordsJetbrainsAnnotations
-
-    compile coordsLombok
-    annotationProcessor coordsLombok
+    /* compile + shade */
+    // !!! When changing anything that is being shaded, UPDATE THE LICENSE AND COPYRIGHT NOTICE IN 'README.md' !!!
+    //noinspection GroovyAssignabilityCheck
+    compileShade([coordsJavassist,
+                  // maven resolver api
+                  '!(org.slf4j):org.apache.maven:maven-resolver-provider:3.8.1',
+                  '!(org.slf4j):org.apache.maven.resolver:maven-resolver-connector-basic:1.6.2',
+                  '!(org.apache.httpcomponents,org.slf4j):org.apache.maven.resolver:maven-resolver-transport-http:1.6.2'])
+    shade('org.slf4j:slf4j-simple:1.7.30') {
+        exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+    }
 }
 
 jar {
@@ -47,37 +24,9 @@ jar {
     }
 }
 
-// publishing
-javadoc {
-    failOnError false
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url deployRepoUrl
-            credentials(HttpHeaderCredentials) {
-                name = "Job-Token"
-                value = System.getenv("CI_JOB_TOKEN")
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+//shadowing
+shadowJar {
+    configurations = [project.configurations.shade]
+    //noinspection GroovyAssignabilityCheck
+    shadowJarIncludeFrom(['core-api'])
 }

@@ -1,49 +1,95 @@
-image: 'gradle:6.6.1-jdk8'
+image: 'gradle:7.1-jdk16'
+
+variables:
+  GRADLE_EXEC: 'gradle -g .gradlehome'
 
 cache:
+  key: '$CI_COMMIT_BRANCH'
   paths:
-    - .gradle/
-    - ulib-*/build/
+    - .gradle
+    - .gradlehome
+  when: always
 
 stages:
-  - build
-  - deploy
+  #- test
+  - build # ready-for-use files
+  - publish # api files for maven repository
+  - docs # javadocs
 
-build:
+# snapshots
+snapshot build:
   stage: build
-  script:
-    - 'gradle build'
-  artifacts:
+  script: "$GRADLE_EXEC shadowJar -Pvariation=snapshot"
+  artifacts: &artifacts_build
     paths:
-      - ulib-core/build/libs/*.jar
-      - ulib-spigot-bungeecord-api/build/libs/*.jar
-      - ulib-bungeecord-api/build/libs/*.jar
-      - ulib-spigot-api/build/libs/*.jar
-      - ulib-bungeecord/build/libs/*.jar
-      - ulib-spigot/build/libs/*.jar
-  only:
-    - master
+      - ulib-core/build/libs/*-lib.jar
+      - ulib-spigot/build/libs/*-plugin.jar
+      - ulib-bungeecord/build/libs/*-plugin.jar
+      - ulib-velocity/build/libs/*-plugin.jar
+  # only run if this is a snapshot release on the 'develop' branch
+  rules: &rules_snapshot
+    - if: $BETA != null  # cancel if beta
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+      changes: &file_changes
+        - "*.gradle"
+        - "ulib-*/**/*"
+        - "docs/**/*"
+        - "gradle/**/*"
+snapshot publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=snapshot"
+  artifacts: &artifacts_publication
+    paths:
+      - ulib-*-api/build/libs/*.jar
+  rules: *rules_snapshot
 
-repo:
-  stage: deploy
-  script:
-    - 'gradle publish'
-  only:
-    - master
+# betas
+beta build:
+  stage: build
+  script: "$GRADLE_EXEC shadowJar -Pvariation=beta -Pbeta=$BETA"
+  artifacts: *artifacts_build
+  # only run if this is a beta release, triggered via the web on the 'develop' branch
+  rules: &rules_beta
+    - if: $BETA == null # cancel if not beta
+      when: never
+    - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'develop' # only on develop
+      changes: *file_changes
+beta publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=beta -Pbeta=$BETA"
+  artifacts: *artifacts_publication
+  rules: *rules_beta
 
+# releases
+release build:
+  stage: build
+  script: "$GRADLE_EXEC shadowJar -Pvariation=release"
+  artifacts: *artifacts_build
+  # only run if this is a full release, triggered via the web on the 'master' branch
+  rules: &rules_release
+    - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
+      when: never
+    - if: $CI_COMMIT_BRANCH == 'master' # only on master
+      changes: *file_changes
+release publication:
+  stage: publish
+  script: "$GRADLE_EXEC publish -Pvariation=release"
+  artifacts: *artifacts_publication
+  rules: *rules_release
 pages:
-  stage: deploy
-  script:
-    - 'gradle javadoc'
-    - 'mkdir public'
-    - 'cd public'
-    - 'cp -r ../docs ./'
-    - 'cd docs'
-    - 'mv ../../ulib-core/build/docs/javadoc core'
-    - 'mv ../../ulib-spigot-api/build/docs/javadoc spigot'
-    - 'mv ../../ulib-bungeecord-api/build/docs/javadoc bungeecord'
+  stage: docs
+  script: '$GRADLE_EXEC docsWebpage -Pvariation=release'
   artifacts:
     paths:
       - public
-  only:
-    - master
+  rules: *rules_release
+
+# include:
+#   - template: Security/SAST.gitlab-ci.yml
+#   - template: Dependency-Scanning.gitlab-ci.yml
+#   - template: Security/License-Scanning.gitlab-ci.yml
+# variables:
+#   SECURE_LOG_LEVEL: "debug"

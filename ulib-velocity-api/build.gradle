@@ -1,0 +1,6 @@
+dependencies {
+    api project(':ulib-minecraft-api')
+
+    implementation coordsVelocity
+    annotationProcessor coordsVelocity
+}

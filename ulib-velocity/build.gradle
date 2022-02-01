@@ -1,0 +1,16 @@
+dependencies {
+    api project(':ulib-velocity-api')
+    api project(':ulib-minecraft')
+
+    implementation coordsVelocity
+    annotationProcessor coordsVelocity
+}
+
+//shadowing
+shadowJar {
+    def c = project(':ulib-core').configurations.shade.copyRecursive()
+    c.exclude group: 'org.slf4j'
+    configurations = [c]
+    //noinspection GroovyAssignabilityCheck
+    shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'velocity-api'])
+}

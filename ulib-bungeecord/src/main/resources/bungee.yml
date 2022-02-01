@@ -1,4 +1,4 @@
-main: eu.software4you.ulib.ULibPlugin
+main: eu.software4you.ulib.ULibBungeecordPlugin
 name: uLib
 version: {{version}}
 author: Software4You.eu

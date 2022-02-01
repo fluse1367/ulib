@@ -10021,7 +10021,7 @@ h3 {
   font-size: 1.25rem;
 }
 .masthead .masthead-avatar {
-  width: 15rem;
+  width: 30rem;
 }
 
 @media (min-width: 992px) {
@@ -10180,4 +10180,9 @@ form .row:first-child .floating-label-form-group {
 
 .btn-social {
   margin-bottom: 0.5rem;
+}
+
+.vl {
+  border-left: 6px solid green;
+  height: 100%;
 }

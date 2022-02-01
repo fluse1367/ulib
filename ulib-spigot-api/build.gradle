@@ -1,51 +1,6 @@
 dependencies {
-    compile project(':ulib-core')
-    compile project(':ulib-spigot-bungeecord-api')
-    compileOnly coordsPaper
+    api project(':ulib-minecraft-api')
+    implementation coordsPaper
 
-    compile coordsXSeries
-
-    // annotation
-    annotationProcessor coordsLombok
-}
-
-// publishing
-javadoc {
-    def projects = ['spigot-bungeecord-api', 'core']
-    for (String sub : projects) {
-        def proj = project(':ulib-' + sub)
-        source(proj.projectDir.getPath() + "/src/main/java")
-        classpath = files(classpath.files, proj.configurations.compile.collect(), proj.configurations.compileOnly.collect())
-    }
-    failOnError false
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url deployRepoUrl
-            credentials(HttpHeaderCredentials) {
-                name = "Job-Token"
-                value = System.getenv("CI_JOB_TOKEN")
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+    implementation coordsXSeries
 }

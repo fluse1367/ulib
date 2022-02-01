@@ -1,0 +1,73 @@
+# uLib configuration file.
+
+# Internal setting to track config version updates.
+# !!! DO NOT CHANGE !!!
+config-version: 2
+
+# The ulib-data-directory is uLib's main directory for all it's files.
+# This directory can only be changed via command-line options.
+# To change it, add this to the command-line (before the -jar):
+#   -Dulib.ulib.directory.main=YOUR_VALUE
+# Defaults to '.ulib'
+
+# Switch to override properties set via the command line.
+# Usually the properties set via command line override the settings in this file.
+# Possible values: true, false; Default value: false
+override-command-line: false
+
+# Switch to force uLib to handle all requests synchronously that would usually worked off multi-threaded.
+# Enforcing synchronous work will significantly decrease uLib's performance in certain areas!
+# Possible values: true, false; Default: false
+# Command line equivalent: -Dulib.forcesync=YOUR_VALUE
+force-synchronous-work: false
+
+# Switch to allow uLib to use potentially unsafe operations if necessary.
+# Allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind!
+# Use this at your own risk!
+# Possible values: allow, deny; Default: deny
+# Command line equivalent: -Dulib.unsafe_operations=YOUR_VALUE
+unsafe-operations: deny
+
+# Logging settings
+logging:
+  # Switch to toggle the branding splash.
+  # Possible values: true, false; Default value: true
+  # Command line equivalent: -Dulib.splash=YOUR_VALUE
+  splash: true
+
+  # Adjustment of logging level.
+  # Possible values: OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, DEBUG, ALL; Default value: INFO
+  # Note: FINEST and DEBUG are equivalent.
+  # Command line equivalent: -Dulib.loglevel=YOUR_VALUE
+  log-level: INFO
+
+  # Switch to completely turn off all logging (does override log-level setting!).
+  # Possible values: true, false; Default value: false
+  # Command line equivalent: -Dulib.quiet=YOUR_VALUE
+  quiet: false
+
+# Directories settings
+directories:
+  # Where the log files will be placed.
+  # If the value is '' the 'logs' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.logs=YOUR_VALUE
+  logs: ''
+
+  # Where cached files will be placed.
+  # If the value is '' the 'cache' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.cache=YOUR_VALUE
+  cache: ''
+
+  # Where not further resolved maven artifacts will be stored.
+  # If the value is '' the 'libraries_unsafe' directory will be placed inside the cache-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.libraries_unsafe=YOUR_VALUE
+  libraries_unsafe: ''
+
+  # Where fully-resolved maven artifacts will be stored.
+  # If the value is '' the 'libraries' directory will be placed inside the ulib-data-directory.
+  # Default: ''
+  # Command line equivalent: -Dulib.directory.libraries=YOUR_VALUE
+  libraries: ''

@@ -1,35 +1,14 @@
 dependencies {
-    compile project(':ulib-bungeecord-api')
-    compileOnly coordsWaterfall
+    api project(':ulib-bungeecord-api')
+    api project(':ulib-minecraft')
 
-    // annotation
-    annotationProcessor coordsLombok
+
+    implementation coordsWaterfall
 }
 
-def projects = ['core', 'bungeecord-api', 'spigot-bungeecord-api']
-jar {
-    for (String sub : projects) {
-        def proj = ':ulib-' + sub
-
-        dependsOn "$proj:build"
-
-        def buildDir = project(proj).buildDir.path
-        from("$buildDir/classes/java/main") {
-            include '**'
-        }
-        from("$buildDir/resources/main") {
-            include '**'
-        }
-    }
-}
-
-processResources {
-    eachFile {
-        copyDetails ->
-            if (copyDetails.path == 'bungee.yml') {
-                filter { line ->
-                    line.replace('{{version}}', project.version)
-                }
-            }
-    }
+//shadowing
+shadowJar {
+    configurations = [project(':ulib-core').configurations.shade]
+    //noinspection GroovyAssignabilityCheck
+    shadowJarIncludeFrom(['core-api', 'core', 'minecraft-api', 'minecraft', 'bungeecord-api'])
 }

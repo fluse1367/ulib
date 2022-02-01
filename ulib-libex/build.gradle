@@ -1,0 +1,6 @@
+// external library module, that is being loaded by the system class loader (via the agent)
+//      to prevent class loader conflicts when injecting code
+
+jar {
+    archiveFileName.set "libex"
+}
