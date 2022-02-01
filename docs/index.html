@@ -86,7 +86,7 @@
         <script>
             $(function() {
                 $.get("core", function(data){
-                    $('#currentVersion').text($(data).filter('title').text().split(" ")[1]);
+                    $('#currentVersion').text($(data).filter('title').text().split(" ")[2]);
                     $('#currentVersionContainer').show();
                 });
             });
