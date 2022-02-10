@@ -18,6 +18,8 @@ subprojects {
                 }
                 publications {
                     maven(MavenPublication) {
+                        artifactId "ulib-${project.name}"
+
                         from components.java
                     }
                 }

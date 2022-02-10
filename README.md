@@ -58,11 +58,11 @@ repositories {
 }
 dependencies {
     /* ... */
-    implementation 'eu.software4you.ulib:loader:VERSION'
-    compileOnly 'eu.software4you.ulib:core-api:VERSION'
-    compileOnly 'eu.software4you.ulib:spigot-api:VERSION'
-    compileOnly 'eu.software4you.ulib:bungeecord-api:VERSION'
-    compileOnly 'eu.software4you.ulib:velocity-api:VERSION'
+    implementation 'eu.software4you.ulib:ulib-loader:VERSION'
+    compileOnly 'eu.software4you.ulib:ulib-core-api:VERSION'
+    compileOnly 'eu.software4you.ulib:ulib-spigot-api:VERSION'
+    compileOnly 'eu.software4you.ulib:ulib-bungeecord-api:VERSION'
+    compileOnly 'eu.software4you.ulib:ulib-velocity-api:VERSION'
     /* ... */
 }
 ```
@@ -87,32 +87,32 @@ dependencies {
         <!-- ... -->
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>loader</artifactId>
+            <artifactId>ulib-loader</artifactId>
             <version>VERSION</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>core-api</artifactId>
+            <artifactId>ulib-core-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>spigot-api</artifactId>
+            <artifactId>ulib-spigot-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>bungeecord-api</artifactId>
+            <artifactId>ulib-bungeecord-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>velocity-api</artifactId>
+            <artifactId>ulib-velocity-api</artifactId>
             <version>VERSION</version>
         </dependency>
         <!-- ... -->
