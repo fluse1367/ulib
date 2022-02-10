@@ -5,12 +5,13 @@ This library is designed to ease process of developing standalone applications, 
 Copyright (c) 2021 [fluse1367](https://gitlab.com/fluse1367) / [software4you.eu](https://gitlab.com/software4you.eu)   
 See "Included Software" (at the bottom) for copyright and license notice of included software.
 
-| [![Gitlab release pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master?label=Release%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=master) | [![Gitlab snapshot pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/develop?label=Snapshot%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=develop) |
-| ---: | ---: |
-| ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) |
-| ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=orange&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=orange&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) |
+|                                                    [![Gitlab release pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/master?label=Release%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=master) |                                                [![Gitlab snapshot pipeline status](https://img.shields.io/gitlab/pipeline/software4you.eu/ulib/develop?label=Snapshot%20Build&style=for-the-badge)](https://gitlab.com/software4you.eu/ulib/-/pipelines?ref=develop) |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                   ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-loader&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-loader%2Fmaven-metadata.xml) |                   ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-loader&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-loader%2Fmaven-metadata.xml) |
+|               ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) |               ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-core-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-core-api%2Fmaven-metadata.xml) |
+|         ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=orange&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) |         ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=orange&label=ulib-spigot-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-spigot-api%2Fmaven-metadata.xml) |
 | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) |
-| ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |
+|       ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |       ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |
 
 ## Important Things to Know
 
@@ -24,18 +25,6 @@ See "Included Software" (at the bottom) for copyright and license notice of incl
 
 
 - Minimum Java version is 17.
-
-
-- When looking up the exact dependencies of uLib, you will notice that it uses [Paper](https://papermc.io)
-  and [Waterfall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.   
-  Paper/Waterfall provide better performance, and an expanded API which allows uLib to implement more and better
-  features.   
-  uLib should work on Spigot as well, but some features could not work properly or not work at all as workarounds are
-  necessary to implement some features on Spigot. <br><br>
-  Consider using [Purpur](https://purpur.pl3x.net), [Airplane](https://airplane.gg),
-  [Tuinity](https://github.com/Spottedleaf/Tuinity) or [Paper](https://papermc.io),
-  and [Velocity](https://velocitypowered.com)
-  or [Watefall](https://github.com/PaperMC/Waterfall) instead of Spigot and BungeeCord.
 
 
 - When launching uLib for the first time (or if the respective caching folder was removed), it will download a few of
@@ -53,7 +42,8 @@ project do not take any responsibility/liability in any way.
 
 ## Repository
 
-See the versions table to find out the most recent versions.
+See the versions table to find out the most recent versions.  
+Make sure you only include the `loader` as runtime library.
 
 <details><summary>Gradle</summary>
 
@@ -68,10 +58,11 @@ repositories {
 }
 dependencies {
     /* ... */
-    compile 'eu.software4you.ulib:ulib-core-api:VERSION'
-    compile 'eu.software4you.ulib:ulib-spigot-api:VERSION'
-    compile 'eu.software4you.ulib:ulib-bungeecord-api:VERSION'
-    compile 'eu.software4you.ulib:ulib-velocity-api:VERSION'
+    implementation 'eu.software4you.ulib:loader:VERSION'
+    compileOnly 'eu.software4you.ulib:core-api:VERSION'
+    compileOnly 'eu.software4you.ulib:spigot-api:VERSION'
+    compileOnly 'eu.software4you.ulib:bungeecord-api:VERSION'
+    compileOnly 'eu.software4you.ulib:velocity-api:VERSION'
     /* ... */
 }
 ```
@@ -96,25 +87,32 @@ dependencies {
         <!-- ... -->
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-core-api</artifactId>
+            <artifactId>loader</artifactId>
+            <version>VERSION</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.software4you.ulib</groupId>
+            <artifactId>core-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-spigot-api</artifactId>
+            <artifactId>spigot-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-bungeecord-api</artifactId>
+            <artifactId>bungeecord-api</artifactId>
             <version>VERSION</version>
         </dependency>
 
         <dependency>
             <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-velocity-api</artifactId>
+            <artifactId>velocity-api</artifactId>
             <version>VERSION</version>
         </dependency>
         <!-- ... -->
