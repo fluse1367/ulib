@@ -1,0 +1,45 @@
+subprojects {
+    ext {
+        doPubliblishment = {
+            apply plugin: 'maven-publish'
+            publishing {
+                java {
+                    withSourcesJar()
+                    withJavadocJar()
+                }
+                javadoc {
+                    failOnError false
+                }
+                components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
+                    skip()
+                }
+                tasks.withType(GenerateModuleMetadata) {
+                    enabled = false
+                }
+                publications {
+                    maven(MavenPublication) {
+                        from components.java
+                    }
+                }
+
+                repositories {
+                    maven {
+                        def release = java.util.Optional.ofNullable((String) project.findProperty('variation')).orElse('snapshot').toLowerCase() == 'release'
+
+                        url "https://gitlab.com/api/v4/projects/${release ? /*ulib*/ '19415500' : /*ulib-snapshots*/ '26647460'}/packages/maven"
+                        credentials(HttpHeaderCredentials) {
+                            name = "${release ? 'Job' : 'Deploy'}-Token"
+                            value = System.getenv("CI_${release ? /*releases*/ 'JOB' : /*snapshots*/ 'SNAPSHOT_REPOSITORY_DEPLOY'}_TOKEN")
+
+
+                        }
+                        authentication {
+                            header(HttpHeaderAuthentication)
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}

@@ -94,3 +94,5 @@ jar {
 extraJavaModuleInfo {
     automaticModule('fabric-loader-0.13.1.jar', 'fabric.loader')
 }
+
+doPubliblishment()

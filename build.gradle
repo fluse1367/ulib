@@ -3,6 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import static java.util.Optional.ofNullable
 
 apply from: 'manual-dependencies.gradle'
+apply from: 'publishing.gradle'
 
 // plugin support
 buildscript {
@@ -175,4 +176,8 @@ subprojects {
         }
     };
 
+    // publishing
+    if (project.name.endsWith("-api")) {
+        doPubliblishment()
+    }
 }
