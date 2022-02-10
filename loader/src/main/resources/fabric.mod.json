@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "ulib",
+  "version": "{{project.version}}",
+  "name": "uLib",
+  "authors": [
+    "fluse1367"
+  ],
+  "license": "GPLv3",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "eu.software4you.ulib.loader.minecraft.ModFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": "*",
+    "java": ">=17"
+  }
+}

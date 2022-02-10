@@ -5,6 +5,7 @@ dependencyVelocity()
 
 dependencies {
     lazyLib('net.sf.jopt-simple:jopt-simple:6.0-alpha-3', 'jopt-simple')
+    compileOnly 'net.fabricmc:fabric-loader:0.13.1'
 }
 
 ext {
@@ -88,4 +89,8 @@ jar {
             'Modules'                : Base64.encoder.encodeToString(modulesGraphSerialized),
             'Modules-Readable'       : modulesGraph,
     ])
+}
+
+extraJavaModuleInfo {
+    automaticModule('fabric-loader-0.13.1.jar', 'fabric.loader')
 }

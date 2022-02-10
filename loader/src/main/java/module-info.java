@@ -15,6 +15,7 @@ module ulib.loader {
     requires static bungeecord.api; // bungeecord
     requires static org.bukkit; // spigot
     requires static com.velocitypowered.api; // velocity
+    requires static fabric.loader; // fabric
     requires static org.slf4j;
     requires static com.google.guice;
 
