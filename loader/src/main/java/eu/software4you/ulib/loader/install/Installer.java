@@ -142,12 +142,12 @@ public final class Installer {
             return
                     // access to core API
                     request.startsWith("eu.software4you.ulib.core.api.") || request.equals("eu.software4you.ulib.core.ULib")
-                            // access to minecraft api
-                            || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
-                            // access to velocity api
-                            || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
-                            // access to spigot api
-                            || request.startsWith("eu.software4you.ulib.spigot.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.SPIGOT
+                    // access to minecraft api
+                    || request.startsWith("eu.software4you.ulib.minecraft.api.") && EnvironmentProvider.get() != EnvironmentProvider.Environment.STANDALONE
+                    // access to velocity api
+                    || request.startsWith("eu.software4you.ulib.velocity.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.VELOCITY
+                    // access to spigot api
+                    || request.startsWith("eu.software4you.ulib.spigot.api.") && EnvironmentProvider.get() == EnvironmentProvider.Environment.SPIGOT
                     ;
         };
         this.delegationInjector = constructInjector(classProvider, published::contains, checkLoadingRequest);
@@ -208,6 +208,24 @@ public final class Installer {
         if (!instance.init)
             instance.init();
         instance.installLoaders(target);
+    }
+
+    /**
+     * Install the uLib API to the class loader of the calling class.
+     *
+     * @implNote If the caller is part of a named module, an {@link Module#addReads(Module) reads} record must be
+     * added by that module manually in order for that module to be able to interact with the uLib API.
+     * Its {@link Module module object} can be obtained with {@link #getModule()}.
+     */
+    @Synchronized
+    public static void installMe() {
+        if (!instance.init)
+            instance.init();
+
+        var loader = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().getClassLoader();
+        if (instance.published.contains(loader))
+            return;
+        instance.installLoaders(loader);
     }
 
     /**
