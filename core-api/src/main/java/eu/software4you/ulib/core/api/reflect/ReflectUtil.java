@@ -141,7 +141,7 @@ public abstract class ReflectUtil {
     protected abstract Class<?> getCallerClass0(int depth);
 
     /**
-     * Tries to load a certain class.
+     * Attempts to load a certain class.
      *
      * @param name the fully qualified name of the class
      * @param init if the class should be initialized in case of loading success
@@ -153,7 +153,7 @@ public abstract class ReflectUtil {
     }
 
     /**
-     * Tries to load a certain class.
+     * Attempts to load a certain class.
      *
      * @param name   the fully qualified name of the class
      * @param init   if the class should be initialized in case of loading success
@@ -172,7 +172,7 @@ public abstract class ReflectUtil {
     }
 
     /**
-     * Tries to obtain a value of an enum.
+     * Attempts to obtain a value of an enum.
      *
      * @param enumClass the class of enum
      * @param enumEntry the fully qualified name of the desired entry.

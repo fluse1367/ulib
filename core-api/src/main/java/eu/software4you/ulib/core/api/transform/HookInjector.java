@@ -16,14 +16,14 @@ public abstract class HookInjector {
     }
 
     /**
-     * Searches a class for any static hooks and tries to inject them.
+     * Searches a class for any static hooks and attempts to inject them.
      */
     public static void hookStatic(@NotNull Class<?> clazz) {
         getInstance().hookStatic0(clazz);
     }
 
     /**
-     * Searches the calling class for any static hooks and tries to inject them.
+     * Searches the calling class for any static hooks and attempts to inject them.
      */
     public static void hookStatic() {
         hookStatic(ReflectUtil.getCallerClass());
@@ -44,7 +44,7 @@ public abstract class HookInjector {
     }
 
     /**
-     * Searches an object for any hooks and tries to inject them.
+     * Searches an object for any hooks and attempts to inject them.
      *
      * @param inst       the object (class) to search in
      * @param hookStatic if static hooks should also be injected
@@ -54,7 +54,7 @@ public abstract class HookInjector {
     }
 
     /**
-     * Searches an object for any non-static hooks and tries to inject them.
+     * Searches an object for any non-static hooks and attempts to inject them.
      * Equivalent to {@code hook(inst, false)}.
      *
      * @param inst the object (class) to search in

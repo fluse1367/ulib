@@ -9,7 +9,7 @@ import java.util.function.Function;
 public class Conversions {
 
     /**
-     * Tries to convert the given object into an int.
+     * Attempts to convert the given object into an int.
      *
      * @param o the value to convert
      * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
@@ -19,7 +19,7 @@ public class Conversions {
     }
 
     /**
-     * Tries to convert the given object into a long.
+     * Attempts to convert the given object into a long.
      *
      * @param o the value to convert
      * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
@@ -29,7 +29,7 @@ public class Conversions {
     }
 
     /**
-     * Tries to convert the given object into a float.
+     * Attempts to convert the given object into a float.
      *
      * @param o the value to convert
      * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
@@ -39,7 +39,7 @@ public class Conversions {
     }
 
     /**
-     * Tries to convert the given object into a double.
+     * Attempts to convert the given object into a double.
      *
      * @param o the value to convert
      * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
@@ -49,7 +49,7 @@ public class Conversions {
     }
 
     /**
-     * Tries to convert the given object into a boolean.
+     * Attempts to convert the given object into a boolean.
      * If the object is applicable as integer (according to {@link #tryInt(Object)}), a value other than 0 will be interpreted as true.
      *
      * @param o the value to convert
@@ -61,7 +61,7 @@ public class Conversions {
     }
 
     /**
-     * Tries to convert the specified object to another object. Any object thrown will be caught.
+     * Attempts to convert the specified object to another object. Any object thrown will be caught.
      *
      * @param input     the object to convert
      * @param converter the converting function

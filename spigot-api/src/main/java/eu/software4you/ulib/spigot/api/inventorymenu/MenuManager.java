@@ -135,7 +135,7 @@ public abstract class MenuManager {
     }
 
     /**
-     * Tries to find a page within a {@link MultiPageMenu}.
+     * Attempts to find a page within a {@link MultiPageMenu}.
      *
      * @param page the page to search for
      * @return the respective {@link MultiPageMenu} and the page index, or {@code null} of nothing found

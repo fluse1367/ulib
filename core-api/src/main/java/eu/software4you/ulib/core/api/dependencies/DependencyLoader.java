@@ -39,7 +39,7 @@ public abstract class DependencyLoader {
     }
 
     /**
-     * Tries to load a JAR-File (from {@link File}) with the {@link ClassLoader} from the calling class.
+     * Attempts to load a JAR-File (from {@link File}) with the {@link ClassLoader} from the calling class.
      * This method is equivalent with {@code load(file, false)}.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
@@ -52,7 +52,7 @@ public abstract class DependencyLoader {
     }
 
     /**
-     * Tries to load a JAR-File (from {@link File}) with the {@link ClassLoader} from the calling class.
+     * Attempts to load a JAR-File (from {@link File}) with the {@link ClassLoader} from the calling class.
      * <p>
      * The file's classes will only be available exclusively to classes loaded with that specific {@code classLoader}.
      *
@@ -105,7 +105,7 @@ public abstract class DependencyLoader {
     }
 
     /**
-     * Tries to load a JAR-File (from {@link URL}) with the {@link ClassLoader} from the calling class.
+     * Attempts to load a JAR-File (from {@link URL}) with the {@link ClassLoader} from the calling class.
      * This method <b>does not</b> fall back to system class loader loading.
      *
      * @param url the {@link URL} to load
@@ -115,7 +115,7 @@ public abstract class DependencyLoader {
     }
 
     /**
-     * Tries to load a JAR-File (from {@link URL}).
+     * Attempts to load a JAR-File (from {@link URL}).
      *
      * @param url         the {@link URL} to load
      * @param classLoader the {@link URLClassLoader} to load the jar file with

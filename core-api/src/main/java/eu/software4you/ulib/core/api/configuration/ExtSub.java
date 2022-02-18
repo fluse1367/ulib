@@ -207,7 +207,7 @@ public interface ExtSub extends Sub {
     }
 
     /**
-     * Reads a value and tries to convert it to the given type. If the value is a String type, it is processed
+     * Reads a value and attempts to convert it to the given type. If the value is a String type, it is processed
      * with {@link String#format(String, Object...)} if {@code replacements} are given.
      *
      * @param clazz        the type class
@@ -225,7 +225,7 @@ public interface ExtSub extends Sub {
     }
 
     /**
-     * Reads a value and tries to convert it to the given type. If the value is a String type, it is processed
+     * Reads a value and attempts to convert it to the given type. If the value is a String type, it is processed
      * with {@link String#format(String, Object...)} if {@code replacements} are given.
      *
      * @param clazz        the type class
@@ -243,7 +243,7 @@ public interface ExtSub extends Sub {
     <T> T get(@NotNull Class<T> clazz, @NotNull String path, @Nullable T def, Object... replacements);
 
     /**
-     * Reads a list and tries to convert each entry to the given type. If the entries are a String type,
+     * Reads a list and attempts to convert each entry to the given type. If the entries are a String type,
      * they are processed with {@link String#format(String, Object...)} if {@code replacements} are given.
      *
      * @param clazz        the type class
@@ -260,7 +260,7 @@ public interface ExtSub extends Sub {
     }
 
     /**
-     * Reads a list and tries to convert each entry to the given type. If the entries are a String type,
+     * Reads a list and attempts to convert each entry to the given type. If the entries are a String type,
      * they are processed with {@link String#format(String, Object...)} if {@code replacements} are given.
      *
      * @param clazz        the type class
