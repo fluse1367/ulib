@@ -12,7 +12,7 @@ public class Initiable {
         this.message = message;
     }
 
-    protected final void initiate() {
+    public void initiate() {
         if (initiated)
             throw new UnsupportedOperationException(message);
         initiated = true;

@@ -12,7 +12,7 @@ public class Completable extends Initiable {
         this.message = message;
     }
 
-    protected final void complete() {
+    public void complete() {
         if (completed)
             throw new UnsupportedOperationException(message);
         completed = true;
