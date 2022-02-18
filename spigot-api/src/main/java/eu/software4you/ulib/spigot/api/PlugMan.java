@@ -1,6 +1,6 @@
 package eu.software4you.ulib.spigot.api;
 
-import eu.software4you.ulib.core.api.utils.FileUtils;
+import eu.software4you.ulib.core.api.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -120,6 +120,6 @@ public class PlugMan {
     }
 
     public static boolean reload(Plugin plugin) {
-        return unload(plugin) && load(FileUtils.getClassFile(plugin.getClass()));
+        return unload(plugin) && load(FileUtil.getClassFile(plugin.getClass()).orElse(null));
     }
 }

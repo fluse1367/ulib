@@ -9,7 +9,7 @@ import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
 import eu.software4you.ulib.core.api.internal.Providers;
 import eu.software4you.ulib.core.api.io.IOUtil;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import eu.software4you.ulib.core.api.utils.FileUtils;
+import eu.software4you.ulib.core.api.util.FileUtil;
 import eu.software4you.ulib.velocity.api.internal.Providers.ProviderLayout;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @NotNull
     private final File dataFolder;
     @Getter
-    private final File file = FileUtils.getClassFile(getClass());
+    private final File file = FileUtil.getClassFile(getClass()).orElse(null);
     private final ExtYamlSub config = YamlSub.newYaml();
     private final Layout layout = Providers.get(ProviderLayout.class).get();
     private String layoutFileName = defaultLayoutFileName;
