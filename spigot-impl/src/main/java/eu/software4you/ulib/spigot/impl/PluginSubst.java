@@ -4,7 +4,7 @@ import eu.software4you.ulib.core.api.configuration.ConversionPolicy;
 import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.core.api.sql.SqlEngine;
-import eu.software4you.ulib.core.api.util.LazyValue;
+import eu.software4you.ulib.core.api.util.value.LazyValue;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.minecraft.api.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.spigot.api.plugin.ExtendedJavaPlugin;

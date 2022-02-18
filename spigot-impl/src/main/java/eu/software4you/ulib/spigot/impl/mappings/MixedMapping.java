@@ -2,7 +2,7 @@ package eu.software4you.ulib.spigot.impl.mappings;
 
 import eu.software4you.ulib.core.api.common.collection.Pair;
 import eu.software4you.ulib.core.api.common.collection.Triple;
-import eu.software4you.ulib.core.api.util.LazyValue;
+import eu.software4you.ulib.core.api.util.value.LazyValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

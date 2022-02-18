@@ -2,7 +2,7 @@ package eu.software4you.ulib.spigot.impl.mappings;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.io.IOUtil;
-import eu.software4you.ulib.core.api.util.LazyValue;
+import eu.software4you.ulib.core.api.util.value.LazyValue;
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.impl.UnsafeOperations;
 import eu.software4you.ulib.minecraft.api.launchermeta.LauncherMeta;

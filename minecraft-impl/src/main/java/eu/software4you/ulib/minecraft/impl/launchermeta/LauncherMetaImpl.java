@@ -2,7 +2,7 @@ package eu.software4you.ulib.minecraft.impl.launchermeta;
 
 import com.google.gson.JsonParser;
 import eu.software4you.ulib.core.api.http.HttpUtil;
-import eu.software4you.ulib.core.api.util.LazyValue;
+import eu.software4you.ulib.core.api.util.value.LazyValue;
 import eu.software4you.ulib.minecraft.api.launchermeta.LauncherMeta;
 import eu.software4you.ulib.minecraft.api.launchermeta.VersionsMeta;
 import lombok.SneakyThrows;

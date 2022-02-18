@@ -35,6 +35,7 @@ module ulib.core.api {
     exports eu.software4you.ulib.core.api.reflect;
     exports eu.software4you.ulib.core.api.sql;
     exports eu.software4you.ulib.core.api.transform;
+    exports eu.software4you.ulib.core.api.util.value;
     exports eu.software4you.ulib.core.api.util;
     exports eu.software4you.ulib.core.api.utils;
     exports eu.software4you.ulib.core.api;

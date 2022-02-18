@@ -1,7 +1,7 @@
 package eu.software4you.ulib.minecraft.impl.launchermeta;
 
 import com.google.gson.JsonObject;
-import eu.software4you.ulib.core.api.util.LazyValue;
+import eu.software4you.ulib.core.api.util.value.LazyValue;
 import eu.software4you.ulib.minecraft.api.launchermeta.RemoteLibrary;
 import eu.software4you.ulib.minecraft.api.launchermeta.RemoteResource;
 import eu.software4you.ulib.minecraft.api.launchermeta.VersionManifest;
