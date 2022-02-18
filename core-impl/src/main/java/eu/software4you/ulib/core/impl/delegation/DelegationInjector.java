@@ -1,14 +1,13 @@
 package eu.software4you.ulib.core.impl.delegation;
 
 import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 import eu.software4you.ulib.core.api.transform.Callback;
 import eu.software4you.ulib.core.api.transform.HookInjector;
 import eu.software4you.ulib.core.api.transform.HookPoint;
-import eu.software4you.ulib.core.api.utils.ClassUtils;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 public final class DelegationInjector {
 
@@ -26,11 +25,11 @@ public final class DelegationInjector {
     }
 
     public void inject(Class<? extends ClassLoader> clazz) {
-        Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "findClass", String.class))
+        ReflectUtil.findUnderlyingMethod(clazz, "findClass", true, String.class)
                 .ifPresent(into -> inject(hookFindClass, into));
-        Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "findClass", String.class, String.class))
+        ReflectUtil.findUnderlyingMethod(clazz, "findClass", true, String.class, String.class)
                 .ifPresent(into -> inject(hookFindModuleClass, into));
-        Optional.ofNullable(ClassUtils.findUnderlyingDeclaredMethod(clazz, "loadClass", String.class, boolean.class))
+        ReflectUtil.findUnderlyingMethod(clazz, "findClass", true, String.class, boolean.class)
                 .ifPresent(into -> inject(hookLoadClass, into));
     }
 

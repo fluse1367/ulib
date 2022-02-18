@@ -1,10 +1,15 @@
 package eu.software4you.ulib.core.api.reflect;
 
 import eu.software4you.ulib.core.api.internal.Providers;
+import eu.software4you.ulib.core.api.util.Unsettled;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Useful shortcuts for the Java Reflection API.<br>
@@ -134,4 +139,114 @@ public abstract class ReflectUtil {
     protected abstract Object call0(Class<?> clazz, Object invoker, String call, boolean forced, List<Parameter<?>>[] parameters);
 
     protected abstract Class<?> getCallerClass0(int depth);
+
+    /**
+     * Tries to load a certain class.
+     *
+     * @param name the fully qualified name of the class
+     * @param init if the class should be initialized in case of loading success
+     * @return a {@link Unsettled} object wrapping the operation result
+     */
+    @NotNull
+    public static Unsettled<Class<?>> forName(@NotNull String name, boolean init) {
+        return forName(name, init, getCallerClass().getClassLoader());
+    }
+
+    /**
+     * Tries to load a certain class.
+     *
+     * @param name   the fully qualified name of the class
+     * @param init   if the class should be initialized in case of loading success
+     * @param loader the loader from which the class is loaded
+     * @return a {@link Unsettled} object wrapping the operation result
+     */
+    @NotNull
+    public static Unsettled<Class<?>> forName(@NotNull String name, boolean init, ClassLoader loader) {
+        return Unsettled.execute(new Supplier<Class<?>>() {
+            @SneakyThrows
+            @Override
+            public Class<?> get() {
+                return Class.forName(name, init, loader);
+            }
+        });
+    }
+
+    /**
+     * Tries to obtain a value of an enum.
+     *
+     * @param enumClass the class of enum
+     * @param enumEntry the fully qualified name of the desired entry.
+     * @return an optional wrapping the enum entry value on success, an empty optional otherwise
+     */
+    @NotNull
+    public static <E extends Enum<?>> Optional<E> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
+        return Unsettled.execute(new Supplier<E>() {
+            @SneakyThrows
+            @Override
+            public E get() {
+                //noinspection unchecked
+                return (E) enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry);
+            }
+        }).get();
+    }
+
+    /**
+     * Searches a class and it's superclasses for a certain field.
+     *
+     * @param clazz     the class to search in
+     * @param fieldName the name of the field to find
+     * @param declared  if the non-public fields should be searched as well
+     * @return an optional wrapping the field, or an empty optional if the field cannot be found
+     */
+    @NotNull
+    public static Optional<Field> findUnderlyingField(@NotNull Class<?> clazz, @NotNull String fieldName, boolean declared) {
+        Class<?> current = clazz;
+        do {
+            try {
+                return Optional.of(declared ? current.getDeclaredField(fieldName) : current.getField(fieldName));
+            } catch (Exception ignored) {
+            }
+        } while ((current = current.getSuperclass()) != null);
+        return Optional.empty();
+    }
+
+    /**
+     * Collects all fields from a certain class and it's superclasses.
+     *
+     * @param clazz the class to search in
+     * @return The collection of fields
+     */
+    @NotNull
+    public static Collection<Field> findUnderlyingFields(@NotNull Class<?> clazz, boolean declared) {
+        List<Field> cache = new ArrayList<>();
+        Class<?> current = clazz;
+        do {
+            try {
+                cache.addAll(Arrays.asList(declared ? current.getDeclaredFields() : current.getFields()));
+            } catch (Exception ignored) {
+            }
+        } while ((current = current.getSuperclass()) != null);
+        return cache;
+    }
+
+    /**
+     * Searches a class and it's superclasses for a certain method.
+     *
+     * @param clazz      the class to search in
+     * @param methodName the name of the method to find
+     * @param declared   if the non-public methods should be searched as well
+     * @return an optional wrapping the method, or an empty optional if the method cannot be found
+     */
+    @NotNull
+    public static Optional<Method> findUnderlyingMethod(@NotNull Class<?> clazz, @NotNull String methodName, boolean declared, @NotNull Class<?>... parameterTypes) {
+        Class<?> current = clazz;
+        do {
+            try {
+                return Optional.of(declared ? current.getDeclaredMethod(methodName, parameterTypes)
+                        : current.getMethod(methodName, parameterTypes));
+            } catch (Exception ignored) {
+            }
+        } while ((current = current.getSuperclass()) != null);
+        return Optional.empty();
+    }
 }

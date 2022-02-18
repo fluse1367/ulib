@@ -1,7 +1,6 @@
 package eu.software4you.ulib.spigot.api.multiversion;
 
-
-import eu.software4you.ulib.core.api.utils.ClassUtils;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,8 @@ public class MultiversionManager {
     }
 
     public static Class<?> netMinecraftServer(String ex) {
-        return ClassUtils.forName(netMinecraftServerPrefix() + ex);
+        return ReflectUtil.forName(netMinecraftServerPrefix() + ex, true, ReflectUtil.getCallerClass().getClassLoader())
+                .get().orElse(null);
     }
 
     public static String orgBukkitCraftbukkitPrefix() {
@@ -46,6 +46,7 @@ public class MultiversionManager {
     }
 
     public static Class<?> orgBukkitCraftbukkit(String ex) {
-        return ClassUtils.forName(orgBukkitCraftbukkitPrefix() + ex);
+        return ReflectUtil.forName(orgBukkitCraftbukkitPrefix() + ex, true, ReflectUtil.getCallerClass().getClassLoader())
+                .get().orElse(null);
     }
 }

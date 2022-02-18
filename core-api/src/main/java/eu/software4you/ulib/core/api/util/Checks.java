@@ -1,12 +1,10 @@
 package eu.software4you.ulib.core.api.util;
 
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -244,17 +242,9 @@ public class Checks {
      *
      * @param name the fully qualified name of the class
      * @param init if the class should be initialized in case of loading success
-     * @return {@code true} if the
+     * @return {@code true} if the class could be loaded, {@code false} otherwise
      */
     public static boolean clazz(@Nullable String name, boolean init) {
-        var caller = ReflectUtil.getCallerClass();
-        //noinspection Convert2Lambda
-        return Unsettled.execute(new Supplier<Class<?>>() {
-            @SneakyThrows
-            @Override
-            public Class<?> get() {
-                return Class.forName(name, init, caller.getClassLoader());
-            }
-        }).wasSuccess();
+        return ReflectUtil.forName(name, init, ReflectUtil.getCallerClass().getClassLoader()).wasSuccess();
     }
 }

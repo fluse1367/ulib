@@ -2,12 +2,10 @@ package eu.software4you.ulib.core.impl.reflect;
 
 import eu.software4you.ulib.core.api.reflect.Parameter;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import eu.software4you.ulib.core.api.utils.ClassUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,21 +45,20 @@ public final class ReflectUtilImpl extends ReflectUtil {
                 callParts[i] = callParts[i].substring(0, callParts[i].length() - 2);
                 // we should call a method
 
-                Method method = (forced ? ClassUtils.findUnderlyingDeclaredMethod(clazz, callParts[i], argumentTypes)
-                        : ClassUtils.findUnderlyingMethod(clazz, callParts[i], argumentTypes));
-                if (method == null)
+                var opMethod = findUnderlyingMethod(clazz, callParts[i], forced, argumentTypes);
+                if (opMethod.isEmpty())
                     throw new NoSuchMethodException(String.format("%s(%s) in %s (%sforced)", callParts[i], ArrayUtils.toString(argumentTypes), clazz, forced ? "" : "not "));
+                var method = opMethod.get();
                 if (forced)
                     method.setAccessible(true);
                 returned = method.invoke(invoker, arguments);
                 returnType = method.getReturnType();
             } else {
                 // the call is a field
-                Field field = (forced ?
-                        ClassUtils.findUnderlyingDeclaredField(clazz, callParts[i])
-                        : ClassUtils.findUnderlyingField(clazz, callParts[i]));
-                if (field == null)
+                var opField = findUnderlyingField(clazz, callParts[i], forced);
+                if (opField.isEmpty())
                     throw new NoSuchFieldException(String.format("%s in %s (%sforced)", callParts[i], clazz, forced ? "" : "not "));
+                var field = opField.get();
                 if (forced)
                     field.setAccessible(true);
                 if (arguments.length > 0) {

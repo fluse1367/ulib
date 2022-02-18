@@ -5,7 +5,7 @@ import eu.software4you.ulib.core.api.configuration.serialization.DeSerialization
 import eu.software4you.ulib.core.api.configuration.serialization.InvalidFactoryDeclarationException;
 import eu.software4you.ulib.core.api.configuration.serialization.Serializable;
 import eu.software4you.ulib.core.api.configuration.serialization.SerializationException;
-import eu.software4you.ulib.core.api.utils.ClassUtils;
+import eu.software4you.ulib.core.api.reflect.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -123,7 +123,7 @@ public class SerializationAdapters {
 
         @Override
         protected Enum<?> deserialize(Class<? extends Enum<?>> clazz, Map<String, Object> elements) {
-            return (Enum<?>) ClassUtils.getEnumEntry(clazz, (String) elements.get("value"));
+            return ReflectUtil.getEnumEntry(clazz, (String) elements.get("value")).orElse(null);
         }
 
         @Override
