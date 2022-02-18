@@ -1,8 +1,8 @@
 package eu.software4you.ulib.spigot.impl.enchantment;
 
-import eu.software4you.ulib.core.api.math.MathUtils;
 import eu.software4you.ulib.core.api.reflect.Parameter;
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.api.util.Conversions;
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.spigot.api.enchantment.CustomEnchantment;
 import eu.software4you.ulib.spigot.api.enchantment.EnchantUtil;
@@ -74,7 +74,7 @@ final class EnchantUtilImpl extends EnchantUtil {
                             ce.isCursed() ? "c" : "7",
                             loreLine,
                             // append roman level number if 1 < level < 11 otherwise use the decimal number
-                            (level > 1) ? level <= 10 ? " " + MathUtils.decToRoman(level) : level : "",
+                            (level > 1) ? level <= 10 ? " " + Conversions.toRoman(level) : level : "",
                             // append control characters
                             ENCHANTMENT_LORE_CONTROL_CHARS
                     )));

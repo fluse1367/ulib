@@ -54,29 +54,4 @@ public class MathUtils {
 
         return new Coordinate2D(newX, newY);
     }
-
-    public static boolean isBetween(int a, int needle, int b) {
-        return b > a ? needle > a && needle < b : needle > b && needle < a;
-    }
-
-    /**
-     * Generates a roman number from a decimal one.
-     *
-     * @param num decimal input number
-     * @return roman number
-     */
-    public static String decToRoman(int num) {
-        int[] dec = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-        String[] romanLiterals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-
-        StringBuilder roman = new StringBuilder();
-
-        for (int i = 0; i < dec.length; i++) {
-            while (num >= dec[i]) {
-                num -= dec[i];
-                roman.append(romanLiterals[i]);
-            }
-        }
-        return roman.toString();
-    }
 }

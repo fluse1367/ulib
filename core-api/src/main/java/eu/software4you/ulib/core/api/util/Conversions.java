@@ -86,4 +86,25 @@ public class Conversions {
         }
         return b.toString();
     }
+
+    /**
+     * Generates a roman number from a decimal one.
+     *
+     * @param num decimal input number
+     * @return the roman number
+     */
+    public static String toRoman(int num) {
+        int[] dec = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] romanLiterals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+        StringBuilder roman = new StringBuilder();
+
+        for (int i = 0; i < dec.length; i++) {
+            while (num >= dec[i]) {
+                num -= dec[i];
+                roman.append(romanLiterals[i]);
+            }
+        }
+        return roman.toString();
+    }
 }
