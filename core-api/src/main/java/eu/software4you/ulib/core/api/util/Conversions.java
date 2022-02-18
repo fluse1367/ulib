@@ -71,4 +71,18 @@ public class Conversions {
             return Optional.empty();
         return Unsettled.execute(() -> converter.apply(input)).get();
     }
+
+    /**
+     * Converts a byte array into the appropriate hex representation.
+     *
+     * @param bytes the byte array
+     * @return the hex string
+     */
+    public static String toHex(byte[] bytes) {
+        var b = new StringBuilder();
+        for (byte by : bytes) {
+            b.append(Integer.toHexString(Byte.toUnsignedInt(by) | 0x100));
+        }
+        return b.toString();
+    }
 }

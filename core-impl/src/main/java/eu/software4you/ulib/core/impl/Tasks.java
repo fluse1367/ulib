@@ -1,7 +1,7 @@
 package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.api.utils.ArrayUtils;
+import eu.software4you.ulib.core.api.util.ArrayUtil;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public final class Tasks {
     @SafeVarargs
     public static <T> List<T> await(Callable<T> task, Callable<T>... tasks) {
         List<Future<T>> futs = new ArrayList<>();
-        for (Callable<T> t : ArrayUtils.concat(task, tasks)) {
+        for (Callable<T> t : ArrayUtil.concat(task, tasks)) {
             futs.add(run(t));
         }
         return futs.stream().map(Tasks::get).collect(Collectors.toList());

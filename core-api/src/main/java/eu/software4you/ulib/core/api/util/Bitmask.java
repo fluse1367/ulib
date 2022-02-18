@@ -1,4 +1,4 @@
-package eu.software4you.ulib.core.api.utils;
+package eu.software4you.ulib.core.api.util;
 
 import lombok.Getter;
 import lombok.Setter;

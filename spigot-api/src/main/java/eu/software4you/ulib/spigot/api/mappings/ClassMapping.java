@@ -1,6 +1,6 @@
 package eu.software4you.ulib.spigot.api.mappings;
 
-import eu.software4you.ulib.core.api.utils.ArrayUtils;
+import eu.software4you.ulib.core.api.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public interface ClassMapping extends MappedClass {
      */
     @Nullable
     default MappedMethod methodFromSource(String sourceName, MappedClass param0, MappedClass... params) {
-        return methodFromSource(sourceName, ArrayUtils.concat(param0, params));
+        return methodFromSource(sourceName, ArrayUtil.concat(param0, params));
     }
 
     /**
@@ -131,7 +131,7 @@ public interface ClassMapping extends MappedClass {
      */
     @Nullable
     default MappedMethod methodFromMapped(String mappedName, MappedClass param0, MappedClass... params) {
-        return methodFromMapped(mappedName, ArrayUtils.concat(param0, params));
+        return methodFromMapped(mappedName, ArrayUtil.concat(param0, params));
     }
 
     /**

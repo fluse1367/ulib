@@ -3,7 +3,7 @@ package eu.software4you.ulib.minecraft.impl.launchermeta;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import eu.software4you.ulib.core.api.http.CachedResource;
-import eu.software4you.ulib.core.api.utils.LazyValue;
+import eu.software4you.ulib.core.api.util.LazyValue;
 import eu.software4you.ulib.minecraft.api.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.api.launchermeta.VersionsMeta;
 import org.jetbrains.annotations.NotNull;

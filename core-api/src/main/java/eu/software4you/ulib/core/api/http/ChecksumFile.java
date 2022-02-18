@@ -1,7 +1,7 @@
 package eu.software4you.ulib.core.api.http;
 
 import eu.software4you.ulib.core.api.io.IOUtil;
-import eu.software4you.ulib.core.api.utils.ChecksumUtils;
+import eu.software4you.ulib.core.api.util.HashUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -174,7 +174,7 @@ public class ChecksumFile {
 
     @SneakyThrows
     private String hash() {
-        return ChecksumUtils.getFileChecksum(MessageDigest.getInstance(algorithm), file);
+        return HashUtil.computeHex(new FileInputStream(file), MessageDigest.getInstance(algorithm));
     }
 
     protected void mkdirsp(File child) {
