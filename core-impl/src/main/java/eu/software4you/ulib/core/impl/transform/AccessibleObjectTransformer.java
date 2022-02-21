@@ -124,8 +124,6 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             if (cb.self() != this.self || !isLocked.test(key))
                 return;
 
-            System.out.println("Call from " + cb.callerClass());
-
             thr(cb);
         }
 
