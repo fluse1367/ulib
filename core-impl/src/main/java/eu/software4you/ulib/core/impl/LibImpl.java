@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.api.Lib;
 import eu.software4you.ulib.core.api.RunMode;
+import eu.software4you.ulib.core.api.common.validation.Initiable;
 import eu.software4you.ulib.core.impl.transform.AccessibleObjectTransformer;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,8 @@ public final class LibImpl implements Lib {
     private final RunMode runMode;
     private final String name;
     private final String nameOnly;
+
+    private final Initiable init = new Initiable();
 
     @SneakyThrows
     public LibImpl() {
@@ -59,9 +62,20 @@ public final class LibImpl implements Lib {
 
         if (UnsafeOperations.allowed()) {
             logger.warning(() -> "Unsafe operations are allowed. " +
-                    "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
-                    "Use this at your own risk!");
+                                 "Be aware that allowing unsafe operations is potentially dangerous and can lead to instability and/or damage of any kind! " +
+                                 "Use this at your own risk!");
         }
+    }
+
+    public void postInit() {
+        init.initiate();
+        logger.fine("Post Init");
+
+        logger.finer("Code injection dummy test");
+        AccessibleObjectTransformer.dummyTest();
+
+        logger.finer("Sudo lock");
+        AccessibleObjectTransformer.lockSudo();
     }
 
     @Override

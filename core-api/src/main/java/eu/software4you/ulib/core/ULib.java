@@ -10,7 +10,12 @@ import java.util.logging.Logger;
  */
 public final class ULib {
 
-    private static final Lib impl = load();
+    private static final Lib impl;
+
+    static {
+        impl = load();
+        postLoad();
+    }
 
     @SneakyThrows
     private static Lib load() {
@@ -19,6 +24,11 @@ public final class ULib {
                 .orElseThrow(IllegalStateException::new);
         return (Lib) Class.forName("eu.software4you.ulib.core.impl.LibImpl", true, loader)
                 .getConstructor().newInstance();
+    }
+
+    @SneakyThrows
+    private static void postLoad() {
+        impl.getClass().getMethod("postInit").invoke(impl);
     }
 
     /**
