@@ -25,12 +25,13 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccessibleObjectTransformer implements ClassFileTransformer {
+    private static final String SUDO_KEY = "ulib.sudo";
 
     public static void init() {
         Set<Module> permitted = AccessibleObjectTransformer.class.getModule().getLayer().modules().stream()
                 .filter(m -> m.getName().startsWith("ulib."))
                 .collect(Collectors.toSet());
-        System.getProperties().put("ulib.sudo", (Predicate<Module>) permitted::contains);
+        System.getProperties().put(SUDO_KEY, (Predicate<Module>) permitted::contains);
 
         var agent = Agent.getInstance();
         agent.addTransformer(new AccessibleObjectTransformer());
@@ -66,7 +67,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
     }
 
     public static void lockSudo() {
-        HookInjector.hook(new SudoLock(System.getProperties()));
+        HookInjector.hook(new SudoLock(System.getProperties(), o -> o instanceof String s && s.equals(SUDO_KEY)));
     }
 
     @Override
@@ -80,18 +81,17 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             ClassPool pool = new ClassPool(true);
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
+            pool.importPackage("java.util.function");
 
             CtClass cc = pool.get(className);
 
             var cm = cc.getMethod("checkCanSetAccessible", "(Ljava/lang/Class;Ljava/lang/Class;)V");
 
-            cc.removeMethod(cm);
             cm.insertBefore("""
-                    if (((java.util.function.Predicate) System.getProperties().get((Object) "ulib.sudo")).test($1.getModule())) {
+                    if (((Predicate) System.getProperties().get((Object) "%s")).test($1.getModule())) {
                         return;
                     }
-                    """);
-            cc.addMethod(cm);
+                    """.formatted(SUDO_KEY));
 
             return cc.toBytecode();
         } catch (Throwable thr) {
@@ -114,15 +114,14 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
     @Hooks("java.util.Properties")
     public static final class SudoLock {
         private final Properties self;
+        private final Predicate<Object> isLocked;
 
         private void thr(Callback<?> cb) {
             cb.throwNow(new SecurityException("sudo lock"));
         }
 
         private void testAndThrow(Object key, Callback<?> cb) {
-            if (cb.self() != this.self
-                || !(key instanceof String s)
-                || !s.equals("ulib.sudo"))
+            if (cb.self() != this.self || !isLocked.test(key))
                 return;
 
             System.out.println("Call from " + cb.callerClass());
@@ -150,7 +149,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             if (cb.self() != this.self)
                 return;
 
-            if (t.containsKey("ulib.sudo"))
+            if (t.containsKey(SUDO_KEY))
                 thr(cb);
         }
 
@@ -256,12 +255,12 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
                 return;
 
             var s = self.entrySet();
-            s.removeIf(e -> !(e.getKey() instanceof String k) || !k.equals("ulib.sudo"));
+            s.removeIf(e -> !isLocked.test(e.getKey()));
             cb.cancel();
         }
 
         @RequiredArgsConstructor
-        private static final class It<T, R> implements Iterator<R> {
+        private final class It<T, R> implements Iterator<R> {
             private final Iterator<T> it;
             private final Function<T, R> converter;
             private final Function<T, Object> keyer;
@@ -281,8 +280,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             public void remove() {
                 if (current == null)
                     return;
-                var key = keyer.apply(current);
-                if (key instanceof String s && s.equals("ulib.sudo"))
+                if (isLocked.test(keyer.apply(current)))
                     throw new SecurityException("sudo lock");
                 it.remove();
             }
