@@ -102,10 +102,10 @@ public final class ReflectUtilImpl extends ReflectUtil {
         ...
          */
 
-        int offset = 1;
+        int offset = 0;
         int i = depth + offset;
         if (i >= stack.length)
-            throw new IllegalArgumentException("Depth ( " + depth + ") > Stack (" + (stack.length - (offset + 1)) + ")");
+            throw new IllegalArgumentException("Depth (" + depth + ") > Stack (" + (stack.length - (offset + 1)) + ")");
 
         return stack[i];
     }
