@@ -29,7 +29,7 @@ public final class DelegationInjector {
                 .ifPresent(into -> inject(hookFindClass, into));
         ReflectUtil.findUnderlyingMethod(clazz, "findClass", true, String.class, String.class)
                 .ifPresent(into -> inject(hookFindModuleClass, into));
-        ReflectUtil.findUnderlyingMethod(clazz, "findClass", true, String.class, boolean.class)
+        ReflectUtil.findUnderlyingMethod(clazz, "loadClass", true, String.class, boolean.class)
                 .ifPresent(into -> inject(hookLoadClass, into));
     }
 
