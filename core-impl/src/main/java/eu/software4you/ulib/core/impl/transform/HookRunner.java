@@ -142,10 +142,11 @@ final class HookRunner {
             try {
                 hook.getValue().invoke(hook.getKey(), args);
             } catch (InvocationTargetException e) {
+                if (e.getTargetException() instanceof HookException he)
+                    throw he.getCause();
+
                 ULib.logger().log(Level.WARNING, e.getTargetException(),
                         () -> "Hook " + hook.getValue() + " threw an exception while being called from " + caller);
-            } catch (HookException e) {
-                throw e.getCause();
             }
             if (cb.isCanceled())
                 break; // cancel all future hook processing
