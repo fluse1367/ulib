@@ -34,7 +34,7 @@ public final class HookInjectorImpl extends eu.software4you.ulib.core.api.transf
                 (Function<Callback<?>, ?>) Callback::getReturnValue,
 
                 /* [3] caller class determination */
-                (Supplier<Class<?>>) () -> ReflectUtil.getCallerClass(4)
+                (Supplier<Class<?>>) () -> ReflectUtil.getCallerClass(3)
         });
         Agent.getInstance().addTransformer(new HookInjector(ULib.logger(), injected));
     }
