@@ -131,8 +131,21 @@ public class IOUtil {
      * @see #write(InputStream, OutputStream)
      */
     public static Thread redirect(InputStream in, OutputStream out, ThreadFactory factory) {
+        return factory.newThread(prepareRedirect(in, out));
+    }
+
+    /**
+     * Creates a new {@link Runnable} that redirects all data read from an {@link InputStream} to an {@link OutputStream}.
+     * Any exception thrown by {@link InputStream#read()} will not be caught.
+     *
+     * @param in  the stream to read from
+     * @param out the stream to write to
+     * @return the runnable
+     * @see #write(InputStream, OutputStream)
+     */
+    public static Runnable prepareRedirect(InputStream in, OutputStream out) {
         //noinspection Convert2Lambda
-        return factory.newThread(new Runnable() {
+        return new Runnable() {
             @SneakyThrows
             @Override
             public void run() {
@@ -141,6 +154,6 @@ public class IOUtil {
                     out.write(b);
                 }
             }
-        });
+        };
     }
 }
