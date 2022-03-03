@@ -1,22 +1,23 @@
 package eu.software4you.ulib.core.api.io;
 
+import eu.software4you.ulib.core.api.util.value.Unsettled;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Supplier;
 
 /**
  * Class containing I/O (stream) operations.
  */
 public class IOUtil {
     /**
-     * Writes an input stream into an output stream. This method closes the streams.
+     * Writes an input stream into an output stream. This method does not close the streams.
      *
      * @param in  the stream to read from
      * @param out the stream to write to
-     * @throws IOException inherited from {@link InputStream#read()}, {@link InputStream#close()},
-     *                     {@link OutputStream#write(byte[], int, int)}, {@link OutputStream#flush()} and {@link OutputStream#close()}
+     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #redirect(InputStream, OutputStream)
      * @see InputStream#read()
      * @see InputStream#close()
@@ -24,53 +25,52 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    public static void write(@NotNull InputStream in, @NotNull OutputStream out) throws IOException {
-        try (var is = in; var os = out) {
-            byte[] buff = new byte[1024];
-            int len;
-            while ((len = is.read(buff)) != -1) {
-                os.write(buff, 0, len);
-            }
-            os.flush();
+    @SneakyThrows
+    public static void write(@NotNull InputStream in, @NotNull OutputStream out) {
+        byte[] buff = new byte[1024];
+        int len;
+        while ((len = in.read(buff)) != -1) {
+            out.write(buff, 0, len);
         }
+        out.flush();
     }
 
     /**
      * Writes a reader into a writer. This method closes the objects.
      *
-     * @param reader the reader to read from
-     * @param writer the writer to write to
-     * @throws IOException inherited from {@link Reader#read()}, {@link Reader#close()},
-     *                     {@link Writer#write(char[], int, int)}, {@link Writer#flush()} and {@link Writer#close()}
+     * @param in  the reader to read from
+     * @param out the writer to write to
+     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see InputStream#read()
      * @see InputStream#close()
      * @see OutputStream#write(byte[], int, int)
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    public static void write(@NotNull Reader reader, @NotNull Writer writer) throws IOException {
-        try (var in = reader; var out = writer) {
-            char[] buff = new char[1024];
-            int len;
-            while ((len = in.read(buff)) != -1) {
-                out.write(buff, 0, len);
-            }
-            out.flush();
+    @SneakyThrows
+    public static void write(@NotNull Reader in, @NotNull Writer out) {
+        char[] buff = new char[1024];
+        int len;
+        while ((len = in.read(buff)) != -1) {
+            out.write(buff, 0, len);
         }
+        out.flush();
     }
 
     /**
-     * Reads all bytes from an input stream. This method closes the stream.
+     * Reads all bytes from an input stream. This method does not close the stream.
      *
      * @param in the stream to read from
      * @return the bytes read
-     * @throws IOException inherited from {@link #write(InputStream, OutputStream)}
+     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    public static byte[] read(@NotNull InputStream in) throws IOException {
-        var bout = new ByteArrayOutputStream();
-        write(in, bout);
-        return bout.toByteArray();
+    @SneakyThrows
+    public static byte[] read(@NotNull InputStream in) {
+        try (var bout = new ByteArrayOutputStream()) {
+            write(in, bout);
+            return bout.toByteArray();
+        }
     }
 
     /**
@@ -78,27 +78,30 @@ public class IOUtil {
      *
      * @param reader the reader to read from
      * @return the bytes read
-     * @throws IOException inherited from {@link #write(Reader, Writer)}
+     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    public static char[] read(@NotNull Reader reader) throws IOException {
-        var cout = new CharArrayWriter();
-        write(reader, cout);
-        return cout.toCharArray();
+    public static char[] read(@NotNull Reader reader) {
+        try (var cout = new CharArrayWriter()) {
+            write(reader, cout);
+            return cout.toCharArray();
+        }
     }
 
     /**
-     * Reads all bytes from an input stream into a string. This method closes the stream.
+     * Reads all bytes from an input stream into a string. This method does not close the stream.
      *
      * @param in the stream to read from
      * @return the bytes read
-     * @throws IOException inherited from {@link #write(InputStream, OutputStream)}
+     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    public static String toString(@NotNull InputStream in) throws IOException {
-        var bout = new ByteArrayOutputStream();
-        write(in, bout);
-        return bout.toString();
+    @SneakyThrows
+    public static String toString(@NotNull InputStream in) {
+        try (var bout = new ByteArrayOutputStream()) {
+            write(in, bout);
+            return bout.toString();
+        }
     }
 
     /**
