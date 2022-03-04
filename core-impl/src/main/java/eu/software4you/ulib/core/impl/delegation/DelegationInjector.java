@@ -8,16 +8,17 @@ import eu.software4you.ulib.core.api.transform.HookPoint;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 
 public final class DelegationInjector {
 
     private final DelegationHook delegation;
     private final Method hookFindClass, hookFindAdditionalClass, hookFindModuleClass, hookLoadClass;
-    private final Map<String, Class<?>[]> additionalHooks;
+    private final Map<String, Collection<Class<?>[]>> additionalHooks;
 
     @SneakyThrows
-    public DelegationInjector(DelegationHook delegation, Map<String, Class<?>[]> additionalHooks) {
+    public DelegationInjector(DelegationHook delegation, Map<String, Collection<Class<?>[]>> additionalHooks) {
         this.delegation = delegation;
         this.additionalHooks = additionalHooks;
         var c = DelegationHook.class;
@@ -36,9 +37,9 @@ public final class DelegationInjector {
         ReflectUtil.findUnderlyingMethod(clazz, "loadClass", true, String.class, boolean.class)
                 .ifPresent(into -> inject(hookLoadClass, into));
 
-        additionalHooks.forEach((name, params) -> ReflectUtil
+        additionalHooks.forEach((name, coll) -> coll.forEach(params -> ReflectUtil
                 .findUnderlyingMethod(clazz, name, true, params)
-                .ifPresent(into -> inject(hookFindAdditionalClass, into)));
+                .ifPresent(into -> inject(hookFindAdditionalClass, into))));
     }
 
     private void inject(Method hook, Method into) {

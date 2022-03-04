@@ -1,5 +1,7 @@
 package eu.software4you.ulib.loader.install.provider;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,23 +20,23 @@ public class EnvironmentProvider {
     }
 
     public enum Environment {
-        /* 0 */ SPIGOT(Map.of("loadClass0", new Class<?>[]{String.class, boolean.class, boolean.class, boolean.class})),
-        /* 1 */ BUNGEECORD(),
-        /* 2 */ VELOCITY(),
-        /* 3 */ STANDALONE(),
+        /* 0 */ SPIGOT(Map.of("loadClass0", Collections.singletonList(new Class<?>[]{String.class, boolean.class, boolean.class, boolean.class}))),
+        /* 1 */ BUNGEECORD,
+        /* 2 */ VELOCITY,
+        /* 3 */ STANDALONE,
         ;
 
-        private final Map<String, Class<?>[]> hooks;
+        private final Map<String, Collection<Class<?>[]>> hooks;
 
         Environment() {
             this(Map.of());
         }
 
-        Environment(Map<String, Class<?>[]> hooks) {
+        Environment(Map<String, Collection<Class<?>[]>> hooks) {
             this.hooks = hooks;
         }
 
-        public Map<String, Class<?>[]> getAdditionalClassLoaderHookings() {
+        public Map<String, Collection<Class<?>[]>> getAdditionalClassLoaderHookings() {
             return hooks;
         }
     }
