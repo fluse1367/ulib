@@ -7,10 +7,11 @@ public class ModFabric implements ModInitializer {
 
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.STANDALONE);
+        Init.init();
     }
 
     @Override
     public void onInitialize() {
-        Init.init(getClass());
+
     }
 }

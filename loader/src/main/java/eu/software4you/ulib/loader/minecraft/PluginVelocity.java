@@ -25,6 +25,7 @@ public class PluginVelocity {
 
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.VELOCITY);
+        Init.init();
     }
 
     private final ProxyServer proxyServer;
@@ -35,8 +36,6 @@ public class PluginVelocity {
 
     @Inject
     public PluginVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataPath) {
-        Init.init(getClass());
-
         this.proxyServer = proxyServer;
         this.logger = logger;
         this.dataDir = dataPath.toFile();

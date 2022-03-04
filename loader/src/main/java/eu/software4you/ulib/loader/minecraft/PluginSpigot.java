@@ -13,6 +13,7 @@ import java.util.Optional;
 public class PluginSpigot extends JavaPlugin {
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.SPIGOT);
+        Init.init();
     }
 
     private Plugin pluginSubstitute;
@@ -20,8 +21,6 @@ public class PluginSpigot extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onLoad() {
-        Init.init(getClass());
-
         var loader = Installer.getModule().getLayer().findLoader("ulib.spigot");
         var cl = Class.forName("eu.software4you.ulib.spigot.impl.PluginSubst", true, loader);
         this.pluginSubstitute = (Plugin) cl.getConstructors()[0].newInstance(this, getPluginLoader(), getDescription(), getDataFolder(), getFile());
