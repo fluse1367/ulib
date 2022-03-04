@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.impl.transform;
 
 import eu.software4you.ulib.core.ULib;
+import eu.software4you.ulib.core.api.transform.FluentHookParams;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.InvocationTargetException;
@@ -140,7 +141,14 @@ final class HookRunner {
 
         for (Entry<Object, Method> hook : map.get(at)) {
             try {
-                hook.getValue().invoke(hook.getKey(), args);
+                var invoker = hook.getKey();
+                var method = hook.getValue();
+
+                if (method.isAnnotationPresent(FluentHookParams.class)) {
+                    method.invoke(invoker, params.clone(), cb);
+                } else {
+                    method.invoke(invoker, args);
+                }
             } catch (InvocationTargetException e) {
                 if (e.getTargetException() instanceof HookException he)
                     throw he.getCause();
