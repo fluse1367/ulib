@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.impl.delegation;
 
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.transform.Callback;
+import eu.software4you.ulib.core.api.transform.FluentHookParams;
 import lombok.SneakyThrows;
 
 import java.util.function.BiFunction;
@@ -94,6 +95,18 @@ public final class DelegationHook {
                 cb.setReturnValue(cl);
             }
         }
+    }
+
+    @FluentHookParams
+    public void hookFindClassAdditional(Object[] params, Callback<Class<?>> cb) {
+        if (params.length == 0)
+            return;
+
+        if (!(params[0] instanceof String name)) {
+            return;
+        }
+
+        hookFindClass(name, cb);
     }
 
     public void hookFindClass(String module, String name, Callback<Class<?>> cb) {

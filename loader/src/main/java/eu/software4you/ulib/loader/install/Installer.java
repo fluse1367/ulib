@@ -170,8 +170,8 @@ public final class Installer {
 
         // construct injector instance
         var classInjector = Class.forName("eu.software4you.ulib.core.impl.delegation.DelegationInjector", true, loaderCoreImpl);
-        var constructorInjector = classInjector.getConstructor(classHook);
-        return constructorInjector.newInstance(hook);
+        var constructorInjector = classInjector.getConstructor(classHook, Map.class);
+        return constructorInjector.newInstance(hook, EnvironmentProvider.get().getAdditionalClassLoaderHookings());
     }
 
     @SneakyThrows

@@ -1,5 +1,6 @@
 package eu.software4you.ulib.loader.install.provider;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class EnvironmentProvider {
@@ -17,9 +18,24 @@ public class EnvironmentProvider {
     }
 
     public enum Environment {
-        SPIGOT, // 0
-        BUNGEECORD, // 1
-        VELOCITY, // 2
-        STANDALONE, // 3
+        /* 0 */ SPIGOT(Map.of("loadClass0", new Class<?>[]{String.class, boolean.class, boolean.class, boolean.class})),
+        /* 1 */ BUNGEECORD(),
+        /* 2 */ VELOCITY(),
+        /* 3 */ STANDALONE(),
+        ;
+
+        private final Map<String, Class<?>[]> hooks;
+
+        Environment() {
+            this(Map.of());
+        }
+
+        Environment(Map<String, Class<?>[]> hooks) {
+            this.hooks = hooks;
+        }
+
+        public Map<String, Class<?>[]> getAdditionalClassLoaderHookings() {
+            return hooks;
+        }
     }
 }
