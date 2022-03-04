@@ -20,7 +20,8 @@ public final class AgentMain {
         System.getProperties().put("ulib.javaagent", new Object[]{
                 (Consumer<Class<?>>) agent::transform,
                 (Consumer<ClassFileTransformer>) agent::addTransformer,
-                (Consumer<JarFile>) agent::appendJar
+                (Consumer<JarFile>) agent::appendJar,
+                (Consumer<JarFile>) agent::appendJarBootstrap
         });
     }
 
@@ -35,5 +36,9 @@ public final class AgentMain {
 
     public void appendJar(JarFile jar) {
         instrumentation.appendToSystemClassLoaderSearch(jar);
+    }
+
+    public void appendJarBootstrap(JarFile jar) {
+        instrumentation.appendToBootstrapClassLoaderSearch(jar);
     }
 }

@@ -19,6 +19,7 @@ public final class Agent {
     private final Consumer<Class<?>> transformClass;
     private final Consumer<ClassFileTransformer> addTransformer;
     private final Consumer<JarFile> appendJar;
+    private final Consumer<JarFile> appendJarBootstrap;
 
     static void init(Logger logger) {
         if (available())
@@ -34,7 +35,8 @@ public final class Agent {
             init(logger,
                     (Consumer<Class<?>>) array[0],
                     (Consumer<ClassFileTransformer>) array[1],
-                    (Consumer<JarFile>) array[2]
+                    (Consumer<JarFile>) array[2],
+                    (Consumer<JarFile>) array[3]
             );
         } catch (ClassCastException e) {
             throw new IllegalStateException("Invalid javaagent access array: " + Arrays.toString(array), e);
@@ -47,13 +49,14 @@ public final class Agent {
     static void init(Logger logger,
                      Consumer<Class<?>> transformClass,
                      Consumer<ClassFileTransformer> addTransformer,
-                     Consumer<JarFile> appendJar) {
+                     Consumer<JarFile> appendJar,
+                     Consumer<JarFile> appendJarBootstrap) {
         if (available())
             return;
 
         logger.fine(() -> "Agent init!");
 
-        instance = new Agent(transformClass, addTransformer, appendJar);
+        instance = new Agent(transformClass, addTransformer, appendJar, appendJarBootstrap);
         instance.loadUlibEx(logger);
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.dependencies.DependencyLoaderImpl"));
         ImplInjector.inject(instance, Class.forName("eu.software4you.ulib.impl.transform.HookInjectorImpl"));
@@ -94,7 +97,9 @@ public final class Agent {
 
         logger.fine(() -> "Loading " + libex);
         // load ulibex
-        appendJar.accept(new JarFile(libex));
+        var jar = new JarFile(libex);
+        appendJar.accept(jar);
+        appendJarBootstrap.accept(jar);
     }
 
     public static boolean available() {

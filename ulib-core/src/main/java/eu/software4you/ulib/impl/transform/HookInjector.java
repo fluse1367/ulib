@@ -35,6 +35,7 @@ final class HookInjector implements ClassFileTransformer {
             ClassPool pool = new ClassPool(true);
             pool.appendClassPath(new LoaderClassPath(loader));
             pool.appendClassPath(new ByteArrayClassPath(className, byteCode));
+            pool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
             pool.importPackage("eu.software4you.libex.function");
 
             CtClass cc = pool.get(className);
