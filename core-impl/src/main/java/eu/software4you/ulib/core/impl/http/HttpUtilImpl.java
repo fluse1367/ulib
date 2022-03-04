@@ -33,7 +33,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String getContentAsString0(String url, Pair<String, String>[] headers) {
-        return IOUtil.toString(getContent(url, headers));
+        try (var in = getContent(url, headers)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream getContent0(String url, Pair<String, String>[] headers) {
@@ -43,7 +45,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String getContentAsString0(HttpClient client, String url, Pair<String, String>[] headers) {
-        return IOUtil.toString(getContent(client, url, headers));
+        try (var in = getContent(client, url, headers)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream getContent0(HttpClient client, String url, Pair<String, String>[] headers) {
@@ -67,7 +71,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String postContentAsString0(String url, Pair<String, String>[] parameters) {
-        return IOUtil.toString(postContent(url, parameters));
+        try (var in = postContent(url, parameters)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream postContent0(String url, Pair<String, String>[] parameters) {
@@ -76,7 +82,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String postContentAsString0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return IOUtil.toString(postContent(url, headers, parameters));
+        try (var in = postContent(url, headers, parameters)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream postContent0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
@@ -85,7 +93,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, Pair<String, String>[] parameters) {
-        return IOUtil.toString(postContent(client, url, parameters));
+        try (var in = postContent(client, url, parameters)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream postContent0(HttpClient client, String url, Pair<String, String>[] parameters) {
@@ -94,7 +104,9 @@ public final class HttpUtilImpl extends HttpUtil {
 
     @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
-        return IOUtil.toString(postContent(client, url, headers, parameters));
+        try (var in = postContent(client, url, headers, parameters)) {
+            return IOUtil.toString(in);
+        }
     }
 
     protected InputStream postContent0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
