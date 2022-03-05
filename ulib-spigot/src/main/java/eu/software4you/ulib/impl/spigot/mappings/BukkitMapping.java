@@ -4,10 +4,7 @@ import eu.software4you.common.collection.Pair;
 import eu.software4you.common.collection.Triple;
 import eu.software4you.spigot.multiversion.Protocol;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -83,7 +80,7 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
         Map<String, ClassMapping> byBukkitName = new HashMap<>();
 
         String classMapping = mappingData.getFirst();
-        String memberMapping = mappingData.getSecond();
+        String memberMapping = mappingData.getSecond(); // MAY BE NULL
 
         Matcher classMatcher = CLASS_MAPPING_PATTERN.matcher(classMapping);
         while (classMatcher.find()) {
@@ -95,11 +92,11 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
 
             logger().finest(() -> String.format("Class Mapping: %s -> %s (raw: %s)", vanillaName, bukkitName, bukkitNameRaw));
 
-            var fieldMatcher = FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
-            var fields = mapFields(fieldMatcher);
+            var fields = mapFields(memberMapping == null ? null
+                    : FIELD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping));
 
-            var methodMatcher = METHOD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping);
-            var methods = mapMethods(methodMatcher);
+            var methods = mapMethods(memberMapping == null ? null
+                    : METHOD_MAPPING_PATTERN.apply(bukkitNameRaw).matcher(memberMapping));
 
 
             ClassMapping mapping = new ClassMapping(vanillaName, bukkitName, fields, methods);
@@ -112,6 +109,9 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
     }
 
     private List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> mapFields(Matcher matcher) {
+        if (matcher == null)
+            return Collections.emptyList();
+
         // triple: vanillaName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
         while (matcher.find()) {
@@ -132,6 +132,9 @@ final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> 
     }
 
     private List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> mapMethods(Matcher matcher) {
+        if (matcher == null)
+            return Collections.emptyList();
+
         // triple: vanillaName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
         while (matcher.find()) {
