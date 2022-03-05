@@ -17,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Manages {@link Menu} instances.
@@ -27,7 +28,9 @@ public abstract class MenuManager {
 
     private final Plugin plugin;
     private final List<Menu> menus = new ArrayList<>();
-    protected Listener handler;
+    private Listener handler;
+    protected Supplier<Listener> handlerRegister;
+    protected Runnable reset;
     private boolean listening = false;
 
     /**
@@ -46,8 +49,8 @@ public abstract class MenuManager {
     public void listen() {
         if (listening)
             return;
-        ((Runnable) handler).run();
-        plugin.getServer().getPluginManager().registerEvents(handler, plugin);
+        this.handler = handlerRegister.get();
+        reset.run();
         listening = true;
     }
 
@@ -58,7 +61,7 @@ public abstract class MenuManager {
         if (!listening)
             return;
         HandlerList.unregisterAll(handler);
-        ((Runnable) handler).run();
+        reset.run();
         listening = false;
     }
 

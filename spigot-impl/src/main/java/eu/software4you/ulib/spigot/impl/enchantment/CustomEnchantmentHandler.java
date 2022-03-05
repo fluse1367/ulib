@@ -8,12 +8,12 @@ import eu.software4you.ulib.spigot.api.enchantment.EnchantUtil;
 import eu.software4you.ulib.spigot.api.mappings.Mappings;
 import eu.software4you.ulib.spigot.api.multiversion.BukkitReflectionUtils.PackageType;
 import eu.software4you.ulib.spigot.impl.PluginSubst;
+import eu.software4you.ulib.spigot.impl.combinedlisteners.DelegationListener;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
@@ -31,25 +31,22 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class CustomEnchantmentHandler implements Listener {
-    private String methodName_player_getEnchantment;
-    private final PluginSubst pl;
-
-    private CustomEnchantmentHandler(PluginSubst pl) {
-        this.pl = pl;
-        // Use Mappings API to get xpSeed
-        Tasks.run(() -> {
-            methodName_player_getEnchantment = Mappings.getMixedMapping()
-                    .fromSource("net.minecraft.world.entity.player.Player")
-                    .methodFromSource("getEnchantmentSeed").mappedName();
-        });
-    }
+public class CustomEnchantmentHandler {
+    static Listener handle;
 
     static void register() {
         var pl = PluginSubst.getInstance();
         var handler = new CustomEnchantmentHandler(pl);
 
-        pl.registerEvents(handler);
+        var d = DelegationListener.registerSingleDelegation(VillagerAcquireTradeEvent.class, handler::handle,
+                EventPriority.HIGHEST, true);
+        DelegationListener.registerDelegation(d, EnchantItemEvent.class, handler::handle,
+                EventPriority.LOW, true);
+        DelegationListener.registerDelegation(d, PrepareAnvilEvent.class, handler::handle,
+                EventPriority.HIGHEST, true);
+        DelegationListener.registerDelegation(d, InventoryClickEvent.class, handler::handle,
+                EventPriority.HIGHEST, true);
+        handle = d;
     }
 
     // villagers can trade EVERY enchantment
@@ -63,8 +60,20 @@ public class CustomEnchantmentHandler implements Listener {
                 .collect(Collectors.toList());
     }
 
+    private String methodName_player_getEnchantment;
+    private final PluginSubst pl;
+
+    private CustomEnchantmentHandler(PluginSubst pl) {
+        this.pl = pl;
+        // Use Mappings API to get xpSeed
+        Tasks.run(() -> {
+            methodName_player_getEnchantment = Mappings.getMixedMapping()
+                    .fromSource("net.minecraft.world.entity.player.Player")
+                    .methodFromSource("getEnchantmentSeed").mappedName();
+        });
+    }
+
     // villager trading
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handle(VillagerAcquireTradeEvent e) {
 
         if (!(e.getEntity() instanceof Villager v))
@@ -125,7 +134,6 @@ public class CustomEnchantmentHandler implements Listener {
 
     // enchanting table
     @SneakyThrows
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void handle(EnchantItemEvent e) {
 
         Random rand = new Random();
@@ -167,7 +175,6 @@ public class CustomEnchantmentHandler implements Listener {
     }
 
     // anvil enchanting / combining
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handle(PrepareAnvilEvent e) {
         final AnvilInventory inv = e.getInventory();
         final ItemStack target = inv.getItem(0);
@@ -226,7 +233,6 @@ public class CustomEnchantmentHandler implements Listener {
         return EnchantUtil.getCustomEnchantments().contains(enchantment);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handle(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         InventoryView grindstone = p.getOpenInventory();

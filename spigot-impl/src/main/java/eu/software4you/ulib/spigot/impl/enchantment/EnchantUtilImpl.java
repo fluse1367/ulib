@@ -136,7 +136,7 @@ final class EnchantUtilImpl extends EnchantUtil {
             return false;
 
         // register enchantmenthandler if not registered
-        if (!PluginSubst.getInstance().isListening(CustomEnchantmentHandler.class)) {
+        if (CustomEnchantmentHandler.handle == null) {
             CustomEnchantmentHandler.register();
         }
 

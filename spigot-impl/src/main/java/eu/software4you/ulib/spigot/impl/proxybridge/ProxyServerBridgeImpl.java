@@ -10,11 +10,10 @@ import eu.software4you.ulib.minecraft.api.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.api.proxybridge.message.MessageType;
 import eu.software4you.ulib.spigot.api.plugin.ExtendedPlugin;
 import eu.software4you.ulib.spigot.impl.PluginSubst;
+import eu.software4you.ulib.spigot.impl.combinedlisteners.DelegationListener;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +22,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge implements PluginMessageListener, Listener {
+public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge implements PluginMessageListener {
     private static ExtendedPlugin plugin;
     private String thisServer = null;
     private String lastReceivedRequest;
     private String lastReceivedCommand;
 
     public ProxyServerBridgeImpl() {
-
+        DelegationListener.registerSingleDelegation(PlayerJoinEvent.class, this::handle);
     }
 
     public static void init(PluginSubst pl) {
@@ -123,7 +122,6 @@ public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.p
     }
 
     // attempt to get own server name
-    @EventHandler
     public void handle(PlayerJoinEvent e) {
         if (thisServer != null)
             return;

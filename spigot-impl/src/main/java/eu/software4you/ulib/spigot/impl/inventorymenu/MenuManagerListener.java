@@ -8,9 +8,9 @@ import eu.software4you.ulib.spigot.api.inventorymenu.handlers.PageSwitchHandler;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.Page;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.PageHandleable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -22,16 +22,16 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class MenuManagerListener implements Runnable, Listener {
+public final class MenuManagerListener {
     private final MenuManager man;
 
+    @Getter(AccessLevel.PACKAGE)
     private final List<Pair<Player, MultiPageMenu>> noTriggerOpenClose = new ArrayList<>();
 
     MenuManagerListener(MenuManager man) {
         this.man = man;
     }
 
-    @EventHandler
     public void handle(InventoryClickEvent e) {
         Inventory inv = e.getClickedInventory();
         if (inv == null)
@@ -85,7 +85,6 @@ public class MenuManagerListener implements Runnable, Listener {
             handler.accept(p, e.getClick());
     }
 
-    @EventHandler
     public void handle(InventoryOpenEvent e) {
         Player p = (Player) e.getPlayer();
         Page opened = man.getPage(e.getInventory());
@@ -98,7 +97,6 @@ public class MenuManagerListener implements Runnable, Listener {
         handleOpen(opened, p);
     }
 
-    @EventHandler
     public void handle(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
         Page closed = man.getPage(e.getInventory());
@@ -127,10 +125,5 @@ public class MenuManagerListener implements Runnable, Listener {
     private void handle(Consumer<Player> handler, Player player) {
         if (handler != null)
             handler.accept(player);
-    }
-
-    @Override
-    public void run() {
-        noTriggerOpenClose.clear();
     }
 }

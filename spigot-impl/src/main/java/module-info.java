@@ -39,7 +39,6 @@ module ulib.spigot {
     provides Providers.ProviderMenuManager with MenuManagerImpl.MenuManagerProvider;
     provides ProxyServerBridge with ProxyServerBridgeImpl;
 
-
     opens eu.software4you.ulib.spigot.impl;
-    opens eu.software4you.ulib.spigot.impl.proxybridge;
+    exports eu.software4you.ulib.spigot.impl.combinedlisteners;
 }

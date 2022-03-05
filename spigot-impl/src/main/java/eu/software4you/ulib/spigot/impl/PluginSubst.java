@@ -15,7 +15,6 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
@@ -35,7 +34,7 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
         // check for already existing instance
         if (System.getProperties().containsKey(PROP_KEY)) {
             System.err.println("[uLib] A previous uLib instance was detected. uLib does not support being reloaded." +
-                    " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
+                               " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
             throw new IllegalStateException("Reloading not supported");
         }
 
@@ -76,7 +75,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
 
             ProxyServerBridgeImpl.init(this);
             proxyServerBridgeImpl = (ProxyServerBridgeImpl) ProxyServerBridge.getInstance();
-            registerEvents(proxyServerBridgeImpl);
 
             Messenger messenger = Bukkit.getMessenger();
             messenger.registerOutgoingPluginChannel(this, ProxyServerBridge.CHANNEL);
@@ -112,12 +110,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
     @EventHandler
     public void handle(PluginDisableEvent e) {
         DependencyLoader.free(e.getPlugin().getClass().getClassLoader());
-    }
-
-    public boolean isListening(Class<? extends Listener> clazz) {
-        return HandlerList.getRegisteredListeners(this).stream()
-                .map(reg -> reg.getListener().getClass())
-                .anyMatch(cl -> cl == clazz);
     }
 
     @Override
