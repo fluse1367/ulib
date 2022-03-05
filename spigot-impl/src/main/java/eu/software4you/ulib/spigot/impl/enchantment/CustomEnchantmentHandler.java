@@ -36,7 +36,7 @@ public class CustomEnchantmentHandler implements Listener {
     private final PluginSubst pl;
 
     private CustomEnchantmentHandler(PluginSubst pl) {
-        this.pl = pl;
+        (this.pl = pl).makeBukkitAvailable();
         // Use Mappings API to get xpSeed
         Tasks.run(() -> {
             methodName_player_getEnchantment = Mappings.getMixedMapping()

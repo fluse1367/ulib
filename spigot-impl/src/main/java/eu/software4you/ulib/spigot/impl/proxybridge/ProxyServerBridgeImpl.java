@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import eu.software4you.ulib.minecraft.api.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.api.proxybridge.message.MessageType;
-import eu.software4you.ulib.spigot.api.plugin.ExtendedPlugin;
 import eu.software4you.ulib.spigot.impl.PluginSubst;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -24,13 +23,13 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge implements PluginMessageListener, Listener {
-    private static ExtendedPlugin plugin;
+    private static PluginSubst plugin;
     private String thisServer = null;
     private String lastReceivedRequest;
     private String lastReceivedCommand;
 
     public ProxyServerBridgeImpl() {
-
+        plugin.makeBukkitAvailable();
     }
 
     public static void init(PluginSubst pl) {

@@ -8,6 +8,7 @@ import eu.software4you.ulib.spigot.api.inventorymenu.handlers.PageSwitchHandler;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.Page;
 import eu.software4you.ulib.spigot.api.inventorymenu.menu.PageHandleable;
+import eu.software4you.ulib.spigot.impl.PluginSubst;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +30,7 @@ public class MenuManagerListener implements Runnable, Listener {
 
     MenuManagerListener(MenuManager man) {
         this.man = man;
+        PluginSubst.getInstance().makeBukkitAvailable();
     }
 
     @EventHandler
