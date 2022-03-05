@@ -121,9 +121,11 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
             outDir.mkdirs();
         }
 
-        try {
+        try (in) {
             if (!outFile.exists() || replace) {
-                IOUtil.write(in, new FileOutputStream(outFile));
+                try (var out = new FileOutputStream(outFile)) {
+                    IOUtil.write(in, out);
+                }
             } else {
                 getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }

@@ -72,16 +72,18 @@ final class MappingsImpl extends Mappings {
             return null;
 
         var res = Tasks.await(() -> {
-            var clOut = new ByteArrayOutputStream();
-            IOUtil.write(data.getClassMappings().require(), clOut);
-            return clOut;
+            try (var in = data.getClassMappings().require(); var clOut = new ByteArrayOutputStream()) {
+                IOUtil.write(in, clOut);
+                return clOut;
+            }
         }, () -> {
             var mm = data.getMemberMappings();
             if (mm == null)
                 return null;
-            var memOut = new ByteArrayOutputStream();
-            IOUtil.write(mm.require(), memOut);
-            return memOut;
+            try (var in = mm.require(); var memOut = new ByteArrayOutputStream()) {
+                IOUtil.write(in, memOut);
+                return memOut;
+            }
         });
 
         return new BukkitMapping(res.get(0).toString(),

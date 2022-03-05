@@ -59,7 +59,9 @@ public interface RemoteResource {
      * @throws IOException if an IO error occurs
      */
     default void download(OutputStream out) throws IOException {
-        IOUtil.write(download(), out);
+        try (var in = download()) {
+            IOUtil.write(in, out);
+        }
     }
 
     /**

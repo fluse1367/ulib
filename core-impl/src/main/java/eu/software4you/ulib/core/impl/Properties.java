@@ -82,11 +82,18 @@ public final class Properties {
 
         var conf = new File(DATA_DIR, "config.yml");
         if (!conf.exists()) {
-            IOUtil.write(getCurrentConfig(), new FileOutputStream(conf));
-            return serializer.deserialize(new FileReader(conf));
+            try (var in = getCurrentConfig();
+                 var out = new FileOutputStream(conf);
+                 var reader = new FileReader(conf)) {
+                IOUtil.write(in, out);
+                return serializer.deserialize(reader);
+            }
         }
-        YamlSub current = serializer.deserialize(new InputStreamReader(getCurrentConfig()));
-        YamlSub saved = serializer.deserialize(new FileReader(conf));
+        YamlSub current, saved;
+        try (var in = new InputStreamReader(getCurrentConfig()); var reader = new FileReader(conf)) {
+            current = serializer.deserialize(in);
+            saved = serializer.deserialize(reader);
+        }
 
         // check if upgrade is required
         int cv = current.get("config-version", -1), sv = saved.get("config-version", -2);
@@ -104,7 +111,9 @@ public final class Properties {
             }
         });
 
-        saved.save(new FileWriter(conf));
+        try (var out = new FileWriter(conf)) {
+            saved.save(out);
+        }
         return saved;
     }
 

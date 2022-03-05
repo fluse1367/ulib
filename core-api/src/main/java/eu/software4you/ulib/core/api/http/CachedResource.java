@@ -84,7 +84,9 @@ public class CachedResource extends ChecksumFile {
 
         // download to file
         mkdirsp(file);
-        IOUtil.write(request(), new FileOutputStream(file));
+        try (var in = request(); var out = new FileOutputStream(file)) {
+            IOUtil.write(in, out);
+        }
     }
 
 }

@@ -136,8 +136,9 @@ public class ChecksumFile {
         }
         logger().finer(() -> String.format("Caching sha1 as file of %s", file.getName()));
         mkdirsp(checksumFile);
-        IOUtil.write(new ByteArrayInputStream(hash().getBytes()),
-                new FileOutputStream(checksumFile));
+        try (var in = new ByteArrayInputStream(hash().getBytes()); var out = new FileOutputStream(checksumFile)) {
+            IOUtil.write(in, out);
+        }
     }
 
     @SneakyThrows
@@ -155,7 +156,9 @@ public class ChecksumFile {
                 return false; // if checksum not saved, re-download and re-generated sha1File
             }
             var bout = new ByteArrayOutputStream();
-            IOUtil.write(new FileInputStream(checksumFile), bout);
+            try (var in = new FileInputStream(checksumFile)) {
+                IOUtil.write(in, bout);
+            }
             expected = bout.toString();
         } else {
             expected = this.checksum;
