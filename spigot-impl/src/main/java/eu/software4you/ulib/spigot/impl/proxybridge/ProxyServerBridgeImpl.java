@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import eu.software4you.ulib.minecraft.api.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.api.proxybridge.message.MessageType;
-import eu.software4you.ulib.spigot.api.plugin.ExtendedPlugin;
 import eu.software4you.ulib.spigot.impl.PluginSubst;
 import eu.software4you.ulib.spigot.impl.combinedlisteners.DelegationListener;
 import lombok.SneakyThrows;
@@ -23,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge implements PluginMessageListener {
-    private static ExtendedPlugin plugin;
+    private static PluginSubst plugin;
     private String thisServer = null;
     private String lastReceivedRequest;
     private String lastReceivedCommand;
@@ -39,7 +38,7 @@ public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.p
     private void sendMessage(String server, Message message) {
         byte[] data = new Gson().toJson(message).getBytes();
         Bukkit.getOnlinePlayers().stream().findFirst().ifPresent(server.equals(PROXY_SERVER_NAME) ?
-                player -> player.sendPluginMessage(plugin, CHANNEL, data) :
+                player -> player.sendPluginMessage(plugin.getPluginObject(), CHANNEL, data) :
                 player -> {
                     // plugin message forwarding, see https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/#forward
                     ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -50,7 +49,7 @@ public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.p
                     out.writeShort(data.length);
                     out.write(data);
 
-                    player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                    player.sendPluginMessage(plugin.getPluginObject(), "BungeeCord", out.toByteArray());
                 });
     }
 

@@ -15,4 +15,5 @@ module ulib.minecraft.api {
     exports eu.software4you.ulib.minecraft.api.util;
 
     exports eu.software4you.ulib.minecraft.api.internal to ulib.bungeecord, ulib.velocity, ulib.spigot;
+    opens eu.software4you.ulib.minecraft.api.proxybridge.message to com.google.gson;
 }
