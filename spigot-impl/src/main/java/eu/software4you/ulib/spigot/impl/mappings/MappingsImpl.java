@@ -13,6 +13,7 @@ import eu.software4you.ulib.spigot.api.multiversion.Protocol;
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Optional;
 
 import static eu.software4you.ulib.spigot.impl.PluginSubst.getPlainMcVersion;
 
@@ -75,12 +76,19 @@ final class MappingsImpl extends Mappings {
             IOUtil.write(data.getClassMappings().require(), clOut);
             return clOut;
         }, () -> {
+            var mm = data.getMemberMappings();
+            if (mm == null)
+                return null;
             var memOut = new ByteArrayOutputStream();
-            IOUtil.write(data.getMemberMappings().require(), memOut);
+            IOUtil.write(mm.require(), memOut);
             return memOut;
         });
 
-        return new BukkitMapping(res.get(0).toString(), res.get(1).toString(), protocol);
+        return new BukkitMapping(res.get(0).toString(),
+                Optional.ofNullable(res.get(1))
+                        .map(ByteArrayOutputStream::toString)
+                        .orElse(null),
+                protocol);
     }
 
     @Override

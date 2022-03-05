@@ -1,9 +1,6 @@
 package eu.software4you.ulib.spigot.impl.mappings;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.core.api.http.CachedResource;
@@ -15,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.Optional;
 
 @Getter
 final class BuildDataMeta {
@@ -35,12 +33,14 @@ final class BuildDataMeta {
         String mappingsUrl = SPIGOTMC_REST + "/raw/mappings/";
 
         this.classMappings = new CachedResource(mappingsUrl + (this.cm = cm) + "?at=" + hash, null);
-        this.memberMappings = new CachedResource(mappingsUrl + (this.mm = mm) + "?at=" + hash, null);
+        this.memberMappings = (this.mm = mm) == null ? null : new CachedResource(mappingsUrl + this.mm + "?at=" + hash, null);
     }
 
     private static BuildDataMeta fromJson(JsonObject json, String ver, String hash) {
         String cm = json.get("classMappings").getAsString();
-        String mm = json.get("memberMappings").getAsString();
+        String mm = Optional.ofNullable(json.get("memberMappings"))
+                .map(JsonElement::getAsString)
+                .orElse(null);
 
         return new BuildDataMeta(ver, hash, cm, mm);
     }
