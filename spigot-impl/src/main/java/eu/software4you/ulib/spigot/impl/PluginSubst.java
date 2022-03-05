@@ -35,7 +35,7 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
         // check for already existing instance
         if (System.getProperties().containsKey(PROP_KEY)) {
             System.err.println("[uLib] A previous uLib instance was detected. uLib does not support being reloaded." +
-                               " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
+                    " Please fully stop the server instead of doing a reload, or reload specific plugins with a plugin-manager.");
             throw new IllegalStateException("Reloading not supported");
         }
 
@@ -118,14 +118,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
         return HandlerList.getRegisteredListeners(this).stream()
                 .map(reg -> reg.getListener().getClass())
                 .anyMatch(cl -> cl == clazz);
-    }
-
-    public void makeBukkitAvailable() {
-        var caller = ReflectUtil.getCallerClass();
-        if (caller.getModule() != getClass().getModule())
-            throw new IllegalCallerException();
-
-        getClass().getModule().addExports(caller.getPackageName(), Bukkit.class.getModule());
     }
 
     @Override

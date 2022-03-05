@@ -6,7 +6,6 @@ import eu.software4you.ulib.minecraft.api.internal.Providers;
 import eu.software4you.ulib.minecraft.api.plugin.PluginBase;
 import eu.software4you.ulib.minecraft.api.usercache.UserCache;
 import eu.software4you.ulib.spigot.api.plugin.ExtendedPlugin;
-import eu.software4you.ulib.spigot.impl.PluginSubst;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,7 +18,6 @@ public final class UserCacheImpl extends eu.software4you.ulib.minecraft.impl.use
 
     UserCacheImpl(ExtendedPlugin owner, SqlEngine engine, SqlTable table) {
         super(engine, table);
-        PluginSubst.getInstance().makeBukkitAvailable();
         this.owner = owner;
         this.owner.registerEvents(this);
     }
