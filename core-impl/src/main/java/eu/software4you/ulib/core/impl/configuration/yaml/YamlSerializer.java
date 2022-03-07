@@ -58,7 +58,7 @@ public class YamlSerializer {
     }
 
     void deserialize(Reader reader, YamlDocument doc) throws IOException {
-        var content = new String(IOUtil.read(reader).<IOException>orElseRethrow()); // copy contents
+        var content = new String(IOUtil.read(reader).orElseRethrow()); // copy contents
 
         Node root = yaml.compose(new StringReader(content));
 

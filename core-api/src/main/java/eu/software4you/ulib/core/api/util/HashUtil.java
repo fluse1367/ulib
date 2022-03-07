@@ -3,6 +3,7 @@ package eu.software4you.ulib.core.api.util;
 import eu.software4you.ulib.core.api.util.value.Expect;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.zip.CRC32;
@@ -17,7 +18,7 @@ public class HashUtil {
      * @return the hex representation of the stream's hash
      */
     @NotNull
-    public static Expect<String> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
+    public static Expect<String, IOException> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
         return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest).orElseRethrow()));
     }
 
@@ -29,7 +30,7 @@ public class HashUtil {
      * @return the computed hash
      * @see Conversions#toHex(byte[])
      */
-    public static Expect<byte[]> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
+    public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
         return Expect.compute(() -> {
             var buff = new byte[1024];
             int len;
@@ -61,7 +62,7 @@ public class HashUtil {
      * @see InputStream#read()
      * @see InputStream#close()
      */
-    public static Expect<Long> computeCRC32(@NotNull InputStream in) {
+    public static Expect<Long, IOException> computeCRC32(@NotNull InputStream in) {
         return Expect.compute(() -> {
             Checksum sum = new CRC32();
 

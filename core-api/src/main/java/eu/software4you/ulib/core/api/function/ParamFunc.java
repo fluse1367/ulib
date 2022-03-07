@@ -10,8 +10,8 @@ import java.util.function.Function;
  * @apiNote only pass this task object as function if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface ParamFunc<T, R> extends Function<T, R> {
-    R execute(T t) throws Throwable;
+public interface ParamFunc<T, R, X extends Throwable> extends Function<T, R> {
+    R execute(T t) throws X;
 
     @SneakyThrows
     @Override

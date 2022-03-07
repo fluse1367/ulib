@@ -10,8 +10,8 @@ import java.util.function.BiConsumer;
  * @apiNote only pass this task object as consumer if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface BiParamTask<T, U> extends BiConsumer<T, U> {
-    void execute(T t, U u) throws Throwable;
+public interface BiParamTask<T, U, X extends Throwable> extends BiConsumer<T, U> {
+    void execute(T t, U u) throws X;
 
     @SneakyThrows
     @Override

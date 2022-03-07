@@ -123,7 +123,7 @@ public class SerializationAdapters {
 
         @Override
         protected Enum<?> deserialize(Class<? extends Enum<?>> clazz, Map<String, Object> elements) {
-            return ReflectUtil.getEnumEntry(clazz, (String) elements.get("value")).orElse(null);
+            return ReflectUtil.getEnumEntry(clazz, (String) elements.get("value")).getValue();
         }
 
         @Override

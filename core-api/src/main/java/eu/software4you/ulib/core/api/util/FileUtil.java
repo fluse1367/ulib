@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class FileUtil {
@@ -41,15 +42,15 @@ public class FileUtil {
      * @return an {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Expect<File> createNewFile(@NotNull File file) {
+    public static Expect<File, IOException> createNewFile(@NotNull File file) {
         if (file.exists())
             return Expect.of(file);
         if (file.getParentFile() != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs())
-            return Expect.failed(new RuntimeException("Parent directories could not be created"));
+            return Expect.failed(new IOException("Parent directories could not be created"));
 
         return Expect.compute(() -> {
             if (!file.createNewFile())
-                throw new RuntimeException("File could not be created");
+                throw new IOException("File could not be created");
             return file;
         });
     }
@@ -91,7 +92,7 @@ public class FileUtil {
      * @return an optional wrapping the file, or an empty optional if the file cannot be obtained
      */
     @NotNull
-    public static Expect<File> getClassFile(@Nullable Class<?> clazz) {
+    public static Expect<File, ?> getClassFile(@Nullable Class<?> clazz) {
         return Expect.compute(() -> clazz.getProtectionDomain().getCodeSource().getLocation().toURI())
                 .map(File::new);
     }

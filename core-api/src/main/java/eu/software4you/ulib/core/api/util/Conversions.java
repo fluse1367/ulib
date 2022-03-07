@@ -12,7 +12,7 @@ public class Conversions {
      * @param o the value to convert
      * @return an expect object wrapping the operation result
      */
-    public static Expect<Integer> tryInt(Object o) {
+    public static Expect<Integer, NumberFormatException> tryInt(Object o) {
         return tryConvert(o, in -> in instanceof Integer i ? i : Integer.parseInt(in.toString()));
     }
 
@@ -22,7 +22,7 @@ public class Conversions {
      * @param o the value to convert
      * @return an expect object wrapping the operation result
      */
-    public static Expect<Long> tryLong(Object o) {
+    public static Expect<Long, NumberFormatException> tryLong(Object o) {
         return tryConvert(o, in -> in instanceof Long l ? l : Long.parseLong(in.toString()));
     }
 
@@ -32,7 +32,7 @@ public class Conversions {
      * @param o the value to convert
      * @return an expect object wrapping the operation result
      */
-    public static Expect<Float> tryFloat(Object o) {
+    public static Expect<Float, NumberFormatException> tryFloat(Object o) {
         return tryConvert(o, in -> in instanceof Float f ? f : Float.parseFloat(in.toString()));
     }
 
@@ -42,7 +42,7 @@ public class Conversions {
      * @param o the value to convert
      * @return an expect object wrapping the operation result
      */
-    public static Expect<Double> tryDouble(Object o) {
+    public static Expect<Double, NumberFormatException> tryDouble(Object o) {
         return tryConvert(o, in -> in instanceof Double d ? d : Double.parseDouble(in.toString()));
     }
 
@@ -53,7 +53,7 @@ public class Conversions {
      * @param o the value to convert
      * @return an expect object wrapping the operation result
      */
-    public static Expect<Boolean> tryBoolean(@Nullable Object o) {
+    public static Expect<Boolean, ?> tryBoolean(@Nullable Object o) {
         return tryConvert(o, in -> in instanceof Boolean b ? b :
                 tryInt(in).toOptional()
                         .map(i -> i != 0)
@@ -68,7 +68,7 @@ public class Conversions {
      * @param converter the converting function
      * @return an optional wrapping the value if the converting function executed successful and returned a non-null value, an empty optional otherwise
      */
-    public static <I, R> Expect<R> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R> converter) {
+    public static <I, R, X extends Throwable> Expect<R, X> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R, X> converter) {
         if (Checks.nil(input, converter))
             return Expect.empty();
         return Expect.compute(() -> converter.apply(input));

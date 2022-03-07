@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -147,7 +148,7 @@ public abstract class ReflectUtil {
      * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Expect<Class<?>> forName(@NotNull String name, boolean init) {
+    public static Expect<Class<?>, ClassNotFoundException> forName(@NotNull String name, boolean init) {
         return forName(name, init, getCallerClass().getClassLoader());
     }
 
@@ -160,7 +161,7 @@ public abstract class ReflectUtil {
      * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Expect<Class<?>> forName(@NotNull String name, boolean init, ClassLoader loader) {
+    public static Expect<Class<?>, ClassNotFoundException> forName(@NotNull String name, boolean init, ClassLoader loader) {
         return Expect.compute(() -> Class.forName(name, init, loader));
     }
 
@@ -172,9 +173,20 @@ public abstract class ReflectUtil {
      * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static <E extends Enum<?>> Expect<E> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
+    public static <E extends Enum<?>> Expect<E, IllegalArgumentException> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
         //noinspection unchecked
-        return Expect.compute(() -> (E) enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry));
+        var res = Expect.compute(() -> enumClass.getMethod("valueOf", String.class)
+                        .invoke(null, enumEntry))
+                .<E, ReflectiveOperationException>map(o -> (E) o);
+
+        if (res.getThrowable().getValue() instanceof InvocationTargetException ex)
+            return Expect.failed((IllegalArgumentException) ex.getTargetException());
+
+        // should never happen
+        if (res.wasFailure())
+            throw new IllegalStateException();
+
+        return res.toOther();
     }
 
     /**

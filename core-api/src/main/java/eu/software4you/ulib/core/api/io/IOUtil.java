@@ -23,7 +23,7 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    public static Expect<Void> write(@NotNull InputStream in, @NotNull OutputStream out) {
+    public static Expect<Void, IOException> write(@NotNull InputStream in, @NotNull OutputStream out) {
         return Expect.compute(() -> {
             byte[] buff = new byte[1024];
             int len;
@@ -45,7 +45,7 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    public static Expect<Void> write(@NotNull Reader in, @NotNull Writer out) {
+    public static Expect<Void, IOException> write(@NotNull Reader in, @NotNull Writer out) {
         return Expect.compute(() -> {
             char[] buff = new char[1024];
             int len;
@@ -63,10 +63,10 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
-    public static Expect<byte[]> read(@NotNull InputStream in) {
+    public static Expect<byte[], IOException> read(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
-                write(in, bout);
+                write(in, bout).rethrow();
                 return bout.toByteArray();
             }
         });
@@ -79,7 +79,7 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
-    public static Expect<char[]> read(@NotNull Reader reader) {
+    public static Expect<char[], IOException> read(@NotNull Reader reader) {
         return Expect.compute(() -> {
             try (var cout = new CharArrayWriter()) {
                 write(reader, cout).rethrow();
@@ -95,7 +95,7 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
-    public static Expect<String> toString(@NotNull InputStream in) {
+    public static Expect<String, IOException> toString(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
                 write(in, bout).rethrow();
@@ -143,7 +143,7 @@ public class IOUtil {
      * @return the runnable
      * @see #write(InputStream, OutputStream)
      */
-    public static Task prepareRedirect(InputStream in, OutputStream out) {
+    public static Task<IOException> prepareRedirect(InputStream in, OutputStream out) {
         return () -> {
             int b;
             while (!Thread.currentThread().isInterrupted() && (b = in.read()) != -1) {

@@ -38,7 +38,7 @@ public class MultiversionManager {
 
     public static Class<?> netMinecraftServer(String ex) {
         return ReflectUtil.forName(netMinecraftServerPrefix() + ex, true, ReflectUtil.getCallerClass().getClassLoader())
-                .get().orElse(null);
+                .getValue();
     }
 
     public static String orgBukkitCraftbukkitPrefix() {
@@ -47,6 +47,6 @@ public class MultiversionManager {
 
     public static Class<?> orgBukkitCraftbukkit(String ex) {
         return ReflectUtil.forName(orgBukkitCraftbukkitPrefix() + ex, true, ReflectUtil.getCallerClass().getClassLoader())
-                .get().orElse(null);
+                .getValue();
     }
 }

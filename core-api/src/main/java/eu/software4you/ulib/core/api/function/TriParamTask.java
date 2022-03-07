@@ -8,8 +8,8 @@ import lombok.SneakyThrows;
  * @apiNote only pass this task object as consumer if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface TriParamTask<T, U, V> extends TriConsumer<T, U, V> {
-    void execute(T t, U u, V v) throws Throwable;
+public interface TriParamTask<T, U, V, X extends Throwable> extends TriConsumer<T, U, V> {
+    void execute(T t, U u, V v) throws X;
 
     @SneakyThrows
     @Override

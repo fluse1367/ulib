@@ -5,6 +5,7 @@ import eu.software4you.ulib.core.api.function.ParamFunc;
 import eu.software4you.ulib.core.api.function.ParamTask;
 import eu.software4you.ulib.core.api.function.Task;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,11 +24,12 @@ import java.util.concurrent.CompletableFuture;
  * This class can be seen as {@link Optional} with additional exception wrapping.
  *
  * @param <T> the result type
+ * @param <X> the type of throwable object
  * @see Optional
  * @see CompletableFuture
  */
-public final class Expect<T> {
-    private static final Expect<?> EMPTY = new Expect<>(null, null);
+public final class Expect<T, X extends Throwable> {
+    private static final Expect<?, ?> EMPTY = new Expect<>(null, null);
 
     /**
      * Returns an empty Expect instance.
@@ -37,9 +39,9 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(pure = true)
-    public static <T> Expect<T> empty() {
+    public static <T, X extends Throwable> Expect<T, X> empty() {
         //noinspection unchecked
-        return (Expect<T>) EMPTY;
+        return (Expect<T, X>) EMPTY;
     }
 
     /**
@@ -52,7 +54,7 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(value = "_ -> new", pure = true)
-    public static <T> Expect<T> of(@NonNull T value) {
+    public static <T, X extends Throwable> Expect<T, X> of(@NonNull T value) {
         return new Expect<>(Objects.requireNonNull(value), null);
     }
 
@@ -65,7 +67,7 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(value = "!null -> new", pure = true)
-    public static <T> Expect<T> ofNullable(@Nullable T value) {
+    public static <T, X extends Throwable> Expect<T, X> ofNullable(@Nullable T value) {
         return value == null ? empty() : of(value);
     }
 
@@ -79,7 +81,7 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(value = "_ -> new", pure = true)
-    public static <T> Expect<T> failed(@NonNull Throwable throwable) {
+    public static <T, X extends Throwable> Expect<T, X> failed(@NonNull X throwable) {
         return new Expect<>(null, Objects.requireNonNull(throwable));
     }
 
@@ -93,13 +95,22 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(value = "_ -> new")
-    public static <T> Expect<T> compute(@NonNull Func<T> task) {
+    public static <T, X extends Throwable> Expect<T, X> compute(@NonNull Func<T, X> task) {
         Objects.requireNonNull(task);
 
         try {
             return ofNullable(task.execute());
         } catch (Throwable t) {
-            return failed(t);
+            return dirtyFailed(t);
+        }
+    }
+
+    @SneakyThrows
+    private static <T, X extends Throwable> Expect<T, X> dirtyFailed(@NonNull Throwable throwable) {
+        try {
+            return new Expect<>(null, (X) Objects.requireNonNull(throwable));
+        } catch (ClassCastException e) {
+            throw throwable;
         }
     }
 
@@ -112,21 +123,21 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(value = "_ -> new")
-    public static Expect<Void> compute(@NonNull Task task) {
+    public static <X extends Throwable> Expect<Void, X> compute(@NonNull Task<X> task) {
         Objects.requireNonNull(task);
 
         try {
             task.execute();
         } catch (Throwable t) {
-            return failed(t);
+            return dirtyFailed(t);
         }
         return empty();
     }
 
     private final T value;
-    private final Throwable throwable;
+    private final X throwable;
 
-    private Expect(T val, Throwable t) {
+    private Expect(T val, X t) {
         this.value = val;
         this.throwable = t;
     }
@@ -140,6 +151,10 @@ public final class Expect<T> {
     @Contract(pure = true)
     public Optional<T> toOptional() {
         return Optional.ofNullable(value);
+    }
+
+    public <XX extends Throwable> Expect<T, XX> toOther() {
+        return ofNullable(value);
     }
 
     /**
@@ -185,7 +200,7 @@ public final class Expect<T> {
      */
     @NonNull
     @Contract(pure = true)
-    public Expect<Throwable> getThrowable() {
+    public Expect<Throwable, ?> getThrowable() {
         return Expect.ofNullable(throwable);
     }
 
@@ -203,7 +218,7 @@ public final class Expect<T> {
     /**
      * Throws the caught throwable if present.
      */
-    public void rethrow() throws Throwable {
+    public void rethrow() throws X {
         if (wasFailure())
             throw throwable;
     }
@@ -231,10 +246,10 @@ public final class Expect<T> {
      * @throws X if no value is present
      */
     @NonNull
-    public <X extends Throwable> T orElseRethrow() throws X, NoSuchElementException {
+    public T orElseRethrow() throws X, NoSuchElementException {
         if (isEmpty()) {
             if (wasFailure())
-                throw (X) throwable;
+                throw throwable;
             throw new NoSuchElementException("No value present");
         }
 
@@ -248,7 +263,7 @@ public final class Expect<T> {
      * @return an Expect object wrapping a potential caught throwable object
      */
     @NonNull
-    public Expect<Void> ifPresent(@NonNull ParamTask<? super T> task) {
+    public <XX extends Throwable> Expect<Void, XX> ifPresent(@NonNull ParamTask<? super T, XX> task) {
         Objects.requireNonNull(task);
 
         return isPresent() ? compute(() -> task.execute(value)) : empty();
@@ -262,7 +277,8 @@ public final class Expect<T> {
      * @return an Expect object wrapping a potential caught throwable object
      */
     @NonNull
-    public Expect<Void> ifPresentOrElse(@NonNull ParamTask<? super T> task, @NonNull ParamTask<? super Expect<? super Throwable>> other) {
+    public <XX extends Throwable> Expect<Void, XX> ifPresentOrElse(@NonNull ParamTask<? super T, XX> task,
+                                                                   @NonNull ParamTask<? super Expect<? super X, ?>, XX> other) {
         Objects.requireNonNull(task);
         Objects.requireNonNull(other);
 
@@ -276,7 +292,7 @@ public final class Expect<T> {
      * @return this Except object if a value is present, otherwise another Expect object wrapping a potential caught throwable object or value from the task's execution
      */
     @NonNull
-    public Expect<T> orElse(@NonNull ParamFunc<? super Expect<? super Throwable>, T> task) {
+    public <XX extends Throwable> Expect<T, ? extends Throwable> orElse(@NonNull ParamFunc<? super Expect<? super X, ?>, T, XX> task) {
         Objects.requireNonNull(task);
 
         return isPresent() ? this : compute(() -> task.execute(getThrowable()));
@@ -289,7 +305,7 @@ public final class Expect<T> {
      * @param <U>    the return type
      * @return an empty Expect object if no value is present, otherwise another Expect object wrapping a potential caught throwable object or value from the task's execution
      */
-    public <U> Expect<U> map(@NonNull ParamFunc<? super T, U> mapper) {
+    public <U, XX extends Throwable> Expect<U, XX> map(@NonNull ParamFunc<? super T, U, XX> mapper) {
         Objects.requireNonNull(mapper);
 
         return isPresent() ? compute(() -> mapper.execute(value)) : empty();
