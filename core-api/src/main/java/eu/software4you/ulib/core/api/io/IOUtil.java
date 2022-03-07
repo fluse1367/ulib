@@ -1,12 +1,11 @@
 package eu.software4you.ulib.core.api.io;
 
-import eu.software4you.ulib.core.api.util.value.Unsettled;
-import lombok.SneakyThrows;
+import eu.software4you.ulib.core.api.function.Task;
+import eu.software4you.ulib.core.api.util.value.Expect;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.concurrent.ThreadFactory;
-import java.util.function.Supplier;
 
 /**
  * Class containing I/O (stream) operations.
@@ -17,7 +16,6 @@ public class IOUtil {
      *
      * @param in  the stream to read from
      * @param out the stream to write to
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #redirect(InputStream, OutputStream)
      * @see InputStream#read()
      * @see InputStream#close()
@@ -25,14 +23,15 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    @SneakyThrows
-    public static void write(@NotNull InputStream in, @NotNull OutputStream out) {
-        byte[] buff = new byte[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            out.write(buff, 0, len);
-        }
-        out.flush();
+    public static Expect<Void> write(@NotNull InputStream in, @NotNull OutputStream out) {
+        return Expect.compute(() -> {
+            byte[] buff = new byte[1024];
+            int len;
+            while ((len = in.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+            out.flush();
+        });
     }
 
     /**
@@ -40,21 +39,21 @@ public class IOUtil {
      *
      * @param in  the reader to read from
      * @param out the writer to write to
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see InputStream#read()
      * @see InputStream#close()
      * @see OutputStream#write(byte[], int, int)
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
-    @SneakyThrows
-    public static void write(@NotNull Reader in, @NotNull Writer out) {
-        char[] buff = new char[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            out.write(buff, 0, len);
-        }
-        out.flush();
+    public static Expect<Void> write(@NotNull Reader in, @NotNull Writer out) {
+        return Expect.compute(() -> {
+            char[] buff = new char[1024];
+            int len;
+            while ((len = in.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+            out.flush();
+        });
     }
 
     /**
@@ -62,15 +61,15 @@ public class IOUtil {
      *
      * @param in the stream to read from
      * @return the bytes read
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    @SneakyThrows
-    public static byte[] read(@NotNull InputStream in) {
-        try (var bout = new ByteArrayOutputStream()) {
-            write(in, bout);
-            return bout.toByteArray();
-        }
+    public static Expect<byte[]> read(@NotNull InputStream in) {
+        return Expect.compute(() -> {
+            try (var bout = new ByteArrayOutputStream()) {
+                write(in, bout);
+                return bout.toByteArray();
+            }
+        });
     }
 
     /**
@@ -78,14 +77,15 @@ public class IOUtil {
      *
      * @param reader the reader to read from
      * @return the bytes read
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    public static char[] read(@NotNull Reader reader) {
-        try (var cout = new CharArrayWriter()) {
-            write(reader, cout);
-            return cout.toCharArray();
-        }
+    public static Expect<char[]> read(@NotNull Reader reader) {
+        return Expect.compute(() -> {
+            try (var cout = new CharArrayWriter()) {
+                write(reader, cout).rethrow();
+                return cout.toCharArray();
+            }
+        });
     }
 
     /**
@@ -93,15 +93,15 @@ public class IOUtil {
      *
      * @param in the stream to read from
      * @return the bytes read
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see #write(InputStream, OutputStream)
      */
-    @SneakyThrows
-    public static String toString(@NotNull InputStream in) {
-        try (var bout = new ByteArrayOutputStream()) {
-            write(in, bout);
-            return bout.toString();
-        }
+    public static Expect<String> toString(@NotNull InputStream in) {
+        return Expect.compute(() -> {
+            try (var bout = new ByteArrayOutputStream()) {
+                write(in, bout).rethrow();
+                return bout.toString();
+            }
+        });
     }
 
     /**
@@ -143,16 +143,11 @@ public class IOUtil {
      * @return the runnable
      * @see #write(InputStream, OutputStream)
      */
-    public static Runnable prepareRedirect(InputStream in, OutputStream out) {
-        //noinspection Convert2Lambda
-        return new Runnable() {
-            @SneakyThrows
-            @Override
-            public void run() {
-                int b;
-                while (!Thread.currentThread().isInterrupted() && (b = in.read()) != -1) {
-                    out.write(b);
-                }
+    public static Task prepareRedirect(InputStream in, OutputStream out) {
+        return () -> {
+            int b;
+            while (!Thread.currentThread().isInterrupted() && (b = in.read()) != -1) {
+                out.write(b);
             }
         };
     }

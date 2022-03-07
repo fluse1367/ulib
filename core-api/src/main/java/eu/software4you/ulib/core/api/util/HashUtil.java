@@ -1,13 +1,10 @@
 package eu.software4you.ulib.core.api.util;
 
-import eu.software4you.ulib.core.api.util.value.Unsettled;
-import lombok.SneakyThrows;
+import eu.software4you.ulib.core.api.util.value.Expect;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
-import java.util.function.Supplier;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -20,8 +17,8 @@ public class HashUtil {
      * @return the hex representation of the stream's hash
      */
     @NotNull
-    public static String computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
-        return Conversions.toHex(computeHash(stream, digest));
+    public static Expect<String> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
+        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest).orElseRethrow()));
     }
 
     /**
@@ -30,17 +27,17 @@ public class HashUtil {
      * @param in     the stream to compute the hash from
      * @param digest the digest to use
      * @return the computed hash
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see Conversions#toHex(byte[])
      */
-    @SneakyThrows
-    public static byte[] computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
-        var buff = new byte[1024];
-        int len;
-        while ((len = in.read()) != -1) {
-            digest.update(buff, 0, len);
-        }
-        return digest.digest();
+    public static Expect<byte[]> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
+        return Expect.compute(() -> {
+            var buff = new byte[1024];
+            int len;
+            while ((len = in.read()) != -1) {
+                digest.update(buff, 0, len);
+            }
+            return digest.digest();
+        });
     }
 
     /**
@@ -61,21 +58,21 @@ public class HashUtil {
      *
      * @param in the stream to compute the checksum from
      * @return the checksum
-     * @implNote this method may throw an {@link IOException}, consider using it in conjunction with {@link Unsettled#execute(Supplier)}
      * @see InputStream#read()
      * @see InputStream#close()
      */
-    @SneakyThrows
-    public static long computeCRC32(@NotNull InputStream in) {
-        Checksum sum = new CRC32();
+    public static Expect<Long> computeCRC32(@NotNull InputStream in) {
+        return Expect.compute(() -> {
+            Checksum sum = new CRC32();
 
-        byte[] buff = new byte[1024];
-        int len;
-        while ((len = in.read(buff)) != -1) {
-            sum.update(buff, 0, len);
-        }
+            byte[] buff = new byte[1024];
+            int len;
+            while ((len = in.read(buff)) != -1) {
+                sum.update(buff, 0, len);
+            }
 
-        return sum.getValue();
+            return sum.getValue();
+        });
     }
 
     /**

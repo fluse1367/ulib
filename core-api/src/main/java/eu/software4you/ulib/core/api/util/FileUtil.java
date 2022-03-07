@@ -1,14 +1,12 @@
 package eu.software4you.ulib.core.api.util;
 
 import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import eu.software4you.ulib.core.api.util.value.Unsettled;
-import lombok.SneakyThrows;
+import eu.software4you.ulib.core.api.util.value.Expect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Supplier;
 
 public class FileUtil {
 
@@ -40,23 +38,19 @@ public class FileUtil {
      * Attempts to create a new file if it doesn't exist yet. Also attempts to create parent directories if necessary.
      *
      * @param file the file to create
-     * @return an {@link Unsettled} object wrapping the file on success, or wrapping the thrown object on failure
+     * @return an {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Unsettled<File> createNewFile(@NotNull File file) {
+    public static Expect<File> createNewFile(@NotNull File file) {
         if (file.exists())
-            return Unsettled.of(file);
+            return Expect.of(file);
         if (file.getParentFile() != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs())
-            return Unsettled.thrown(new RuntimeException("Parent directories could not be created"));
+            return Expect.failed(new RuntimeException("Parent directories could not be created"));
 
-        return Unsettled.execute(new Supplier<File>() {
-            @Override
-            @SneakyThrows
-            public File get() {
-                if (!file.createNewFile())
-                    throw new RuntimeException("File could not be created");
-                return file;
-            }
+        return Expect.compute(() -> {
+            if (!file.createNewFile())
+                throw new RuntimeException("File could not be created");
+            return file;
         });
     }
 
@@ -97,13 +91,8 @@ public class FileUtil {
      * @return an optional wrapping the file, or an empty optional if the file cannot be obtained
      */
     @NotNull
-    public static Optional<File> getClassFile(@Nullable Class<?> clazz) {
-        return Unsettled.execute(new Supplier<File>() {
-            @SneakyThrows
-            @Override
-            public File get() {
-                return new File(clazz.getProtectionDomain().getCodeSource().getLocation().toURI());
-            }
-        }).get();
+    public static Expect<File> getClassFile(@Nullable Class<?> clazz) {
+        return Expect.compute(() -> clazz.getProtectionDomain().getCodeSource().getLocation().toURI())
+                .map(File::new);
     }
 }

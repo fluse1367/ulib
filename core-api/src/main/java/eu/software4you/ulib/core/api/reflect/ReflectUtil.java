@@ -1,7 +1,7 @@
 package eu.software4you.ulib.core.api.reflect;
 
 import eu.software4you.ulib.core.api.internal.Providers;
-import eu.software4you.ulib.core.api.util.value.Unsettled;
+import eu.software4you.ulib.core.api.util.value.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Useful shortcuts for the Java Reflection API.<br>
@@ -145,10 +144,10 @@ public abstract class ReflectUtil {
      *
      * @param name the fully qualified name of the class
      * @param init if the class should be initialized in case of loading success
-     * @return a {@link Unsettled} object wrapping the operation result
+     * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Unsettled<Class<?>> forName(@NotNull String name, boolean init) {
+    public static Expect<Class<?>> forName(@NotNull String name, boolean init) {
         return forName(name, init, getCallerClass().getClassLoader());
     }
 
@@ -158,17 +157,11 @@ public abstract class ReflectUtil {
      * @param name   the fully qualified name of the class
      * @param init   if the class should be initialized in case of loading success
      * @param loader the loader from which the class is loaded
-     * @return a {@link Unsettled} object wrapping the operation result
+     * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Unsettled<Class<?>> forName(@NotNull String name, boolean init, ClassLoader loader) {
-        return Unsettled.execute(new Supplier<Class<?>>() {
-            @SneakyThrows
-            @Override
-            public Class<?> get() {
-                return Class.forName(name, init, loader);
-            }
-        });
+    public static Expect<Class<?>> forName(@NotNull String name, boolean init, ClassLoader loader) {
+        return Expect.compute(() -> Class.forName(name, init, loader));
     }
 
     /**
@@ -176,18 +169,12 @@ public abstract class ReflectUtil {
      *
      * @param enumClass the class of enum
      * @param enumEntry the fully qualified name of the desired entry.
-     * @return an optional wrapping the enum entry value on success, an empty optional otherwise
+     * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static <E extends Enum<?>> Optional<E> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
-        return Unsettled.execute(new Supplier<E>() {
-            @SneakyThrows
-            @Override
-            public E get() {
-                //noinspection unchecked
-                return (E) enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry);
-            }
-        }).get();
+    public static <E extends Enum<?>> Expect<E> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
+        //noinspection unchecked
+        return Expect.compute(() -> (E) enumClass.getMethod("valueOf", String.class).invoke(null, enumEntry));
     }
 
     /**

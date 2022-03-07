@@ -1,10 +1,8 @@
 package eu.software4you.ulib.core.api.util;
 
-import eu.software4you.ulib.core.api.util.value.Unsettled;
+import eu.software4you.ulib.core.api.function.ParamFunc;
+import eu.software4you.ulib.core.api.util.value.Expect;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 public class Conversions {
 
@@ -12,9 +10,9 @@ public class Conversions {
      * Attempts to convert the given object into an int.
      *
      * @param o the value to convert
-     * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
+     * @return an expect object wrapping the operation result
      */
-    public static Optional<Integer> tryInt(Object o) {
+    public static Expect<Integer> tryInt(Object o) {
         return tryConvert(o, in -> in instanceof Integer i ? i : Integer.parseInt(in.toString()));
     }
 
@@ -22,9 +20,9 @@ public class Conversions {
      * Attempts to convert the given object into a long.
      *
      * @param o the value to convert
-     * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
+     * @return an expect object wrapping the operation result
      */
-    public static Optional<Long> tryLong(Object o) {
+    public static Expect<Long> tryLong(Object o) {
         return tryConvert(o, in -> in instanceof Long l ? l : Long.parseLong(in.toString()));
     }
 
@@ -32,9 +30,9 @@ public class Conversions {
      * Attempts to convert the given object into a float.
      *
      * @param o the value to convert
-     * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
+     * @return an expect object wrapping the operation result
      */
-    public static Optional<Float> tryFloat(Object o) {
+    public static Expect<Float> tryFloat(Object o) {
         return tryConvert(o, in -> in instanceof Float f ? f : Float.parseFloat(in.toString()));
     }
 
@@ -42,9 +40,9 @@ public class Conversions {
      * Attempts to convert the given object into a double.
      *
      * @param o the value to convert
-     * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
+     * @return an expect object wrapping the operation result
      */
-    public static Optional<Double> tryDouble(Object o) {
+    public static Expect<Double> tryDouble(Object o) {
         return tryConvert(o, in -> in instanceof Double d ? d : Double.parseDouble(in.toString()));
     }
 
@@ -53,11 +51,14 @@ public class Conversions {
      * If the object is applicable as integer (according to {@link #tryInt(Object)}), a value other than 0 will be interpreted as true.
      *
      * @param o the value to convert
-     * @return an optional wrapping the value if conversation was successful, an empty optional otherwise
+     * @return an expect object wrapping the operation result
      */
-    public static Optional<Boolean> tryBoolean(@Nullable Object o) {
+    public static Expect<Boolean> tryBoolean(@Nullable Object o) {
         return tryConvert(o, in -> in instanceof Boolean b ? b :
-                tryInt(in).map(i -> i != 0).orElseGet(() -> Boolean.parseBoolean(o.toString())));
+                tryInt(in).toOptional()
+                        .map(i -> i != 0)
+                        .orElseGet(() -> Boolean.parseBoolean(o.toString()))
+        );
     }
 
     /**
@@ -67,10 +68,10 @@ public class Conversions {
      * @param converter the converting function
      * @return an optional wrapping the value if the converting function executed successful and returned a non-null value, an empty optional otherwise
      */
-    public static <I, R> Optional<R> tryConvert(@Nullable I input, @Nullable Function<I, R> converter) {
+    public static <I, R> Expect<R> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R> converter) {
         if (Checks.nil(input, converter))
-            return Optional.empty();
-        return Unsettled.execute(() -> converter.apply(input)).get();
+            return Expect.empty();
+        return Expect.compute(() -> converter.apply(input));
     }
 
     /**

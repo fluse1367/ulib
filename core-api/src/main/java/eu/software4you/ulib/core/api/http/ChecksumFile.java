@@ -177,7 +177,8 @@ public class ChecksumFile {
 
     @SneakyThrows
     private String hash() {
-        return HashUtil.computeHex(new FileInputStream(file), MessageDigest.getInstance(algorithm));
+        return HashUtil.computeHex(new FileInputStream(file), MessageDigest.getInstance(algorithm))
+                .orElseRethrow();
     }
 
     protected void mkdirsp(File child) {

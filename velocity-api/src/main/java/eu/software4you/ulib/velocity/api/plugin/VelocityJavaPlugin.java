@@ -59,7 +59,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @NotNull
     private final File dataFolder;
     @Getter
-    private final File file = FileUtil.getClassFile(getClass()).orElse(null);
+    private final File file = FileUtil.getClassFile(getClass()).getValue();
     private final ExtYamlSub config = YamlSub.newYaml();
     private final Layout layout = Providers.get(ProviderLayout.class).get();
     private String layoutFileName = defaultLayoutFileName;

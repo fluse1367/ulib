@@ -120,6 +120,6 @@ public class PlugMan {
     }
 
     public static boolean reload(Plugin plugin) {
-        return unload(plugin) && load(FileUtil.getClassFile(plugin.getClass()).orElse(null));
+        return unload(plugin) && load(FileUtil.getClassFile(plugin.getClass()).getValue());
     }
 }

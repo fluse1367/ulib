@@ -34,7 +34,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String getContentAsString0(String url, Pair<String, String>[] headers) {
         try (var in = getContent(url, headers)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
@@ -46,7 +46,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String getContentAsString0(HttpClient client, String url, Pair<String, String>[] headers) {
         try (var in = getContent(client, url, headers)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
@@ -72,7 +72,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String postContentAsString0(String url, Pair<String, String>[] parameters) {
         try (var in = postContent(url, parameters)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
@@ -83,7 +83,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String postContentAsString0(String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
         try (var in = postContent(url, headers, parameters)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
@@ -94,7 +94,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, Pair<String, String>[] parameters) {
         try (var in = postContent(client, url, parameters)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
@@ -105,7 +105,7 @@ public final class HttpUtilImpl extends HttpUtil {
     @SneakyThrows
     protected String postContentAsString0(HttpClient client, String url, List<Pair<String, String>> headers, Pair<String, String>[] parameters) {
         try (var in = postContent(client, url, headers, parameters)) {
-            return IOUtil.toString(in);
+            return IOUtil.toString(in).orElseRethrow();
         }
     }
 
