@@ -28,10 +28,8 @@ public final class AgentInstaller {
 
             if (System.getProperty("jdk.attach.allowAttachSelf", "false").equals("true")) {
                 attachSelf();
-            } else {
-                if (!attachEx()) {
-                    return false;
-                }
+            } else if (!attachEx()) {
+                return false;
             }
 
         } catch (Throwable e) {
