@@ -245,6 +245,6 @@ public class Checks {
      * @return {@code true} if the class could be loaded, {@code false} otherwise
      */
     public static boolean clazz(@Nullable String name, boolean init) {
-        return ReflectUtil.forName(name, init, ReflectUtil.getCallerClass().getClassLoader()).wasSuccess();
+        return !ReflectUtil.forName(name, init, ReflectUtil.getCallerClass().getClassLoader()).hasCaught();
     }
 }

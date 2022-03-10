@@ -179,14 +179,14 @@ public abstract class ReflectUtil {
                         .invoke(null, enumEntry))
                 .<E, ReflectiveOperationException>map(o -> (E) o);
 
-        if (res.getThrowable().getValue() instanceof InvocationTargetException ex)
+        if (res.isPresent())
+            return res.toOther();
+
+        if (res.getCaught().orElseThrow() instanceof InvocationTargetException ex)
             return Expect.failed((IllegalArgumentException) ex.getTargetException());
 
         // should never happen
-        if (res.wasFailure())
-            throw new IllegalStateException();
-
-        return res.toOther();
+        throw new IllegalStateException();
     }
 
     /**

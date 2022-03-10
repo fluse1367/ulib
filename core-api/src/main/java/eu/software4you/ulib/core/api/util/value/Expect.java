@@ -7,6 +7,7 @@ import eu.software4you.ulib.core.api.function.Task;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
@@ -107,11 +108,7 @@ public final class Expect<T, X extends Throwable> {
 
     @SneakyThrows
     private static <T, X extends Throwable> Expect<T, X> dirtyFailed(@NonNull Throwable throwable) {
-        try {
-            return new Expect<>(null, (X) Objects.requireNonNull(throwable));
-        } catch (ClassCastException e) {
-            throw throwable;
-        }
+        return new Expect<>(null, Objects.requireNonNull(throwable));
     }
 
     /**
@@ -135,11 +132,28 @@ public final class Expect<T, X extends Throwable> {
     }
 
     private final T value;
-    private final X throwable;
+    private final X checked; // present if `unchecked` is not present
+    private final RuntimeException unchecked; // present if `checked` is not present
+    private final Throwable caught; // always present
 
-    private Expect(T val, X t) {
+    private Expect(T val, Throwable t) {
+        X checked;
+        RuntimeException unchecked;
+        try {
+            checked = (X) t;
+            unchecked = null;
+        } catch (ClassCastException e) {
+            checked = null;
+            if (!(t instanceof RuntimeException re))
+                throw new IllegalStateException("Cannot convert to requested type and caught object is not unchecked (%s)"
+                        .formatted(t.getClass().getName()), e);
+            unchecked = re;
+        }
+
         this.value = val;
-        this.throwable = t;
+        this.checked = checked;
+        this.unchecked = unchecked;
+        this.caught = t;
     }
 
     /**
@@ -153,6 +167,10 @@ public final class Expect<T, X extends Throwable> {
         return Optional.ofNullable(value);
     }
 
+    /**
+     * TODO: is method even necessary?
+     */
+    @Contract(pure = true)
     public <XX extends Throwable> Expect<T, XX> toOther() {
         return ofNullable(value);
     }
@@ -162,6 +180,7 @@ public final class Expect<T, X extends Throwable> {
      *
      * @return {@code true} if a value is present, {@code false} otherwise
      */
+    @Contract(pure = true)
     public boolean isPresent() {
         return value != null;
     }
@@ -171,6 +190,7 @@ public final class Expect<T, X extends Throwable> {
      *
      * @return {@code true} if no value is present, {@code false} otherwise
      */
+    @Contract(pure = true)
     public boolean isEmpty() {
         return value == null;
     }
@@ -180,28 +200,52 @@ public final class Expect<T, X extends Throwable> {
      *
      * @return {@code true} if a throwable object is present, {@code false} otherwise
      */
-    public boolean wasFailure() {
-        return throwable != null;
+    @Contract(pure = true)
+    public boolean hasCaught() {
+        return caught != null;
     }
 
     /**
-     * Checks if no throwable object is present.
+     * Determines if an object has been caught and is not checked.
      *
-     * @return {@code true} if no throwable object is present, {@code false} otherwise
+     * @return {@code true} if an object has been caught and is not checked, {@code false} otherwise
      */
-    public boolean wasSuccess() {
-        return throwable == null;
+    @Contract(pure = true)
+    public boolean hasCaughtUnchecked() {
+        return hasCaught() && unchecked != null;
     }
 
     /**
-     * Returns an optional wrapping the contained throwable object.
+     * Returns an optional wrapping the caught object.
      *
-     * @return an optional wrapping the contained throwable object
+     * @return an optional wrapping the caught object
      */
     @NonNull
     @Contract(pure = true)
-    public Expect<Throwable, ?> getThrowable() {
-        return Expect.ofNullable(throwable);
+    public Optional<Throwable> getCaught() {
+        return Optional.ofNullable(caught);
+    }
+
+    /**
+     * Returns an optional wrapping the checked caught object.
+     *
+     * @return an optional wrapping the checked caught object
+     */
+    @NonNull
+    @Contract(pure = true)
+    public Optional<X> getCaughtChecked() {
+        return Optional.ofNullable(checked);
+    }
+
+    /**
+     * Returns an optional wrapping the unchecked caught object.
+     *
+     * @return an optional wrapping the unchecked caught object
+     */
+    @NotNull
+    @Contract(pure = true)
+    public Optional<? extends RuntimeException> getCaughtUnchecked() {
+        return Optional.ofNullable(unchecked);
     }
 
     /**
@@ -216,11 +260,16 @@ public final class Expect<T, X extends Throwable> {
     }
 
     /**
-     * Throws the caught throwable if present.
+     * Throws the caught object if present, regardless if it is checked or not.
      */
-    public void rethrow() throws X {
-        if (wasFailure())
-            throw throwable;
+    public void rethrow() throws X, IllegalStateException {
+        if (!hasCaught())
+            return;
+
+        if (checked == null)
+            throw unchecked;
+
+        throw checked;
     }
 
     /**
@@ -233,7 +282,7 @@ public final class Expect<T, X extends Throwable> {
     @NonNull
     public T orElseThrow() throws NoSuchElementException, IllegalStateException {
         if (isEmpty())
-            throw wasSuccess() ? new NoSuchElementException("No value present") : new IllegalStateException("Execution failed", throwable);
+            throw hasCaught() ? new IllegalStateException("Execution failed", caught) : new NoSuchElementException("No value present");
 
         return value;
     }
@@ -247,13 +296,11 @@ public final class Expect<T, X extends Throwable> {
      */
     @NonNull
     public T orElseRethrow() throws X, NoSuchElementException {
-        if (isEmpty()) {
-            if (wasFailure())
-                throw throwable;
-            throw new NoSuchElementException("No value present");
-        }
+        if (isPresent())
+            return value;
 
-        return value;
+        rethrow();
+        throw new IllegalStateException(); // make compiler happy
     }
 
     /**
@@ -278,11 +325,11 @@ public final class Expect<T, X extends Throwable> {
      */
     @NonNull
     public <XX extends Throwable> Expect<Void, XX> ifPresentOrElse(@NonNull ParamTask<? super T, XX> task,
-                                                                   @NonNull ParamTask<? super Expect<? super X, ?>, XX> other) {
+                                                                   @NonNull ParamTask<? super Optional<? super Throwable>, XX> other) {
         Objects.requireNonNull(task);
         Objects.requireNonNull(other);
 
-        return isPresent() ? compute(() -> task.execute(value)) : compute(() -> other.execute(getThrowable()));
+        return isPresent() ? compute(() -> task.execute(value)) : compute(() -> other.execute(getCaught()));
     }
 
     /**
@@ -292,10 +339,10 @@ public final class Expect<T, X extends Throwable> {
      * @return this Except object if a value is present, otherwise another Expect object wrapping a potential caught throwable object or value from the task's execution
      */
     @NonNull
-    public <XX extends Throwable> Expect<T, ? extends Throwable> orElse(@NonNull ParamFunc<? super Expect<? super X, ?>, T, XX> task) {
+    public <XX extends Throwable> Expect<T, ? extends Throwable> orElse(@NonNull ParamFunc<? super Optional<? super Throwable>, T, XX> task) {
         Objects.requireNonNull(task);
 
-        return isPresent() ? this : compute(() -> task.execute(getThrowable()));
+        return isPresent() ? this : compute(() -> task.execute(getCaught()));
     }
 
     /**
@@ -313,6 +360,6 @@ public final class Expect<T, X extends Throwable> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, throwable);
+        return Objects.hash(value, caught);
     }
 }
