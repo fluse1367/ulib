@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.api.io;
 
+import eu.software4you.ulib.core.api.util.value.Expect;
+
 import java.io.*;
 import java.nio.charset.Charset;
 
@@ -17,8 +19,8 @@ public class ByteArrayDataOutputStream extends DataOutputStream {
     /**
      * @see ByteArrayOutputStream#writeTo(OutputStream)
      */
-    public void writeTo(OutputStream out) throws IOException {
-        bout.writeTo(out);
+    public Expect<Void, IOException> writeTo(OutputStream out) {
+        return Expect.compute(() -> bout.writeTo(out));
     }
 
     /**
@@ -45,8 +47,8 @@ public class ByteArrayDataOutputStream extends DataOutputStream {
     /**
      * @see ByteArrayOutputStream#toString(String)
      */
-    public String toString(String charsetName) throws UnsupportedEncodingException {
-        return bout.toString(charsetName);
+    public Expect<String, UnsupportedEncodingException> toString(String charsetName) {
+        return Expect.compute(() -> bout.toString(charsetName));
     }
 
     /**

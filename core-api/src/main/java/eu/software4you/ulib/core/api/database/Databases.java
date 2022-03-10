@@ -28,7 +28,7 @@ public abstract class Databases {
      * @throws IllegalArgumentException when no suitable wrapper for the used protocol is found.
      */
     @NotNull
-    public static SqlDatabase wrap(@NotNull Connection connection) throws IllegalArgumentException {
+    public static SqlDatabase wrap(@NotNull Connection connection) {
         return getInstance().wrap0(connection);
     }
 

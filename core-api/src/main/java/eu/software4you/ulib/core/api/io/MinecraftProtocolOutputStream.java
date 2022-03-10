@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.api.io;
 
+import eu.software4you.ulib.core.api.util.value.Expect;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,41 +12,52 @@ public class MinecraftProtocolOutputStream extends DataOutputStream {
         super(out);
     }
 
-    public void writeVarInt(int value) throws IOException {
-        do {
-            byte currentByte = (byte) (value & 0b01111111);
+    public Expect<Void, IOException> writeVarInt(final int value) {
+        return Expect.compute(() -> {
+            int val = value;
+            do {
+                byte currentByte = (byte) (val & 0b01111111);
 
-            value >>>= 7;
-            if (value != 0) currentByte |= 0b10000000;
+                val >>>= 7;
+                if (val != 0) currentByte |= 0b10000000;
 
-            writeByte(currentByte);
-        } while (value != 0);
+                writeByte(currentByte);
+            } while (val != 0);
+        });
     }
 
-    public void writeVarLong(long value) throws IOException {
-        do {
-            byte currentByte = (byte) (value & 0b01111111);
+    public Expect<Void, IOException> writeVarLong(final long value) {
+        return Expect.compute(() -> {
+            long val = value;
+            do {
+                byte currentByte = (byte) (val & 0b01111111);
 
-            value >>>= 7;
-            if (value != 0) currentByte |= 0b10000000;
+                val >>>= 7;
+                if (val != 0) currentByte |= 0b10000000;
 
-            writeByte(currentByte);
-        } while (value != 0);
+                writeByte(currentByte);
+            } while (val != 0);
+        });
     }
 
-    public void writeString(String string) throws IOException {
-        byte[] buf = string.getBytes();
-        writeVarInt(buf.length);
-        write(buf);
+    public Expect<Void, IOException> writeString(String string) {
+        return Expect.compute(() -> {
+            byte[] buf = string.getBytes();
+            writeVarInt(buf.length).rethrow();
+            write(buf);
+        });
     }
 
-    public void writeUUID(UUID uuid) throws IOException {
-        writeLong(uuid.getMostSignificantBits());
-        writeLong(uuid.getLeastSignificantBits());
+    public Expect<Void, IOException> writeUUID(UUID uuid) {
+        return Expect.compute(() -> {
+            writeLong(uuid.getMostSignificantBits());
+            writeLong(uuid.getLeastSignificantBits());
+        });
     }
 
 
-    public void writeBlockPosition(int x, int y, int z) throws IOException {
-        writeLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF));
+    public Expect<Void, IOException> writeBlockPosition(int x, int y, int z) {
+        return Expect.compute(() ->
+                writeLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF)));
     }
 }
