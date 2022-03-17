@@ -1,19 +1,12 @@
 package eu.software4you.ulib.loader.install;
 
 import eu.software4you.ulib.loader.agent.AgentInstaller;
-import eu.software4you.ulib.loader.install.provider.DependencyProvider;
-import eu.software4you.ulib.loader.install.provider.DependencyTransformer;
-import eu.software4you.ulib.loader.install.provider.EnvironmentProvider;
-import eu.software4you.ulib.loader.install.provider.ModuleClassProvider;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
+import eu.software4you.ulib.loader.install.provider.*;
+import lombok.*;
 
 import java.io.File;
 import java.util.*;
 import java.util.function.*;
-import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -64,23 +57,10 @@ public final class Installer {
         this.filesAdditional = dependencyProvider.downloadLibraries(modules, filter, transformer::transform);
     }
 
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
     private void initAgent() {
         // agent init
         if (!System.getProperties().containsKey("ulib.javaagent") && !new AgentInstaller().install()) {
             throw new RuntimeException("Unable to install agent");
-        }
-
-        // append super files to system classpath
-        var consumer = System.getProperties().remove("ulib.loader.javaagent");
-        try {
-            var con = (Consumer<JarFile>) consumer;
-            for (File file : filesSuper) {
-                con.accept(new JarFile(file));
-            }
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Javaagent provided property is invalid");
         }
     }
 
@@ -121,8 +101,8 @@ public final class Installer {
 
     @SneakyThrows
     private void loadULib() {
-        System.getProperties().put("ulib.environment", EnvironmentProvider.get().ordinal());
-        Class.forName("eu.software4you.ulib.core.ULib", true, moduleCoreApi.getClassLoader());
+        var clInit = Class.forName("eu.software4you.ulib.core.impl.init.Init", true, moduleCoreApi.getClassLoader());
+        clInit.getMethod("init", Object.class).invoke(null, System.getProperties().remove("ulib.javaagent"));
     }
 
     @SneakyThrows

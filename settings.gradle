@@ -10,3 +10,5 @@ files('super-module', 'loader',
         include ":${it.name}"
     }
 }
+
+include 'core'
