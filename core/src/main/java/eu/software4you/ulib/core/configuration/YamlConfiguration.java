@@ -103,12 +103,23 @@ public interface YamlConfiguration extends Configuration {
      */
     Expect<Void, IOException> save(Writer writer);
 
-    @Override
-    @NotNull Optional<YamlConfiguration> getSub(@NotNull String path);
+    /**
+     * Clears all data from this sub.
+     */
+    void reset();
 
     @Override
-    @NotNull Collection<YamlConfiguration> getSubs();
+    @NotNull Optional<? extends YamlConfiguration> getSub(@NotNull String path);
+
+    @Override
+    @NotNull Collection<? extends YamlConfiguration> getSubs();
 
     @Override
     @NotNull YamlConfiguration createSub(@NotNull String path);
+
+    @Override
+    @NotNull YamlConfiguration getRoot();
+
+    @Override
+    @NotNull YamlConfiguration subAndCreate(@NotNull String path);
 }

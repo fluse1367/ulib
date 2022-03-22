@@ -111,11 +111,6 @@ public interface Configuration {
     boolean contains(@NotNull String path);
 
     /**
-     * Clears all data from this sub.
-     */
-    void reset();
-
-    /**
      * Searches the configuration for a configuration-sub with a specific key.
      *
      * @param path the key path; nodes seperated by {@code .}

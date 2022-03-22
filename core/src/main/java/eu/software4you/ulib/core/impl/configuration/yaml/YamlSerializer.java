@@ -1,6 +1,5 @@
 package eu.software4you.ulib.core.impl.configuration.yaml;
 
-import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.impl.configuration.SerializationAdapters;
 import eu.software4you.ulib.core.io.IOUtil;
@@ -56,14 +55,16 @@ public class YamlSerializer {
         Node root = yaml.compose(new StringReader(content));
 
         // clear doc
-        doc.children.clear();
+        YamlDocument.clear(doc);
         // replace node
         doc.replaceNode(extractAnchor(root));
 
         if (root instanceof MappingNode) {
             graph(doc, (MappingNode) root, "\n" + content, 0);
         } else {
-            doc.children.put("", new Pair<>(doc.node, read(doc.node)));
+            var val = read(doc.node);
+            YamlDocument.put(doc, "", val);
+            doc.childNodes.put("", doc.node);
         }
     }
 
@@ -121,7 +122,7 @@ public class YamlSerializer {
             } else {
                 value = read(node);
             }
-            parent.children.put(key, new Pair<>(keyNode, value));
+            YamlDocument.put(parent, key, value);
         });
 
         return parent;
