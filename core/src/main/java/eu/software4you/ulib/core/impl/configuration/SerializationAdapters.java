@@ -3,25 +3,69 @@ package eu.software4you.ulib.core.impl.configuration;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.configuration.serialization.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+// singleton
 public class SerializationAdapters {
-    private final Set<Pair<Class<?>, Adapter<?>>> registry = new LinkedHashSet<>();
-    private final BiConsumer<Class<?>, Adapter<?>> registerHook;
+    @Getter
+    private static final SerializationAdapters instance = new SerializationAdapters();
 
-    public SerializationAdapters(BiConsumer<Class<?>, Adapter<?>> registerHook) {
-        this.registerHook = registerHook;
+    private final Set<Pair<Class<?>, Adapter<?>>> registry = new LinkedHashSet<>();
+    private final List<BiConsumer<Class<?>, Adapter<?>>> registerHooks = new ArrayList<>();
+
+    private SerializationAdapters() {
         registerAdapter(Serializable.class, new SerializableAdapter());
         registerAdapter(Enum.class, new EnumAdapter());
     }
 
+    public void addHook(BiConsumer<Class<?>, Adapter<?>> registerHook) {
+        registerHooks.add(registerHook);
+    }
+
     public <T> void registerAdapter(Class<T> serialization, Adapter<? extends T> adapter) {
         if (registry.add(new Pair<>(serialization, adapter))) {
-            registerHook.accept(serialization, adapter);
+            registerHooks.forEach(hook -> hook.accept(serialization, adapter));
         }
+    }
+
+    @Nullable
+    public Map<String, ?> attemptSerialization(Object object) {
+        var serialized = serialize(object);
+        if (serialized == null)
+            return null;
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("!", object.getClass().getName());
+        map.put("=", serialized);
+        return map;
+    }
+
+    @Nullable
+    public Object attemptDeserialization(Map<?, ?> map, boolean deep) {
+        if (!(map.get("!") instanceof String clazz) || !(map.get("=") instanceof Map<?, ?> serialized))
+            return null;
+
+        // convert into (string, object)
+        Map<String, Object> elements = new LinkedHashMap<>(serialized.size());
+        serialized.forEach((key, val) -> {
+            Object value = val;
+
+            // try nested deserialization
+            if (deep && val instanceof Map<?, ?> m) {
+                var newVal = attemptDeserialization(m, true);
+                if (newVal != null)
+                    value = newVal;
+            }
+
+            elements.put(key.toString(), value);
+        });
+
+        return deserialize(ReflectUtil.forName(clazz, true).orElseThrow(), elements);
     }
 
     public Object deserialize(Class<?> clazz, Map<String, Object> elements) {

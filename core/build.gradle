@@ -1,5 +1,6 @@
 dependencies {
     lib 'org.yaml:snakeyaml:1.29'
+    lib 'com.github.cliftonlabs:json-simple:4.0.1'
     lib 'org.javassist:javassist:3.28.0-GA'
 
     // maven resolver

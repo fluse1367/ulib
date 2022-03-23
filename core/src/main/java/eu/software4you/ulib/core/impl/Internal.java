@@ -95,7 +95,7 @@ public final class Internal {
         });
 
         try (var out = new FileWriter(conf)) {
-            saved.save(out);
+            saved.dump(out);
         }
         return saved;
     }

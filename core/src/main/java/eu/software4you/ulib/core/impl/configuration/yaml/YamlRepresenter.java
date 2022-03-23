@@ -5,8 +5,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 class YamlRepresenter extends Representer implements BiConsumer<Class<?>, SerializationAdapters.Adapter<?>> {
@@ -26,12 +24,9 @@ class YamlRepresenter extends Representer implements BiConsumer<Class<?>, Serial
         @Override
         public Node representData(Object object) {
 
-            var serialized = YamlSerializer.getInstance().getAdapters().serialize(object);
+            var serialized = SerializationAdapters.getInstance().attemptSerialization(object);
             if (serialized != null) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("!", object.getClass().getName());
-                map.put("=", serialized);
-                return super.representData(map);
+                return super.representData(serialized);
             }
 
             return super.representData(object);

@@ -20,8 +20,6 @@ public class YamlSerializer {
     @Getter
     private static final YamlSerializer instance = new YamlSerializer();
 
-    @Getter
-    private final SerializationAdapters adapters;
     private final Yaml yaml;
     private final YamlConstructor constructor;
 
@@ -33,8 +31,8 @@ public class YamlSerializer {
 
 
         var representer = new YamlRepresenter(dumperConfig);
+        SerializationAdapters.getInstance().addHook(representer);
 
-        this.adapters = new SerializationAdapters(representer);
         this.constructor = new YamlConstructor(loaderConfig);
 
         this.yaml = new Yaml(constructor, representer,
@@ -55,7 +53,7 @@ public class YamlSerializer {
         Node root = yaml.compose(new StringReader(content));
 
         // clear doc
-        YamlDocument.clear(doc);
+        doc.clear();
         // replace node
         doc.replaceNode(extractAnchor(root));
 
@@ -63,7 +61,7 @@ public class YamlSerializer {
             graph(doc, (MappingNode) root, "\n" + content, 0);
         } else {
             var val = read(doc.node);
-            YamlDocument.put(doc, "", val);
+            doc.put("", val);
             doc.childNodes.put("", doc.node);
         }
     }
@@ -122,7 +120,7 @@ public class YamlSerializer {
             } else {
                 value = read(node);
             }
-            YamlDocument.put(parent, key, value);
+            parent.put(key, value);
         });
 
         return parent;

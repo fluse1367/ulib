@@ -16,7 +16,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     protected static final String PATH_SEPARATOR = ".";
 
     // key -> node (data or sub)
-    private final Map<String, Object> children = new LinkedHashMap<>();
+    protected final Map<String, Object> children = new LinkedHashMap<>();
 
     @Getter
     @NotNull
@@ -150,7 +150,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
         var doc = r.getFirst();
         var key = r.getSecond();
-        ((ConfigurationBase<R>) doc).children.put(key, value);
+        doc.children.put(key, value);
         doc.placedNewValue(key, value);
     }
 
@@ -265,7 +265,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     protected final Optional<Object> resolveValue(final String fullPath) {
         return resolve(fullPath)
                 // pair: (doc, key)
-                .map(pair -> ((ConfigurationBase<?>) pair.getFirst()).children.get(pair.getSecond()));
+                .map(pair -> pair.getFirst().children.get(pair.getSecond()));
     }
 
     // - misc -
@@ -276,20 +276,6 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
         return sub;
     }
 
-    // - protected accessors -
-
-    protected final void clear() {
-        children.clear();
-    }
-
-    protected final void put(String key, Object val) {
-        children.put(key, val);
-    }
-
-    protected final boolean hasChild(String key) {
-        return children.containsKey(key);
-    }
-
     // - abstraction -
 
     // constructs a new sub with the specified key
@@ -297,6 +283,8 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     // called when a new value has been placed at the specified key, while overwriting any other associated value
     // the key is not resolved
-    protected abstract void placedNewValue(String key, Object value);
+    protected void placedNewValue(String key, Object value) {
+        // to be overwritten
+    }
 
 }

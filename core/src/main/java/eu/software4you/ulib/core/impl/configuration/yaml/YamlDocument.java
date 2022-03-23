@@ -15,15 +15,6 @@ import java.util.stream.Collectors;
 
 public class YamlDocument extends ConfigurationBase<YamlDocument> implements YamlConfiguration {
 
-    static void clear(YamlDocument doc) {
-        doc.clear();
-        doc.childNodes.clear();
-    }
-
-    static void put(YamlDocument doc, String key, Object val) {
-        doc.put(key, val);
-    }
-
     final Map<String, Node> childNodes = new HashMap<>();
     private final YamlSerializer serializer;
     // node that this sub represents
@@ -41,7 +32,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     protected YamlDocument(YamlSerializer serializer, Reader reader) throws IOException {
         super(); // init as root
         this.serializer = serializer;
-        load(reader).orElseRethrow();
+        reinit(reader).orElseRethrow();
     }
 
     // constructor for sub
@@ -76,7 +67,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     }
 
     @Override
-    public void reset() {
+    public void purge() {
         clear();
         Node newNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
         if (isRoot()) {
@@ -86,13 +77,24 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
         }
     }
 
+    // serializer access
+
+    void clear() {
+        children.clear();
+        childNodes.clear();
+    }
+
+    void put(String key, Object val) {
+        children.put(key, val);
+    }
+
     @Override
-    public Expect<Void, IOException> load(Reader reader) {
+    public Expect<Void, IOException> reinit(Reader reader) {
         return Expect.compute(() -> serializer.deserialize(reader, this));
     }
 
     @Override
-    public Expect<Void, IOException> save(Writer writer) {
+    public Expect<Void, IOException> dump(Writer writer) {
         return Expect.compute(() -> serializer.serialize(this, writer));
     }
 
@@ -135,7 +137,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
         // create new sub
         Node keyNode, valueNode = key.isEmpty() ? null : new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
 
-        if (hasChild(key)) {
+        if (children.containsKey(key)) {
             // replace old node
             keyNode = replaceNode(key, valueNode);
         } else {
@@ -164,7 +166,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
             // overwrite current node
             replaceNode(keyNode = valueNode);
             clear();
-        } else if (hasChild(key)) {
+        } else if (children.containsKey(key)) {
             // replace already existing node
             keyNode = replaceNode(key, valueNode);
         } else {

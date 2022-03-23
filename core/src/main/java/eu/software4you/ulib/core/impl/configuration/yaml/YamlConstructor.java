@@ -1,12 +1,12 @@
 package eu.software4you.ulib.core.impl.configuration.yaml;
 
+import eu.software4you.ulib.core.impl.configuration.SerializationAdapters;
 import lombok.SneakyThrows;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.*;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 class YamlConstructor extends SafeConstructor {
@@ -50,14 +50,11 @@ class YamlConstructor extends SafeConstructor {
         public Object construct(Node node) {
             var map = (Map<?, ?>) super.construct(node);
 
-            if (node.isTwoStepsConstruction() || !(map.get("!") instanceof String clazz) || !(map.get("=") instanceof Map serialized)) {
+            if (node.isTwoStepsConstruction())
                 return null;
-            }
 
-            Map<String, Object> elements = new LinkedHashMap<>(serialized.size());
-            ((Map<?, ?>) serialized).forEach((k, v) -> elements.put(k.toString(), v));
-
-            return YamlSerializer.getInstance().getAdapters().deserialize(Class.forName(clazz), elements);
+            // not deep bc nested elements are already handled by snakeyaml
+            return SerializationAdapters.getInstance().attemptDeserialization(map, false);
         }
     }
 }

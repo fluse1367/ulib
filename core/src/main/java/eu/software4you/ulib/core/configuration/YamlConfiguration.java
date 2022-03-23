@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Representation of a YAML-type configuration sub.
  */
-public interface YamlConfiguration extends Configuration {
+public interface YamlConfiguration extends ConfigurationReinit {
     /**
      * Creates a new empty YAML-Typed {@link Configuration}.
      *
@@ -20,7 +20,6 @@ public interface YamlConfiguration extends Configuration {
     static YamlConfiguration newYaml() {
         return YamlSerializer.getInstance().createNew();
     }
-
 
     /**
      * Loads a YAML-Typed {@link Configuration} from a reader.
@@ -88,25 +87,6 @@ public interface YamlConfiguration extends Configuration {
     default void setComments(@NotNull String path, @NotNull List<String> lines) throws IllegalArgumentException {
         setComments(path, lines.toArray(new String[0]));
     }
-
-    /**
-     * Clears all data from the sub and loads new data in.
-     *
-     * @param reader the data
-     */
-    Expect<Void, IOException> load(Reader reader);
-
-    /**
-     * Writes (serializes) this sub to a writer.
-     *
-     * @param writer the writer to write to
-     */
-    Expect<Void, IOException> save(Writer writer);
-
-    /**
-     * Clears all data from this sub.
-     */
-    void reset();
 
     @Override
     @NotNull Optional<? extends YamlConfiguration> getSub(@NotNull String path);
