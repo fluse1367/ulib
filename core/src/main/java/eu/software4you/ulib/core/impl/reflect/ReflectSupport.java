@@ -27,15 +27,17 @@ public final class ReflectSupport {
             var types = toParameterTypes(params);
             var method = ReflectUtil.findUnderlyingMethod(clazz, name, true, types)
                     .orElseThrow(() -> new NoSuchMethodException("%s(%s) in %s".formatted(name, Arrays.toString(types), clazz)));
-            method.setAccessible(true);
+            if (!method.canAccess(invoke))
+                method.setAccessible(true);
 
-            var result = method.invoke(invoke, toParameterObjects(frame.getParams()));
+            var result = method.invoke(invoke, toParameterObjects(params));
             return new Pair<>(method.getReturnType(), result);
         }
 
         var field = ReflectUtil.findUnderlyingField(clazz, name, true)
                 .orElseThrow(() -> new NoSuchFieldException("%s in %s".formatted(name, clazz)));
-        field.setAccessible(true);
+        if (!field.canAccess(invoke))
+            field.setAccessible(true);
 
         // put value
         if (!params.isEmpty()) {

@@ -100,7 +100,7 @@ public final class ClassTransformer implements ClassFileTransformer {
             int at = hookPoint.ordinal();
             String src = String.format("""
                             {
-                              Object[] arr = (Object[]) System.getProperties().get("ulib.hooking");
+                              Object[] arr = (Object[]) System.getProperties().get("%s");
                               Function funcHookRunner = (Function) arr[0];
                               Function funcIsReturning = (Function) arr[1];
                               Function funcGetReturnValue = (Function) arr[2];
@@ -113,6 +113,7 @@ public final class ClassTransformer implements ClassFileTransformer {
                               
                               if (isReturning.booleanValue()) return%s;
                             }""",
+                    InjectionManager.HOOKING_KEY,
                     /*Hook call*/ returnType, returnValue, hasReturnValue.toString().toUpperCase(), self, /*hookId*/ methodDescriptor, at,
                     /*return*/ hasReturnType ? " ($r) funcGetReturnValue.apply((Object) callback)" : ""
             );

@@ -53,7 +53,7 @@ public final class InjectionSupport {
         if (resolved.getFirst().equals("<init>")) {
             // descriptor is empty, therefore get default constructor
             var targetConstructor = target.getDeclaredConstructors()[0];
-            return getDescriptor(targetConstructor);
+            return "<init>" + getDescriptor(targetConstructor);
         }
 
         var targetMethod = Arrays.stream(target.getDeclaredMethods())
@@ -61,7 +61,7 @@ public final class InjectionSupport {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Hook target `%s` not found in %s"
                         .formatted(hook.value(), target.getName())));
-        return getDescriptor(targetMethod);
+        return targetMethod.getName() + getDescriptor(targetMethod);
     }
 
     public static String fullDescriptor(Method method) {

@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InjectionManager {
+    public static final String HOOKING_KEY = "ulib.hooking";
 
     @Getter
     private static final InjectionManager instance = new InjectionManager();
@@ -23,7 +24,7 @@ public class InjectionManager {
     private final Map<Thread, Throwable> transformThrowings = new HashMap<>();
 
     static {
-        System.getProperties().put("ulib.hooking", new Object[]{
+        System.getProperties().put(HOOKING_KEY, new Object[]{
                 /* [0] Hook runner */
                 (Function<Object[], ?>) instance::runHooks,
 

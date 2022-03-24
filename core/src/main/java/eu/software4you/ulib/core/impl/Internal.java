@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
+import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -104,9 +105,27 @@ public final class Internal {
         return Objects.requireNonNull(Internal.class.getResourceAsStream("/META-INF/coreconfig.yml"), "Configuration not found");
     }
 
+    @SneakyThrows
+    private static void widenModuleAccess() {
+        var method = Module.class.getDeclaredMethod("implAddReadsAllUnnamed");
+        method.setAccessible(true);
+
+        var modules = AccessibleObjectTransformer.class.getModule().getLayer().modules().stream()
+                .filter(m -> m.getName().startsWith("ulib."))
+                .toArray(Module[]::new);
+
+        for (Module module : modules) {
+            method.invoke(module);
+        }
+    }
+
     public static void agentInit(Instrumentation instrumentation) {
         if (Internal.instrumentation != null)
             throw new IllegalStateException();
-        Internal.instrumentation = instrumentation;
+        Internal.instrumentation = Objects.requireNonNull(instrumentation);
+
+        AccessibleObjectTransformer.acquirePrivileges();
+        widenModuleAccess();
+        PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY);
     }
 }
