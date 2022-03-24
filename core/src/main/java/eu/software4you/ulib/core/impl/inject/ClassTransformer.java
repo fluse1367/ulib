@@ -3,8 +3,7 @@ package eu.software4you.ulib.core.impl.inject;
 import eu.software4you.ulib.core.inject.HookPoint;
 import eu.software4you.ulib.core.util.Expect;
 import javassist.*;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -15,6 +14,7 @@ public final class ClassTransformer implements ClassFileTransformer {
 
     private final InjectionManager man;
 
+    @SneakyThrows
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         if (!man.shouldProcess(classBeingRedefined))
@@ -56,11 +56,23 @@ public final class ClassTransformer implements ClassFileTransformer {
                 object = res.orElseThrow();
             }
 
-            Expect.compute(() -> injectHookCalls(object));
+            try {
+                Expect.compute(() -> injectHookCalls(object)).rethrow();
+            } catch (Throwable thr) {
+                man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
+                return null;
+            }
+
             count++;
         }
 
-        return count == 0 ? null : Expect.compute(() -> clazz.toBytecode()).toOptional().orElse(null);
+
+        try {
+            return count == 0 ? null : Expect.compute(() -> clazz.toBytecode()).orElseRethrow();
+        } catch (Throwable thr) {
+            man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
+            return null;
+        }
     }
 
     private void injectHookCalls(CtBehavior behavior) throws NotFoundException, CannotCompileException {

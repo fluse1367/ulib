@@ -5,6 +5,7 @@ import eu.software4you.ulib.loader.install.provider.*;
 import lombok.*;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -134,10 +135,16 @@ public final class Installer {
             return;
 
         var clIU = Class.forName("eu.software4you.ulib.core.inject.InjectUtil", true, moduleCore.getClassLoader());
-        clIU.getMethod("injectLoaderDelegation", ClassLoader.class, Class.class, Predicate.class, BiPredicate.class)
+        Object result = clIU.getMethod("injectLoaderDelegation", ClassLoader.class, Class.class, Predicate.class, BiPredicate.class)
                 .invoke(null, target, cl,
                         (Predicate<ClassLoader>) published::contains,
                         (BiPredicate<Class<?>, String>) this::testLoadingRequest);
+        try {
+            result.getClass().getMethod("rethrow").invoke(result);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
+
         injected.add(cl);
     }
 

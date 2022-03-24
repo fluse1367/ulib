@@ -18,6 +18,10 @@ public class InjectionManager {
     @Getter
     private static final InjectionManager instance = new InjectionManager();
 
+    private static final Exception DECLARE_SUCCESS = new Exception(); // a throwable that indicates nothing was thrown
+    @Getter
+    private final Map<Thread, Throwable> transformThrowings = new HashMap<>();
+
     static {
         System.getProperties().put("ulib.hooking", new Object[]{
                 /* [0] Hook runner */
@@ -130,7 +134,12 @@ public class InjectionManager {
         });
 
         // redefine classes
+        transformThrowings.put(Thread.currentThread(), DECLARE_SUCCESS);
         Internal.getInstrumentation().retransformClasses(needsRedefinition.toArray(Class[]::new));
+
+        var threw = transformThrowings.remove(Thread.currentThread());
+        if (threw != DECLARE_SUCCESS && threw != null)
+            throw new RuntimeException("Injection failed", threw);
     }
 
 }
