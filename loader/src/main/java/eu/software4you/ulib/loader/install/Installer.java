@@ -136,7 +136,7 @@ public final class Installer {
 
         var clIU = Class.forName("eu.software4you.ulib.core.inject.InjectUtil", true, moduleCore.getClassLoader());
         Object result = clIU.getMethod("injectLoaderDelegation", ClassLoader.class, Class.class, Predicate.class, BiPredicate.class)
-                .invoke(null, target, cl,
+                .invoke(null, classProvider, cl,
                         (Predicate<ClassLoader>) published::contains,
                         (BiPredicate<Class<?>, String>) this::testLoadingRequest);
         try {
