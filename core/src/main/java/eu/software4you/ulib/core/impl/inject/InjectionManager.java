@@ -43,21 +43,21 @@ public class InjectionManager {
 
     private Callback<?> runHooks(Object[] params) {
         return runHooks(
+                ReflectUtil.getCallerClass(),
                 (Class<?>) params[0],
-                (Class<?>) params[1],
-                params[2],
-                (boolean) params[3],
-                params[4],
-                (Class<?>) params[5],
-                (String) params[6],
-                (int) params[7],
-                (Object[]) params[8]
+                params[1],
+                (boolean) params[2],
+                params[3],
+                (Class<?>) params[4],
+                (String) params[5],
+                (int) params[6],
+                (Object[]) params[7]
         );
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @SneakyThrows
-    private Callback<?> runHooks(Class<?> clazz, Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, Class<?> caller, String methodDescriptor, int at, Object[] params) {
+    private CallbackImpl<?> runHooks(Class<?> clazz, Class<?> returnType, Object returnValue, boolean hasReturnValue, Object self, Class<?> caller, String methodDescriptor, int at, Object[] params) {
         CallbackImpl<?> cb = new CallbackImpl(returnType, returnValue, hasReturnValue, self, caller);
         if (!injected.containsKey(clazz))
             return cb;

@@ -25,6 +25,7 @@ public final class ClassTransformer implements ClassFileTransformer {
         ClassPool pool = new ClassPool(true);
         pool.appendClassPath(new LoaderClassPath(loader));
         pool.appendClassPath(new ByteArrayClassPath(name, classfileBuffer));
+        pool.importPackage("java.util.function");
 
         CtClass clazz;
         {
@@ -94,23 +95,25 @@ public final class ClassTransformer implements ClassFileTransformer {
             boolean head = hookPoint == HookPoint.HEAD;
 
             String returnValue = hasReturnType && !head ? ("(Object) " + (primitive ? "($w) " : "") + "$_") : "null";
-            boolean hasReturnValue = !head && hasReturnType;
+            Boolean hasReturnValue = !head && hasReturnType;
 
             int at = hookPoint.ordinal();
             String src = String.format("""
                             {
-                              Object[] arr = (Object[]) System.getProperties().remove("ulib.hooking");
+                              Object[] arr = (Object[]) System.getProperties().get("ulib.hooking");
                               Function funcHookRunner = (Function) arr[0];
                               Function funcIsReturning = (Function) arr[1];
                               Function funcGetReturnValue = (Function) arr[2];
                               Supplier funcDetermineCaller = (Supplier) arr[3];
                               
                               Object caller = funcDetermineCaller.get();
-                              Object callback = funcHookRunner.apply((Object) new Object[]{$class, %s.class, %s, %s, %s, caller, "%s", %d, $args});
+                              Object[] params = {%s.class, %s, Boolean.%s, %s, caller, "%s", Integer.valueOf(%d), $args};
+                              Object callback = funcHookRunner.apply((Object) params);
+                              Boolean isReturning = (Boolean) funcIsReturning.apply(callback);
                               
-                              if ((boolean) funcIsReturning.apply((Object) callback)) return%s;
+                              if (isReturning.booleanValue()) return%s;
                             }""",
-                    /*Hook call*/ returnType, returnValue, hasReturnValue, self, /*hookId*/ methodDescriptor, at,
+                    /*Hook call*/ returnType, returnValue, hasReturnValue.toString().toUpperCase(), self, /*hookId*/ methodDescriptor, at,
                     /*return*/ hasReturnType ? " ($r) funcGetReturnValue.apply((Object) callback)" : ""
             );
 
