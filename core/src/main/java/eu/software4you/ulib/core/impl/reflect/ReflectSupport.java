@@ -24,8 +24,9 @@ public final class ReflectSupport {
         var params = frame.getParams();
 
         if (!frame.isField()) {
-            var method = ReflectUtil.findUnderlyingMethod(clazz, name, true, toParameterTypes(params))
-                    .orElseThrow(() -> new NoSuchMethodException(name));
+            var types = toParameterTypes(params);
+            var method = ReflectUtil.findUnderlyingMethod(clazz, name, true, types)
+                    .orElseThrow(() -> new NoSuchMethodException("%s(%s) in %s".formatted(name, Arrays.toString(types), clazz)));
             method.setAccessible(true);
 
             var result = method.invoke(invoke, toParameterObjects(frame.getParams()));
@@ -33,7 +34,7 @@ public final class ReflectSupport {
         }
 
         var field = ReflectUtil.findUnderlyingField(clazz, name, true)
-                .orElseThrow(() -> new NoSuchFieldException(name));
+                .orElseThrow(() -> new NoSuchFieldException("%s in %s".formatted(name, clazz)));
         field.setAccessible(true);
 
         // put value

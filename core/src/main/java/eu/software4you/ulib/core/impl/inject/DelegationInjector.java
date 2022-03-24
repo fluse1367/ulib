@@ -22,11 +22,11 @@ public final class DelegationInjector {
                                                 BiPredicate<Class<?>, String> filterRequest) {
         var hook = new DelegationHook(
                 (name, resolve) -> ReflectUtil.<Class<?>>call(delegate.getClass(), delegate, "loadClass()",
-                        Param.fromMultiple(name, resolve)).getValue(),
+                        Param.fromMultiple(name, resolve)).orElseThrow(),
                 name -> ReflectUtil.<Class<?>>call(delegate.getClass(), delegate, "findClass()",
-                        Param.fromMultiple(name)).getValue(),
+                        Param.fromMultiple(name)).orElseThrow(),
                 (module, name) -> ReflectUtil.<Class<?>>call(delegate.getClass(), delegate, "findClass()",
-                        Param.fromMultiple(module, name)).getValue(),
+                        Param.fromMultiple(module, name)).orElseThrow(),
                 filterLoader,
                 filterRequest
         );

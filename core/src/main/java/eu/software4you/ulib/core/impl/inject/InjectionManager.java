@@ -77,7 +77,7 @@ public class InjectionManager {
             } catch (InvocationTargetException e) {
                 if (e.getCause() instanceof HookException he)
                     throw he.getCause();
-                // TODO: log unprocessed throwable object?
+                throw e.getCause();
             }
             if (cb.isCanceled())
                 break; // cancel all future hook processing
