@@ -322,7 +322,7 @@ public final class Expect<T, X extends Throwable> {
             return value;
 
         rethrow();
-        throw new IllegalStateException(); // make compiler happy
+        throw new IllegalStateException("Empty Expect object");
     }
 
     /**

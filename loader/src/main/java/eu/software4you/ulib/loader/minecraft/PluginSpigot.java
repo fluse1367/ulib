@@ -1,6 +1,5 @@
 package eu.software4you.ulib.loader.minecraft;
 
-import eu.software4you.ulib.core.ULib;
 import eu.software4you.ulib.loader.install.Installer;
 import eu.software4you.ulib.loader.install.provider.EnvironmentProvider;
 import lombok.SneakyThrows;
@@ -33,7 +32,7 @@ public class PluginSpigot extends JavaPlugin {
         Optional.ofNullable(getCommand("ulib"))
                 .orElseThrow()
                 .setExecutor((sender, command, label, args) -> {
-                    sender.sendMessage("%suLib version %s".formatted(ChatColor.GREEN, ULib.get().getVersion()));
+                    sender.sendMessage("%suLib version %s".formatted(ChatColor.GREEN, getDescription().getVersion()));
                     return true;
                 });
     }

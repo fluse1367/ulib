@@ -1,14 +1,6 @@
 rootProject.name = 'ulib-root'
-files('super-module', 'loader',
-        'core-api', 'core-impl',
-        'minecraft-api', 'minecraft-impl',
-        'bungeecord-api', 'bungeecord-impl',
-        'velocity-api', 'velocity-impl',
-        'spigot-api', 'spigot-impl',
-).each {
+files('loader', 'core').each {
     if (it.directory && new File(it, 'build.gradle').exists()) {
         include ":${it.name}"
     }
 }
-
-include 'core'

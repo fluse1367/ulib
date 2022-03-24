@@ -1,4 +1,0 @@
-/**
- * Commonly used collection-like classes.
- */
-package eu.software4you.ulib.core.api.common.collection;

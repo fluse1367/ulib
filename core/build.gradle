@@ -18,4 +18,5 @@ dependencies {
 extraJavaModuleInfo {
     automaticModule('javassist-3.28.0-GA.jar', 'javassist')
     automaticModule('maven-resolver-provider-3.8.4.jar', 'maven.resolver.provider')
+    automaticModule('json-simple-4.0.1.jar', 'json.simple')
 }

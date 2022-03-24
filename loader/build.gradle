@@ -31,25 +31,24 @@ ext {
     modulesGraph = new LinkedHashMap<String, List<String>>()
 
     // include module into module graph
-    inclModule = { String baseName ->
+    inclModule = { String projName ->
+        evaluationDependsOn ":$projName" // let gradle finish the project configuration first
+
         def map = new LinkedHashMap<String, List<String>>()
 
         // include module jar files
         def jars = []
-        ["$baseName-api", "$baseName-impl"].each { projInclude(jars, it) }
+        projInclude(jars, projName)
         map.put("jars", jars)
 
         // include module library coordinates
         def libraries = []
-        ["$baseName-api", "$baseName-impl"].each {
-            evaluationDependsOn ":$it" // let gradle finish the project configuration first
-            project(":$it").configurations.lib.resolvedConfiguration.resolvedArtifacts.each { f ->
-                libraries += f.moduleVersion.id.toString()
-            }
+        project(":$projName").configurations.lib.resolvedConfiguration.resolvedArtifacts.each { f ->
+            libraries += f.moduleVersion.id.toString()
         }
         map.put("libraries", libraries)
 
-        modulesGraph.put(baseName, map)
+        modulesGraph.put(projName, map)
     }
 }
 
@@ -57,17 +56,8 @@ ext {
 jar {
     archiveBaseName.set 'ulib-loader'
 
-    // include super module
-    def modulesSuper = [];
-    projInclude(modulesSuper, "super-module")
-    modulesGraph.put('super', ['jars': modulesSuper])
-
     // include modules
     inclModule('core')
-    inclModule('minecraft')
-    inclModule('velocity')
-    inclModule('bungeecord')
-    inclModule('spigot')
 
     // serialize modules graph
     byte[] modulesGraphSerialized;

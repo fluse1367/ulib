@@ -1,12 +1,10 @@
 package eu.software4you.ulib.core.impl;
 
-import eu.software4you.ulib.core.ULib;
-
 import java.util.function.Supplier;
 
 public final class UnsafeOperations {
     public static boolean allowed() {
-        return Properties.getInstance().UNSAFE_OPERATIONS;
+        return Internal.isUnsafeOperations();
     }
 
     public static boolean comply(boolean bool, String module, String exception, String warning) {
@@ -16,7 +14,7 @@ public final class UnsafeOperations {
     public static boolean comply(boolean bool, String module, Supplier<String> exception, Supplier<String> warning) {
         if (bool) {
             if (allowed())
-                ULib.logger().warning(() -> String.format("(%s) %s (unsafe operations are allowed)", module, warning.get()));
+                System.err.printf("(%s) %s (unsafe operations are allowed)%n", module, warning.get());
             else
                 throw new UnsafeOperationException(String.format("(%s) Cannot comply: %s (allow unsafe operations to bypass this)", module, exception.get()));
         }

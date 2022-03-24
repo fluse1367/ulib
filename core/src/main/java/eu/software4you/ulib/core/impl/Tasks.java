@@ -1,17 +1,15 @@
 package eu.software4you.ulib.core.impl;
 
-import eu.software4you.ulib.core.ULib;
-import eu.software4you.ulib.core.api.util.ArrayUtil;
+import eu.software4you.ulib.core.util.ArrayUtil;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public final class Tasks {
-    private static final boolean SYNC = Properties.getInstance().FORCE_SYNC;
+    private static final boolean SYNC = Internal.isForceSync();
 
     public static final ExecutorService RUNNER = new ThreadPoolExecutor(1, SYNC ? 1 : Integer.MAX_VALUE,
             10L, TimeUnit.SECONDS, SYNC ? new LinkedBlockingQueue<>() : new SynchronousQueue<>(), r -> {
@@ -56,7 +54,8 @@ public final class Tasks {
         try {
             r.run();
         } catch (Throwable thr) {
-            ULib.logger().log(Level.SEVERE, thr, () -> "An error occurred while executing a task.");
+            System.err.println("An error occurred while executing a task.");
+            thr.printStackTrace();
         }
     }
 
@@ -65,7 +64,8 @@ public final class Tasks {
         try {
             return c.call();
         } catch (Throwable thr) {
-            ULib.logger().log(Level.SEVERE, thr, () -> "An error occurred while executing a task.");
+            System.err.println("An error occurred while executing a task.");
+            thr.printStackTrace();
             throw thr;
         }
     }

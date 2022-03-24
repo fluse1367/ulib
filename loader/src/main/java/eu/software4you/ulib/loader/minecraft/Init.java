@@ -1,6 +1,6 @@
 package eu.software4you.ulib.loader.minecraft;
 
-import eu.software4you.ulib.core.api.reflect.ReflectUtil;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.loader.install.Installer;
 
 final class Init {

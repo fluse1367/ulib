@@ -1,29 +1,17 @@
 package eu.software4you.ulib.loader.launch;
 
-import eu.software4you.ulib.core.api.dependencies.DependencyLoader;
 import joptsimple.*;
 import lombok.SneakyThrows;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.jar.*;
 
 final class Launcher {
-    static Logger logger;
-    private static final StringWriter logWriter = new StringWriter() {
-        @Override
-        public void flush() {
-            logger.info(System.lineSeparator() + this);
-            getBuffer().setLength(0);
-        }
-    };
 
     @SneakyThrows
     static void launch(String... args) {
@@ -48,21 +36,20 @@ final class Launcher {
         try {
             options = parser.parse(args);
         } catch (OptionException e) {
-            logger.warning(e::getMessage);
-            parser.printHelpOn(logWriter);
+            System.err.println(e.getMessage());
+            parser.printHelpOn(System.out);
             return;
         }
 
         if (!options.hasOptions()) {
-            logger.info(() -> "This is a library, so it's not designed to run stand-alone.");
-            logger.info(() -> "https://software4you.eu");
-            parser.printHelpOn(logWriter);
+            System.out.println("This is a library, so it's not designed to run stand-alone.");
+            parser.printHelpOn(System.out);
             System.exit(0);
             return;
         }
 
         if (options.has("help")) {
-            parser.printHelpOn(logWriter);
+            parser.printHelpOn(System.out);
             return;
         }
         if (!(options.has(launch) || options.has(main)))
@@ -73,14 +60,14 @@ final class Launcher {
             String launchFilePath = options.valueOf(launch);
             File launchFile = new File(launchFilePath);
             if (!launchFile.exists()) {
-                logger.warning(() -> String.format("Cannot launch specified file: File %s does not exist.", launchFilePath));
+                System.err.printf("Cannot launch specified file: File %s does not exist.%n", launchFilePath);
                 return;
             }
 
             JarFile jar = new JarFile(launchFile);
             Manifest manifest = jar.getManifest();
             if (manifest == null) {
-                logger.warning(() -> String.format("%s does not have a manifest.", launchFile.getName()));
+                System.err.printf("%s does not have a manifest.%n", launchFile.getName());
                 return;
             }
 
@@ -89,42 +76,38 @@ final class Launcher {
             String mainClassName = mainAttr.getValue("Main-Class");
 
             if (mainClassName == null) {
-                logger.warning(() -> String.format("%s does not have a main class.", launchFile.getName()));
+                System.err.printf("%s does not have a main class.%n", launchFile.getName());
                 return;
             }
 
-            logger.warning(() -> String.format("Launching %s ...", launchFile.getName()));
+            System.err.printf("Launching %s ...%n", launchFile.getName());
 
             try {
-                DependencyLoader.load(launchFile);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, e, () -> String.format("Could not load %s", launchFile.getName()));
-                return;
-            }
-
-            try {
-                mainClass = Class.forName(mainClassName);
+                var cl = new URLClassLoader(new URL[]{launchFile.toURI().toURL()}, Launcher.class.getClassLoader());
+                mainClass = Class.forName(mainClassName, true, cl);
             } catch (ClassNotFoundException e) {
-                logger.warning(() -> String.format("Main class %s not found in %s", mainClassName, launchFile.getName()));
+                System.err.printf("Main class %s not found in %s%n", mainClassName, launchFile.getName());
                 return;
             } catch (Exception e) {
-                logger.log(Level.SEVERE, e, () -> String.format("Could not load main class %s of %s",
-                        mainClassName, launchFile.getName()));
+                System.err.printf("Could not load main class %s of %s%n",
+                        mainClassName, launchFile.getName());
+                e.printStackTrace();
                 return;
             }
 
         } else { // implicit option.has(main) == true
             String mainClassName = options.valueOf(main);
 
-            logger.info(() -> String.format("Launching main class %s ...", mainClassName));
+            System.out.printf("Launching main class %s ...%n", mainClassName);
 
             try {
                 mainClass = Class.forName(mainClassName);
             } catch (ClassNotFoundException e) {
-                logger.warning(() -> String.format("Main class %s not found in classpath", mainClassName));
+                System.err.printf("Main class %s not found in classpath%n", mainClassName);
                 return;
             } catch (Exception e) {
-                logger.log(Level.SEVERE, e, () -> String.format("Could not load main class %s", mainClassName));
+                System.err.printf("Could not load main class %s%n", mainClassName);
+                e.printStackTrace();
                 return;
             }
         }
@@ -134,7 +117,7 @@ final class Launcher {
         try {
             mainMethod = mainClass.getMethod("main", String[].class);
         } catch (NoSuchMethodException e) {
-            logger.warning(() -> String.format("Could not find main method in main class %s", mainClass.getName()));
+            System.err.printf("Could not find main method in main class %s%n", mainClass.getName());
             return;
         }
 
@@ -142,13 +125,13 @@ final class Launcher {
             List<String> mainArgsList = options.valuesOf(mainArgs);
             String[] invokeArgs = mainArgsList.toArray(new String[0]);
 
-            logger.info(() -> String.format("Invoking %s.%s with %s", mainClass.getName(), mainMethod.getName(), mainArgsList));
+            System.out.printf("Invoking %s.%s with %s%n", mainClass.getName(), mainMethod.getName(), mainArgsList);
 
             mainMethod.invoke(null, (Object) invokeArgs);
         } catch (InvocationTargetException e) {
             e.getCause().printStackTrace();
         } catch (IllegalAccessException e) {
-            logger.warning(() -> String.format("Main method in main class %s is not accessible", mainClass.getName()));
+            System.err.printf("Main method in main class %s is not accessible%n", mainClass.getName());
         }
     }
 }

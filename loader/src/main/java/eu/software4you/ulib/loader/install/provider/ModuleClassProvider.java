@@ -4,15 +4,12 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.io.File;
-import java.lang.module.Configuration;
-import java.lang.module.ModuleDescriptor;
-import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
+import java.lang.module.*;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class ModuleClassProvider {
+public final class ModuleClassProvider extends ClassLoader {
 
     private final ModuleClassProvider providerParent;
     @Getter
@@ -87,6 +84,7 @@ public final class ModuleClassProvider {
         return om.orElseThrow().getClassLoader();
     }
 
+    @Override
     @SneakyThrows
     public Class<?> loadClass(String name, boolean resolve) {
         try {
@@ -98,6 +96,7 @@ public final class ModuleClassProvider {
         return null;
     }
 
+    @Override
     @SneakyThrows
     public Class<?> findClass(String name) {
         try {
@@ -109,6 +108,7 @@ public final class ModuleClassProvider {
         return null;
     }
 
+    @Override
     @SneakyThrows
     public Class<?> findClass(String module, String name) {
         try {

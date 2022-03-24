@@ -9,10 +9,17 @@ import lombok.SneakyThrows;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public final class DelegationInjector {
 
     public static DelegationInjector delegateTo(ClassLoader delegate, ClassLoader target, BiPredicate<Class<?>, String> filter) {
+        return delegateTo(delegate, target.getClass(), loader -> loader == target, filter);
+    }
+
+    public static DelegationInjector delegateTo(ClassLoader delegate, Class<? extends ClassLoader> target,
+                                                Predicate<ClassLoader> filterLoader,
+                                                BiPredicate<Class<?>, String> filterRequest) {
         var hook = new DelegationHook(
                 (name, resolve) -> ReflectUtil.<Class<?>>call(delegate.getClass(), delegate, "loadClass()",
                         Param.fromMultiple(name, resolve)).getValue(),
@@ -20,11 +27,11 @@ public final class DelegationInjector {
                         Param.fromMultiple(name)).getValue(),
                 (module, name) -> ReflectUtil.<Class<?>>call(delegate.getClass(), delegate, "findClass()",
                         Param.fromMultiple(module, name)).getValue(),
-                loader -> loader == target,
-                filter
+                filterLoader,
+                filterRequest
         );
 
-        return new DelegationInjector(target.getClass(), hook, Collections.emptyMap());
+        return new DelegationInjector(target, hook, Collections.emptyMap());
     }
 
     private final Class<? extends ClassLoader> clazz;

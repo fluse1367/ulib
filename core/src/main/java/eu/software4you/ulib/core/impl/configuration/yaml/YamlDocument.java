@@ -32,7 +32,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     protected YamlDocument(YamlSerializer serializer, Reader reader) throws IOException {
         super(); // init as root
         this.serializer = serializer;
-        reinit(reader).orElseRethrow();
+        reinit(reader).rethrow();
     }
 
     // constructor for sub

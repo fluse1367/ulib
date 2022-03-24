@@ -3,10 +3,7 @@ module ulib.loader {
     requires static lombok;
 
     // loaded later
-    requires static ulib.core.api;
     requires static ulib.core;
-    requires static ulib.velocity;
-    requires static ulib.spigot;
 
     // for launch function
     requires static joptsimple;
@@ -19,6 +16,7 @@ module ulib.loader {
     requires static org.slf4j;
     requires static com.google.guice;
 
+    // java
     requires java.instrument;
     requires java.logging;
     requires jdk.attach;
