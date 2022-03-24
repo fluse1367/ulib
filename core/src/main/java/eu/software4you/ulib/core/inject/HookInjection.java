@@ -134,7 +134,7 @@ public class HookInjection {
         var descriptor = getDescriptor(target);
         var call = buildCall(hook, hookInvoke);
 
-        return addHook(targetClazz, descriptor, at, call);
+        return addHook(targetClazz, target.getName() + descriptor, at, call);
     }
 
     /**
