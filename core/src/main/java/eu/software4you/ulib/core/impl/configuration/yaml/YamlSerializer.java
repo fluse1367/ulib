@@ -121,6 +121,7 @@ public class YamlSerializer {
                 value = read(node);
             }
             parent.put(key, value);
+            parent.childNodes.put(key, keyNode);
         });
 
         return parent;
