@@ -11,6 +11,7 @@ module ulib.core {
     requires javassist;
     requires org.yaml.snakeyaml;
     requires json.simple;
+    requires maven.resolver.provider;
 
 
     // api exports
