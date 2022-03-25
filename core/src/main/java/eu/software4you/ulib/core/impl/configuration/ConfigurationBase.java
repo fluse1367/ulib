@@ -59,8 +59,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     @Override
     public @NotNull <T> Optional<T> get(@NotNull Class<T> clazz, @NotNull String path) {
-        return resolve(path)
-                .map(Pair::getSecond)
+        return resolveValue(path)
                 .filter(clazz::isInstance)
                 .map(clazz::cast);
     }
