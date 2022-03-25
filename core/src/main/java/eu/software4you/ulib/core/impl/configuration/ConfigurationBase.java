@@ -41,6 +41,10 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     // - direct data access -
 
+    private <T> T _get(String path) {
+        return this.<T>get(path).orElse(null);
+    }
+
     @Override
     @NotNull
     public <T> Optional<T> get(@NotNull String path) {
@@ -71,27 +75,27 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     @Override
     public @NotNull Optional<Boolean> bool(@NotNull String path) {
-        return Conversions.tryBoolean(get(path)).toOptional();
+        return Conversions.tryBoolean(_get(path)).toOptional();
     }
 
     @Override
     public @NotNull Optional<Float> dec32(@NotNull String path) {
-        return Conversions.tryFloat(get(path)).toOptional();
+        return Conversions.tryFloat(_get(path)).toOptional();
     }
 
     @Override
     public @NotNull Optional<Double> dec64(@NotNull String path) {
-        return Conversions.tryDouble(get(path)).toOptional();
+        return Conversions.tryDouble(_get(path)).toOptional();
     }
 
     @Override
     public @NotNull Optional<Integer> int32(@NotNull String path) {
-        return Conversions.tryInt(get(path)).toOptional();
+        return Conversions.tryInt(_get(path)).toOptional();
     }
 
     @Override
     public @NotNull Optional<Long> int64(@NotNull String path) {
-        return Conversions.tryLong(get(path)).toOptional();
+        return Conversions.tryLong(_get(path)).toOptional();
     }
 
     @Override
