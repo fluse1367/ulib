@@ -82,10 +82,26 @@ public class HookInjection {
     @Contract("_, _, _, _ -> this")
     public <R> HookInjection addHook(@NotNull Class<?> target, @NotNull String methodDescriptor, @NotNull HookPoint at, @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
         check();
-        if (!instructions.containsKey(target))
-            instructions.put(target, new InjectionConfiguration(target));
+        instructions.computeIfAbsent(target, InjectionConfiguration::new)
+                .with(methodDescriptor, at, call);
+        return this;
+    }
 
-        instructions.get(target).with(methodDescriptor, at, call);
+    /**
+     * Adds the specified hook to the builder.
+     *
+     * @param target the target method that is to be injected
+     * @param at     where to apply the hook
+     * @param call   the callable object
+     * @param <R>    the return type of the target method
+     * @return this
+     */
+    @NotNull
+    @Contract("_, _, _ -> this")
+    public <R> HookInjection addHook(@NotNull Method target, @NotNull HookPoint at, @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+        check();
+        instructions.computeIfAbsent(target.getDeclaringClass(), InjectionConfiguration::new)
+                .with(getSignature(target), at, call);
         return this;
     }
 
@@ -131,10 +147,10 @@ public class HookInjection {
         checkInvoke(hook, hookInvoke);
 
         var targetClazz = target.getDeclaringClass();
-        var descriptor = getDescriptor(target);
+        var descriptor = getSignature(target);
         var call = buildCall(hook, hookInvoke);
 
-        return addHook(targetClazz, target.getName() + descriptor, at, call);
+        return addHook(targetClazz, descriptor, at, call);
     }
 
     /**

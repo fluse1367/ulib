@@ -1,22 +1,66 @@
 package eu.software4you.ulib.core.impl.inject;
 
 import eu.software4you.ulib.core.inject.*;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.Expect;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public final class DelegationHook {
+public final class ClassLoaderDelegationHook {
+
+    // for injection
+    private final Class<? extends ClassLoader> targetClazz;
+    private final HookInjection injection;
+    private final Map<String, Collection<Class<?>[]>> additionalHooks;
+
+    // for hook execution
     private final ClassLoaderDelegation delegation;
     private final Predicate<ClassLoader> filterClassLoader; // check class loader delegated
     private final BiPredicate<Class<?>, String> filterLoadingRequest; // requesting class, requested name
 
-    public DelegationHook(ClassLoaderDelegation delegation,
-                          Predicate<ClassLoader> filterClassLoader,
-                          BiPredicate<Class<?>, String> filterLoadingRequest) {
+    public ClassLoaderDelegationHook(Class<? extends ClassLoader> targetClazz,
+                                     Map<String, Collection<Class<?>[]>> additional,
+                                     ClassLoaderDelegation delegation,
+                                     Predicate<ClassLoader> filterClassLoader,
+                                     BiPredicate<Class<?>, String> filterLoadingRequest) {
+        this.targetClazz = targetClazz;
+        this.additionalHooks = additional;
+        this.injection = new HookInjection(targetClazz);
+
         this.delegation = delegation;
         this.filterClassLoader = filterClassLoader;
         this.filterLoadingRequest = filterLoadingRequest;
+    }
+
+    public Expect<Void, Exception> inject() {
+        ReflectUtil.findUnderlyingMethod(targetClazz, "findClass", true, String.class)
+                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                        (p, c) -> hook_findClass((String) p[0], c)
+                ));
+
+        ReflectUtil.findUnderlyingMethod(targetClazz, "findClass", true, String.class, String.class)
+                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                        (p, c) -> hook_findClass((String) p[0], (String) p[1], c)
+                ));
+
+        ReflectUtil.findUnderlyingMethod(targetClazz, "loadClass", true, String.class, boolean.class)
+                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                        (p, c) -> hook_loadClass((String) p[0], (boolean) p[1], c)
+                ));
+
+        additionalHooks.forEach((name, coll) -> coll.forEach(params -> ReflectUtil
+                .findUnderlyingMethod(targetClazz, name, true, params)
+                .ifPresent(into -> injection.addHook(into, HookPoint.HEAD,
+                        this::hookAdditional_findClass
+                ))));
+
+        // TODO: delegate resource finding?
+
+        return injection.inject();
     }
 
     private Class<?> identifyClassLoadingRequestSource() {
@@ -47,7 +91,7 @@ public final class DelegationHook {
     /* actual hooks */
 
     // hooks into the findClass method of the target loader
-    public void hook_findClass(String name, Callback<Class<?>> cb) {
+    private void hook_findClass(String name, Callback<Class<?>> cb) {
         if (!check(cb.self(), name))
             return;
 
@@ -57,8 +101,7 @@ public final class DelegationHook {
         }
     }
 
-    @FluentHookParams
-    public void hookAdditional_findClass(Object[] params, Callback<Class<?>> cb) {
+    private void hookAdditional_findClass(Object[] params, Callback<Class<?>> cb) {
         if (params.length == 0)
             return;
 
@@ -69,7 +112,7 @@ public final class DelegationHook {
         hook_findClass(name, cb);
     }
 
-    public void hook_findClass(String module, String name, Callback<Class<?>> cb) {
+    private void hook_findClass(String module, String name, Callback<Class<?>> cb) {
         if (!check(cb.self(), name))
             return;
 
@@ -80,7 +123,7 @@ public final class DelegationHook {
     }
 
     // hooks into the loadClass method of the target loader
-    public void hook_loadClass(String name, boolean resolve, Callback<Class<?>> cb) {
+    private void hook_loadClass(String name, boolean resolve, Callback<Class<?>> cb) {
         if (!check(cb.self(), name))
             return;
 

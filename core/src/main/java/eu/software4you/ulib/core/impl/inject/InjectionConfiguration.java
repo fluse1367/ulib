@@ -34,7 +34,7 @@ public class InjectionConfiguration {
 
         private void with(HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
             if (Arrays.stream(targetClass.getDeclaredMethods())
-                    .map(m -> m.getName() + InjectionSupport.getDescriptor(m))
+                    .map(InjectionSupport::getSignature)
                     .noneMatch(targetMethod::equals))
                 throw new IllegalArgumentException("Hook target `%s` not found in %s".formatted(targetMethod, targetClass.getName()));
 

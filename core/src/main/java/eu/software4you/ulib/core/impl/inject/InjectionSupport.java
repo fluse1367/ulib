@@ -61,39 +61,11 @@ public final class InjectionSupport {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Hook target `%s` not found in %s"
                         .formatted(hook.value(), target.getName())));
-        return targetMethod.getName() + getDescriptor(targetMethod);
+        return getSignature(targetMethod);
     }
 
-    public static String fullDescriptor(Method method) {
-        return fullDescriptor(method.getDeclaringClass().getName(),
-                method.getName(), getDescriptor(method), method.getDeclaringClass().getClassLoader());
-    }
-
-    public static String fullDescriptor(String className, String methodName, String methodDescriptor, ClassLoader cl) {
-        return String.format("%s.%s%s", className.replace(".", "/"),
-                methodName, resolveDescriptor(className, methodName, methodDescriptor, cl));
-    }
-
-    public static String resolveDescriptor(String className, String methodName, String methodDescriptor, ClassLoader classLoader) {
-        if (methodDescriptor.isEmpty()) {
-            Class<?> cl = ReflectUtil.forName(className, false, classLoader)
-                    .orElseThrow(() -> new IllegalArgumentException("Class `%s` not found in %s".formatted(className, classLoader)));
-            if (methodName.equals("<init>")) {
-                return getDescriptor(cl.getDeclaredConstructors()[0]);
-            }
-
-            Method method = null;
-            for (Method dm : cl.getDeclaredMethods()) {
-                if (dm.getName().equals(methodName)) {
-                    method = dm;
-                    break;
-                }
-            }
-            if (method == null)
-                throw new IllegalArgumentException(String.format("Method %s not found in %s", methodName, className));
-            return getDescriptor(method);
-        }
-        return methodDescriptor;
+    public static String getSignature(Method method) {
+        return method.getName() + getDescriptor(method);
     }
 
     public static String getDescriptor(Method method) { // from https://stackoverflow.com/a/45122250/8400001

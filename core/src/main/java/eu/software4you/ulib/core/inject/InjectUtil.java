@@ -1,7 +1,6 @@
 package eu.software4you.ulib.core.inject;
 
-import eu.software4you.ulib.core.impl.inject.DelegationHook;
-import eu.software4you.ulib.core.impl.inject.DelegationInjector;
+import eu.software4you.ulib.core.impl.inject.ClassLoaderDelegationHook;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,10 +54,8 @@ public class InjectUtil {
                                                                  Predicate<ClassLoader> filterLoader,
                                                                  BiPredicate<Class<?>, String> filterRequest,
                                                                  Class<? extends ClassLoader> target) {
-        return new DelegationInjector(target,
-                new DelegationHook(delegation, filterLoader, filterRequest),
-                Collections.emptyMap()
-        ).inject();
+        return new ClassLoaderDelegationHook(target, Collections.emptyMap(), delegation,
+                filterLoader, filterRequest).inject();
     }
 
 }
