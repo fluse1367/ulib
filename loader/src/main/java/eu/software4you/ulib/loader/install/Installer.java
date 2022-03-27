@@ -27,6 +27,7 @@ public final class Installer {
     private ModuleClassProvider classProvider;
     private Object delegation;
     private Module moduleCore;
+    private Module[] apiModules;
 
     @SneakyThrows
     private void init() {
@@ -85,6 +86,10 @@ public final class Installer {
         this.classProvider = new ModuleClassProvider(null, files, getClass().getClassLoader(), parentLayers, comply);
         this.moduleCore = this.classProvider.getLayer().findModule("ulib.core")
                 .orElseThrow(IllegalStateException::new);
+
+        this.apiModules = this.classProvider.getLayer().modules().stream()
+                .filter(m -> m.getName().startsWith("ulib."))
+                .toArray(Module[]::new);
 
         // add reads record if necessary
         var me = getClass().getModule();
@@ -159,6 +164,29 @@ public final class Installer {
         injected.add(cl);
     }
 
+    @SneakyThrows
+    private void addReadsTo(Module module) {
+        var addRecord = Arrays.stream(apiModules)
+                .filter(api -> !module.canRead(api))
+                .toList();
+        if (addRecord.isEmpty())
+            return;
+
+        // ReflectUtil.call(Module.class, module, "implAddReads()", Param.fromMultiple(module));
+
+        var clParam = Class.forName("eu.software4you.ulib.core.reflect.Param", true, instance.classProvider);
+        var clRU = Class.forName("eu.software4you.ulib.core.reflect.ReflectUtil", true, instance.classProvider);
+
+        var params = clParam.getMethod("fromMultiple", Object[].class)
+                .invoke(null, new Object[]{new Object[]{module}});
+
+        var method = clRU.getMethod("call", Class.class, Object.class, String.class, List[].class);
+
+        for (Module m : addRecord) {
+            method.invoke(null, Module.class, m, "implAddReads()", new List[]{(List<?>) params});
+        }
+    }
+
     /**
      * Installs the uLib API to a class loader by injecting code into it.
      *
@@ -178,19 +206,20 @@ public final class Installer {
     /**
      * Install the uLib API to the class loader of the calling class.
      *
-     * @implNote If the caller is part of a named module, an {@link Module#addReads(Module) reads} record must be
-     * added by that module manually in order for that module to be able to interact with the uLib API.
-     * Its {@link Module module object} can be obtained with {@link #getModule()}.
+     * @implNote Unlike {@link #installTo(ClassLoader)}, this method will automatically add
+     * an {@link Module#addReads(Module) reads} record to the module of the calling class (if necessary).
      */
     @Synchronized
     public static void installMe() {
         if (!instance.init)
             instance.init();
 
-        var loader = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().getClassLoader();
+        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        var loader = caller.getClassLoader();
         if (instance.published.contains(loader))
             return;
         instance.installLoaders(loader);
+        instance.addReadsTo(caller.getModule());
     }
 
     /**
