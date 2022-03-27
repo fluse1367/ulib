@@ -64,7 +64,7 @@ public class Dependencies {
                     .toArray(URL[]::new);
 
             // inject
-            InjectUtil.injectLoaderDelegation(ClassLoaderDelegation.delegateToClassLoader(new URLClassLoader(urls)), injectionTarget)
+            InjectUtil.injectLoaderDelegation(new ClassLoaderDelegation(new URLClassLoader(urls)), injectionTarget)
                     .rethrow();
         });
     }

@@ -108,8 +108,8 @@ public final class Installer {
     @SneakyThrows
     private void initDelegation() {
         this.delegation = Class.forName("eu.software4you.ulib.core.inject.ClassLoaderDelegation", true, moduleCore.getClassLoader())
-                .getMethod("delegateToClassLoader", ClassLoader.class)
-                .invoke(null, classProvider);
+                .getConstructor(ClassLoader.class)
+                .newInstance(classProvider);
     }
 
     private boolean testLoadingRequest(Class<?> requester, String request) {
