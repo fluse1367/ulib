@@ -25,6 +25,7 @@ public final class Installer {
 
     private Collection<File> filesModules, filesAdditional;
     private ModuleClassProvider classProvider;
+    private Object delegation;
     private Module moduleCore;
 
     @SneakyThrows
@@ -36,6 +37,7 @@ public final class Installer {
         provideDependencies();
         initLoaders();
         initImpl();
+        initDelegation();
     }
 
     private void provideDependencies() {
@@ -103,6 +105,13 @@ public final class Installer {
         clInit.getMethod("init", Object.class).invoke(null, System.getProperties().remove("ulib.javaagent"));
     }
 
+    @SneakyThrows
+    private void initDelegation() {
+        this.delegation = Class.forName("eu.software4you.ulib.core.inject.ClassLoaderDelegation", true, moduleCore.getClassLoader())
+                .getMethod("delegateToClassLoader", ClassLoader.class)
+                .invoke(null, classProvider);
+    }
+
     private boolean testLoadingRequest(Class<?> requester, String request) {
         var requestingLayer = requester.getModule().getLayer();
 
@@ -135,10 +144,12 @@ public final class Installer {
             return;
 
         var clIU = Class.forName("eu.software4you.ulib.core.inject.InjectUtil", true, moduleCore.getClassLoader());
-        Object result = clIU.getMethod("injectLoaderDelegation", ClassLoader.class, Class.class, Predicate.class, BiPredicate.class)
-                .invoke(null, classProvider, cl,
+        Object result = clIU.getMethod("injectLoaderDelegation", delegation.getClass(), Predicate.class, BiPredicate.class, Class.class)
+                .invoke(null,
+                        delegation,
                         (Predicate<ClassLoader>) published::contains,
-                        (BiPredicate<Class<?>, String>) this::testLoadingRequest);
+                        (BiPredicate<Class<?>, String>) this::testLoadingRequest,
+                        cl);
         try {
             result.getClass().getMethod("rethrow").invoke(result);
         } catch (InvocationTargetException e) {

@@ -1,43 +1,22 @@
 package eu.software4you.ulib.core.impl.inject;
 
-import eu.software4you.ulib.core.inject.Callback;
-import eu.software4you.ulib.core.inject.FluentHookParams;
-import lombok.SneakyThrows;
+import eu.software4you.ulib.core.inject.*;
 
-import java.util.function.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class DelegationHook {
-    private final BiFunction<String, Boolean, Class<?>> delegateLoadClass;
-    private final Function<String, Class<?>> delegateFindClass;
-    private final BiFunction<String, String, Class<?>> delegateFindModuleClass;
+    private final ClassLoaderDelegation delegation;
     private final Predicate<ClassLoader> filterClassLoader; // check class loader delegated
     private final BiPredicate<Class<?>, String> filterLoadingRequest; // requesting class, requested name
 
-    @SneakyThrows
-    public DelegationHook(BiFunction<String, Boolean, Class<?>> delegateLoadClass,
-                          Function<String, Class<?>> delegateFindClass,
-                          BiFunction<String, String, Class<?>> delegateFindModuleClass,
+    public DelegationHook(ClassLoaderDelegation delegation,
                           Predicate<ClassLoader> filterClassLoader,
-                          BiPredicate<Class<?>, String> filterLoadingRequest
-    ) {
-        this.delegateLoadClass = delegateLoadClass;
-        this.delegateFindClass = delegateFindClass;
-        this.delegateFindModuleClass = delegateFindModuleClass;
+                          BiPredicate<Class<?>, String> filterLoadingRequest) {
+        this.delegation = delegation;
         this.filterClassLoader = filterClassLoader;
         this.filterLoadingRequest = filterLoadingRequest;
-    }
-
-    private Class<?> delegationFindClass(String name) {
-        return delegateFindClass.apply(name);
-    }
-
-    private Class<?> delegationFindClass(String module, String name) {
-        return delegateFindModuleClass.apply(module, name);
-    }
-
-    private Class<?> delegationLoadClassClass(String name, boolean resolve) {
-        return delegateLoadClass.apply(name, resolve);
     }
 
     private Class<?> identifyClassLoadingRequestSource() {
@@ -72,7 +51,7 @@ public final class DelegationHook {
         if (!check(cb.self(), name))
             return;
 
-        var cl = delegationFindClass(name);
+        var cl = delegation.findClass(name);
         if (cl != null) {
             cb.setReturnValue(cl);
         }
@@ -94,7 +73,7 @@ public final class DelegationHook {
         if (!check(cb.self(), name))
             return;
 
-        var cl = delegationFindClass(module, name);
+        var cl = delegation.findClass(module, name);
         if (cl != null) {
             cb.setReturnValue(cl);
         }
@@ -105,7 +84,7 @@ public final class DelegationHook {
         if (!check(cb.self(), name))
             return;
 
-        var cl = delegationLoadClassClass(name, resolve);
+        var cl = delegation.loadClass(name, resolve);
         if (cl != null) {
             cb.setReturnValue(cl);
         }

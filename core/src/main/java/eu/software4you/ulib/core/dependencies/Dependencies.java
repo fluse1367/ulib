@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.dependencies;
 
 import eu.software4you.ulib.core.impl.maven.MavenController;
+import eu.software4you.ulib.core.inject.ClassLoaderDelegation;
 import eu.software4you.ulib.core.inject.InjectUtil;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +64,7 @@ public class Dependencies {
                     .toArray(URL[]::new);
 
             // inject
-            InjectUtil.injectLoaderDelegation(new URLClassLoader(urls), injectionTarget)
+            InjectUtil.injectLoaderDelegation(ClassLoaderDelegation.delegateToClassLoader(new URLClassLoader(urls)), injectionTarget)
                     .rethrow();
         });
     }
