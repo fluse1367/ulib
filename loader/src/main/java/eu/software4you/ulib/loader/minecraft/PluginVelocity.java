@@ -25,7 +25,7 @@ public class PluginVelocity {
 
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.VELOCITY);
-        Init.init();
+        Installer.installMe();
     }
 
     private final ProxyServer proxyServer;

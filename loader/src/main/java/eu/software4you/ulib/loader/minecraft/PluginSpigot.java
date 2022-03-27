@@ -12,7 +12,7 @@ import java.util.Optional;
 public class PluginSpigot extends JavaPlugin {
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.SPIGOT);
-        Init.init();
+        Installer.installMe();
     }
 
     private Plugin pluginSubstitute;
