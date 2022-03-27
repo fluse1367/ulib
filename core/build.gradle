@@ -4,9 +4,20 @@ dependencies {
     lib 'org.javassist:javassist:3.28.0-GA'
 
     // maven resolver
-    lib 'org.apache.maven:maven-resolver-provider:3.8.4'
-    lib 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.2'
-    lib 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.2'
+    lib('org.apache.maven:maven-resolver-provider:3.8.4') {
+        exclude group: 'org.slf4j'
+    }
+    lib('org.apache.maven.resolver:maven-resolver-connector-basic:1.7.2') {
+        exclude group: 'org.slf4j'
+    }
+    lib('org.apache.maven.resolver:maven-resolver-transport-http:1.7.2') {
+        exclude group: 'org.slf4j'
+    }
+
+    // no annoying logger message
+    libOnly('org.slf4j:slf4j-simple:1.7.32') {
+        exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+    }
 }
 
 extraJavaModuleInfo {
