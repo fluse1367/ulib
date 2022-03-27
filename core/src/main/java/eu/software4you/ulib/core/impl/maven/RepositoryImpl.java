@@ -14,20 +14,14 @@ public final class RepositoryImpl implements Repository {
 
     static {
         // cache default (common) repositories
-        cache("central", "https://repo1.maven.org/maven2/");
-        cache("jitpack", "https://jitpack.io");
-        cache("jcenter", "https://jcenter.bintray.com");
-        cache("sonatype", "https://oss.sonatype.org/content/repositories/releases");
-    }
-
-    private static void cache(String id, String url) {
-        cache.put(id, new RepositoryImpl(id, url));
+        of("central", "https://repo1.maven.org/maven2/");
+        of("jitpack", "https://jitpack.io");
+        of("jcenter", "https://jcenter.bintray.com");
+        of("sonatype", "https://oss.sonatype.org/content/repositories/releases");
     }
 
     public static Repository of(String id, String url) {
-        if (!cache.containsKey(id))
-            cache(id, url);
-        return cache.get(id);
+        return cache.computeIfAbsent(id, s -> new RepositoryImpl(id, url));
     }
 
     public static Repository of(String id) {

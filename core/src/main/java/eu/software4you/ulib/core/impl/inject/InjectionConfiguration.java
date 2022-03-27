@@ -16,12 +16,9 @@ public class InjectionConfiguration {
 
 
     public <R> InjectionConfiguration with(String targetMethod, HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
-
-        if (!hooks.containsKey(targetMethod))
-            hooks.put(targetMethod, new Hooks<R>(targetMethod));
-
         //noinspection unchecked
-        ((Hooks<R>) this.hooks.get(targetMethod)).with(at, call);
+        ((Hooks<R>) hooks.computeIfAbsent(targetMethod, Hooks::new))
+                .with(at, call);
         return this;
     }
 
@@ -38,9 +35,8 @@ public class InjectionConfiguration {
                     .noneMatch(targetMethod::equals))
                 throw new IllegalArgumentException("Hook target `%s` not found in %s".formatted(targetMethod, targetClass.getName()));
 
-            if (!callbacks.containsKey(at.ordinal()))
-                callbacks.put(at.ordinal(), new ArrayList<>(1));
-            callbacks.get(at.ordinal()).add(call);
+            callbacks.computeIfAbsent(at.ordinal(), ArrayList::new)
+                    .add(call);
         }
     }
 }
