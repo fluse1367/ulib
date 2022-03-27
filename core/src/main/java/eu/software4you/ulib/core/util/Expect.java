@@ -268,14 +268,22 @@ public final class Expect<T, X extends Throwable> {
     /**
      * Throws the caught object if present, regardless if it is checked or not.
      */
-    public void rethrow() throws X, IllegalStateException {
+    public void rethrow() throws X, RuntimeException {
         if (!hasCaught())
             return;
 
-        if (checked == null)
+        if (unchecked != null)
             throw unchecked;
 
         throw checked;
+    }
+
+    /**
+     * Throws the caught object wrapped in a runtime exception if present.
+     */
+    public void rethrowRE() throws RuntimeException {
+        if (hasCaught())
+            throw new RuntimeException(caught);
     }
 
     /**
