@@ -63,33 +63,36 @@ public class JsonSerializer {
         doc.put("", root);
     }
 
-    private JsonDocument graph(final JsonDocument parent, final Map<String, Object> localRoot) {
-
-        localRoot.forEach((key, val) -> {
-
-            if (val instanceof Map<?, ?> serialized) {
-                // attempt deserialization
-                var newVal = SerializationAdapters.getInstance().attemptDeserialization(serialized, true);
-                if (newVal != null) {
-                    // deserialization success
-                    val = newVal;
-                } else {
-                    // deserialization failure
-                    // it's still a map so construct sub
-
-                    // convert map
-                    Map<String, Object> elements = new LinkedHashMap<>(serialized.size());
-                    serialized.forEach((k, v) -> elements.put(k.toString(), v));
-
-                    // graph
-                    val = graph(parent.constructSub(key), elements);
-                }
-            }
-
-            parent.put(key, val);
-        });
-
+    private JsonDocument graph(final JsonDocument parent, final JsonObject localRoot) {
+        localRoot.forEach((key, val) -> parent.put(key, process(parent, key, val)));
         return parent;
+    }
+
+    private Object process(final JsonDocument parent, final String key, final Object val) {
+        if (val instanceof JsonObject serialized) {
+            // attempt deserialization
+            var newVal = SerializationAdapters.getInstance().attemptDeserialization(serialized, true);
+            if (newVal != null) {
+                // deserialization success
+                return newVal;
+            }
+            // deserialization failure
+            // it's still a map so construct sub
+
+            // graph
+            return graph(parent.constructSub(key), serialized);
+        }
+
+
+        if (val instanceof JsonArray array) {
+            // process each element of array
+            return array.stream()
+                    .map(o -> process(parent, key, o))
+                    .toList();
+        }
+
+        // value is something else
+        return val;
     }
 
     void serialize(Writer writer, JsonDocument doc) throws IOException {
