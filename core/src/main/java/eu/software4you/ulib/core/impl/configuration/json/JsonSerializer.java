@@ -5,7 +5,8 @@ import eu.software4you.ulib.core.impl.configuration.SerializationAdapters;
 import lombok.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonSerializer {
@@ -39,23 +40,8 @@ public class JsonSerializer {
         }
 
         // list
-        if (root instanceof JsonArray json) {
-            List<? super Object> li = new ArrayList<>(json.size());
-
-            json.forEach(e -> {
-                // deserialize each element
-                if (e instanceof Map<?, ?> map) {
-                    var obj = SerializationAdapters.getInstance().attemptDeserialization(map, true);
-                    if (obj != null) {
-                        li.add(obj);
-                        return;
-                    }
-                }
-
-                li.add(e);
-            });
-
-            doc.put("", li);
+        if (root instanceof JsonArray array) {
+            doc.put("", process(doc, "", array));
             return;
         }
 

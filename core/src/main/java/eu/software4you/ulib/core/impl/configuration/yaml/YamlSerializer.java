@@ -109,31 +109,53 @@ public class YamlSerializer {
             int e = m.getIndex() - m.getColumn();
             keyNode.setBlockComments(comment(content, s, e));
 
-            Object value;
-            if (node instanceof MappingNode mNode) {
-                if (!constructor.isSerialized(mNode) || (value = constructor.getSerializationConstruct().construct(mNode)) == null) {
-                    value = graph(parent.constructChild(key, node), mNode,
-                            content, keyNode.getEndMark().getIndex());
-                }
+            if (node instanceof CollectionNode<?> collNode) {
                 // get last child to set `ai` to correct position
-                ai.set(getLastChild(mNode).getEndMark().getIndex());
-            } else {
-                value = read(node);
+                ai.set(getLastChild(collNode).getEndMark().getIndex());
             }
-            parent.put(key, value);
+            parent.put(key, process(parent, keyNode, node, content));
             parent.childNodes.put(key, keyNode);
         });
 
         return parent;
     }
 
-    private Node getLastChild(MappingNode root) {
-        var li = root.getValue();
-        var last = li.get(li.size() - 1);
-        var node = last.getValueNode();
+    private Object process(final YamlDocument parent, final ScalarNode keyNode, final Node node, final String content) {
+        if (!(node instanceof CollectionNode<?> cn))
+            return read(node);
 
-        if (node instanceof MappingNode)
-            return getLastChild((MappingNode) node);
+        if (cn instanceof MappingNode mn) {
+            Object val;
+            if (!constructor.isSerialized(mn) || (val = constructor.getSerializationConstruct().construct(mn)) == null) {
+                return graph(parent.constructChild(keyNode.getValue(), mn), mn,
+                        content, keyNode.getEndMark().getIndex());
+            }
+            return val;
+        }
+
+        if (!(cn instanceof SequenceNode sn))
+            throw new IllegalStateException();
+
+        return sn.getValue().stream()
+                .map(n -> process(parent, keyNode, n, content))
+                .toList();
+    }
+
+    private Node getLastChild(CollectionNode<?> root) {
+        var li = root.getValue();
+        var elem = li.get(li.size() - 1);
+
+        Node node;
+        if (elem instanceof NodeTuple tuple) {
+            node = tuple.getValueNode();
+        } else if (elem instanceof Node n) {
+            node = n;
+        } else {
+            throw new IllegalStateException();
+        }
+
+        if (node instanceof CollectionNode<?> cn)
+            return getLastChild(cn);
         return node;
     }
 
