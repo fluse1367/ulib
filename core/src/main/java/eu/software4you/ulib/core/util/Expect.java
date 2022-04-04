@@ -2,7 +2,6 @@ package eu.software4you.ulib.core.util;
 
 import eu.software4you.ulib.core.function.*;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -89,7 +88,6 @@ public final class Expect<T, X extends Throwable> {
      * @throws NullPointerException if the supplied task object is {@code null}
      */
     @NonNull
-    @Contract(value = "_ -> new")
     public static <T, X extends Throwable> Expect<T, X> compute(@NonNull Func<T, X> task) {
         Objects.requireNonNull(task);
 
@@ -112,7 +110,6 @@ public final class Expect<T, X extends Throwable> {
         return compute(() -> func.execute(t, u, v));
     }
 
-    @SneakyThrows
     private static <T, X extends Throwable> Expect<T, X> dirtyFailed(@NonNull Throwable throwable) {
         return new Expect<>(null, Objects.requireNonNull(throwable));
     }
@@ -125,7 +122,6 @@ public final class Expect<T, X extends Throwable> {
      * @throws NullPointerException if the supplied task object is {@code null}
      */
     @NonNull
-    @Contract(value = "_ -> new")
     public static <X extends Throwable> Expect<Void, X> compute(@NonNull Task<X> task) {
         Objects.requireNonNull(task);
 
