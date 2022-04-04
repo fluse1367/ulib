@@ -51,15 +51,14 @@ public interface Configuration {
 
 
     /**
-     * Reads a list and attempts to convert each entry to the given type. If the entries are a String type,
-     * they are processed with {@link String#format(String, Object...)} if {@code replacements} are given.
+     * Reads a list or an array and attempts to cast each element to the given type.
+     * If not all elements can be casted, an empty optional is returned instead.
      *
      * @param clazz the type class
      * @param path  the key path; nodes seperated by {@code .}
      * @param <T>   the type
      * @return an optional wrapping the value, or an empty optional if there is no boolean at the path specified
      * @throws IllegalArgumentException if a entry is not of type {@code <T>}
-     * @see String#format(String, Object...)
      */
     @NotNull <T> Optional<List<T>> list(@NotNull Class<T> clazz, @NotNull String path);
 

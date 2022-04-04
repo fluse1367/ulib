@@ -66,8 +66,9 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     @Override
     public @NotNull <T> Optional<List<T>> list(@NotNull Class<T> clazz, @NotNull String path) {
-        //noinspection unchecked
-        return get(List.class, path)
+        return get(path)
+                .map(val -> val.getClass().isArray() ? Arrays.asList((Object[]) val)
+                        : ((val instanceof List<?> li) ? li : null))
                 .filter(li -> li.stream().allMatch(clazz::isInstance))
                 .map(li -> (List<T>) li);
     }
