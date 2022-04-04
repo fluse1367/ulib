@@ -88,4 +88,68 @@ public class Param<V> extends Pair<Class<? extends V>, V> {
         return Collections.singletonList(new Param<>(clazz, value));
     }
 
+    public static <V1> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1) {
+        return Collections.singletonList(new Param<>(clazz1, value1));
+    }
+
+    public static <V1, V2> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1,
+                                                 Class<? extends V2> clazz2, V2 value2) {
+        return Arrays.asList(
+                new Param<>(clazz1, value1),
+                new Param<>(clazz2, value2)
+        );
+    }
+
+    public static <V1, V2, V3> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1,
+                                                     Class<? extends V2> clazz2, V2 value2,
+                                                     Class<? extends V3> clazz3, V3 value3) {
+        return Arrays.asList(
+                new Param<>(clazz1, value1),
+                new Param<>(clazz2, value2),
+                new Param<>(clazz3, value3)
+        );
+    }
+
+    public static <V1, V2, V3, V4> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1,
+                                                         Class<? extends V2> clazz2, V2 value2,
+                                                         Class<? extends V3> clazz3, V3 value3,
+                                                         Class<? extends V4> clazz4, V4 value4) {
+        return Arrays.asList(
+                new Param<>(clazz1, value1),
+                new Param<>(clazz2, value2),
+                new Param<>(clazz3, value3),
+                new Param<>(clazz4, value4)
+        );
+    }
+
+    public static <V1, V2, V3, V4, V5> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1,
+                                                             Class<? extends V2> clazz2, V2 value2,
+                                                             Class<? extends V3> clazz3, V3 value3,
+                                                             Class<? extends V4> clazz4, V4 value4,
+                                                             Class<? extends V5> clazz5, V5 value5) {
+        return Arrays.asList(
+                new Param<>(clazz1, value1),
+                new Param<>(clazz2, value2),
+                new Param<>(clazz3, value3),
+                new Param<>(clazz4, value4),
+                new Param<>(clazz5, value5)
+        );
+    }
+
+    public static <V1, V2, V3, V4, V5, V6> List<Param<?>> listOf(Class<? extends V1> clazz1, V1 value1,
+                                                                 Class<? extends V2> clazz2, V2 value2,
+                                                                 Class<? extends V3> clazz3, V3 value3,
+                                                                 Class<? extends V4> clazz4, V4 value4,
+                                                                 Class<? extends V5> clazz5, V5 value5,
+                                                                 Class<? extends V6> clazz6, V6 value6) {
+        return Arrays.asList(
+                new Param<>(clazz1, value1),
+                new Param<>(clazz2, value2),
+                new Param<>(clazz3, value3),
+                new Param<>(clazz4, value4),
+                new Param<>(clazz5, value5),
+                new Param<>(clazz6, value6)
+        );
+    }
+
 }

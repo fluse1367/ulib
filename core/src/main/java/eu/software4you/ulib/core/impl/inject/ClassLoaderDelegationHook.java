@@ -4,6 +4,7 @@ import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -37,6 +38,8 @@ public final class ClassLoaderDelegationHook {
     }
 
     public Expect<Void, Exception> inject() {
+        // delegate class finding/loading
+
         ReflectUtil.findUnderlyingMethod(targetClazz, "findClass", true, String.class)
                 .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
                         (p, c) -> hook_findClass((String) p[0], c)
@@ -58,7 +61,17 @@ public final class ClassLoaderDelegationHook {
                         this::hookAdditional_findClass
                 ))));
 
-        // TODO: delegate resource finding?
+        // delegate resource finding
+
+        ReflectUtil.findUnderlyingMethod(targetClazz, "findResource", true, String.class)
+                .ifPresent(into -> injection.<URL>addHook(into, HookPoint.HEAD,
+                        (p, c) -> hook_findResource((String) p[0], c)
+                ));
+
+        ReflectUtil.findUnderlyingMethod(targetClazz, "findResource", true, String.class, String.class)
+                .ifPresent(into -> injection.<URL>addHook(into, HookPoint.HEAD,
+                        (p, c) -> hook_findResource((String) p[0], (String) p[1], c)
+                ));
 
         return injection.inject();
     }
@@ -83,14 +96,19 @@ public final class ClassLoaderDelegationHook {
         throw new IllegalStateException(); // a class loader cannot be the source of the class loading request
     }
 
+    private boolean checkCl(Object source) {
+        return source instanceof ClassLoader cl && filterClassLoader.test(cl);
+    }
+
     private boolean check(Object source, String name) {
-        return source instanceof ClassLoader cl && filterClassLoader.test(cl)
+        return checkCl(source)
                && filterLoadingRequest.test(identifyClassLoadingRequestSource(), name);
     }
 
-    /* actual hooks */
+    // - actual hooks -
 
-    // hooks into the findClass method of the target loader
+    // class finding/loading hooks
+
     private void hook_findClass(String name, Callback<Class<?>> cb) {
         if (!check(cb.self(), name))
             return;
@@ -122,7 +140,6 @@ public final class ClassLoaderDelegationHook {
         }
     }
 
-    // hooks into the loadClass method of the target loader
     private void hook_loadClass(String name, boolean resolve, Callback<Class<?>> cb) {
         if (!check(cb.self(), name))
             return;
@@ -130,6 +147,28 @@ public final class ClassLoaderDelegationHook {
         var cl = delegation.loadClass(name, resolve);
         if (cl != null) {
             cb.setReturnValue(cl);
+        }
+    }
+
+    // resource finding hooks
+
+    private void hook_findResource(String name, Callback<URL> cb) {
+        if (!checkCl(cb.self()))
+            return;
+
+        var u = delegation.findResource(name);
+        if (u != null) {
+            cb.setReturnValue(u);
+        }
+    }
+
+    private void hook_findResource(String module, String name, Callback<URL> cb) {
+        if (!checkCl(cb.self()))
+            return;
+
+        var u = delegation.findResource(module, name);
+        if (u != null) {
+            cb.setReturnValue(u);
         }
     }
 }

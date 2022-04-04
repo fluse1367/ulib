@@ -47,7 +47,7 @@ public class InjectUtil {
      *                      the second argument is the fully qualified name of the class that is to be loaded
      * @param target        the target class that will be injected
      * @return the execution result
-     * @see ClassLoaderDelegation#delegateToClassLoader(ClassLoader)
+     * @see ClassLoaderDelegation#ClassLoaderDelegation(ClassLoader)
      */
     @NotNull
     public static Expect<Void, Exception> injectLoaderDelegation(ClassLoaderDelegation delegation,
