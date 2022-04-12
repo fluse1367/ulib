@@ -58,6 +58,7 @@ jar {
 
     // include modules
     inclModule('core')
+    inclModule('minecraft')
 
     // serialize modules graph
     byte[] modulesGraphSerialized;
