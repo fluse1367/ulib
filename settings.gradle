@@ -1,5 +1,5 @@
 rootProject.name = 'ulib-root'
-files('loader', 'core').each {
+files('loader', 'core', 'minecraft').each {
     if (it.directory && new File(it, 'build.gradle').exists()) {
         include ":${it.name}"
     }

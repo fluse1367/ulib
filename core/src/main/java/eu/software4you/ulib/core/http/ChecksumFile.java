@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.http;
 
 import eu.software4you.ulib.core.io.IOUtil;
+import eu.software4you.ulib.core.util.Expect;
 import eu.software4you.ulib.core.util.HashUtil;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
@@ -102,11 +103,10 @@ public class ChecksumFile {
      *
      * @return the file's contents
      */
-    @SneakyThrows
     @NotNull
-    public InputStream require() {
+    public Expect<InputStream, FileNotFoundException> require() {
         ensure();
-        return new FileInputStream(file);
+        return Expect.compute(() -> new FileInputStream(file));
     }
 
     /**

@@ -1,4 +1,0 @@
-dependencies {
-    api project(':minecraft-api')
-    api project(':core-impl')
-}

@@ -1,5 +1,5 @@
 module ulib.core {
-
+    // static
     requires static lombok;
     requires static org.jetbrains.annotations;
 
@@ -12,7 +12,6 @@ module ulib.core {
     requires org.yaml.snakeyaml;
     requires json.simple;
     requires maven.resolver.provider;
-
 
     // api exports
     exports eu.software4you.ulib.core.collection;

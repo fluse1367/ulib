@@ -1,13 +1,11 @@
 package eu.software4you.ulib.core.impl.database.sql;
 
-import eu.software4you.ulib.core.database.sql.Column;
-import eu.software4you.ulib.core.database.sql.ColumnBuilder;
+import eu.software4you.ulib.core.database.sql.*;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,7 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
 
     public SqlDatabase(Connection connection) {
         this.connection = connection;
+        initExistingTables();
         url = null;
         info = null;
     }
@@ -34,86 +33,6 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
         if (!isConnected())
             throw new IllegalStateException("Database not connected!");
     }
-
-    /* TODO
-    @SneakyThrows
-    private void loadTables() {
-        validateConnection();
-
-        val meta = connection.getMetaData();
-        val tableRes = meta.getTables(null, null, null, new String[]{"TABLE"});
-        while (tableRes.next()) {
-            String tableCatalog = tableRes.getString("TABLE_CAT");
-            String tableName = tableRes.getString("TABLE_NAME");
-            String tableSchema = tableRes.getString("TABLE_SCHEM");
-            ULib.get().info("Table: " + tableName);
-
-            val colRes = meta.getColumns(
-                    tableCatalog,
-                    tableSchema,
-                    tableName,
-                    null
-            );
-
-            while (colRes.next()) {
-                String colName = colRes.getString("COLUMN_NAME");
-                String colType = colRes.getString("TYPE_NAME");
-                boolean notNull = colRes.getInt("NULLABLE") == ResultSetMetaData.columnNoNulls;
-                boolean autoIncrement = colRes.getString("IS_AUTOINCREMENT").equals("YES");
-                int size = colRes.getInt("COLUMN_SIZE");
-                String def = colRes.getString("COLUMN_DEF");
-
-                StringJoiner sj = new StringJoiner(", ");
-                for (int i = 1; i <= colRes.getMetaData().getColumnCount(); i++) {
-                    sj.add(colRes.getMetaData().getColumnName(i) + ": " + colRes.getObject(i));
-                }
-                ULib.get().info(sj.toString());
-
-                ULib.get().info(String.format("%s has column: %s, type: %s, not null: %b, auto inc: %b, size: %d, default: %s",
-                        tableName,
-                        colName,
-                        colType,
-                        notNull,
-                        autoIncrement,
-                        size,
-                        def == null ? "null_" : def
-                ));
-
-                new ColumnImpl<>(null,
-                        colName,
-                        DataType.valueOf(colType),
-                        notNull,
-                        autoIncrement,
-                        null,
-                        size,
-                        def,
-
-                        )
-            }
-
-            ULib.get().info("INDEX: ");
-
-            val indexRes = meta.getIndexInfo(
-                    tableCatalog,
-                    tableSchema,
-                    tableName,
-                    true,
-                    false
-            );
-
-
-            while (indexRes.next()) {
-
-                StringJoiner sj = new StringJoiner(", ");
-                for (int i = 1; i <= indexRes.getMetaData().getColumnCount(); i++) {
-                    sj.add(indexRes.getMetaData().getColumnName(i) + ": " + indexRes.getObject(i));
-                }
-                ULib.get().info(sj.toString());
-            }
-
-        }
-    }
-    */
 
     @SneakyThrows
     @Override
@@ -129,6 +48,7 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
         if (url == null)
             throw new IllegalArgumentException("Invalid database url: null");
         connection = DriverManager.getConnection(url, info);
+        initExistingTables();
     }
 
     @SneakyThrows
@@ -151,6 +71,7 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
 
     @Override
     public @Nullable Table getTable(@NotNull String name) {
+        // TODO: attempt fetching tables if `name` does not occur in the map?
         return tables.get(name);
     }
 
@@ -162,6 +83,61 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
         )));
         tables.put(name, table);
         return table;
+    }
+
+    @SneakyThrows
+    private void initExistingTables() {
+        if (!isConnected())
+            return;
+
+        var meta = connection.getMetaData();
+        var resultTables = meta.getTables(null, null, null, new String[]{"TABLES"});
+
+
+        while (resultTables.next()) {
+            String tableCatalog = resultTables.getString("TABLE_CAT");
+            String tableName = resultTables.getString("TABLE_NAME");
+            String tableSchema = resultTables.getString("TABLE_SCHEM");
+
+            var cols = fetchColumns(meta, tableCatalog, tableSchema, tableName);
+
+            tables.put(tableName, createTable(tableName, cols));
+        }
+    }
+
+    // helper method
+    @SneakyThrows
+    private Map<String, Column<?>> fetchColumns(DatabaseMetaData meta, String tableCatalog, String tableSchema, String tableName) {
+        var resultColumns = meta.getColumns(
+                tableCatalog,
+                tableSchema,
+                tableName,
+                null
+        );
+
+        Map<String, Column<?>> cols = new HashMap<>();
+
+        while (resultColumns.next()) {
+            String colName = resultColumns.getString("COLUMN_NAME");
+            String colType = resultColumns.getString("TYPE_NAME");
+            boolean notNull = resultColumns.getInt("NULLABLE") == ResultSetMetaData.columnNoNulls;
+            boolean autoIncrement = resultColumns.getString("IS_AUTOINCREMENT").equals("YES");
+            int size = resultColumns.getInt("COLUMN_SIZE");
+            String def = resultColumns.getString("COLUMN_DEF");
+
+            var column = new ColumnImpl<>(null,
+                    colName,
+                    DataType.valueOf(colType),
+                    notNull,
+                    autoIncrement,
+                    null,
+                    size,
+                    def,
+                    new String[0]);
+            cols.put(colName, column);
+        }
+
+        return cols;
     }
 
     protected abstract Table createTable(String name, Map<String, Column<?>> columns);

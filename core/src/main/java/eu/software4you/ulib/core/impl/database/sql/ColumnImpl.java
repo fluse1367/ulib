@@ -2,11 +2,12 @@ package eu.software4you.ulib.core.impl.database.sql;
 
 import eu.software4you.ulib.core.database.sql.Column;
 import eu.software4you.ulib.core.database.sql.DataType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
 @Getter
-final class ColumnImpl<T> implements Column<T> {
+public final class ColumnImpl<T> implements Column<T> {
     private final Class<T> t;
     private final String name;
     private final DataType dataType;
