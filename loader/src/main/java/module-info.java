@@ -1,26 +1,27 @@
 module ulib.loader {
-    // only compile time
+    // static
     requires static lombok;
 
-    // loaded later
-    requires static ulib.core;
+    // ulib
+    requires static ulib.core; // static bc it's loaded later
 
-    // for launch function
+    // 3rd party
+    requires static org.slf4j;
+    requires static com.google.guice;
     requires static joptsimple;
 
-    // minecraft
+    // minecraft; static bc loader won't get loaded as module when in minecraft context
     requires static bungeecord.api; // bungeecord
     requires static org.bukkit; // spigot
     requires static com.velocitypowered.api; // velocity
     requires static fabric.loader; // fabric
-    requires static org.slf4j;
-    requires static com.google.guice;
 
     // java
     requires java.instrument;
     requires java.logging;
     requires jdk.attach;
 
+    // api exports
     exports eu.software4you.ulib.loader.install;
     exports eu.software4you.ulib.loader.agent to java.instrument;
 }
