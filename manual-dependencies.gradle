@@ -8,11 +8,11 @@ import java.util.jar.JarOutputStream
 
 task downloadManualDependencies() {
     downloadLib "BungeeCord.jar", "https://ci.md-5.net/job/BungeeCord/1628/artifact/bootstrap/target/BungeeCord.jar",
-            jarFilterTransformer(true, startsWithFilter("net/md_5/bungee/", "gnu/trove/", "META-INF/"))
+            jarFilterTransformer(true, startsWithFilter("net/md_5/bungee/", "gnu/trove/", "com/google/gson/", "META-INF/"))
 }
 
 private void downloadLib(String name, String href, Consumer<File> transformer) {
-    def file = new File("$rootProject.rootDir/.libs/$name");
+    def file = new File("$rootProject.rootDir/.libs/$name")
 
     if (file.exists())
         return
@@ -40,7 +40,7 @@ private static Consumer<File> jarFilterTransformer(boolean copyManifest, Predica
             var fout = new FileOutputStream(it)
 
             try (var jout = copyManifest ? new JarOutputStream(fout, jit.manifest) : new JarOutputStream(fout)) {
-                var enIt = jit.entries().asIterator();
+                var enIt = jit.entries().asIterator()
                 while (enIt.hasNext()) {
                     var en = enIt.next()
                     var name = en.name

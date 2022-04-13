@@ -1,6 +1,0 @@
-//file:noinspection GroovyAssignabilityCheck
-manualDependency("BungeeCord", "bungeecord.api")
-
-dependencies {
-    api project(':minecraft-api')
-}

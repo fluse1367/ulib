@@ -44,6 +44,15 @@ public interface UserCache {
     }
 
     /**
+     * Checks weather the main user cache is enabled.
+     *
+     * @return {@code true} if the main cache is enabled, {@code false} otherwise
+     */
+    static boolean isMainCache() {
+        return AbstractUserCache.MAIN_CACHE_DB.isSet();
+    }
+
+    /**
      * Caches (or updates) a UUID and its associated username.
      *
      * @param uuid the uuid

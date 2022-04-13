@@ -22,6 +22,6 @@ module ulib.minecraft {
     exports eu.software4you.ulib.minecraft.util;
 
     // impl exports
-    exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.velocity;
-    exports eu.software4you.ulib.minecraft.impl.usercache to ulib.velocity;
+    exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.velocity, ulib.bungeecord;
+    exports eu.software4you.ulib.minecraft.impl.usercache to ulib.velocity, ulib.bungeecord;
 }
