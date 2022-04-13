@@ -2,23 +2,27 @@ package eu.software4you.ulib.loader.impl.init;
 
 import eu.software4you.ulib.loader.impl.install.ModuleClassProvider;
 import eu.software4you.ulib.loader.install.Installer;
+import eu.software4you.ulib.loader.minecraft.PluginSpigot;
+import eu.software4you.ulib.loader.minecraft.PluginVelocity;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.*;
 
 public class InitAccess {
 
+    private static final Collection<Class<?>> PERMITTED = Arrays.asList(Installer.class, PluginVelocity.class, PluginSpigot.class);
     private static final InitAccess inst = new InitAccess();
 
     public static InitAccess getInstance() {
-        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != Installer.class)
+        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (!PERMITTED.contains(caller))
             throw new SecurityException();
         return inst;
     }
-
 
     private Object initializer, injector;
 
@@ -45,6 +49,13 @@ public class InitAccess {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return null;
         }
+    }
+
+    @SneakyThrows
+    public Object construct(String mod, String cn, Object... initArgs) {
+        return initializer.getClass()
+                .getMethod("construct", String.class, String.class, Object[].class)
+                .invoke(initializer, mod, cn, initArgs);
     }
 
     @Synchronized

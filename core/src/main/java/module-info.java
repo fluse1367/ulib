@@ -31,5 +31,5 @@ module ulib.core {
     exports eu.software4you.ulib.core.util;
 
     // init export
-    exports eu.software4you.ulib.core.impl.init;
+    exports eu.software4you.ulib.core.impl.init to ulib.loader;
 }

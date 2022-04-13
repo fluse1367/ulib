@@ -7,6 +7,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import eu.software4you.ulib.loader.impl.EnvironmentProvider;
+import eu.software4you.ulib.loader.impl.init.InitAccess;
 import eu.software4you.ulib.loader.install.Installer;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -44,8 +45,7 @@ public class PluginVelocity {
     @SneakyThrows
     @Subscribe
     public void onInit(ProxyInitializeEvent e) {
-        var loader = Installer.getLayer().findLoader("ulib.velocity");
-        var cl = Class.forName("eu.software4you.ulib.velocity.impl.PluginSubst", true, loader);
-        this.pluginSubstitute = cl.getConstructors()[0].newInstance(this, proxyServer, logger, dataDir);
+        this.pluginSubstitute = InitAccess.getInstance().construct("velocity", "eu.software4you.ulib.velocity.impl.PluginSubst",
+                this, proxyServer, logger, dataDir);
     }
 }

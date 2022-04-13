@@ -58,6 +58,19 @@ public class Initializer {
         return Class.forName(name, true, coreLoader);
     }
 
+    @SneakyThrows
+    public Object construct(String mod, String name, Object[] initArgs) {
+        // only `InitAccess` is permitted to directly construct objects
+        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (caller == null || !caller.getName().equals(InitAccess.class.getName()))
+            throw new SecurityException();
+
+
+        var loader = layer.findLoader("ulib." + mod);
+        var cl = Class.forName(name, true, loader);
+        return cl.getConstructors()[0].newInstance(initArgs);
+    }
+
     private void provideDependencies() {
         List<String> modules = new ArrayList<>(1);
         modules.add("core");
