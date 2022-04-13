@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl.install;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

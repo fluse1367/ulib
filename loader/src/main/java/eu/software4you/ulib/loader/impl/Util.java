@@ -1,21 +1,19 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl;
 
 import lombok.SneakyThrows;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 @SuppressWarnings("DuplicatedCode")
-final class Util {
-    static String classify(String name) {
+public final class Util {
+    public static String classify(String name) {
         return name.replace('.', '/').concat(".class");
     }
 
     @SneakyThrows
-    static void write(InputStream in, OutputStream out) {
+    public static void write(InputStream in, OutputStream out) {
         try (var is = in; var os = out) {
             byte[] buffer = new byte[1024];
             int read;
@@ -26,7 +24,7 @@ final class Util {
         }
     }
 
-    static long getCRC32(InputStream in) throws IOException {
+    public static long getCRC32(InputStream in) throws IOException {
         Checksum sum = new CRC32();
 
         byte[] buff = new byte[1024];

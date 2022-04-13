@@ -1,23 +1,14 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl.dependency;
 
 import lombok.SneakyThrows;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.function.*;
 import java.util.jar.*;
 
-import static eu.software4you.ulib.loader.install.provider.Util.classify;
+import static eu.software4you.ulib.loader.impl.Util.classify;
 
 public final class DependencyTransformer {
 

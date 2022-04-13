@@ -1,17 +1,15 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl.dependency;
 
 import lombok.SneakyThrows;
 
 import java.io.*;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 
-import static eu.software4you.ulib.loader.install.provider.Util.getCRC32;
-import static eu.software4you.ulib.loader.install.provider.Util.write;
+import static eu.software4you.ulib.loader.impl.Util.getCRC32;
+import static eu.software4you.ulib.loader.impl.Util.write;
 
 public final class DependencyProvider {
 

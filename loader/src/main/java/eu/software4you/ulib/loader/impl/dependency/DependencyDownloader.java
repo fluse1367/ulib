@@ -1,4 +1,4 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl.dependency;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-import static eu.software4you.ulib.loader.install.provider.Util.write;
+import static eu.software4you.ulib.loader.impl.Util.write;
 
 @RequiredArgsConstructor
 final class DependencyDownloader {

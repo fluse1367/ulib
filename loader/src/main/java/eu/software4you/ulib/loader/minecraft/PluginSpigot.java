@@ -1,7 +1,7 @@
 package eu.software4you.ulib.loader.minecraft;
 
+import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.install.Installer;
-import eu.software4you.ulib.loader.install.provider.EnvironmentProvider;
 import lombok.SneakyThrows;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -20,7 +20,7 @@ public class PluginSpigot extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onLoad() {
-        var loader = Installer.getModule().getLayer().findLoader("ulib.spigot");
+        var loader = Installer.getLayer().findLoader("ulib.spigot");
         var cl = Class.forName("eu.software4you.ulib.spigot.impl.PluginSubst", true, loader);
         this.pluginSubstitute = (Plugin) cl.getConstructors()[0].newInstance(this, getPluginLoader(), getDescription(), getDataFolder(), getFile());
     }

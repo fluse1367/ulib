@@ -1,9 +1,6 @@
-package eu.software4you.ulib.loader.install.provider;
+package eu.software4you.ulib.loader.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class EnvironmentProvider {
 
