@@ -9,7 +9,7 @@ module ulib.minecraft {
     // 3rd party
 
     // ulib
-    requires ulib.core;
+    requires transitive ulib.core;
 
     // api exports
     exports eu.software4you.ulib.minecraft.launchermeta;
@@ -20,4 +20,8 @@ module ulib.minecraft {
     exports eu.software4you.ulib.minecraft.proxybridge;
     exports eu.software4you.ulib.minecraft.usercache;
     exports eu.software4you.ulib.minecraft.util;
+
+    // impl exports
+    exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.velocity;
+    exports eu.software4you.ulib.minecraft.impl.usercache to ulib.velocity;
 }

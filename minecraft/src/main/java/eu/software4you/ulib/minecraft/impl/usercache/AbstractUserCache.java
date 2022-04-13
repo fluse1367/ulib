@@ -17,9 +17,9 @@ import java.util.function.BiFunction;
 public abstract class AbstractUserCache implements UserCache {
 
     public static final SingletonInstance<BiFunction<PluginBase<?, ?>, Table, AbstractUserCache>> PROVIDER = new SingletonInstance<>();
-    // TODO: supply the singleton
     public static final SingletonInstance<PluginBase<?, ?>> PLUGIN_INSTANCE = new SingletonInstance<>();
     public static final LazyValue<UserCache> MAIN_CACHE = new LazyValue<>(AbstractUserCache::getMainCache);
+    public static final SingletonInstance<SqlDatabase> MAIN_CACHE_DB = new SingletonInstance<>();
 
     private static UserCache getMainCache() {
         var plugin = PLUGIN_INSTANCE.get();
@@ -39,7 +39,8 @@ public abstract class AbstractUserCache implements UserCache {
                         login.string("password").orElse("root")
                 );
             }
-            default -> throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type", "null")));
+            default ->
+                    throw new IllegalArgumentException(String.format("Backend type must be either FILE or MYSQL, %s is not allowed", backend.string("type", "null")));
         }
 
         var table = database.addTable("cached_users",
@@ -53,11 +54,13 @@ public abstract class AbstractUserCache implements UserCache {
         if (!table.exists())
             table.create();
 
+        MAIN_CACHE_DB.setInstance(database);
+
         return PROVIDER.get().apply(plugin, table);
     }
 
     private final Table table;
-    private final Map<UUID, String> cache = new ConcurrentHashMap<>();
+    protected final Map<UUID, String> cache = new ConcurrentHashMap<>();
 
     protected AbstractUserCache(Table table) {
         this.table = table;

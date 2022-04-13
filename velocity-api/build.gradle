@@ -1,6 +1,0 @@
-//file:noinspection GroovyAssignabilityCheck
-dependencyVelocity()
-
-dependencies {
-    api project(':minecraft-api')
-}

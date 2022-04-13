@@ -1,9 +1,8 @@
-package eu.software4you.ulib.velocity.api.plugin;
+package eu.software4you.ulib.velocity.plugin;
 
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import eu.software4you.ulib.minecraft.api.plugin.PluginBase;
-import net.kyori.adventure.audience.Audience;
+import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -14,11 +13,7 @@ import java.io.File;
  *
  * @see VelocityJavaPlugin
  */
-public interface VelocityPlugin extends PluginBase<Object, ScheduledTask, Audience> {
-
-    @Override
-    @NotNull
-    Layout getLayout();
+public interface VelocityPlugin extends PluginBase<Object, ScheduledTask> {
 
     /**
      * Returns the id of the plugin.

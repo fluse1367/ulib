@@ -3,4 +3,4 @@
  *
  * @see eu.software4you.ulib.minecraft.plugin
  */
-package eu.software4you.ulib.velocity.api.plugin;
+package eu.software4you.ulib.velocity.plugin;

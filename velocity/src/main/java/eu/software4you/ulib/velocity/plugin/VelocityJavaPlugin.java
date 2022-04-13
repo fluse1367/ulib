@@ -1,24 +1,18 @@
-package eu.software4you.ulib.velocity.api.plugin;
+package eu.software4you.ulib.velocity.plugin;
 
 import com.google.common.collect.Multimap;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import eu.software4you.ulib.core.api.configuration.yaml.ExtYamlSub;
-import eu.software4you.ulib.core.api.configuration.yaml.YamlSub;
-import eu.software4you.ulib.core.api.internal.Providers;
-import eu.software4you.ulib.core.api.io.IOUtil;
-import eu.software4you.ulib.core.api.reflect.ReflectUtil;
-import eu.software4you.ulib.core.api.util.FileUtil;
-import eu.software4you.ulib.velocity.api.internal.Providers.ProviderLayout;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import eu.software4you.ulib.core.configuration.YamlConfiguration;
+import eu.software4you.ulib.core.io.IOUtil;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.FileUtil;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,9 +37,6 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiredArgsConstructor
 public abstract class VelocityJavaPlugin implements VelocityPlugin {
-    private final static String layoutBaseName = "layout";
-    private final static String layoutFileExtension = "yml";
-    private final static String defaultLayoutFileName = String.format("%s.%s", layoutBaseName, layoutFileExtension);
     @Getter
     @NotNull
     private final String id;
@@ -60,10 +51,8 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     private final File dataFolder;
     @Getter
     private final File file = FileUtil.getClassFile(getClass()).getValue();
-    private final ExtYamlSub config = YamlSub.newYaml();
-    private final Layout layout = Providers.get(ProviderLayout.class).get();
-    private String layoutFileName = defaultLayoutFileName;
-    private boolean configInit, layoutInit;
+    private final YamlConfiguration config = YamlConfiguration.newYaml();
+    private boolean configInit;
 
     private PluginContainer getPlugin() {
         return proxyServer.getPluginManager().getPlugin(id)
@@ -87,7 +76,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public @NotNull ExtYamlSub getConf() {
+    public @NotNull YamlConfiguration getConf() {
         if (!configInit) {
             configInit = true;
             reloadConfig();
@@ -99,47 +88,12 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     public void reloadConfig() {
         saveDefaultConfig();
         try {
-            config.load(new FileReader(new File(getDataFolder(), "config.yml")));
+            config.reinit(new FileReader(new File(getDataFolder(), "config.yml")));
         } catch (IOException e) {
             getLogger().warn("Failure while reloading config.yml!", e);
         }
     }
 
-    @Override
-    public void saveDefaultLayout() {
-        if (!new File(getDataFolder(), layoutFileName).exists())
-            saveResource(layoutFileName, false);
-    }
-
-    @Override
-    public @NotNull Layout getLayout() {
-        if (!layoutInit) {
-            layoutInit = true;
-            reloadLayout();
-        }
-        return layout;
-    }
-
-    @Override
-    public void reloadLayout() {
-        saveDefaultLayout();
-        File layoutFile = new File(getDataFolder(), layoutFileName);
-        try {
-            layout.load(new FileReader(layoutFile));
-        } catch (IOException e) {
-            getLogger().warn(String.format("Failure while reloading %s!", layoutFile.getName()), e);
-        }
-    }
-
-    @Override
-    public void setLayoutLocale(Locale locale) {
-        if (locale == null || locale.getLanguage().isEmpty()) {
-            layoutFileName = defaultLayoutFileName;
-        } else {
-            layoutFileName = String.format("%s.%s.%s", layoutBaseName, locale.getLanguage(), layoutFileExtension);
-        }
-        reloadLayout();
-    }
 
     @Override
     public void saveResource(String resourcePath, boolean replace) {
@@ -148,7 +102,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
         }
 
         resourcePath = resourcePath.replace('\\', '/');
-        InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        InputStream in = getPluginObject().getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (in == null) {
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getFile().getPath());
         }
@@ -163,7 +117,9 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                IOUtil.write(in, new FileOutputStream(outFile));
+                try (in; var out = new FileOutputStream(outFile)) {
+                    IOUtil.write(in, out);
+                }
             } else {
                 logger.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
@@ -195,8 +151,11 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @SneakyThrows
     @Override
     public void cancelAllTasks() {
-        ((Multimap<Object, ScheduledTask>) ReflectUtil.forceCall(getProxyServer().getScheduler().getClass(),
-                proxyServer.getScheduler(), "tasksByPlugin")).get(getPluginObject()).forEach(ScheduledTask::cancel);
+        var sch = proxyServer.getScheduler();
+        ReflectUtil.<Multimap<Object, ScheduledTask>>call(sch.getClass(), sch, "tasksByPlugin")
+                .map(Multimap::values)
+                .ifPresentOrElse(tasks -> tasks.forEach(ScheduledTask::cancel), thr -> thr
+                        .ifPresent(t -> logger.warn("Could not cancel tasks", (Throwable) t)));
     }
 
     @Override

@@ -1,20 +1,16 @@
 package eu.software4you.ulib.velocity.impl.proxybridge;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
-import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
-import com.velocitypowered.api.proxy.messages.ChannelMessageSink;
-import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.*;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import eu.software4you.ulib.minecraft.api.proxybridge.ProxyServerBridge;
-import eu.software4you.ulib.minecraft.api.proxybridge.command.Command;
-import eu.software4you.ulib.minecraft.api.proxybridge.message.Message;
-import eu.software4you.ulib.minecraft.api.proxybridge.message.MessageType;
-import eu.software4you.ulib.velocity.api.plugin.VelocityPlugin;
+import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
+import eu.software4you.ulib.minecraft.proxybridge.command.Command;
+import eu.software4you.ulib.minecraft.proxybridge.message.Message;
+import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
+import eu.software4you.ulib.velocity.plugin.VelocityPlugin;
 import lombok.SneakyThrows;
 
 import java.nio.charset.StandardCharsets;
@@ -23,17 +19,14 @@ import java.util.concurrent.Future;
 
 public final class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge {
     public static final ChannelIdentifier IDENTIFIER = new LegacyChannelIdentifier(ProxyServerBridge.CHANNEL);
-    private static VelocityPlugin plugin;
 
+    private final VelocityPlugin plugin;
     private ServerConnection lastReceivedRequest = null;
     private ServerConnection lastReceivedCommand = null;
 
-    public ProxyServerBridgeImpl() {
+    public ProxyServerBridgeImpl(VelocityPlugin plugin) {
+        this.plugin = plugin;
         registerCommand(new Command("ServerName", (args, origin) -> origin.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    public static void init(VelocityPlugin plugin) {
-        ProxyServerBridgeImpl.plugin = plugin;
     }
 
     private void sendMessage(ChannelMessageSink sink, Message message) {
@@ -42,7 +35,7 @@ public final class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.
 
     private RegisteredServer findServer(String serverName) {
         var server = plugin.getProxyServer().getServer(serverName);
-        if (!server.isPresent())
+        if (server.isEmpty())
             throw new IllegalArgumentException(String.format("Server %s was not found or is not connected", serverName));
         return server.get();
     }
