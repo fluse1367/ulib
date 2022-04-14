@@ -4,3 +4,5 @@ manualDependency("BungeeCord", "bungeecord.api")
 dependencies {
     api project(':minecraft')
 }
+
+doPubliblishment()

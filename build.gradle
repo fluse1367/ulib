@@ -73,7 +73,7 @@ subprojects {
             canBeResolved = true
             extendsFrom libOnly
         }
-        api {
+        implementation {
             extendsFrom lib
         }
     }; // <- for somewhat reason the build fails without this semicolon
@@ -175,9 +175,4 @@ subprojects {
             filter ReplaceTokens, beginToken: '{{', endToken: '}}', tokens: replacementTokens
         }
     };
-
-    // publishing
-    if (project.name.endsWith("-api")) {
-        doPubliblishment()
-    }
 }

@@ -17,3 +17,5 @@ extraJavaModuleInfo {
     automaticModule('guava-21.0.jar', 'guava')
     automaticModule('XSeries-8.7.1.jar', 'xseries')
 }
+
+doPubliblishment()
