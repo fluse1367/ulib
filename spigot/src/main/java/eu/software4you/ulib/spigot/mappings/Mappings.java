@@ -4,7 +4,8 @@ import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
 import eu.software4you.ulib.spigot.impl.mappings.MappingsImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Util to read mappings.
@@ -24,9 +25,9 @@ public final class Mappings {
      * @see VersionsMeta#getCurrent()
      * @see VersionsMeta#get(String)
      */
-    @Nullable
-    public static VanillaMapping loadVanillaServerMapping(@NotNull VersionManifest manifest) {
-        return MappingsImpl.loadVanilla(manifest);
+    @NotNull
+    public static Optional<VanillaMapping> loadVanillaServerMapping(@NotNull VersionManifest manifest) {
+        return Optional.ofNullable(MappingsImpl.loadVanilla(manifest));
     }
 
     /**
@@ -51,9 +52,9 @@ public final class Mappings {
      * @param version the plain mc version string (e.g. {@code 1.16.5})
      * @return the mapping, or {@code null} if a mapping could not be found for that version
      */
-    @Nullable
-    public static BukkitMapping loadBukkitMapping(@NotNull String version) {
-        return MappingsImpl.loadBukkit(version);
+    @NotNull
+    public static Optional<BukkitMapping> loadBukkitMapping(@NotNull String version) {
+        return Optional.ofNullable(MappingsImpl.loadBukkit(version));
     }
 
     /**
@@ -78,9 +79,9 @@ public final class Mappings {
      * @param manifest source manifest
      * @return the mapping, or {@code null} if a mapping could not be found for that version
      */
-    @Nullable
-    public static MixedMapping loadMixedMapping(@NotNull VersionManifest manifest) {
-        return MappingsImpl.loadMixed(manifest);
+    @NotNull
+    public static Optional<MixedMapping> loadMixedMapping(@NotNull VersionManifest manifest) {
+        return Optional.ofNullable(MappingsImpl.loadMixed(manifest));
     }
 
     /**

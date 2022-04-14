@@ -6,7 +6,6 @@ import eu.software4you.ulib.core.util.LazyValue;
 import eu.software4you.ulib.minecraft.launchermeta.*;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.time.OffsetDateTime;
@@ -88,8 +87,8 @@ final class Version implements VersionManifest {
     }
 
     @Override
-    public @Nullable RemoteResource getDownload(@NotNull String id) {
-        return downloads.get(id);
+    public @NotNull Optional<RemoteResource> getDownload(@NotNull String id) {
+        return Optional.ofNullable(downloads.get(id));
     }
 
     @Override

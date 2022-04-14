@@ -29,11 +29,11 @@ public final class EnchantUtilImpl {
         Tasks.run(() -> {
             var mapping = Mappings.getMixedMapping();
             methodName_enchantment_getRarity = mapping
-                    .fromSource("net.minecraft.world.item.enchantment.Enchantment")
-                    .methodFromSource("getRarity").mappedName();
+                    .fromSource("net.minecraft.world.item.enchantment.Enchantment").orElseThrow()
+                    .methodFromSource("getRarity").orElseThrow().mappedName();
             methodName_item_getEnchantmentValue = mapping
-                    .fromSource("net.minecraft.world.item.Item")
-                    .methodFromSource("getEnchantmentValue").mappedName();
+                    .fromSource("net.minecraft.world.item.Item").orElseThrow()
+                    .methodFromSource("getEnchantmentValue").orElseThrow().mappedName();
         });
     }
 

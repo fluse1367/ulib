@@ -17,18 +17,16 @@ import static eu.software4you.ulib.spigot.impl.PluginSubst.getPlainMcVersion;
 public final class MappingsImpl {
     private static final LazyValue<VanillaMapping> currentVanilla = new LazyValue<>(() -> {
         String ver = getPlainMcVersion();
-        var manifest = VersionsMeta.getCurrent().get(ver);
-        if (manifest == null)
-            throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));
+        var manifest = VersionsMeta.getCurrent().get(ver)
+                .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));
         return loadVanilla(manifest);
     });
     private static final LazyValue<BukkitMapping> currentBukkit = new LazyValue<>(() ->
             loadBukkit(getPlainMcVersion()));
     private static final LazyValue<MixedMapping> currentMixed = new LazyValue<>(() -> {
         String ver = getPlainMcVersion();
-        var manifest = VersionsMeta.getCurrent().get(ver);
-        if (manifest == null)
-            throw new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver));
+        var manifest = VersionsMeta.getCurrent().get(ver)
+                .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));
         return loadMixed(manifest);
     });
 
@@ -36,12 +34,12 @@ public final class MappingsImpl {
     public static VanillaMapping loadVanilla(VersionManifest version) {
         if (version == null)
             return null;
-        var mapping = version.getDownload("server_mappings");
-        if (mapping == null)
+        var opMapping = version.getDownload("server_mappings");
+        if (opMapping.isEmpty())
             return null;
 
         var out = new ByteArrayOutputStream();
-        mapping.download(out);
+        opMapping.get().download(out);
         return new VanillaMapping(out.toString());
     }
 

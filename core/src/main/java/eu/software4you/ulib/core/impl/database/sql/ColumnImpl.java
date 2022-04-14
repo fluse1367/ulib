@@ -4,6 +4,9 @@ import eu.software4you.ulib.core.database.sql.Column;
 import eu.software4you.ulib.core.database.sql.DataType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 @AllArgsConstructor
 @Getter
@@ -17,4 +20,9 @@ public final class ColumnImpl<T> implements Column<T> {
     private final long size;
     private final T defaultValue;
     private final T[] acceptable;
+
+    @NotNull
+    public Optional<Index> getIndex() {
+        return Optional.ofNullable(index);
+    }
 }

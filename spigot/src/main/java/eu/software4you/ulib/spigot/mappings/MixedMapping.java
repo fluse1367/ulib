@@ -1,7 +1,8 @@
 package eu.software4you.ulib.spigot.mappings;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Represents a mixture of a {@link VanillaMapping Vanilla-} and {@link BukkitMapping Bukkit-}Mapping.
@@ -24,6 +25,6 @@ public interface MixedMapping extends JarMapping {
      * @param source the source (Bukkit) class
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    ClassMapping from(@NotNull Class<?> source);
+    @NotNull
+    Optional<ClassMapping> from(@NotNull Class<?> source);
 }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * Represents a downloadable mojang-resource.
@@ -25,7 +26,7 @@ public interface RemoteResource {
      * @return the file hash
      */
     @NotNull
-    String getSha1();
+    Optional<String> getSha1();
 
     /**
      * Returns the file size.

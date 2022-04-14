@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.configuration;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
@@ -65,8 +64,8 @@ public interface YamlConfiguration extends ConfigurationReinit {
      * @param path the key path; elements seperated by {@code .}
      * @return a list with the comment lines, or {@code null} if {@code path} not found
      */
-    @Nullable
-    List<String> getComments(@NotNull String path);
+    @NotNull
+    Optional<List<String>> getComments(@NotNull String path);
 
     /**
      * Sets the comments of a specific key.

@@ -4,7 +4,8 @@ import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.common.Keyable;
 import eu.software4you.ulib.core.database.sql.query.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Represents a sql Table.
@@ -25,8 +26,8 @@ public interface Table extends Keyable<String> {
      * @param name the column name
      * @return the column instance, or {@code null} if not found
      */
-    @Nullable
-    Column<?> getColumn(@NotNull String name);
+    @NotNull
+    Optional<Column<?>> getColumn(@NotNull String name);
 
     @NotNull
     String getName();
@@ -109,6 +110,7 @@ public interface Table extends Keyable<String> {
      *
      * @return the query builder
      */
+    @NotNull
     QueryStart delete();
 
     /**

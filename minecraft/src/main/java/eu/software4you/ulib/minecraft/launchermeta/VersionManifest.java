@@ -1,12 +1,10 @@
 package eu.software4you.ulib.minecraft.launchermeta;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Limited representation of a minecraft version manifest.
@@ -66,8 +64,8 @@ public interface VersionManifest {
      * @param id the artifact id
      * @return the download object, or {@code null} if not found
      */
-    @Nullable
-    RemoteResource getDownload(@NotNull String id);
+    @NotNull
+    Optional<RemoteResource> getDownload(@NotNull String id);
 
     /**
      * Returns all downloads of the manifest.

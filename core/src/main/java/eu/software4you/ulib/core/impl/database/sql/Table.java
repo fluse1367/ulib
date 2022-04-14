@@ -6,10 +6,8 @@ import eu.software4you.ulib.core.database.sql.DataType;
 import eu.software4you.ulib.core.impl.database.sql.query.*;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 import static eu.software4you.ulib.core.util.ArrayUtil.concat;
 
@@ -26,8 +24,9 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
     }
 
     @Override
-    public @Nullable Column<?> getColumn(@NotNull String name) {
-        return columns.get(name);
+    @NotNull
+    public Optional<Column<?>> getColumn(@NotNull String name) {
+        return Optional.ofNullable(columns.get(name));
     }
 
     @SneakyThrows
@@ -53,9 +52,7 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
                 sb.append(" not null");
             }
             if (sql.applyIndexBeforeAI()) {
-                if (col.getIndex() != null) {
-                    sb.append(" ").append(col.getIndex().getSql());
-                }
+                col.getIndex().ifPresent(in -> sb.append(" ").append(in.getSql()));
                 if (col.isAutoIncrement()) {
                     sb.append(" ").append(sql.autoIncrementKeyword());
                 }
@@ -63,9 +60,7 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
                 if (col.isAutoIncrement()) {
                     sb.append(" ").append(sql.autoIncrementKeyword());
                 }
-                if (col.getIndex() != null) {
-                    sb.append(" ").append(col.getIndex().getSql());
-                }
+                col.getIndex().ifPresent(in -> sb.append(" ").append(in.getSql()));
             }
             if (col.getDefaultValue() != null) {
                 Object def = col.getDefaultValue();
@@ -157,6 +152,7 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
     }
 
     @Override
+    @NotNull
     public QueryStart delete() {
         return new QueryStart(sql, this, "delete from");
     }

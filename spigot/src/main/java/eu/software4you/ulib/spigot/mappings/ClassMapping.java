@@ -2,9 +2,9 @@ package eu.software4you.ulib.spigot.mappings;
 
 import eu.software4you.ulib.core.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Representation of a name-mapped class with it's members.
@@ -24,8 +24,8 @@ public interface ClassMapping extends MappedClass {
      * @param sourceName the <b>source</b> (original) field name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    MappedField fieldFromSource(String sourceName);
+    @NotNull
+    Optional<MappedField> fieldFromSource(String sourceName);
 
     /**
      * Returns a specific field.
@@ -33,8 +33,8 @@ public interface ClassMapping extends MappedClass {
      * @param mappedName the <b>mapped</b> field name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    MappedField fieldFromMapped(String mappedName);
+    @NotNull
+    Optional<MappedField> fieldFromMapped(String mappedName);
 
     /**
      * Returns all method mappings.
@@ -63,9 +63,9 @@ public interface ClassMapping extends MappedClass {
      * @param sourceName the <b>source</b> (original) method name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    default MappedMethod methodFromSource(String sourceName) {
-        return methodsFromSource(sourceName).stream().findFirst().orElse(null);
+    @NotNull
+    default Optional<MappedMethod> methodFromSource(String sourceName) {
+        return methodsFromSource(sourceName).stream().findFirst();
     }
 
     /**
@@ -78,8 +78,8 @@ public interface ClassMapping extends MappedClass {
      * @param params     additional parameter types
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    default MappedMethod methodFromSource(String sourceName, MappedClass param0, MappedClass... params) {
+    @NotNull
+    default Optional<MappedMethod> methodFromSource(String sourceName, MappedClass param0, MappedClass... params) {
         return methodFromSource(sourceName, ArrayUtil.concat(param0, params));
     }
 
@@ -92,8 +92,8 @@ public interface ClassMapping extends MappedClass {
      * @param params     parameter types
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    MappedMethod methodFromSource(String sourceName, MappedClass[] params);
+    @NotNull
+    Optional<MappedMethod> methodFromSource(String sourceName, MappedClass[] params);
 
     /**
      * Returns all methods with a certain name.
@@ -114,9 +114,9 @@ public interface ClassMapping extends MappedClass {
      * @param mappedName the <b>mapped</b> method name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    default MappedMethod methodFromMapped(String mappedName) {
-        return methodsFromMapped(mappedName).stream().findFirst().orElse(null);
+    @NotNull
+    default Optional<MappedMethod> methodFromMapped(String mappedName) {
+        return methodsFromMapped(mappedName).stream().findFirst();
     }
 
     /**
@@ -129,8 +129,8 @@ public interface ClassMapping extends MappedClass {
      * @param params     additional parameter types
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    default MappedMethod methodFromMapped(String mappedName, MappedClass param0, MappedClass... params) {
+    @NotNull
+    default Optional<MappedMethod> methodFromMapped(String mappedName, MappedClass param0, MappedClass... params) {
         return methodFromMapped(mappedName, ArrayUtil.concat(param0, params));
     }
 
@@ -143,6 +143,6 @@ public interface ClassMapping extends MappedClass {
      * @param params     parameter types
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    MappedMethod methodFromMapped(String mappedName, MappedClass[] params);
+    @NotNull
+    Optional<MappedMethod> methodFromMapped(String mappedName, MappedClass[] params);
 }

@@ -48,12 +48,12 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
         return new YamlDocument(this, key, valueNode);
     }
 
-    public List<String> getComments(@NotNull String fullPath) {
+    @NotNull
+    public Optional<List<String>> getComments(@NotNull String fullPath) {
         return resolveKeyNode(fullPath)
                 .map(node -> node.getBlockComments().stream()
                         .map(CommentLine::getValue)
-                        .collect(Collectors.toList()))
-                .orElse(null);
+                        .collect(Collectors.toList()));
     }
 
     public void setComments(@NotNull String fullPath, String... lines) {

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 /**
  * Represents a column in a {@link Table}.
  *
@@ -63,8 +65,8 @@ public interface Column<T> extends Keyable<String>, Sizable {
      *
      * @return the value, or {@code null} if not set
      */
-    @Nullable
-    Index getIndex();
+    @NotNull
+    Optional<Index> getIndex();
 
     @RequiredArgsConstructor
     enum Index {

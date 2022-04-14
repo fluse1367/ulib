@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
+import java.util.Collections;
 import java.util.Objects;
 
 public final class Internal {
@@ -91,7 +92,7 @@ public final class Internal {
         current.getValues(true).forEach((k, v) -> {
             if (!saved.isSet(k)) {
                 saved.set(k, v);
-                saved.setComments(k, current.getComments(k));
+                saved.setComments(k, current.getComments(k).orElse(Collections.emptyList()));
             }
         });
 

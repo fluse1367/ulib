@@ -3,7 +3,6 @@ package eu.software4you.ulib.spigot.impl.mappings;
 import eu.software4you.ulib.core.collection.Triple;
 import eu.software4you.ulib.core.util.LazyValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -67,13 +66,13 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
     }
 
     @Override
-    public @Nullable MappedField fieldFromSource(String originalName) {
-        return Optional.ofNullable(fieldsBySourceName.get(originalName)).map(LazyValue::get).orElse(null);
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedField> fieldFromSource(String originalName) {
+        return Optional.ofNullable(fieldsBySourceName.get(originalName)).map(LazyValue::get);
     }
 
     @Override
-    public @Nullable MappedField fieldFromMapped(String mappedName) {
-        return Optional.ofNullable(fieldsByMappedName.get(mappedName)).map(LazyValue::get).orElse(null);
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedField> fieldFromMapped(String mappedName) {
+        return Optional.ofNullable(fieldsByMappedName.get(mappedName)).map(LazyValue::get);
     }
 
     @Override
@@ -92,7 +91,7 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
     }
 
     @Override
-    public @Nullable MappedMethod methodFromSource(String sourceName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> methodFromSource(String sourceName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
         return method(methodsBySourceName, sourceName, params);
     }
 
@@ -104,17 +103,16 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
     }
 
     @Override
-    public @Nullable MappedMethod methodFromMapped(String mappedName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> methodFromMapped(String mappedName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
         return method(methodsByMappedName, mappedName, params);
     }
 
-    private MappedMethod method(Map<String, LazyValue<List<MappedMethod>>> map,
-                                String name, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    private Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> method(Map<String, LazyValue<List<MappedMethod>>> map,
+                                                                               String name, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
         return Optional.ofNullable(map.get(name))
                 .map(LazyValue::get)
                 .flatMap(li -> li.stream()
                         .filter(mm -> Arrays.equals(mm.parameterTypes(), params))
-                        .findFirst())
-                .orElse(null);
+                        .findFirst());
     }
 }

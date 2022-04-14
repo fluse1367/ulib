@@ -1,9 +1,9 @@
 package eu.software4you.ulib.spigot.mappings;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Mapping for a name-mapped jar.
@@ -24,8 +24,8 @@ public interface JarMapping {
      * @param sourceName the <b>source</b> (original) fully qualified class name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    ClassMapping fromSource(@NotNull String sourceName);
+    @NotNull
+    Optional<ClassMapping> fromSource(@NotNull String sourceName);
 
     /**
      * Returns a specific class mapping.
@@ -33,6 +33,6 @@ public interface JarMapping {
      * @param mappedName the <b>mapped</b> fully qualified class name
      * @return the mapping, or {@code null} if not found
      */
-    @Nullable
-    ClassMapping fromMapped(@NotNull String mappedName);
+    @NotNull
+    Optional<ClassMapping> fromMapped(@NotNull String mappedName);
 }

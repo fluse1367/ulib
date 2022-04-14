@@ -6,7 +6,6 @@ import eu.software4you.ulib.core.util.LazyValue;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.*;
@@ -46,20 +45,18 @@ public final class Meta implements VersionsMeta {
 
     @Override
     public @NotNull VersionManifest getRelease() {
-        //noinspection ConstantConditions
-        return get(release);
+        return get(release).orElseThrow();
     }
 
     @Override
     public @NotNull VersionManifest getSnapshot() {
-        //noinspection ConstantConditions
-        return get(snapshot);
+        return get(snapshot).orElseThrow();
     }
 
     @Override
-    public @Nullable VersionManifest get(@NotNull String id) {
+    public @NotNull Optional<VersionManifest> get(@NotNull String id) {
         if (versions.containsKey(id))
-            return versions.get(id).get();
+            return Optional.ofNullable(versions.get(id).get());
         return null;
     }
 

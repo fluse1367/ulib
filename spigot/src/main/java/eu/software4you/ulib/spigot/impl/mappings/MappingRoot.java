@@ -4,7 +4,6 @@ import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
 import eu.software4you.ulib.spigot.mappings.JarMapping;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,13 +33,13 @@ abstract class MappingRoot<T> implements JarMapping {
     }
 
     @Override
-    public @Nullable ClassMapping fromSource(@NotNull String originalName) {
-        return bySourceName.get(originalName);
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> fromSource(@NotNull String originalName) {
+        return Optional.ofNullable(bySourceName.get(originalName));
     }
 
     @Override
-    public @Nullable ClassMapping fromMapped(@NotNull String mappedName) {
-        return byMappedName.get(mappedName);
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> fromMapped(@NotNull String mappedName) {
+        return Optional.ofNullable(byMappedName.get(mappedName));
     }
 
     @NotNull

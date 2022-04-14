@@ -4,7 +4,6 @@ import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
 import eu.software4you.ulib.core.util.LazyValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -17,7 +16,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
     }
 
     @Override
-    public @Nullable ClassMapping from(@NotNull Class<?> source) {
+    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> from(@NotNull Class<?> source) {
         return fromSource(source.getName());
     }
 
@@ -82,8 +81,8 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
             li.forEach(vm -> {
                 String vanillaSourceName = vm.sourceName();
                 String vanillaObfName = vm.mappedName();
-                String bukkitName = Optional.ofNullable(bukkitResolve.methodFromSource(vanillaObfName, vm.parameterTypes()))
-                        .map(Mapped::mappedName)
+                String bukkitName = bukkitResolve.methodFromSource(vanillaObfName, vm.parameterTypes())
+                        .map(eu.software4you.ulib.spigot.mappings.Mapped::mappedName)
                         .orElse(vanillaObfName); // fall back to vanilla obf name
 
                 Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,

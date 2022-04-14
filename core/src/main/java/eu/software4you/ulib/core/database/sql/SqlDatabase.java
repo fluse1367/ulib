@@ -3,10 +3,10 @@ package eu.software4you.ulib.core.database.sql;
 import eu.software4you.ulib.core.database.Database;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Representation of sql type databases.
@@ -65,8 +65,8 @@ public interface SqlDatabase extends Database {
      * @param name the table name
      * @return the table instance, or {@code null} if not found
      */
-    @Nullable
-    Table getTable(@NotNull String name);
+    @NotNull
+    Optional<Table> getTable(@NotNull String name);
 
     /**
      * Adds a new table to this wrapper.

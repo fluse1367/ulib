@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.http;
 
 import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.io.IOUtil;
+import eu.software4you.ulib.core.util.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +11,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * A http resource that may be cached.
@@ -53,9 +55,9 @@ public class CachedResource extends ChecksumFile {
         return url;
     }
 
-    @Nullable
-    public String getSha1() {
-        return checksum;
+    @NotNull
+    public Optional<String> getSha1() {
+        return Optional.ofNullable(checksum);
     }
 
     @NotNull
@@ -68,10 +70,9 @@ public class CachedResource extends ChecksumFile {
      *
      * @return the resource's contents
      */
-    @SneakyThrows
     @NotNull
-    public InputStream request() {
-        return url.openStream();
+    public Expect<InputStream, IOException> request() {
+        return Expect.compute(url::openStream);
     }
 
     @SneakyThrows
@@ -79,7 +80,8 @@ public class CachedResource extends ChecksumFile {
     protected void generate() {
         // download to file
         mkdirsp(file);
-        try (var in = request(); var out = new FileOutputStream(file)) {
+        try (var in = request().orElseThrow();
+             var out = new FileOutputStream(file)) {
             IOUtil.write(in, out);
         }
     }

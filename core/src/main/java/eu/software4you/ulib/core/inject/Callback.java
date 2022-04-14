@@ -1,7 +1,8 @@
 package eu.software4you.ulib.core.inject;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
+
+import java.util.Optional;
 
 /**
  * Callback information for a hook into a method.<br>
@@ -15,8 +16,8 @@ public interface Callback<T> {
     /**
      * Returns the object instance of the hooked method, or {@code null} if the hooked method is static.
      */
-    @Nullable
-    Object self();
+    @NotNull
+    Optional<Object> self();
 
     /**
      * Returns the calling class of the hooked method.
@@ -38,8 +39,8 @@ public interface Callback<T> {
      *
      * @throws IllegalStateException if no return value is stored.
      */
-    @Nullable
-    T getReturnValue();
+    @NotNull
+    Optional<T> getReturnValue();
 
 
     /**
@@ -51,6 +52,8 @@ public interface Callback<T> {
      * @return the value
      * @throws IllegalStateException if return type is void
      */
+    @Nullable
+    @Contract("!null->!null; null->null")
     T setReturnValue(@Nullable T value);
 
     /**

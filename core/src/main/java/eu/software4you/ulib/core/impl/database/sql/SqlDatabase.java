@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.impl.database.sql;
 import eu.software4you.ulib.core.database.sql.*;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
@@ -70,9 +69,10 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
     }
 
     @Override
-    public @Nullable Table getTable(@NotNull String name) {
+    @NotNull
+    public Optional<eu.software4you.ulib.core.database.sql.Table> getTable(@NotNull String name) {
         // TODO: attempt fetching tables if `name` does not occur in the map?
-        return tables.get(name);
+        return Optional.ofNullable(tables.get(name));
     }
 
     private Table addTable(String name, Column<?>... columns) {

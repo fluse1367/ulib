@@ -35,7 +35,7 @@ public class PropertiesLock {
     }
 
     private void testAndThrow(Object key, Callback<?> cb) {
-        if (cb.self() != this.self || !isLocked.test(key))
+        if (cb.self().orElse(null) != this.self || !isLocked.test(key))
             return;
 
         thr(cb);
@@ -58,7 +58,7 @@ public class PropertiesLock {
 
     @Hook(value = "putAll")
     public void hook_putAll(Map<?, ?> t, Callback<Void> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
 
         if (t.keySet().stream().anyMatch(isLocked))
@@ -92,7 +92,7 @@ public class PropertiesLock {
 
     @Hook(value = "entrySet", at = HookPoint.RETURN)
     public void hook_entrySet(Callback<Set<Map.Entry<Object, Object>>> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
 
         var s = cb.getReturnValue();
@@ -111,7 +111,7 @@ public class PropertiesLock {
 
     @Hook(value = "keySet", at = HookPoint.RETURN)
     public void hook_keySet(Callback<Set<Object>> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
 
         var s = cb.getReturnValue();
@@ -130,7 +130,7 @@ public class PropertiesLock {
 
     @Hook(value = "values")
     public void hook_values(Callback<Collection<Object>> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
 
         var s = self.entrySet();
@@ -149,21 +149,21 @@ public class PropertiesLock {
 
     @Hook(value = "keys")
     public void hook_keys(Callback<Enumeration<Object>> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
         cb.setReturnValue(Collections.enumeration(self.keySet()));
     }
 
     @Hook(value = "elements")
     public void hook_elements(Callback<Enumeration<Object>> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
         cb.setReturnValue(Collections.enumeration(self.values()));
     }
 
     @Hook(value = "clear")
     public void hook_clear(Callback<Void> cb) {
-        if (cb.self() != this.self)
+        if (cb.self().orElse(null) != this.self)
             return;
 
         var s = self.entrySet();

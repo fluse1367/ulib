@@ -20,7 +20,7 @@ public interface UserCache {
      * @return the newly created user cache instance
      */
     static UserCache of(PluginBase<?, ?> owner, SqlDatabase database, String tableName) {
-        return of(owner, database.getTable(tableName));
+        return of(owner, database.getTable(tableName).orElseThrow());
     }
 
     /**

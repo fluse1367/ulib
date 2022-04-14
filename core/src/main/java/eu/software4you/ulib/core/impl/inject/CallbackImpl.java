@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 final class CallbackImpl<T> implements Callback<T> {
 
     private final Class<T> returnType;
@@ -24,8 +26,9 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     @Override
-    public Object self() {
-        return self;
+    @NotNull
+    public Optional<Object> self() {
+        return Optional.ofNullable(self);
     }
 
     @Override
@@ -39,10 +42,11 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     @Override
-    public @Nullable T getReturnValue() {
+    @NotNull
+    public Optional<T> getReturnValue() {
         if (!hasReturnValue)
             throw new IllegalStateException("No return value provided");
-        return this.returnValue;
+        return Optional.ofNullable(this.returnValue);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class CustomEnchantmentHandler {
         Tasks.run(() -> {
             methodName_player_getEnchantment = Mappings.getMixedMapping()
                     .fromSource("net.minecraft.world.entity.player.Player")
-                    .methodFromSource("getEnchantmentSeed").mappedName();
+                    .methodFromSource("getEnchantmentSeed").orElseThrow().mappedName();
         });
     }
 
