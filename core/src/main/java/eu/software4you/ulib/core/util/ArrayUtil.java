@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.util;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class ArrayUtil {
@@ -12,7 +13,8 @@ public class ArrayUtil {
      * @return the concatenated result
      */
     public static <T> T[] concat(T t, T[] arr) {
-        T[] array = Arrays.copyOf(arr, arr.length + 1);
+        @SuppressWarnings("unchecked")
+        T[] array = (T[]) Array.newInstance(arr.getClass().getComponentType(), arr.length + 1);
         array[0] = t;
         System.arraycopy(arr, 0, array, 1, arr.length);
         return array;

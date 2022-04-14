@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.*;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.command.Command;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
@@ -17,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public final class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge {
+public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge {
     public static final ChannelIdentifier IDENTIFIER = new LegacyChannelIdentifier(ProxyServerBridge.CHANNEL);
 
     private final VelocityPlugin plugin;

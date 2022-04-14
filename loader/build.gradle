@@ -59,6 +59,9 @@ jar {
     // include modules
     inclModule('core')
     inclModule('minecraft')
+    inclModule('velocity')
+    inclModule('bungeecord')
+    inclModule('spigot')
 
     // serialize modules graph
     byte[] modulesGraphSerialized;

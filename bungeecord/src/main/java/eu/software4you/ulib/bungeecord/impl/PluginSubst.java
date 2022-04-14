@@ -3,7 +3,7 @@ package eu.software4you.ulib.bungeecord.impl;
 import eu.software4you.ulib.bungeecord.impl.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.bungeecord.impl.usercache.UserCacheImpl;
 import eu.software4you.ulib.bungeecord.plugin.ExtendedProxyPlugin;
-import eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge;
+import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import lombok.SneakyThrows;
 
@@ -13,10 +13,10 @@ public class PluginSubst extends ExtendedProxyPlugin {
     @Override
     public void onEnable() {
         try {
-            ProxyServerBridge.INSTANCE.setInstance(this.proxyServerBridgeImpl = new ProxyServerBridgeImpl(this));
+            AbstractProxyServerBridge.INSTANCE.setInstance(this.proxyServerBridgeImpl = new ProxyServerBridgeImpl(this));
 
             registerEvents(proxyServerBridgeImpl);
-            getProxy().registerChannel(ProxyServerBridge.CHANNEL);
+            getProxy().registerChannel(AbstractProxyServerBridge.CHANNEL);
 
             AbstractUserCache.PLUGIN_INSTANCE.setInstance(this);
             AbstractUserCache.PROVIDER.setInstance(UserCacheImpl::new);

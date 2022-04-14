@@ -1,0 +1,19 @@
+//file:noinspection GroovyAssignabilityCheck
+dependencySpigot()
+
+ext {
+    coordsXSeries = 'com.github.cryptomorin:XSeries:8.7.1'
+    project(':loader').ext.replacementTokens.putIfAbsent('maven.xseries', new String("$coordsXSeries"))
+}
+
+dependencies {
+    api project(':minecraft')
+
+    lib coordsXSeries
+}
+
+extraJavaModuleInfo {
+    automaticModule('commons-lang-2.6.jar', 'commons.lang')
+    automaticModule('guava-21.0.jar', 'guava')
+    automaticModule('XSeries-8.7.1.jar', 'xseries')
+}

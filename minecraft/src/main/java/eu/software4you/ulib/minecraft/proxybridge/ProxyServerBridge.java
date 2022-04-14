@@ -1,5 +1,6 @@
 package eu.software4you.ulib.minecraft.proxybridge;
 
+import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.command.CommandManager;
 
 import java.util.concurrent.Future;
@@ -16,7 +17,7 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @return the current instance
      */
     public static ProxyServerBridge getInstance() {
-        return eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge.INSTANCE.get();
+        return AbstractProxyServerBridge.INSTANCE.get();
     }
 
     /**

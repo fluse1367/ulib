@@ -2,6 +2,7 @@ package eu.software4you.ulib.bungeecord.impl.proxybridge;
 
 import com.google.gson.*;
 import eu.software4you.ulib.bungeecord.plugin.ExtendedPlugin;
+import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 @RequiredArgsConstructor
-public class ProxyServerBridgeImpl extends eu.software4you.ulib.minecraft.impl.proxybridge.ProxyServerBridge implements Listener {
+public class ProxyServerBridgeImpl extends AbstractProxyServerBridge implements Listener {
     private final ExtendedPlugin plugin;
     private ServerInfo lastReceivedRequest = null;
     private ServerInfo lastReceivedCommand = null;
