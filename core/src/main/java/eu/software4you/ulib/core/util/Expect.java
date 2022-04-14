@@ -351,7 +351,7 @@ public final class Expect<T, X extends Throwable> {
      */
     @NonNull
     public <XX extends Throwable> Expect<Void, XX> ifPresentOrElse(@NonNull ParamTask<? super T, XX> task,
-                                                                   @NonNull ParamTask<? super Optional<? super Throwable>, XX> other) {
+                                                                   @NonNull ParamTask<? super Optional<? extends Throwable>, XX> other) {
         Objects.requireNonNull(task);
         Objects.requireNonNull(other);
 
@@ -365,7 +365,7 @@ public final class Expect<T, X extends Throwable> {
      * @return this Except object if a value is present, otherwise another Expect object wrapping a potential caught throwable object or value from the task's execution
      */
     @NonNull
-    public <XX extends Throwable> Expect<T, ? extends Throwable> orElse(@NonNull ParamFunc<? super Optional<? super Throwable>, T, XX> task) {
+    public <XX extends Throwable> Expect<T, ? extends Throwable> orElse(@NonNull ParamFunc<? super Optional<? extends Throwable>, T, XX> task) {
         Objects.requireNonNull(task);
 
         return isPresent() ? this : compute(() -> task.execute(getCaught()));
