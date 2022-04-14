@@ -81,7 +81,7 @@ public class Dependencies {
 
             // finally, inject
             InjectUtil.injectLoaderDelegation(new ClassLoaderDelegation(cl), injectionTarget)
-                    .rethrow();
+                    .rethrow(Exception.class);
         });
     }
 

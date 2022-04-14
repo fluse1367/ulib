@@ -134,7 +134,7 @@ public class CustomEnchantmentHandler {
 
         // set seed to exp seed of player
         if (methodName_player_getEnchantment != null) {
-            int xpSeed = ReflectUtil.<Integer>call(e.getEnchanter().getClass(), e.getEnchanter(),
+            int xpSeed = ReflectUtil.call(Integer.class, e.getEnchanter().getClass(), e.getEnchanter(),
                     String.format("getHandle().%s()", methodName_player_getEnchantment)).orElseThrow();
             rand.setSeed(xpSeed);
         }

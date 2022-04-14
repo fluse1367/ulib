@@ -67,7 +67,7 @@ public class Conversions {
      * @param converter the converting function
      * @return an optional wrapping the value if the converting function executed successful and returned a non-null value, an empty optional otherwise
      */
-    public static <I, R, X extends Throwable> Expect<R, X> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R, X> converter) {
+    public static <I, R, X extends Exception> Expect<R, X> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R, X> converter) {
         if (Conditions.nil(input, converter))
             return Expect.empty();
         return Expect.compute(() -> converter.apply(input));

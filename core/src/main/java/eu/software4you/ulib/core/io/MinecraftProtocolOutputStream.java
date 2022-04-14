@@ -41,7 +41,7 @@ public class MinecraftProtocolOutputStream extends DataOutputStream {
     public Expect<Void, IOException> writeString(String string) {
         return Expect.compute(() -> {
             byte[] buf = string.getBytes();
-            writeVarInt(buf.length).rethrow();
+            writeVarInt(buf.length).rethrow(IOException.class);
             write(buf);
         });
     }

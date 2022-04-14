@@ -20,7 +20,7 @@ public class JsonSerializer {
 
     public JsonDocument deserialize(Reader reader) throws IOException {
         var doc = createNew();
-        doc.reinit(reader).rethrow();
+        doc.reinit(reader).rethrow(IOException.class);
         return doc;
     }
 

@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
  * @apiNote only pass this task object as function if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface BiParamFunc<T, U, R, X extends Throwable> extends BiFunction<T, U, R> {
+public interface BiParamFunc<T, U, R, X extends Exception> extends BiFunction<T, U, R> {
     R execute(T t, U u) throws X;
 
     @SneakyThrows

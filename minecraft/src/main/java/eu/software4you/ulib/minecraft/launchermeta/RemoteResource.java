@@ -48,7 +48,7 @@ public interface RemoteResource {
      * @param dest the destination
      */
     default Expect<Void, IOException> download(File dest) {
-        return Expect.compute(() -> download(new FileOutputStream(dest)).rethrow());
+        return Expect.compute(() -> download(new FileOutputStream(dest)).rethrow(IOException.class));
     }
 
     /**
@@ -58,8 +58,8 @@ public interface RemoteResource {
      */
     default Expect<Void, IOException> download(OutputStream out) {
         return Expect.compute(() -> {
-            try (var in = download().orElseRethrow()) {
-                IOUtil.write(in, out).rethrow();
+            try (var in = download().orElseRethrow(IOException.class)) {
+                IOUtil.write(in, out).rethrow(IOException.class);
             }
         });
     }

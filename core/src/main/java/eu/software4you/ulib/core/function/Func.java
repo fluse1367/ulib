@@ -11,16 +11,12 @@ import java.util.function.Supplier;
  * @apiNote only pass this task object as supplier if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface Func<T, X extends Throwable> extends Callable<T>, Supplier<T> {
+public interface Func<T, X extends Exception> extends Callable<T>, Supplier<T> {
     T execute() throws X;
 
     @Override
     default T call() throws Exception {
-        try {
-            return execute();
-        } catch (Throwable t) {
-            throw new Exception(t);
-        }
+        return execute();
     }
 
     @SneakyThrows

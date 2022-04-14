@@ -55,7 +55,7 @@ public interface YamlConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<YamlConfiguration, IOException> loadYaml(@NotNull File file) {
-        return Expect.compute(() -> loadYaml(new FileInputStream(file)).orElseRethrow());
+        return Expect.compute(() -> loadYaml(new FileInputStream(file)).orElseRethrow(IOException.class));
     }
 
 

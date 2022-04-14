@@ -66,7 +66,7 @@ public class IOUtil {
     public static Expect<byte[], IOException> read(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
-                write(in, bout).rethrow();
+                write(in, bout).rethrow(IOException.class);
                 return bout.toByteArray();
             }
         });
@@ -82,7 +82,7 @@ public class IOUtil {
     public static Expect<char[], IOException> read(@NotNull Reader reader) {
         return Expect.compute(() -> {
             try (var cout = new CharArrayWriter()) {
-                write(reader, cout).rethrow();
+                write(reader, cout).rethrow(IOException.class);
                 return cout.toCharArray();
             }
         });
@@ -98,7 +98,7 @@ public class IOUtil {
     public static Expect<String, IOException> toString(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
-                write(in, bout).rethrow();
+                write(in, bout).rethrow(IOException.class);
                 return bout.toString();
             }
         });

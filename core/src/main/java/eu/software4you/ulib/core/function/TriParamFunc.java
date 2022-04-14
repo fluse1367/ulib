@@ -8,7 +8,7 @@ import lombok.SneakyThrows;
  * @apiNote only pass this task object as function if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface TriParamFunc<T, U, V, R, X extends Throwable> extends TriFunction<T, U, V, R> {
+public interface TriParamFunc<T, U, V, R, X extends Exception> extends TriFunction<T, U, V, R> {
     R execute(T t, U u, V v) throws X;
 
     @SneakyThrows

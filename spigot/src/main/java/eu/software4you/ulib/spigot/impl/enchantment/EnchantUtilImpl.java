@@ -151,15 +151,15 @@ public final class EnchantUtilImpl {
 
     @SneakyThrows
     public int getItemEnchantability(ItemStack stack) {
-        return ReflectUtil.<Integer>call(Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"), null,
+        return ReflectUtil.call(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"), null,
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
                 Param.single(ItemStack.class, stack)).orElseThrow();
     }
 
     private boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
-        Map<NamespacedKey, Enchantment> byKey = ReflectUtil.<Map<NamespacedKey, Enchantment>>call(Enchantment.class, null, "byKey")
+        Map<NamespacedKey, Enchantment> byKey = ReflectUtil.call(Map.class, Enchantment.class, null, "byKey")
                 .orElseThrow();
-        Map<String, Enchantment> byName = ReflectUtil.<Map<String, Enchantment>>call(Enchantment.class, null, "byName")
+        Map<String, Enchantment> byName = ReflectUtil.call(Map.class, Enchantment.class, null, "byName")
                 .orElseThrow();
 
         return fun.apply(byKey, byName);
@@ -174,7 +174,7 @@ public final class EnchantUtilImpl {
         var ce = Class.forName("org.bukkit.craftbukkit.enchantments.CraftEnchantment");
         if (!ce.isInstance(enchantment))
             throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
-        rarityName = ReflectUtil.<String>call(ce, null, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
+        rarityName = ReflectUtil.call(String.class, ce, null, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
                 Param.single(Enchantment.class, enchantment)).orElseThrow();
 
         return EnchantmentRarity.valueOf(rarityName);

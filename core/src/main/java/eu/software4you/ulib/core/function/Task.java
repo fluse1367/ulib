@@ -10,16 +10,12 @@ import java.util.concurrent.Callable;
  * @apiNote only pass this task object as runnable if you certainly know it won't throw an exception
  */
 @FunctionalInterface
-public interface Task<X extends Throwable> extends Callable<Void>, Runnable {
+public interface Task<X extends Exception> extends Callable<Void>, Runnable {
     void execute() throws X;
 
     @Override
     default Void call() throws Exception {
-        try {
-            execute();
-        } catch (Throwable e) {
-            throw new Exception(e);
-        }
+        execute();
         return null;
     }
 

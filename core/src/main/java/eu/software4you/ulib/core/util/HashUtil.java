@@ -18,7 +18,7 @@ public class HashUtil {
      */
     @NotNull
     public static Expect<String, IOException> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
-        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest).orElseRethrow()));
+        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest).orElseRethrow(IOException.class)));
     }
 
     /**

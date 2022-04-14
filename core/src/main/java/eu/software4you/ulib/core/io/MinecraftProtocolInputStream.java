@@ -54,7 +54,7 @@ public class MinecraftProtocolInputStream extends DataInputStream {
 
     public Expect<String, IOException> readString() {
         return Expect.compute(() -> {
-            int len = readVarInt().orElseRethrow();
+            int len = readVarInt().orElseRethrow(IOException.class);
             if (len <= -1)
                 throw new EOFException();
 

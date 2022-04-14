@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * @apiNote only pass this task object as consumer if you know for certain it won't throw an exception
  */
 @FunctionalInterface
-public interface ParamTask<T, X extends Throwable> extends Consumer<T> {
+public interface ParamTask<T, X extends Exception> extends Consumer<T> {
     void execute(T t) throws X;
 
     @SneakyThrows

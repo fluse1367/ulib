@@ -21,13 +21,31 @@ public class ReflectUtil {
      * @param invoke the invoking object of the entry
      * @param call   the call string
      * @param params the parameters according to the call string
-     * @param <R>    return type
      * @return the execution result
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
-    public static <R> Expect<R, ReflectiveOperationException> call(@NotNull Class<?> entry, @Nullable Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+    public static Expect<Object, ReflectiveOperationException> call(@NotNull Class<?> entry, @Nullable Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(entry, invoke, ReflectSupport.buildFramePath(call, params));
+    }
+
+    /**
+     * Calls a chain of methods/fields from an initial entry point.
+     * <p>
+     * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
+     * <pre>{@code someMethod().someField.someMethod()}</pre>
+     *
+     * @param returnType return type
+     * @param entry      the initial entry point
+     * @param invoke     the invoking object of the entry
+     * @param call       the call string
+     * @param params     the parameters according to the call string
+     * @return the execution result
+     * @see #call(Class, Object, CallFrame...)
+     */
+    @SafeVarargs
+    public static <R> Expect<R, ReflectiveOperationException> call(@NotNull Class<R> returnType, @NotNull Class<?> entry, @Nullable Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+        return call(returnType, entry, invoke, ReflectSupport.buildFramePath(call, params));
     }
 
     /**
@@ -37,11 +55,25 @@ public class ReflectUtil {
      * @param entry  the initial entry point
      * @param invoke the invoking object of the entry
      * @param path   the calling path
-     * @param <R>    return type
      * @return an expect object wrapping the execution result
      */
     @NotNull
-    public static <R> Expect<R, ReflectiveOperationException> call(@NotNull Class<?> entry, @Nullable Object invoke, @NotNull CallFrame... path) {
+    public static Expect<Object, ReflectiveOperationException> call(@NotNull Class<?> entry, @Nullable Object invoke, @NotNull CallFrame... path) {
+        return call(Object.class, entry, invoke, path);
+    }
+
+    /**
+     * Calls a chain of methods/fields from an initial entry point.
+     * If a {@link CallFrame} representing a field has at least one parameter, the field will be set to this parameter before the execution continues.
+     *
+     * @param returnType the return type
+     * @param entry      the initial entry point
+     * @param invoke     the invoking object of the entry
+     * @param path       the calling path
+     * @return an expect object wrapping the execution result
+     */
+    @NotNull
+    public static <R> Expect<R, ReflectiveOperationException> call(@NotNull Class<R> returnType, @NotNull Class<?> entry, @Nullable Object invoke, @NotNull CallFrame... path) {
         return Expect.compute(() -> {
 
             Class<?> clazz = entry;
@@ -55,7 +87,7 @@ public class ReflectUtil {
 
             }
 
-            return (R) instance;
+            return returnType.cast(instance);
         });
     }
 
@@ -153,7 +185,8 @@ public class ReflectUtil {
                 .<E, ReflectiveOperationException>map(o -> (E) o);
 
         if (res.isPresent())
-            return res.toOther();
+            //noinspection unchecked,rawtypes
+            return (Expect) res;
 
         if (res.getCaught().orElseThrow() instanceof InvocationTargetException ex)
             return Expect.failed((IllegalArgumentException) ex.getTargetException());

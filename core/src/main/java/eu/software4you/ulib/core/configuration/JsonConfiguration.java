@@ -57,7 +57,7 @@ public interface JsonConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<JsonConfiguration, IOException> loadJson(@NotNull File file) {
-        return Expect.compute(() -> loadJson(new FileInputStream(file)).orElseRethrow());
+        return Expect.compute(() -> loadJson(new FileInputStream(file)).orElseRethrow(IOException.class));
     }
 
     @Override
