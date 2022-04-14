@@ -42,11 +42,10 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     @Override
-    @NotNull
-    public Optional<T> getReturnValue() {
+    public @Nullable T getReturnValue() {
         if (!hasReturnValue)
             throw new IllegalStateException("No return value provided");
-        return Optional.ofNullable(this.returnValue);
+        return this.returnValue;
     }
 
     @Override

@@ -39,8 +39,8 @@ public interface Callback<T> {
      *
      * @throws IllegalStateException if no return value is stored.
      */
-    @NotNull
-    Optional<T> getReturnValue();
+    @Nullable
+    T getReturnValue();
 
 
     /**

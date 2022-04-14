@@ -62,7 +62,7 @@ public class CustomEnchantmentHandler {
         // Use Mappings API to get xpSeed
         Tasks.run(() -> {
             methodName_player_getEnchantment = Mappings.getMixedMapping()
-                    .fromSource("net.minecraft.world.entity.player.Player")
+                    .fromSource("net.minecraft.world.entity.player.Player").orElseThrow()
                     .methodFromSource("getEnchantmentSeed").orElseThrow().mappedName();
         });
     }
