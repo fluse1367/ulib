@@ -18,6 +18,10 @@ dependencies {
     libOnly('org.slf4j:slf4j-simple:1.7.32') {
         exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
     }
+
+    // for somewhat reason the apache http client does not have commons logging declared as dependency however its still necessary
+    // the apache http client is a dependency of the maven http transport module
+    libOnly 'commons-logging:commons-logging:1.2'
 }
 
 extraJavaModuleInfo {
