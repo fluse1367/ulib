@@ -6,6 +6,7 @@ module ulib.core {
     // java
     requires java.instrument;
     requires java.sql;
+    requires java.net.http;
 
     // 3rd party
     requires javassist;
