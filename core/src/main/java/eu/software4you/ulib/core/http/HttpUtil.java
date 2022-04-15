@@ -20,7 +20,6 @@ public class HttpUtil {
 
     /**
      * Sends a {@code application/x-www-form-urlencoded} POST request.
-     * This method will also put the {@code Content-Length} header.
      * The key-value fields will be appended to in an url encoded format.
      *
      * @param uri    the uri
@@ -35,7 +34,6 @@ public class HttpUtil {
             var request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofByteArray(body))
                     .header("Content-Type", "application/x-www-form-urlencoded")
-                    .header("Content-Length", String.valueOf(body.length))
                     .build();
 
             return DEFAULT_CLIENT.send(request, ofInputStream());
