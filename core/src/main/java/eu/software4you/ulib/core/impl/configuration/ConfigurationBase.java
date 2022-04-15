@@ -154,7 +154,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
         var doc = r.getFirst();
         var key = r.getSecond();
-        var isActuallyNew = doc.children.containsKey(key);
+        var isActuallyNew = !doc.children.containsKey(key);
         doc.children.put(key, value);
         doc.placedNewValue(key, value, isActuallyNew);
     }
