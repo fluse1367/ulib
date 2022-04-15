@@ -154,8 +154,9 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
         var doc = r.getFirst();
         var key = r.getSecond();
+        var isActuallyNew = doc.children.containsKey(key);
         doc.children.put(key, value);
-        doc.placedNewValue(key, value);
+        doc.placedNewValue(key, value, isActuallyNew);
     }
 
     // - sub access -
@@ -287,7 +288,8 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     // called when a new value has been placed at the specified key, while overwriting any other associated value
     // the key is not resolved
-    protected void placedNewValue(String key, Object value) {
+    // param genuinelyNew indicates if a value has been overwritten or is actually 'new'
+    protected void placedNewValue(String key, Object value, boolean genuinelyNew) {
         // to be overwritten
     }
 

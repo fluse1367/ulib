@@ -151,7 +151,8 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
         return constructChild(key, valueNode);
     }
 
-    protected void placedNewValue(String key, Object value) {
+    @Override
+    protected void placedNewValue(String key, Object value, boolean genuinelyNew) {
         if (value == null) {
             // remove node
             childNodes.remove(key);
@@ -166,12 +167,12 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
             // overwrite current node
             replaceNode(keyNode = valueNode);
             clear();
-        } else if (children.containsKey(key)) {
-            // replace already existing node
-            keyNode = replaceNode(key, valueNode);
-        } else {
+        } else if (genuinelyNew) {
             // add node
             keyNode = addNode(key, valueNode);
+        } else {
+            // replace already existing node
+            keyNode = replaceNode(key, valueNode);
         }
 
         // overwrite potential old node
