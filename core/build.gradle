@@ -1,21 +1,21 @@
 dependencies {
-    lib 'org.yaml:snakeyaml:1.29'
+    lib 'org.yaml:snakeyaml:1.30'
     lib 'com.github.cliftonlabs:json-simple:4.0.1'
     lib 'org.javassist:javassist:3.28.0-GA'
 
     // maven resolver
-    lib('org.apache.maven:maven-resolver-provider:3.8.4') {
+    lib('org.apache.maven:maven-resolver-provider:3.8.5') {
         exclude group: 'org.slf4j'
     }
-    lib('org.apache.maven.resolver:maven-resolver-connector-basic:1.7.2') {
+    lib('org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3') {
         exclude group: 'org.slf4j'
     }
-    lib('org.apache.maven.resolver:maven-resolver-transport-http:1.7.2') {
+    lib('org.apache.maven.resolver:maven-resolver-transport-http:1.7.3') {
         exclude group: 'org.slf4j'
     }
 
     // no annoying logger message
-    libOnly('org.slf4j:slf4j-simple:1.7.32') {
+    libOnly('org.slf4j:slf4j-simple:1.7.36') {
         exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
     }
 
@@ -26,7 +26,7 @@ dependencies {
 
 extraJavaModuleInfo {
     automaticModule('javassist-3.28.0-GA.jar', 'javassist')
-    automaticModule('maven-resolver-provider-3.8.4.jar', 'maven.resolver.provider')
+    automaticModule('maven-resolver-provider-3.8.5.jar', 'maven.resolver.provider')
     automaticModule('json-simple-4.0.1.jar', 'json.simple')
 }
 

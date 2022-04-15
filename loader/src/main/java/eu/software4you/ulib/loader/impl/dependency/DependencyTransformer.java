@@ -17,12 +17,12 @@ public final class DependencyTransformer {
 
     public DependencyTransformer() {
         // org.apache.maven.model.merge.MavenModelMerger in maven-model-builder -> maven-model
-        add2Transformer("org.apache.maven:maven-model-builder:3.8.4", "org.apache.maven:maven-model:3.8.4",
+        add2Transformer("org.apache.maven:maven-model-builder:3.8.5", "org.apache.maven:maven-model:3.8.5",
                 s -> s.equals(classify("org.apache.maven.model.merge.MavenModelMerger")),
                 s -> false);
 
         // org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException in maven-artifact -> maven-repository-metadata
-        add2Transformer("org.apache.maven:maven-artifact:3.8.4", "org.apache.maven:maven-repository-metadata:3.8.4",
+        add2Transformer("org.apache.maven:maven-artifact:3.8.5", "org.apache.maven:maven-repository-metadata:3.8.5",
                 s -> s.equals(classify("org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException")),
                 s -> false);
 
