@@ -110,7 +110,7 @@ public final class ClassLoaderDelegationHook {
     // class finding/loading hooks
 
     private void hook_findClass(String name, Callback<Class<?>> cb) {
-        if (!check(cb.self(), name))
+        if (!check(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.findClass(name);
@@ -131,7 +131,7 @@ public final class ClassLoaderDelegationHook {
     }
 
     private void hook_findClass(String module, String name, Callback<Class<?>> cb) {
-        if (!check(cb.self(), name))
+        if (!check(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.findClass(module, name);
@@ -141,7 +141,7 @@ public final class ClassLoaderDelegationHook {
     }
 
     private void hook_loadClass(String name, boolean resolve, Callback<Class<?>> cb) {
-        if (!check(cb.self(), name))
+        if (!check(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.loadClass(name, resolve);
@@ -153,7 +153,7 @@ public final class ClassLoaderDelegationHook {
     // resource finding hooks
 
     private void hook_findResource(String name, Callback<URL> cb) {
-        if (!checkCl(cb.self()))
+        if (!checkCl(cb.self().orElseThrow()))
             return;
 
         var u = delegation.findResource(name);
@@ -163,7 +163,7 @@ public final class ClassLoaderDelegationHook {
     }
 
     private void hook_findResource(String module, String name, Callback<URL> cb) {
-        if (!checkCl(cb.self()))
+        if (!checkCl(cb.self().orElseThrow()))
             return;
 
         var u = delegation.findResource(module, name);
