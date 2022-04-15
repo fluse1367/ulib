@@ -12,7 +12,7 @@ import static eu.software4you.ulib.loader.impl.EnvironmentProvider.Environment.*
 
 // handles injection of ulib
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class Injector {
+public class Injector {
 
     private final Initializer initializer;
 

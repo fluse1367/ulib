@@ -24,4 +24,7 @@ module ulib.loader {
     // api exports
     exports eu.software4you.ulib.loader.install;
     exports eu.software4you.ulib.loader.agent to java.instrument;
+
+    // impl exports
+    exports eu.software4you.ulib.loader.impl.init;
 }
