@@ -3,6 +3,8 @@ package eu.software4you.ulib.loader.impl;
 import lombok.SneakyThrows;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -35,5 +37,23 @@ public final class Util {
         in.close();
 
         return sum.getValue();
+    }
+
+    public static List<Class<?>> tryClasses(ClassSup... sups) {
+        List<Class<?>> li = new ArrayList<>(sups.length);
+
+        for (var sup : sups) {
+            try {
+                li.add(sup.get());
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
+                // ignored
+            }
+        }
+
+        return li;
+    }
+
+    public interface ClassSup {
+        Class<?> get() throws ClassNotFoundException, NoClassDefFoundError;
     }
 }

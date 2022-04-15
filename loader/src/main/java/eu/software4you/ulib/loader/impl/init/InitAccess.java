@@ -1,5 +1,6 @@
 package eu.software4you.ulib.loader.impl.init;
 
+import eu.software4you.ulib.loader.impl.Util;
 import eu.software4you.ulib.loader.impl.install.ModuleClassProvider;
 import eu.software4you.ulib.loader.install.Installer;
 import eu.software4you.ulib.loader.minecraft.PluginSpigot;
@@ -10,11 +11,17 @@ import lombok.Synchronized;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public class InitAccess {
 
-    private static final Collection<Class<?>> PERMITTED = Arrays.asList(Installer.class, PluginVelocity.class, PluginSpigot.class);
+    private static final Collection<Class<?>> PERMITTED = Util.tryClasses(
+            () -> Installer.class,
+            () -> PluginVelocity.class,
+            () -> PluginSpigot.class
+    ); // tryClasses bc PluginVelocity/PluginSpigot might fail to load
+
     private static final InitAccess inst = new InitAccess();
 
     public static InitAccess getInstance() {
