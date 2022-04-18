@@ -129,4 +129,29 @@ public final class Internal {
         widenModuleAccess();
         PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY);
     }
+
+    public static boolean isUlibClass(Class<?> cl) {
+        Module m;
+        if (!(m = cl.getModule()).isNamed())
+            return false; // ulib classes are all in named modules
+
+        // check if the module is a genuine ulib module
+        if (!m.getName().startsWith("ulib.")
+            || m != Internal.class.getModule().getLayer().findModule(m.getName()).orElse(null))
+            return false;
+
+        // name check should be unnecessary, buh eh
+        return cl.getName().startsWith("eu.software4you.ulib.");
+    }
+
+    /**
+     * <b>WARNING</b> This method does not check if the class itself is a ulib class.
+     * <p>
+     * A class is considered an implementation class if it is not opened or exported.
+     */
+    public static boolean isImplClass(Class<?> cl) {
+        var m = cl.getModule();
+        var pack = cl.getPackageName();
+        return !m.isExported(pack) && !m.isOpen(pack);
+    }
 }

@@ -1,7 +1,8 @@
 package eu.software4you.ulib.core.reflect;
 
+import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.impl.reflect.ReflectSupport;
-import eu.software4you.ulib.core.util.Expect;
+import eu.software4you.ulib.core.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,6 +92,35 @@ public class ReflectUtil {
         });
     }
 
+
+    /**
+     * Determines if a particular (ulib) class is considered hidden in a call stack.
+     * <p>
+     * A class is considered hidden if it is a utility call class (such as {@link Expect}),
+     * a reflection utility class such as {@link ReflectUtil} or if it is an implementation specific class.
+     * <p>
+     * This method will return {@code false} for any non-ulib class.
+     *
+     * @param clazz the ulib class to check
+     * @return {@code true} if the class is considered hidden in call stack
+     */
+    public static boolean isHidden(@NotNull Class<?> clazz) {
+        if (!Internal.isUlibClass(clazz))
+            return false;
+
+        if (Internal.isImplClass(clazz))
+            return true;
+
+        return  // reflection
+                clazz == ReflectUtil.class
+
+                // utility
+                || clazz == Conditions.class
+                || clazz == Conversions.class
+                || clazz == Expect.class
+                || clazz == LazyValue.class
+                ;
+    }
 
     /**
      * Determines the {@link Class} the current method is being called from
