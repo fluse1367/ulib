@@ -8,7 +8,7 @@ public class ModFabric implements ModInitializer {
 
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.STANDALONE);
-        Installer.installMe();
+        Installer.installTo(ClassLoader.getSystemClassLoader());
     }
 
     @Override
