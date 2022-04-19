@@ -1,12 +1,13 @@
 package eu.software4you.ulib.core.impl.inject;
 
+import eu.software4you.ulib.core.impl.reflect.ReflectSupport;
 import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 
+import java.lang.StackWalker.StackFrame;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -82,7 +83,7 @@ public final class ClassLoaderDelegationHook {
                 .walk(Stream::toList);
 
         boolean walkingClassLoaderChain = false;
-        for (StackWalker.StackFrame frame : frames) {
+        for (StackFrame frame : frames) {
             var cl = frame.getDeclaringClass();
             boolean isClassLoader = ClassLoader.class.isAssignableFrom(cl);
 
@@ -101,8 +102,78 @@ public final class ClassLoaderDelegationHook {
     }
 
     private boolean check(Object source, String name) {
-        return checkCl(source)
+        return !identifyRecursion()
+               && checkCl(source)
                && filterLoadingRequest.test(identifyClassLoadingRequestSource(), name);
+    }
+
+    private boolean identifyRecursion() {
+        /*
+            Stack *should* look like this:
+
+            ClassLoaderDelegationHook#hook_loadClass
+            ClassLoaderDelegationHook$lambda (inner)
+            ClassLoaderDelegationHook$lambda (outer/shell)
+            InjectionManager#runHooks
+            InjectionManager#runHooks(Object[])
+            InjectionManager$lambda? (tbh I don't really know what this is supposed to be; but debugger says so)
+            <Injected Method>
+            ...
+
+         */
+
+
+        var stack = new ArrayList<>(Arrays.asList(ReflectUtil.getCallerStack()));
+
+        // remove subsequent delegation hook frames
+        removeSubsequent(stack, f -> f.getDeclaringClass() == ClassLoaderDelegationHook.class);
+
+        // remove subsequent injection manager frames
+        removeSubsequent(stack, f -> f.getDeclaringClass() == InjectionManager.class);
+
+        if (stack.isEmpty())
+            throw new InternalError("Unexpected Stack");
+
+        var injectedMethod = stack.get(0);
+
+        /*
+            The injected method should be usually a class loader method, could be something else tho.
+            So, check if the injected method is actually from a CL
+         */
+        if (!ClassLoader.class.isAssignableFrom(injectedMethod.getDeclaringClass())) {
+            // The current stack could still be in a recursion.
+            return ReflectSupport.identifyRecursion(5, 100, 2 /* ignore #identifyRecursion & #check */);
+        }
+
+        // remove subsequent class loader frames
+        removeSubsequent(stack, f -> ClassLoader.class.isAssignableFrom(f.getDeclaringClass()));
+
+        // remove subsequent ulib hidden frames
+        removeSubsequent(stack, f -> f.getDeclaringClass() != InjectionManager.class && ReflectUtil.isHidden(f.getDeclaringClass()));
+
+        if (stack.isEmpty())
+            return false; // stack end so no recursion
+
+        // check if frame that invoked the class loader is itself a hook, if yes this is a recursion
+        var interestingFrame = stack.get(0);
+        var interestingClass = interestingFrame.getDeclaringClass();
+
+        return  // is a hook?
+                interestingClass == InjectionManager.class
+                || interestingClass == ClassLoaderDelegation.class // the delegation is part of a hooking
+                || interestingClass == ClassLoaderDelegationHook.class
+                ;
+    }
+
+    private <E> void removeSubsequent(Iterable<E> iter, Predicate<E> removal) {
+        var it = iter.iterator();
+
+        /*
+            loop will end at first elem that does not pass removal,
+            therefore only the leading/subsequent elements will be removed.
+         */
+        while (it.hasNext() && removal.test(it.next()))
+            it.remove();
     }
 
     // - actual hooks -

@@ -123,6 +123,29 @@ public class ReflectUtil {
     }
 
     /**
+     * Attempts to identify an (infinite) recursion by checking for a recurring pattern in the current stack.
+     *
+     * @param threshold           the minimum number a pattern has to occur in the current stack to be considered an (infinite) recursion
+     * @param maxPatternLength    the maximum length a pattern may have
+     * @param ignoreLeadingFrames the number of leading elements in the stack that should be ignored (to compensate branching);
+     *                            E.g. if this method is called directly inside the critical part of another code this may be {@code 0},
+     *                            if this method however is called inside a helper method this may be {@code 1} or more.
+     * @return {@code true}, if the current stack can be considered an (infinite) recursion
+     */
+    public static boolean identifyRecursion(int threshold, int maxPatternLength, int ignoreLeadingFrames) {
+        // check args
+        if (threshold <= 0)
+            throw new IllegalArgumentException("Threshold cannot be a negative number");
+        if (maxPatternLength <= 0)
+            throw new IllegalArgumentException("Max pattern length cannot be a negative number");
+        if (ignoreLeadingFrames < 0)
+            throw new IllegalArgumentException("Cannot ignore negative number of leading frames");
+
+        // redirect to impl
+        return ReflectSupport.identifyRecursion(threshold, maxPatternLength, ignoreLeadingFrames + 1);
+    }
+
+    /**
      * Determines the {@link Class} the current method is being called from
      *
      * @return the calling {@link Class}

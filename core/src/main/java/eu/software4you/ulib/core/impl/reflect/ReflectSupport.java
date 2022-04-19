@@ -5,6 +5,7 @@ import eu.software4you.ulib.core.reflect.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class ReflectSupport {
     public static Class<?>[] toParameterTypes(List<Param<?>> params) {
@@ -69,5 +70,53 @@ public final class ReflectSupport {
         }
 
         return path;
+    }
+
+    public static boolean identifyRecursion(int threshold, int maxPatternLength, int ignoreLeadingFrames) {
+        List<Class<?>> pattern = new LinkedList<>(); // pattern will be iterated/modified quite often
+        List<Class<?>> stack = Arrays.stream(ReflectUtil.getCallerStack()) // stack may be immutable
+                .skip(1) // skip this
+                .skip(ignoreLeadingFrames) // skip leading frames
+                .map(StackWalker.StackFrame::getDeclaringClass)
+                .collect(Collectors.toList());
+
+        int occurrence = 0;
+
+        for (int i = 0; i < stack.size(); i++) {
+            // if we can't find the current pattern in the stack, add the frame to the pattern
+
+            // create sublist and compare to pattern
+            List<Class<?>> sub;
+            try {
+                sub = stack.subList(i, i + pattern.size());
+            } catch (IndexOutOfBoundsException e) {
+                // stack is not big enough to check for any more pattern occurrences
+                return false;
+            }
+            // compare pattern
+            if (pattern.equals(sub)) {
+                // pattern found, test threshold
+                if (++occurrence >= threshold) {
+                    // threshold met, indicate "success"
+                    return true;
+                }
+
+                // jump over to end of pattern
+                i += sub.size();
+                continue;
+            }
+            // check chain length
+            if (pattern.size() > maxPatternLength)
+                return false; // max pattern length reached and no recursion found, abort
+
+            // pattern not found, reset counter
+            occurrence = 0;
+
+            // add frame to pattern
+            pattern.add(stack.get(i));
+        }
+
+        // loop ended and no recursion found
+        return false;
     }
 }
