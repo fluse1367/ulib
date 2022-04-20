@@ -131,7 +131,9 @@ public class ReflectUtil {
      *                            E.g. if this method is called directly inside the critical part of another code this may be {@code 0},
      *                            if this method however is called inside a helper method this may be {@code 1} or more.
      * @return {@code true}, if the current stack can be considered an (infinite) recursion
+     * @deprecated The current implementation is experimental, unsafe, doesn't work properly and is likely to get removed.
      */
+    @Deprecated(forRemoval = true)
     public static boolean identifyRecursion(int threshold, int maxPatternLength, int ignoreLeadingFrames) {
         // check args
         if (threshold <= 0)
