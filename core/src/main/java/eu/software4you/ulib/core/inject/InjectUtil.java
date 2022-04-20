@@ -39,6 +39,12 @@ public class InjectUtil {
      * If the delegation returns a {@code null} value, the request will be handled by the original class loader as usual.
      * If the delegation returns a {@code non-null} value, the usual computation of the class loader will be aborted
      * and the hook-computed value will be returned instead.
+     * <p>
+     * The underlying implementation has built-in protection against recursion. Without recursion detection & protection,
+     * an infinite recursion (would eventually throw a {@link StackOverflowError}) would occur if the injection target
+     * is one of the delegation's parents: A regular class loader will always first delegate a request to its parent.
+     * If the parent happens to be the injection target, it will then (because of the injected hook) delegate the request
+     * to the class loader delegation which will, again, first delegate the request to its parent. É voilà, recursion.
      *
      * @param delegation    the delegation that requests will be forwarded to
      * @param filterLoader  the predicate that determines if a particular class loader instance should forward a request

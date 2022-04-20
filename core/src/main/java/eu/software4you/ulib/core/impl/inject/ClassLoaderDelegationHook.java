@@ -1,13 +1,15 @@
 package eu.software4you.ulib.core.impl.inject;
 
-import eu.software4you.ulib.core.impl.reflect.ReflectSupport;
 import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 
 import java.lang.StackWalker.StackFrame;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -23,6 +25,10 @@ public final class ClassLoaderDelegationHook {
     private final ClassLoaderDelegation delegation;
     private final Predicate<ClassLoader> filterClassLoader; // check class loader delegated
     private final BiPredicate<Class<?>, String> filterLoadingRequest; // requesting class, requested name
+
+    // keep track of thread requesting class loading
+    // method "id" -> (resource identifier -> accessing threads)
+    private final Map<Integer, Map<String, Collection<Thread>>> threadAccess = new ConcurrentHashMap<>();
 
     public ClassLoaderDelegationHook(Class<? extends ClassLoader> targetClazz,
                                      Map<String, Collection<Class<?>[]>> additional,
@@ -101,93 +107,54 @@ public final class ClassLoaderDelegationHook {
         return source instanceof ClassLoader cl && filterClassLoader.test(cl);
     }
 
-    private boolean check(Object source, String name) {
-        return !identifyRecursion()
-               && checkCl(source)
+    private boolean checkClassRequest(Object source, String name) {
+        return checkCl(source)
                && filterLoadingRequest.test(identifyClassLoadingRequestSource(), name);
     }
 
-    private boolean identifyRecursion() {
-        /*
-            Stack *should* look like this:
+    private boolean enter(int id, String resourceIden) {
+        var accessMap = threadAccess.computeIfAbsent(id, m -> new ConcurrentHashMap<>());
+        var coll = accessMap.computeIfAbsent(resourceIden, rec -> new ConcurrentLinkedQueue<>());
 
-            ClassLoaderDelegationHook#hook_loadClass
-            ClassLoaderDelegationHook$lambda (inner)
-            ClassLoaderDelegationHook$lambda (outer/shell)
-            InjectionManager#runHooks
-            InjectionManager#runHooks(Object[])
-            InjectionManager$lambda? (tbh I don't really know what this is supposed to be; but debugger says so)
-            <Injected Method>
-            ...
+        if (coll.contains(Thread.currentThread()))
+            return false; // thread access already in progress
 
-         */
+        coll.add(Thread.currentThread());
+        return true;
+    }
 
+    private void leave(int id, String resourceIden) {
+        var accessMap = threadAccess.get(id);
+        if (accessMap == null)
+            return;
 
-        var stack = new ArrayList<>(Arrays.asList(ReflectUtil.getCallerStack()));
+        var coll = accessMap.get(resourceIden);
+        if (coll == null)
+            return;
 
-        // remove subsequent delegation hook frames
-        removeSubsequent(stack, f -> f.getDeclaringClass() == ClassLoaderDelegationHook.class);
-
-        // remove subsequent injection manager frames
-        removeSubsequent(stack, f -> f.getDeclaringClass() == InjectionManager.class);
-
-        if (stack.isEmpty())
-            throw new InternalError("Unexpected Stack");
-
-        var injectedMethod = stack.get(0);
-
-        /*
-            The injected method should be usually a class loader method, could be something else tho.
-            So, check if the injected method is actually from a CL
-         */
-        if (!ClassLoader.class.isAssignableFrom(injectedMethod.getDeclaringClass())) {
-            // The current stack could still be in a recursion.
-            return ReflectSupport.identifyRecursion(5, 100, 2 /* ignore #identifyRecursion & #check */);
+        if (coll.size() == 1) {
+            accessMap.remove(resourceIden);
+            return;
         }
 
-        // remove subsequent class loader frames
-        removeSubsequent(stack, f -> ClassLoader.class.isAssignableFrom(f.getDeclaringClass()));
-
-        // remove subsequent ulib hidden frames
-        removeSubsequent(stack, f -> f.getDeclaringClass() != InjectionManager.class && ReflectUtil.isHidden(f.getDeclaringClass()));
-
-        if (stack.isEmpty())
-            return false; // stack end so no recursion
-
-        // check if frame that invoked the class loader is itself a hook, if yes this is a recursion
-        var interestingFrame = stack.get(0);
-        var interestingClass = interestingFrame.getDeclaringClass();
-
-        return  // is a hook?
-                interestingClass == InjectionManager.class
-                || interestingClass == ClassLoaderDelegation.class // the delegation is part of a hooking
-                || interestingClass == ClassLoaderDelegationHook.class
-                ;
+        coll.remove(Thread.currentThread());
     }
 
-    private <E> void removeSubsequent(Iterable<E> iter, Predicate<E> removal) {
-        var it = iter.iterator();
-
-        /*
-            loop will end at first elem that does not pass removal,
-            therefore only the leading/subsequent elements will be removed.
-         */
-        while (it.hasNext() && removal.test(it.next()))
-            it.remove();
-    }
 
     // - actual hooks -
 
     // class finding/loading hooks
 
     private void hook_findClass(String name, Callback<Class<?>> cb) {
-        if (!check(cb.self().orElseThrow(), name))
+        if (!enter(0, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.findClass(name);
         if (cl != null) {
             cb.setReturnValue(cl);
         }
+
+        leave(0, "CLASS: " + name);
     }
 
     private void hookAdditional_findClass(Object[] params, Callback<Class<?>> cb) {
@@ -202,44 +169,52 @@ public final class ClassLoaderDelegationHook {
     }
 
     private void hook_findClass(String module, String name, Callback<Class<?>> cb) {
-        if (!check(cb.self().orElseThrow(), name))
+        if (!enter(1, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.findClass(module, name);
         if (cl != null) {
             cb.setReturnValue(cl);
         }
+
+        leave(1, "CLASS: " + name);
     }
 
     private void hook_loadClass(String name, boolean resolve, Callback<Class<?>> cb) {
-        if (!check(cb.self().orElseThrow(), name))
+        if (!enter(2, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
         var cl = delegation.loadClass(name, resolve);
         if (cl != null) {
             cb.setReturnValue(cl);
         }
+
+        leave(2, "CLASS: " + name);
     }
 
     // resource finding hooks
 
     private void hook_findResource(String name, Callback<URL> cb) {
-        if (!checkCl(cb.self().orElseThrow()))
+        if (!enter(3, "RESOURCE: " + name) || !checkCl(cb.self().orElseThrow()))
             return;
 
         var u = delegation.findResource(name);
         if (u != null) {
             cb.setReturnValue(u);
         }
+
+        leave(3, "RESOURCE: " + name);
     }
 
     private void hook_findResource(String module, String name, Callback<URL> cb) {
-        if (!checkCl(cb.self().orElseThrow()))
+        if (!enter(4, "RESOURCE: " + name) || !checkCl(cb.self().orElseThrow()))
             return;
 
         var u = delegation.findResource(module, name);
         if (u != null) {
             cb.setReturnValue(u);
         }
+
+        leave(4, "RESOURCE: " + name);
     }
 }

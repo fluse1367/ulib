@@ -63,25 +63,9 @@ public class Dependencies {
                     .map(uri -> Expect.compute(uri::toURL).orElseThrow())
                     .toArray(URL[]::new);
 
-            ClassLoader cl = new URLClassLoader(urls);
-            /*
-                Check if `injectionTarget` is one of `cl`'s parents, if so, re-init `cl` with null parent.
-                If the injection target instance is one of cl's parent an infinite recursion will occur,
-                  because a regular class loader will always "ask" the parent first.
-                If the parent happens to be the injection target it will then (bc of the injected hook)
-                  "ask" `cl` again for the class (the recursion starts there).
-             */
-            ClassLoader parent = cl;
-            do {
-                if ((parent = parent.getParent()) == injectionTarget) {
-                    cl = new URLClassLoader(urls, null);
-                    break;
-                }
-            } while (parent != null);
-
-            // finally, inject
-            InjectUtil.injectLoaderDelegation(new ClassLoaderDelegation(cl), injectionTarget)
-                    .rethrow(Exception.class);
+            // inject
+            InjectUtil.injectLoaderDelegation(new ClassLoaderDelegation(new URLClassLoader(urls)), injectionTarget)
+                    .rethrow();
         });
     }
 
