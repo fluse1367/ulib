@@ -4,8 +4,7 @@ import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
-import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.*;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
@@ -43,6 +42,8 @@ public final class Internal {
         yaml = null;
         clOverride = null;
     }
+
+    // - class init helpers  -
 
     private static String get(String yamlPath, String propsKey, String def) {
         String pVal = System.getProperty(propsKey), cVal = yaml.string(yamlPath).orElse(pVal);
@@ -106,6 +107,22 @@ public final class Internal {
         return Objects.requireNonNull(Internal.class.getResourceAsStream("/META-INF/coreconfig.yml"), "Configuration not found");
     }
 
+    // - Init methods -
+
+    /**
+     * Init point of the library. Invoked by the loader.
+     */
+    @Synchronized
+    public static void agentInit(Instrumentation instrumentation) {
+        if (Internal.instrumentation != null)
+            throw new IllegalStateException();
+        Internal.instrumentation = Objects.requireNonNull(instrumentation);
+
+        AccessibleObjectTransformer.acquirePrivileges();
+        widenModuleAccess();
+        PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY);
+    }
+
     @SneakyThrows
     private static void widenModuleAccess() {
         var method = Module.class.getDeclaredMethod("implAddReadsAllUnnamed");
@@ -120,15 +137,7 @@ public final class Internal {
         }
     }
 
-    public static void agentInit(Instrumentation instrumentation) {
-        if (Internal.instrumentation != null)
-            throw new IllegalStateException();
-        Internal.instrumentation = Objects.requireNonNull(instrumentation);
-
-        AccessibleObjectTransformer.acquirePrivileges();
-        widenModuleAccess();
-        PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY);
-    }
+    // - utility methods for the library -
 
     public static boolean isUlibClass(Class<?> cl) {
         Module m;
