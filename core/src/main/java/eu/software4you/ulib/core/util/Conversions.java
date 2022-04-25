@@ -1,10 +1,11 @@
 package eu.software4you.ulib.core.util;
 
-import eu.software4you.ulib.core.function.ParamFunc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static eu.software4you.ulib.core.util.Expect.compute;
 
 public class Conversions {
 
@@ -16,7 +17,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Integer, NumberFormatException> tryInt(Object o) {
-        return tryConvert(o, in -> in instanceof Integer i ? i : Integer.parseInt(in.toString()));
+        return compute(() -> o instanceof Integer i ? i : Integer.parseInt(o.toString()));
     }
 
     /**
@@ -27,7 +28,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Long, NumberFormatException> tryLong(Object o) {
-        return tryConvert(o, in -> in instanceof Long l ? l : Long.parseLong(in.toString()));
+        return compute(() -> o instanceof Long l ? l : Long.parseLong(o.toString()));
     }
 
     /**
@@ -38,7 +39,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Float, NumberFormatException> tryFloat(Object o) {
-        return tryConvert(o, in -> in instanceof Float f ? f : Float.parseFloat(in.toString()));
+        return compute(() -> o instanceof Float f ? f : Float.parseFloat(o.toString()));
     }
 
     /**
@@ -49,7 +50,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Double, NumberFormatException> tryDouble(Object o) {
-        return tryConvert(o, in -> in instanceof Double d ? d : Double.parseDouble(in.toString()));
+        return compute(() -> o instanceof Double d ? d : Double.parseDouble(o.toString()));
     }
 
     /**
@@ -61,25 +62,11 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Boolean, ?> tryBoolean(@Nullable Object o) {
-        return tryConvert(o, in -> in instanceof Boolean b ? b :
-                tryInt(in).toOptional()
+        return compute(() -> o instanceof Boolean b ? b :
+                tryInt(o).toOptional()
                         .map(i -> i != 0)
                         .orElseGet(() -> Boolean.parseBoolean(o.toString()))
         );
-    }
-
-    /**
-     * Attempts to convert the specified object to another object. Any object thrown will be caught.
-     *
-     * @param input     the object to convert
-     * @param converter the converting function
-     * @return an optional wrapping the value if the converting function executed successful and returned a non-null value, an empty optional otherwise
-     */
-    @NotNull
-    public static <I, R, X extends Exception> Expect<R, X> tryConvert(@Nullable I input, @Nullable ParamFunc<I, R, X> converter) {
-        if (Conditions.nil(input, converter))
-            return Expect.empty();
-        return Expect.compute(() -> converter.apply(input));
     }
 
     /**
