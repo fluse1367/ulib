@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <W> the type of the fourth value
  */
 @SuppressWarnings({"ConstantConditions", "unchecked"})
-public class Quadruple<T, U, V, W> extends Triple<T, U, V> {
+public final class Quadruple<T, U, V, W> extends Triple<T, U, V> {
     /**
      * Creates an immutable quadruple with initial values.
      *

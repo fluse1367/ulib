@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type of the third value
  */
 @SuppressWarnings({"ConstantConditions", "unchecked"})
-public class Triple<T, U, V> extends Pair<T, U> {
+public sealed class Triple<T, U, V> extends Pair<T, U> permits Quadruple {
     /**
      * Creates an immutable triple with initial values.
      *

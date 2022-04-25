@@ -14,7 +14,7 @@ import java.util.*;
  * @param <V> the value type
  */
 @Getter
-public class Param<V> extends Pair<Class<? extends V>, V> {
+public final class Param<V> extends Pair<Class<? extends V>, V> {
     public Param(@NotNull Class<? extends V> clazz, @Nullable V value) {
         super(clazz, value);
     }

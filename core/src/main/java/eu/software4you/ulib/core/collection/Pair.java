@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.collection;
 
+import eu.software4you.ulib.core.reflect.Param;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <U> the type of the second value
  */
 @SuppressWarnings({"unchecked", "ConstantConditions"})
-public class Pair<T, U> extends FixedList<Object> {
+public sealed class Pair<T, U> extends FixedList<Object> permits Triple, Param {
 
     /**
      * Creates an immutable pair with initial values.
@@ -84,5 +86,12 @@ public class Pair<T, U> extends FixedList<Object> {
      */
     public U setSecond(U u) {
         return (U) set(1, u);
+    }
+
+    @Override
+    public Object set(int index, Object element) {
+        if (!Pair.class.isAssignableFrom(ReflectUtil.getCallerClass()))
+            throw new UnsupportedOperationException("Direct write-access is not supported");
+        return super.set(index, element);
     }
 }
