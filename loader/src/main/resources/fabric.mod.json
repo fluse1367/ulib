@@ -9,7 +9,7 @@
   "license": "GPLv3",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "preLaunch": [
       "eu.software4you.ulib.loader.minecraft.ModFabric"
     ]
   },

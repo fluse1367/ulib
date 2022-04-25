@@ -2,9 +2,9 @@ package eu.software4you.ulib.loader.minecraft;
 
 import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.install.Installer;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 
-public class ModFabric implements ModInitializer {
+public class ModFabric implements PreLaunchEntrypoint {
 
     static {
         EnvironmentProvider.initAs(EnvironmentProvider.Environment.STANDALONE);
@@ -12,7 +12,7 @@ public class ModFabric implements ModInitializer {
     }
 
     @Override
-    public void onInitialize() {
+    public void onPreLaunch() {
 
     }
 }
