@@ -3,8 +3,7 @@ package eu.software4you.ulib.loader.impl.init;
 import eu.software4you.ulib.loader.impl.Util;
 import eu.software4you.ulib.loader.impl.install.ModuleClassProvider;
 import eu.software4you.ulib.loader.install.Installer;
-import eu.software4you.ulib.loader.minecraft.PluginSpigot;
-import eu.software4you.ulib.loader.minecraft.PluginVelocity;
+import eu.software4you.ulib.loader.minecraft.*;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 
@@ -19,7 +18,8 @@ public class InitAccess {
     private static final Collection<Class<?>> PERMITTED = Util.tryClasses(
             () -> Installer.class,
             () -> PluginVelocity.class,
-            () -> PluginSpigot.class
+            () -> PluginSpigot.class,
+            () -> PluginBungeecord.class
     ); // tryClasses bc PluginVelocity/PluginSpigot might fail to load
 
     private static final InitAccess inst = new InitAccess();

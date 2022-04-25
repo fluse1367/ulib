@@ -2,8 +2,8 @@ package eu.software4you.ulib.bungeecord.plugin;
 
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.io.IOUtil;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.*;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +25,14 @@ import java.util.logging.Level;
 public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     private final YamlConfiguration config = YamlConfiguration.newYaml();
     private boolean configInit;
+
+    public ExtendedProxyPlugin() {
+        super();
+    }
+
+    public ExtendedProxyPlugin(ProxyServer proxy, PluginDescription description) {
+        super(proxy, description);
+    }
 
     @Override
     public @NotNull Object getPluginObject() {

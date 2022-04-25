@@ -6,9 +6,19 @@ import eu.software4you.ulib.bungeecord.plugin.ExtendedProxyPlugin;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import lombok.SneakyThrows;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginDescription;
+import org.jetbrains.annotations.NotNull;
 
 public class PluginSubst extends ExtendedProxyPlugin {
+    private final Plugin plugin;
     private ProxyServerBridgeImpl proxyServerBridgeImpl;
+
+    public PluginSubst(Plugin plugin, ProxyServer proxy, PluginDescription description) {
+        super(proxy, description);
+        this.plugin = plugin;
+    }
 
     @Override
     public void onEnable() {
@@ -37,5 +47,10 @@ public class PluginSubst extends ExtendedProxyPlugin {
             getProxy().unregisterChannel(eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge.CHANNEL);
             unregisterEvents(proxyServerBridgeImpl);
         }
+    }
+
+    @Override
+    public @NotNull Object getPluginObject() {
+        return plugin;
     }
 }
