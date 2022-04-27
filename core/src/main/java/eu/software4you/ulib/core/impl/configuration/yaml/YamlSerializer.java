@@ -28,7 +28,7 @@ public class YamlSerializer {
 
         DumperOptions dumperConfig = new DumperOptions();
         dumperConfig.setIndent(2);
-
+        dumperConfig.setProcessComments(true);
 
         var representer = new YamlRepresenter(dumperConfig);
         SerializationAdapters.getInstance().addHook(representer);
