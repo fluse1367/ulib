@@ -297,6 +297,7 @@ public final class Expect<T, X extends Exception> {
      * @param type the throw type
      * @return the contained value
      */
+    @NotNull
     public <XX extends Exception> T orElseRethrow(Class<XX> type) throws XX, NoSuchElementException {
         if (isPresent())
             return value;
@@ -335,13 +336,38 @@ public final class Expect<T, X extends Exception> {
     }
 
     /**
+     * Returns the wrapped value if it is present, the supplied value otherwise.
+     *
+     * @param other the other value to return if there is no wrapped value present
+     * @return the underlying value (if present), the supplied value otherwise
+     */
+    @Nullable
+    @Contract("!null -> !null")
+    public T orElse(@Nullable T other) {
+        return isPresent() ? value : other;
+    }
+
+    /**
      * Executes the supplied task if no value is present and catches any exception.
      *
      * @param task the task to execute if no value is present
      * @return this Except object if a value is present, otherwise another Expect object wrapping a potential caught exception or value from the task's execution
      */
     @NotNull
-    public <XX extends Exception> Expect<T, ? extends Exception> orElse(@NotNull ParamFunc<? super Optional<? extends Exception>, T, XX> task) {
+    public <XX extends Exception> Expect<T, ? extends Exception> orElseGet(@NotNull Func<T, XX> task) {
+        Objects.requireNonNull(task);
+
+        return isPresent() ? this : compute(task);
+    }
+
+    /**
+     * Executes the supplied task if no value is present and catches any exception.
+     *
+     * @param task the task to execute if no value is present
+     * @return this Except object if a value is present, otherwise another Expect object wrapping a potential caught exception or value from the task's execution
+     */
+    @NotNull
+    public <XX extends Exception> Expect<T, ? extends Exception> orElseGet(@NotNull ParamFunc<? super Optional<? extends Exception>, T, XX> task) {
         Objects.requireNonNull(task);
 
         return isPresent() ? this : compute(() -> task.execute(getCaught()));
@@ -354,6 +380,7 @@ public final class Expect<T, X extends Exception> {
      * @param <U>    the return type
      * @return an empty Expect object if no value is present, otherwise another Expect object wrapping a potential caught exception or value from the task's execution
      */
+    @NotNull
     public <U, XX extends Exception> Expect<U, XX> map(@NotNull ParamFunc<? super T, U, XX> mapper) {
         Objects.requireNonNull(mapper);
 
