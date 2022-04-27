@@ -4,11 +4,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * Representation of a configuration document sub.
  */
 public interface Configuration {
+
+    /**
+     * Uses a function to obtain two values from the supplied configuration instances with the same key and applies a mapping to them.
+     *
+     * @param c1     the first configuration
+     * @param c2     the second configuration
+     * @param key    the key
+     * @param getter the function that obtains the values corresponding to the ke
+     * @param mapper the mapping function
+     * @return the mapping result
+     */
+    @NotNull
+    static <C extends Configuration, T, R> Optional<R> map(@NotNull C c1, @NotNull C c2, @NotNull String key,
+                                                           @NotNull BiFunction<? super C, String, Optional<T>> getter,
+                                                           @NotNull BiFunction<T, T, R> mapper) {
+        var val1 = getter.apply(c1, key);
+        var val2 = getter.apply(c2, key);
+
+        if (val1.isEmpty() || val2.isEmpty())
+            return Optional.empty();
+
+        return Optional.ofNullable(mapper.apply(val1.get(), val2.get()));
+    }
 
     /**
      * Returns the root of this sub.
@@ -47,6 +71,13 @@ public interface Configuration {
      * @see String#format(String, Object...)
      */
     @NotNull <T> Optional<T> get(@NotNull Class<T> clazz, @NotNull String path);
+
+    @NotNull
+    default <T, R> Optional<R> map(@NotNull Configuration c, @NotNull String key,
+                                   @NotNull BiFunction<? super Configuration, String, Optional<T>> getter,
+                                   @NotNull BiFunction<T, T, R> mapper) {
+        return Configuration.map(this, c, key, getter, mapper);
+    }
 
 
     /**

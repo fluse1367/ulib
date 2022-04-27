@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.util;
 
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -12,57 +13,81 @@ import java.util.stream.Stream;
  */
 public class Conditions {
 
-    // - primitives -
-
-    // number checks
+    // size checks
 
     /**
-     * Checks weather a certain number is between two boundaries (exclusive).
+     * Determines if the first object is greater than the second one (as specified by {@link Comparable#compareTo(Object)}).
      *
-     * @param a first boundary
-     * @param i the number to check
-     * @param b second boundary
-     * @return {@code true} if {@code i} is between {@code a} and {@code b}, {@code false} otherwise
+     * @param a the first object
+     * @param b the second object
+     * @return {@code true} if the first object is greater than the second one, {@code false} otherwise
      */
-    public static boolean between(int a, int i, int b) {
-        return Math.min(a, b) < i && i < Math.max(a, b);
+    public static <N extends Comparable<? super N>> boolean gt(@NotNull N a, @NotNull N b) {
+        return a.compareTo(b) > 0;
     }
 
     /**
-     * Checks weather a certain number is between two boundaries (exclusive).
+     * Determines if the first object is greater than or equal to the second one (as specified by {@link Comparable#compareTo(Object)}).
      *
-     * @param a first boundary
-     * @param i the number to check
-     * @param b second boundary
-     * @return {@code true} if {@code i} is between {@code a} and {@code b}, {@code false} otherwise
+     * @param a the first object
+     * @param b the second object
+     * @return {@code true} if the first object is greater than or equal to the second one, {@code false} otherwise
      */
-    public static boolean between(long a, long i, long b) {
-        return Math.min(a, b) < i && i < Math.max(a, b);
+    public static <N extends Comparable<? super N>> boolean gte(@NotNull N a, @NotNull N b) {
+        return a.compareTo(b) >= 0;
     }
 
     /**
-     * Checks weather a certain number is between two boundaries (exclusive).
+     * Determines if the first object is less than the second one (as specified by {@link Comparable#compareTo(Object)}).
      *
-     * @param a first boundary
-     * @param i the number to check
-     * @param b second boundary
-     * @return {@code true} if {@code i} is between {@code a} and {@code b}, {@code false} otherwise
+     * @param a the first object
+     * @param b the second object
+     * @return {@code true} if the first object is less than the second one, {@code false} otherwise
      */
-    public static boolean between(float a, float i, float b) {
-        return Math.min(a, b) < i && i < Math.max(a, b);
+    public static <N extends Comparable<? super N>> boolean lt(@NotNull N a, @NotNull N b) {
+        return a.compareTo(b) < 0;
     }
 
     /**
-     * Checks weather a certain number is between two boundaries (exclusive).
+     * Determines if the first object is less than or equal to the second one (as specified by {@link Comparable#compareTo(Object)}).
      *
-     * @param a first boundary
-     * @param i the number to check
-     * @param b second boundary
-     * @return {@code true} if {@code i} is between {@code a} and {@code b}, {@code false} otherwise
+     * @param a the first object
+     * @param b the second object
+     * @return {@code true} if the first object is less than or equal to the second one, {@code false} otherwise
      */
-    public static boolean between(double a, double i, double b) {
-        return Math.min(a, b) < i && i < Math.max(a, b);
+    public static <N extends Comparable<? super N>> boolean lte(@NotNull N a, @NotNull N b) {
+        return a.compareTo(b) <= 0;
     }
+
+    /**
+     * Determines if the first object is equal to the second one (as specified by {@link Comparable#compareTo(Object)}).
+     *
+     * @param a the first object
+     * @param b the second object
+     * @return {@code true} if the first object is equal to the second one, {@code false} otherwise
+     */
+    public static <N extends Comparable<? super N>> boolean eq(@NotNull N a, @NotNull N b) {
+        return a.compareTo(b) == 0;
+    }
+
+    /**
+     * Determines if the comparing object is located between the two boundaries (as specified by {@link Comparable#compareTo(Object)}).
+     * <p>
+     * Effectively this method determines if the lower boundary is less than, and the upper boundary more than the comparing object.
+     *
+     * @param a the first boundary
+     * @param n the comparing object
+     * @param b the second boundary
+     * @return {@code true} if the comparing object located between the two boundaries, {@code false} otherwise
+     */
+    public static <N extends Comparable<? super N>> boolean bt(@NotNull N a, @NotNull N n, @NotNull N b) {
+        N lower = lt(a, b) ? a : b;
+        N upper = gt(b, a) ? b : a;
+
+        return lt(lower, n) && gt(upper, n);
+    }
+
+    // type checks
 
     /**
      * Checks weather a certain object can be converted to an integer (as specified by {@link Conversions#tryInt(Object)}).
@@ -103,8 +128,6 @@ public class Conditions {
     public static boolean dec64(Object o) {
         return Conversions.tryDouble(o).isPresent();
     }
-
-    // - reference/complex types -
 
     // array checks
 

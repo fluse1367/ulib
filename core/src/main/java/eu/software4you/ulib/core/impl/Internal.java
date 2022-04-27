@@ -1,9 +1,11 @@
 package eu.software4you.ulib.core.impl;
 
+import eu.software4you.ulib.core.configuration.Configuration;
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
+import eu.software4you.ulib.core.util.Conditions;
 import lombok.*;
 
 import java.io.*;
@@ -83,13 +85,11 @@ public final class Internal {
         }
 
         // check if upgrade is required
-        int currentVersion = current.int32("config-version").orElse(-1),
-                savedVersion = saved.int32("config-version").orElse(-2);
-        if (currentVersion <= savedVersion)
+        if (current.map(saved, "config-version", Configuration::int32, Conditions::lte).orElse(false))
             return saved;
 
         // upgrade config.yml with newer contents
-        saved.set("config-version", currentVersion);
+        saved.set("config-version", current.int32("config-version").orElseThrow());
         saved.converge(current, true, true);
         saved.purge(true);
 
