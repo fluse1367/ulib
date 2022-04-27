@@ -91,7 +91,7 @@ public interface YamlConfiguration extends ConfigurationReinit {
     @NotNull Optional<? extends YamlConfiguration> getSub(@NotNull String path);
 
     @Override
-    @NotNull Collection<? extends YamlConfiguration> getSubs();
+    @NotNull Collection<? extends YamlConfiguration> getSubs(boolean deep);
 
     @Override
     @NotNull YamlConfiguration createSub(@NotNull String path);

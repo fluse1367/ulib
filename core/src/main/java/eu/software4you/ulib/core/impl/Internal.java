@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
-import java.util.Collections;
 import java.util.Objects;
 
 public final class Internal {
@@ -84,19 +83,17 @@ public final class Internal {
         }
 
         // check if upgrade is required
-        int cv = current.int32("config-version").orElse(-1), sv = saved.int32("config-version").orElse(-2);
-        if (cv <= sv)
+        int currentVersion = current.int32("config-version").orElse(-1),
+                savedVersion = saved.int32("config-version").orElse(-2);
+        if (currentVersion <= savedVersion)
             return saved;
 
         // upgrade config.yml with newer contents
-        saved.set("config-version", cv);
-        current.getValues(true).forEach((k, v) -> {
-            if (!saved.isSet(k)) {
-                saved.set(k, v);
-                saved.setComments(k, current.getComments(k).orElse(Collections.emptyList()));
-            }
-        });
+        saved.set("config-version", currentVersion);
+        saved.converge(current, true, true);
+        saved.purge(true);
 
+        // finally, save new config
         try (var out = new FileWriter(conf)) {
             saved.dump(out);
         }

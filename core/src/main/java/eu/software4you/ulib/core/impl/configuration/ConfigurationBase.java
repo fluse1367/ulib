@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implements Configuration, Keyable<String> {
@@ -41,25 +42,21 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
 
     // - direct data access -
 
-    private <T> T _get(String path) {
-        return this.<T>get(path).orElse(null);
+    private Object _get(String path) {
+        return get(path).orElse(null);
     }
 
     @Override
     @NotNull
-    public <T> Optional<T> get(@NotNull String path) {
-        Objects.requireNonNull(path, "Path may not be null");
-
-        return resolveValue(path)
-                .map(value -> {
-                    //noinspection unchecked
-                    return Expect.<T, ClassCastException>compute(() -> (T) value).getValue();
-                });
+    public Optional<Object> get(@NotNull String path) {
+        return resolve(Objects.requireNonNull(path, "Path may not be null"))
+                // pair: (doc, key)
+                .map(pair -> pair.getFirst().children.get(pair.getSecond()));
     }
 
     @Override
     public @NotNull <T> Optional<T> get(@NotNull Class<T> clazz, @NotNull String path) {
-        return resolveValue(path)
+        return get(path)
                 .filter(clazz::isInstance)
                 .map(clazz::cast);
     }
@@ -141,6 +138,11 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     }
 
     @Override
+    public boolean isEmpty() {
+        return children.isEmpty();
+    }
+
+    @Override
     public void set(@NotNull String fullPath, Object value) {
         Pair<R, String> r;
         if (value != null) {
@@ -168,7 +170,7 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     @Override
     @NotNull
     public Optional<R> getSub(@NotNull String path) {
-        return resolveValue(path)
+        return get(path)
                 .filter(ConfigurationBase.class::isInstance)
                 .map(sub -> Expect.compute(() -> (R) sub).getValue());
     }
@@ -186,30 +188,64 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     }
 
     @Override
-    public @NotNull Collection<R> getSubs() {
+    public @NotNull Collection<R> getSubs(boolean deep) {
         return children.values().stream()
                 .filter(ConfigurationBase.class::isInstance)
-                .map(sub -> Expect.compute(() -> (R) sub).getValue())
+                .map(sub -> (R) sub)
+                .flatMap(sub -> deep ? sub.getSubs(true).stream() : Stream.of(sub))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public void converge(@NotNull Configuration base, boolean strict, boolean deep) {
+        // set default values
+        base.getValues(deep).forEach((k, v) -> {
+            if (contains(k))
+                return;
+            set(k, v);
+            convergeSet(base, k, v);
+        });
+
+        if (!strict)
+            return;
+
+        // remove non-present values
+        getKeys(deep).forEach(k -> {
+            if (!base.contains(k))
+                set(k, null);
+        });
+    }
+
+    @Override
+    public void purge(boolean deep) {
+        var st = getSubs(false).stream();
+        (deep ? st.peek(s -> s.purge(true)) : st)
+                .filter(Configuration::isEmpty)
+                .map(s -> ((Keyable<String>) s).getKey())
+                .forEach(key -> {
+                    children.remove(key);
+                    placedNewValue(key, null, false);
+                });
+
     }
 
     // - checks -
 
     @Override
     public boolean isSet(@NotNull String path) {
-        return resolveValue(path)
+        return get(path)
                 .map(obj -> !(obj instanceof ConfigurationBase))
                 .orElse(false);
     }
 
     @Override
     public boolean contains(@NotNull String path) {
-        return resolveValue(path).isPresent();
+        return get(path).isPresent();
     }
 
     @Override
     public boolean isSub(@NotNull String path) {
-        return resolveValue(path)
+        return get(path)
                 .map(obj -> obj instanceof ConfigurationBase)
                 .orElse(false);
     }
@@ -270,13 +306,6 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
         return resolve(fullPath, false);
     }
 
-    // attempts to resolve the full path and fetch the child object from a certain sub
-    protected final Optional<Object> resolveValue(final String fullPath) {
-        return resolve(fullPath)
-                // pair: (doc, key)
-                .map(pair -> pair.getFirst().children.get(pair.getSecond()));
-    }
-
     // - misc -
 
     private R putNewSub(String key) {
@@ -294,6 +323,11 @@ public abstract class ConfigurationBase<R extends ConfigurationBase<R>> implemen
     // the key is not resolved
     // param genuinelyNew indicates if a value has been overwritten or is actually 'new'
     protected void placedNewValue(String key, Object value, boolean genuinelyNew) {
+        // to be overwritten
+    }
+
+    // called when a value is set by a convergence
+    protected void convergeSet(Configuration base, String key, Object value) {
         // to be overwritten
     }
 

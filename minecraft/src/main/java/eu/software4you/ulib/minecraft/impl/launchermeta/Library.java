@@ -20,7 +20,7 @@ final class Library implements RemoteLibrary {
         downloads.put("artifact", new Artifact("artifact", arti.string("path").orElseThrow(), arti));
 
         json.getSub("classifiers")
-                .map(JsonConfiguration::getSubs)
+                .map(s -> s.getSubs(false))
                 .ifPresent(c -> c.forEach(sub -> {
                     @SuppressWarnings("unchecked")
                     String id = ((Keyable<String>) sub).getKey();

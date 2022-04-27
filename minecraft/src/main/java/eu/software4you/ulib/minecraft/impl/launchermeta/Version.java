@@ -36,7 +36,7 @@ final class Version implements VersionManifest {
 
         Map<String, Resource> downloads = new HashMap<>();
         json.getSub("downloads").orElseThrow()
-                .getSubs()
+                .getSubs(false)
                 .forEach(sub -> {
                     @SuppressWarnings("unchecked")
                     var key = ((Keyable<String>) sub).getKey();

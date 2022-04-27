@@ -33,7 +33,7 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
     @Override
     public Expect<Void, IOException> reinit(Reader reader) {
         return Expect.compute(() -> {
-            purge();
+            clear();
             var opCaught = Expect.compute(() -> serializer.deserialize(reader, this)).getCaught();
             if (opCaught.isPresent())
                 throw new IOException(opCaught.get());
@@ -45,11 +45,9 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
         return Expect.compute(() -> serializer.serialize(writer, this));
     }
 
-    @Override
-    public void purge() {
-        clear();
+    public void clear() {
+        children.clear();
     }
-
 
     // serializer access
 
@@ -61,7 +59,4 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
         children.put(key, val);
     }
 
-    void clear() {
-        children.clear();
-    }
 }

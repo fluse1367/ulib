@@ -64,7 +64,7 @@ public interface JsonConfiguration extends ConfigurationReinit {
     @NotNull Optional<? extends JsonConfiguration> getSub(@NotNull String path);
 
     @Override
-    @NotNull Collection<? extends JsonConfiguration> getSubs();
+    @NotNull Collection<? extends JsonConfiguration> getSubs(boolean deep);
 
     @Override
     @NotNull JsonConfiguration createSub(@NotNull String path);

@@ -53,7 +53,7 @@ public class YamlSerializer {
         Node root = yaml.compose(new StringReader(content));
 
         // clear doc
-        doc.clear();
+        doc._clear();
         // replace node
         doc.replaceNode(extractAnchor(root));
 

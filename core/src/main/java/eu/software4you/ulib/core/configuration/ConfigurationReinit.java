@@ -25,5 +25,5 @@ public interface ConfigurationReinit extends Configuration {
     /**
      * Clears all data from this sub.
      */
-    void purge();
+    void clear();
 }

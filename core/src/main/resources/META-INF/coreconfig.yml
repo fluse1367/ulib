@@ -2,7 +2,7 @@
 
 # Internal setting to track config version updates.
 # !!! DO NOT CHANGE !!!
-config-version: 2
+config-version: 3
 
 # The ulib-data-directory is uLib's main directory for all it's files.
 # This directory can only be changed via command-line options.
@@ -27,24 +27,6 @@ force-synchronous-work: false
 # Possible values: allow, deny; Default: deny
 # Command line equivalent: -Dulib.unsafe_operations=YOUR_VALUE
 unsafe-operations: deny
-
-# Logging settings
-logging:
-  # Switch to toggle the branding splash.
-  # Possible values: true, false; Default value: true
-  # Command line equivalent: -Dulib.splash=YOUR_VALUE
-  splash: true
-
-  # Adjustment of logging level.
-  # Possible values: OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, DEBUG, ALL; Default value: INFO
-  # Note: FINEST and DEBUG are equivalent.
-  # Command line equivalent: -Dulib.loglevel=YOUR_VALUE
-  log-level: INFO
-
-  # Switch to completely turn off all logging (does override log-level setting!).
-  # Possible values: true, false; Default value: false
-  # Command line equivalent: -Dulib.quiet=YOUR_VALUE
-  quiet: false
 
 # Directories settings
 directories:

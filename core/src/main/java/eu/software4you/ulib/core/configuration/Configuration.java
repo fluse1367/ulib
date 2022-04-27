@@ -31,10 +31,9 @@ public interface Configuration {
      * Searches the configuration for a specific key and converts the value to the specified type.
      *
      * @param path the key path; nodes seperated by {@code .}
-     * @param <T>  the type to convert to
      * @return an optional wrapping the value, or empty optional if {@code path} not found or the value couldn't get converted
      */
-    @NotNull <T> Optional<T> get(@NotNull String path);
+    @NotNull Optional<Object> get(@NotNull String path);
 
     /**
      * Reads a value and attempts to convert it to the given type.
@@ -81,6 +80,13 @@ public interface Configuration {
     Map<String, Object> getValues(boolean deep);
 
     /**
+     * Determines if this sub is empty, meaning is does not hold any values or other subs.
+     *
+     * @return {@code true} if this sub is empty, {@code false otherwise}
+     */
+    boolean isEmpty();
+
+    /**
      * Sets a key to a specific value in the configuration.
      * <p>
      * A {@code null} value removes the key from the configuration.
@@ -94,7 +100,7 @@ public interface Configuration {
     void set(@NotNull String path, @Nullable Object value);
 
     /**
-     * Determines whether a certain key holds any value.
+     * Determines whether a certain key has a value assigned to it (cannot be a sub).
      *
      * @param path the key path; nodes seperated by {@code .}
      * @return {@code true}, if the {@code path} holds a value
@@ -102,7 +108,7 @@ public interface Configuration {
     boolean isSet(@NotNull String path);
 
     /**
-     * Determines whether a certain key holds is included in this sub.
+     * Determines whether a certain key has a value assigned to it (can be a sub).
      *
      * @param path the key path; nodes seperated by {@code .}
      * @return {@code true}, if the {@code path} is known
@@ -132,10 +138,11 @@ public interface Configuration {
     /**
      * Collects all subs of this sub.
      *
+     * @param deep if the sub-subs should also get collected (recursively)
      * @return a collection containing all subs.
      */
     @NotNull
-    Collection<? extends Configuration> getSubs();
+    Collection<? extends Configuration> getSubs(boolean deep);
 
     /**
      * Determines whether a certain key holds a configuration-sub.
@@ -157,6 +164,27 @@ public interface Configuration {
      */
     @NotNull
     Configuration subAndCreate(@NotNull String path);
+
+    /**
+     * Harmonizes this sub to the given one.
+     * <p>
+     * Each value present in the base be set to the if it's not present in this sub. The base will not be modified.
+     * <p>
+     * You might want to purge the sub after a strict convergence.
+     *
+     * @param base   the sub to converge/harmonize to
+     * @param strict if values not present in the base should be removed correspondingly
+     * @param deep   if the converging should also be applied recursively to sub-subs
+     * @see #purge(boolean)
+     */
+    void converge(@NotNull Configuration base, boolean strict, boolean deep);
+
+    /**
+     * Removes all subs that do not hold any values.
+     *
+     * @param deep if sub-subs should be purged as well (recursively)
+     */
+    void purge(boolean deep);
 
     /**
      * Reads a boolean.

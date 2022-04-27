@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.impl.configuration.yaml;
 
+import eu.software4you.ulib.core.configuration.Configuration;
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.impl.configuration.ConfigurationBase;
 import eu.software4you.ulib.core.util.Expect;
@@ -67,8 +68,8 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     }
 
     @Override
-    public void purge() {
-        clear();
+    public void clear() {
+        _clear();
         Node newNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
         if (isRoot()) {
             node = newNode;
@@ -79,7 +80,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
 
     // serializer access
 
-    void clear() {
+    void _clear() {
         children.clear();
         childNodes.clear();
     }
@@ -152,6 +153,14 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     }
 
     @Override
+    protected void convergeSet(Configuration base, String key, Object value) {
+        if (!(base instanceof YamlDocument doc))
+            return;
+
+        doc.getComments(key).ifPresent(li -> setComments(key, li));
+    }
+
+    @Override
     protected void placedNewValue(String key, Object value, boolean genuinelyNew) {
         if (value == null) {
             // remove node
@@ -166,7 +175,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
         if (key.isEmpty()) {
             // overwrite current node
             replaceNode(keyNode = valueNode);
-            clear();
+            _clear();
         } else if (genuinelyNew) {
             // add node
             keyNode = addNode(key, valueNode);
