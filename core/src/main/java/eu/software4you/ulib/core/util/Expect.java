@@ -237,7 +237,10 @@ public final class Expect<T, X extends Exception> {
         if (type.isInstance(caught))
             throw type.cast(caught);
 
-        throw new RuntimeException(caught);
+        // exception is not of expected type, box in RuntimeException
+        throw caught instanceof RuntimeException re ?
+                re // attempt direct throw*
+                : new RuntimeException(caught); // throw boxed
     }
 
     /**
