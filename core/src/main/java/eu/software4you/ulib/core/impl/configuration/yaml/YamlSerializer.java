@@ -87,7 +87,7 @@ public class YamlSerializer {
                 .replaceAll("((?:^|\\n)\\s*)#", "$1# ") // add space before comment
                 ;
 
-        IOUtil.write(new StringReader(output), writer);
+        IOUtil.write(new StringReader(output), writer).rethrow(IOException.class);
     }
 
     Node represent(Object data) {
