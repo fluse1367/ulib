@@ -185,7 +185,6 @@ public final class Expect<T, X extends Exception> {
      * @return an optional wrapping the caught object
      */
     @NotNull
-    @Contract(pure = true)
     public Optional<Exception> getCaught() {
         return Optional.ofNullable(caught);
     }
@@ -217,6 +216,7 @@ public final class Expect<T, X extends Exception> {
     /**
      * Throws the caught object if present.
      */
+    @Contract(pure = true)
     public void rethrow() throws Exception {
         if (!hasCaught())
             return;
@@ -230,7 +230,8 @@ public final class Expect<T, X extends Exception> {
      *
      * @param type the type to throw
      */
-    public <XX extends Exception> void rethrow(Class<XX> type) throws XX, RuntimeException {
+    @Contract(pure = true)
+    public <XX extends Exception> void rethrow(@NotNull Class<XX> type) throws XX, RuntimeException {
         if (!hasCaught())
             return;
 
@@ -246,6 +247,7 @@ public final class Expect<T, X extends Exception> {
     /**
      * Throws the caught object wrapped in a runtime exception if present.
      */
+    @Contract(pure = true)
     public void rethrowRE() throws RuntimeException {
         rethrow(RuntimeException.class);
     }
@@ -258,6 +260,7 @@ public final class Expect<T, X extends Exception> {
      * @throws IllegalStateException  if a exception and no value is present
      */
     @NotNull
+    @Contract(pure = true)
     public T orElseThrow() throws NoSuchElementException, IllegalStateException {
         if (isEmpty())
             throw hasCaught() ? new IllegalStateException("Execution failed", caught) : new NoSuchElementException("No value present");
@@ -274,7 +277,7 @@ public final class Expect<T, X extends Exception> {
      * @throws XX if no value is present
      */
     @NotNull
-    public <XX extends Exception> T orElseThrow(Supplier<XX> exceptionSupplier) throws XX {
+    public <XX extends Exception> T orElseThrow(@NotNull Supplier<XX> exceptionSupplier) throws XX {
         if (isEmpty())
             throw exceptionSupplier.get();
 
@@ -289,6 +292,7 @@ public final class Expect<T, X extends Exception> {
      * @throws X if no value is present
      */
     @NotNull
+    @Contract(pure = true)
     public T orElseRethrow() throws Exception {
         return orElseRethrow(Exception.class);
     }
@@ -301,7 +305,8 @@ public final class Expect<T, X extends Exception> {
      * @return the contained value
      */
     @NotNull
-    public <XX extends Exception> T orElseRethrow(Class<XX> type) throws XX, NoSuchElementException {
+    @Contract(pure = true)
+    public <XX extends Exception> T orElseRethrow(@NotNull Class<XX> type) throws XX, NoSuchElementException {
         if (isPresent())
             return value;
 
@@ -345,7 +350,7 @@ public final class Expect<T, X extends Exception> {
      * @return the underlying value (if present), the supplied value otherwise
      */
     @Nullable
-    @Contract("!null -> !null")
+    @Contract(value = "!null -> !null", pure = true)
     public T orElse(@Nullable T other) {
         return isPresent() ? value : other;
     }
