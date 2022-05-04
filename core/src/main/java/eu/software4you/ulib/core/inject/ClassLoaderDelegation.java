@@ -92,6 +92,7 @@ public final class ClassLoaderDelegation {
 
     /**
      * Constructs a delegation container that forwards any class loading request to the specified class loader.
+     * The delegation <b>won't</b> forward resource loading requests.
      *
      * @param delegateTarget the class loader the requests should be forwarded to
      */
