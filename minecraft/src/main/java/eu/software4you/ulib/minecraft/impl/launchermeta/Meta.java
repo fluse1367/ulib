@@ -12,7 +12,7 @@ import java.util.*;
 
 public final class Meta implements VersionsMeta {
 
-    public static LazyValue<Meta> INSTANCE = new LazyValue<>(() -> new Meta(
+    public static LazyValue<Meta> INSTANCE = LazyValue.immutable(() -> new Meta(
             JsonConfiguration.loadJson(URI.create("https://launchermeta.mojang.com/mc/game/version_manifest.json").toURL().openStream())
                     .orElseThrow()
     ));
@@ -31,7 +31,7 @@ public final class Meta implements VersionsMeta {
                     var id = sub.string("id").orElseThrow();
                     var url = sub.string("url").orElseThrow();
 
-                    versions.put(id, new LazyValue<>(() -> new Version(url,
+                    versions.put(id, LazyValue.immutable(() -> new Version(url,
                             JsonConfiguration.loadJson(new CachedResource(url, null).require().orElseThrow())
                                     .orElseThrow()
                     )));
@@ -60,11 +60,13 @@ public final class Meta implements VersionsMeta {
         return null;
     }
 
+    @SuppressWarnings("RedundantUnmodifiable")
     @Override
     public @NotNull Collection<VersionManifest> getVersions() {
         return Collections.unmodifiableCollection(versions.values().stream()
-                .map(LazyValue::getIfDone)
-                .filter(Objects::nonNull)
+                .map(LazyValue::getIfAvailable)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList());
     }
 }

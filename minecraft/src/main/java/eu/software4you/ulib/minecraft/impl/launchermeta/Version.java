@@ -44,7 +44,7 @@ final class Version implements VersionManifest {
                 });
         this.downloads = Collections.unmodifiableMap(downloads);
 
-        this.libraries = new LazyValue<>(() -> {
+        this.libraries = LazyValue.immutable(() -> {
             var libs = json.list(JsonConfiguration.class, "libraries")
                     .orElseThrow().stream().map(sub -> {
                         var mvnc = sub.string("name").orElseThrow();
@@ -52,6 +52,7 @@ final class Version implements VersionManifest {
                         return new Library(mvnc, dwnlds);
                     })
                     .toList();
+            //noinspection RedundantUnmodifiable
             return Collections.unmodifiableCollection(libs);
         });
     }

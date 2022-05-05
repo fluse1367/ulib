@@ -36,7 +36,7 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
         }
 
         var server = Bukkit.getServer();
-        PLAIN_MC_VERSION = new LazyValue<>(() -> ReflectUtil.call(String.class, server.getClass(), server, "getServer().getVersion()")
+        PLAIN_MC_VERSION = LazyValue.immutable(() -> ReflectUtil.call(String.class, server.getClass(), server, "getServer().getVersion()")
                 .orElseThrow());
 
         SerializationAdapters.getInstance().registerAdapter(ConfigurationSerializable.class, new BukkitSerializationAdapter());

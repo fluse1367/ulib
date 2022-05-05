@@ -15,15 +15,15 @@ import java.util.Optional;
 import static eu.software4you.ulib.spigot.impl.PluginSubst.getPlainMcVersion;
 
 public final class MappingsImpl {
-    private static final LazyValue<VanillaMapping> currentVanilla = new LazyValue<>(() -> {
+    private static final LazyValue<VanillaMapping> currentVanilla = LazyValue.immutable(() -> {
         String ver = getPlainMcVersion();
         var manifest = VersionsMeta.getCurrent().get(ver)
                 .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));
         return loadVanilla(manifest);
     });
-    private static final LazyValue<BukkitMapping> currentBukkit = new LazyValue<>(() ->
+    private static final LazyValue<BukkitMapping> currentBukkit = LazyValue.immutable(() ->
             loadBukkit(getPlainMcVersion()));
-    private static final LazyValue<MixedMapping> currentMixed = new LazyValue<>(() -> {
+    private static final LazyValue<MixedMapping> currentMixed = LazyValue.immutable(() -> {
         String ver = getPlainMcVersion();
         var manifest = VersionsMeta.getCurrent().get(ver)
                 .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));

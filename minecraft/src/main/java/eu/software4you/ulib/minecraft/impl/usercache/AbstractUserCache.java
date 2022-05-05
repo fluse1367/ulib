@@ -18,7 +18,7 @@ public abstract class AbstractUserCache implements UserCache {
 
     public static final SingletonInstance<BiFunction<PluginBase<?, ?>, Table, AbstractUserCache>> PROVIDER = new SingletonInstance<>();
     public static final SingletonInstance<PluginBase<?, ?>> PLUGIN_INSTANCE = new SingletonInstance<>();
-    public static final LazyValue<UserCache> MAIN_CACHE = new LazyValue<>(AbstractUserCache::getMainCache);
+    public static final LazyValue<UserCache> MAIN_CACHE = LazyValue.immutable(AbstractUserCache::getMainCache);
     public static final SingletonInstance<SqlDatabase> MAIN_CACHE_DB = new SingletonInstance<>();
 
     private static UserCache getMainCache() {

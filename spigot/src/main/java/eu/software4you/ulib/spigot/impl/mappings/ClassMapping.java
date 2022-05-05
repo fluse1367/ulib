@@ -25,7 +25,7 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
         Map<String, LazyValue<MappedField>> fieldsByOriginalName = new HashMap<>();
         Map<String, LazyValue<MappedField>> fieldsByMappedName = new HashMap<>();
         fields.forEach(t -> {
-            var loader = new LazyValue<>(() -> t.getThird().apply(this).get());
+            var loader = LazyValue.immutable(() -> t.getThird().apply(this).get());
             fieldsByOriginalName.put(t.getFirst(), loader);
             fieldsByMappedName.put(t.getSecond(), loader);
         });
@@ -44,11 +44,11 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
         });
 
         Map<String, LazyValue<List<MappedMethod>>> methodsByOriginalName = new HashMap<>();
-        _methodsByOriginalName.forEach((name, list) -> methodsByOriginalName.put(name, new LazyValue<>(() -> list.stream()
+        _methodsByOriginalName.forEach((name, list) -> methodsByOriginalName.put(name, LazyValue.immutable(() -> list.stream()
                 .map(Supplier::get)
                 .collect(Collectors.toList()))));
         Map<String, LazyValue<List<MappedMethod>>> methodsByMappedName = new HashMap<>();
-        _methodsByMappedName.forEach((name, list) -> methodsByMappedName.put(name, new LazyValue<>(() -> list.stream()
+        _methodsByMappedName.forEach((name, list) -> methodsByMappedName.put(name, LazyValue.immutable(() -> list.stream()
                 .map(Supplier::get)
                 .collect(Collectors.toList()))));
 

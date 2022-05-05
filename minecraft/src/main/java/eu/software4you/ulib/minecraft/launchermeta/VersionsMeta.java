@@ -3,8 +3,7 @@ package eu.software4you.ulib.minecraft.launchermeta;
 import eu.software4you.ulib.minecraft.impl.launchermeta.Meta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Representation of <a href="https://launchermeta.mojang.com/mc/game/version_manifest.json" target="_blank">version_manifest.json</a>.
@@ -20,7 +19,7 @@ public interface VersionsMeta {
      */
     @NotNull
     static VersionsMeta getCurrent() {
-        return Meta.INSTANCE.get();
+        return Objects.requireNonNull(Meta.INSTANCE.get());
     }
 
     /**
@@ -29,9 +28,7 @@ public interface VersionsMeta {
      * @throws IllegalStateException when attempting to unload while the manifest is being loaded
      */
     static void clearCurrent() {
-        if (Meta.INSTANCE.isRunning())
-            throw new IllegalStateException("Cannot clear while loading");
-        Meta.INSTANCE.reset();
+        Meta.INSTANCE.clear();
     }
 
     /**
