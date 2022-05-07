@@ -82,7 +82,7 @@ public class Injector {
         if (addRecord.isEmpty())
             return;
 
-        // ReflectUtil.call(Module.class, module, "implAddReads()", Param.fromMultiple(module));
+        // ReflectUtil.icall(module, "implAddReads()", Param.fromMultiple(module));
 
         var clParam = Class.forName("eu.software4you.ulib.core.reflect.Param", true, initializer.getClassProvider());
         var clRU = Class.forName("eu.software4you.ulib.core.reflect.ReflectUtil", true, initializer.getClassProvider());
@@ -90,10 +90,10 @@ public class Injector {
         var params = clParam.getMethod("fromMultiple", Object[].class)
                 .invoke(null, new Object[]{new Object[]{module}});
 
-        var method = clRU.getMethod("call", Class.class, Object.class, String.class, List[].class);
+        var method = clRU.getMethod("call", Object.class, String.class, List[].class);
 
         for (Module m : addRecord) {
-            method.invoke(null, Module.class, m, "implAddReads()", new List[]{(List<?>) params});
+            method.invoke(null, m, "implAddReads()", new List[]{(List<?>) params});
         }
     }
 }

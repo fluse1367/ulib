@@ -5,10 +5,12 @@ import eu.software4you.ulib.core.function.ParamFunc;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * A container for class loading hooks. The hooks may throw exceptions,
@@ -112,12 +114,12 @@ public final class ClassLoaderDelegation {
      *                       {@link #FLAG_DELEGATE_FIND_MODULE_RESOURCE}
      * @see eu.software4you.ulib.core.util.Bitmask
      */
-    public ClassLoaderDelegation(ClassLoader delegateTarget, int flag) {
-        this.target = delegateTarget;
+    public ClassLoaderDelegation(@NotNull ClassLoader delegateTarget, int flag) {
+        this.target = Objects.requireNonNull(delegateTarget);
 
         if ((flag & FLAG_DELEGATE_LOAD_CLASS) != 0) {
             this.delegateLoadClass = (name, resolve) ->
-                    ReflectUtil.call(Class.class, delegateTarget.getClass(), delegateTarget, "loadClass()",
+                    ReflectUtil.icall(Class.class, target, "loadClass()",
                             Param.listOf(String.class, name, boolean.class, resolve)).getValue();
         } else {
             this.delegateLoadClass = DEFAULT_DELEGATE_LOAD_CLASS;
@@ -125,7 +127,7 @@ public final class ClassLoaderDelegation {
 
         if ((flag & FLAG_DELEGATE_FIND_CLASS) != 0) {
             this.delegateFindClass = name ->
-                    ReflectUtil.call(Class.class, delegateTarget.getClass(), delegateTarget, "findClass()",
+                    ReflectUtil.icall(Class.class, target, "findClass()",
                             Param.listOf(String.class, name)).getValue();
         } else {
             this.delegateFindClass = DEFAULT_DELEGATE_FIND_CLASS;
@@ -133,7 +135,7 @@ public final class ClassLoaderDelegation {
 
         if ((flag & FLAG_DELEGATE_FIND_MODULE_CLASS) != 0) {
             this.delegateFindModuleClass = (module, name) ->
-                    ReflectUtil.call(Class.class, delegateTarget.getClass(), delegateTarget, "findClass()",
+                    ReflectUtil.icall(Class.class, target, "findClass()",
                             Param.listOf(String.class, module, String.class, name)).getValue();
         } else {
             this.delegateFindModuleClass = DEFAULT_DELEGATE_FIND_MODULE_CLASS;
@@ -141,7 +143,7 @@ public final class ClassLoaderDelegation {
 
         if ((flag & FLAG_DELEGATE_FIND_RESOURCE) != 0) {
             this.delegateFindResource = name ->
-                    ReflectUtil.call(URL.class, delegateTarget.getClass(), delegateTarget, "findResource()",
+                    ReflectUtil.icall(URL.class, target, "findResource()",
                             Param.listOf(String.class, name)).getValue();
         } else {
             this.delegateFindResource = DEFAULT_DELEGATE_FIND_RESOURCE;
@@ -149,7 +151,7 @@ public final class ClassLoaderDelegation {
 
         if ((flag & FLAG_DELEGATE_FIND_MODULE_RESOURCE) != 0) {
             this.delegateFindModuleResource = (module, name) ->
-                    ReflectUtil.call(URL.class, delegateTarget.getClass(), delegateTarget, "findResource()",
+                    ReflectUtil.icall(URL.class, target, "findResource()",
                             Param.listOf(String.class, module, String.class, name)).getValue();
         } else {
             this.delegateFindModuleResource = DEFAULT_DELEGATE_FIND_MODULE_RESOURCE;

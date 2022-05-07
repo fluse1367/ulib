@@ -68,7 +68,7 @@ public class LazyValueImpl<T> implements LazyValue<T> {
             return;
 
         // forcibly cancel execution
-        ReflectUtil.call(Thread.class, this.executingThread, "stop0()",
+        ReflectUtil.icall(this.executingThread, "stop0()",
                         Param.single(Object.class, new LazyValueCancel()))
                 .rethrowRE();
     }

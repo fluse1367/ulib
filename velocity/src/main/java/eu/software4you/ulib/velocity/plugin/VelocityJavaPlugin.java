@@ -154,7 +154,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     public void cancelAllTasks() {
         var sch = proxyServer.getScheduler();
         //noinspection RedundantCast
-        ReflectUtil.call(Multimap.class, sch.getClass(), sch, "tasksByPlugin")
+        ReflectUtil.icall(Multimap.class, sch, "tasksByPlugin")
                 .map(Multimap::values)
                 .map(c -> Conversions.safecast(ScheduledTask.class, c).orElse(null))
                 .ifPresentOrElse(tasks -> tasks.forEach(ScheduledTask::cancel), thr -> thr

@@ -148,16 +148,16 @@ public final class EnchantUtilImpl {
 
     @SneakyThrows
     public static int getItemEnchantability(ItemStack stack) {
-        return ReflectUtil.call(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"), null,
+        return ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"),
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
                 Param.single(ItemStack.class, stack)).orElseThrow();
     }
 
     private static boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
-        Map<NamespacedKey, Enchantment> byKey = ReflectUtil.call(Map.class, Enchantment.class, null, "byKey")
+        Map<NamespacedKey, Enchantment> byKey = ReflectUtil.scall(Map.class, Enchantment.class, "byKey")
                 .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
                 .orElseThrow();
-        Map<String, Enchantment> byName = ReflectUtil.call(Map.class, Enchantment.class, null, "byName")
+        Map<String, Enchantment> byName = ReflectUtil.scall(Map.class, Enchantment.class, "byName")
                 .map(map -> Conversions.safecast(String.class, Enchantment.class, map).orElse(null))
                 .orElseThrow();
 
@@ -173,7 +173,7 @@ public final class EnchantUtilImpl {
         var ce = Class.forName("org.bukkit.craftbukkit.enchantments.CraftEnchantment");
         if (!ce.isInstance(enchantment))
             throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
-        rarityName = ReflectUtil.call(String.class, ce, null, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
+        rarityName = ReflectUtil.scall(String.class, ce, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
                 Param.single(Enchantment.class, enchantment)).orElseThrow();
 
         return EnchantmentRarity.valueOf(rarityName);

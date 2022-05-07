@@ -13,6 +13,76 @@ import java.util.*;
 public class ReflectUtil {
 
     /**
+     * Calls a chain of methods/fields from an initial entry point object ("instance-call").
+     * <p>
+     * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
+     * <pre>{@code someMethod().someField.someMethod()}</pre>
+     *
+     * @param invoke the invoking object of the entry
+     * @param call   the call string
+     * @param params the parameters according to the call string
+     * @return the execution result
+     * @see #call(Class, Object, CallFrame...)
+     */
+    @SafeVarargs
+    public static Expect<Object, ReflectiveOperationException> icall(@NotNull Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+        return call(invoke.getClass(), invoke, call, params);
+    }
+
+    /**
+     * Calls a chain of methods/fields from an initial entry point object ("instance-call").
+     * <p>
+     * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
+     * <pre>{@code someMethod().someField.someMethod()}</pre>
+     *
+     * @param returnType return type
+     * @param invoke     the invoking object of the entry
+     * @param call       the call string
+     * @param params     the parameters according to the call string
+     * @return the execution result
+     * @see #call(Class, Object, CallFrame...)
+     */
+    @SafeVarargs
+    public static <R> Expect<R, ReflectiveOperationException> icall(@NotNull Class<R> returnType, @NotNull Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+        return call(returnType, invoke.getClass(), invoke, call, params);
+    }
+
+    /**
+     * Calls a chain of methods/fields from an initial static entry point ("static-call").
+     * <p>
+     * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
+     * <pre>{@code someMethod().someField.someMethod()}</pre>
+     *
+     * @param invoke the initial entry point
+     * @param call   the call string
+     * @param params the parameters according to the call string
+     * @return the execution result
+     * @see #call(Class, Object, CallFrame...)
+     */
+    @SafeVarargs
+    public static Expect<Object, ReflectiveOperationException> scall(@NotNull Class<?> invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+        return call(invoke, null, call, params);
+    }
+
+    /**
+     * Calls a chain of methods/fields from an initial static entry point ("static-call").
+     * <p>
+     * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
+     * <pre>{@code someMethod().someField.someMethod()}</pre>
+     *
+     * @param returnType return type
+     * @param invoke     the initial entry point
+     * @param call       the call string
+     * @param params     the parameters according to the call string
+     * @return the execution result
+     * @see #call(Class, Object, CallFrame...)
+     */
+    @SafeVarargs
+    public static <R> Expect<R, ReflectiveOperationException> scall(@NotNull Class<R> returnType, @NotNull Class<?> invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
+        return call(returnType, invoke, null, call, params);
+    }
+
+    /**
      * Calls a chain of methods/fields from an initial entry point.
      * <p>
      * The call string is a chain of method/field names separated by a dot, methods are indicated by brackets :
