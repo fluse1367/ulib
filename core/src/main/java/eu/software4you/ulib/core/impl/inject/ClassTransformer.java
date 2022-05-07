@@ -9,6 +9,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ClassTransformer implements ClassFileTransformer {
@@ -39,17 +40,16 @@ public final class ClassTransformer implements ClassFileTransformer {
         int count = 0;
         for (String descriptor : man.getTargetMethods(classBeingRedefined)) {
 
-            var behavior = find(clazz, descriptor);
-
-            // indicate error if behavior cannot get obtained
-            if (behavior == null) {
-                man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) ->
-                        new NoSuchElementException("Descriptor %s not found in %s".formatted(descriptor, name)));
-                return null;
-            }
-
             try {
+                // obtain behavior target
+                var behavior = Optional.ofNullable(find(clazz, descriptor))
+                        // indicate error if behavior cannot get obtained
+                        .orElseThrow(() -> new NoSuchElementException("Descriptor %s not found in %s".formatted(descriptor, name)));
+
+                // inject hooks
                 injectHookCalls(behavior);
+
+                // TODO: inject proxies
             } catch (Throwable thr) {
                 man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
                 return null;
