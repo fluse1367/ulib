@@ -49,7 +49,7 @@ public final class ClassTransformer implements ClassFileTransformer {
             }
 
             try {
-                Expect.compute(() -> injectHookCalls(behavior)).rethrow();
+                injectHookCalls(behavior);
             } catch (Throwable thr) {
                 man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
                 return null;
@@ -60,7 +60,7 @@ public final class ClassTransformer implements ClassFileTransformer {
 
 
         try {
-            return count == 0 ? null : Expect.compute(() -> clazz.toBytecode()).orElseRethrow();
+            return count == 0 ? null : clazz.toBytecode();
         } catch (Throwable thr) {
             man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
             return null;
