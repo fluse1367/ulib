@@ -8,6 +8,7 @@ import lombok.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ClassTransformer implements ClassFileTransformer {
@@ -37,28 +38,18 @@ public final class ClassTransformer implements ClassFileTransformer {
 
         int count = 0;
         for (String descriptor : man.getTargetMethods(classBeingRedefined)) {
-            var resolved = InjectionSupport.resolveMethod(descriptor);
-            String resolvedName = resolved.getFirst(), resolvedDescriptor = resolved.getSecond();
 
-            CtBehavior object;
-            if (resolvedName.equals("<init>")) {
-                if (resolvedDescriptor.isBlank()) {
-                    object = clazz.getDeclaredConstructors()[0];
-                } else {
-                    var res = Expect.compute(clazz::getConstructor, resolvedDescriptor);
-                    if (res.isEmpty())
-                        continue;
-                    object = res.orElseThrow();
-                }
-            } else {
-                var res = Expect.compute(clazz::getMethod, resolvedName, resolvedDescriptor);
-                if (res.isEmpty())
-                    continue; // skip this method TODO: log error somehow?
-                object = res.orElseThrow();
+            var behavior = find(clazz, descriptor);
+
+            // indicate error if behavior cannot get obtained
+            if (behavior == null) {
+                man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) ->
+                        new NoSuchElementException("Descriptor %s not found in %s".formatted(descriptor, name)));
+                return null;
             }
 
             try {
-                Expect.compute(() -> injectHookCalls(object)).rethrow();
+                Expect.compute(() -> injectHookCalls(behavior)).rethrow();
             } catch (Throwable thr) {
                 man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
                 return null;
@@ -74,6 +65,25 @@ public final class ClassTransformer implements ClassFileTransformer {
             man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
             return null;
         }
+    }
+
+    private CtBehavior find(CtClass clazz, String descriptor) {
+        var resolved = InjectionSupport.resolveMethod(descriptor);
+        String resolvedName = resolved.getFirst(), resolvedDescriptor = resolved.getSecond();
+
+        if (resolvedName.equals("<init>")) {
+            if (resolvedDescriptor.isBlank()) {
+                // default constructor
+                return clazz.getDeclaredConstructors()[0];
+            }
+
+            // actually resolve constructor
+            return Expect.compute(clazz::getConstructor, resolvedDescriptor)
+                    .orElse(null); // constructor not found
+        }
+
+        return Expect.compute(clazz::getMethod, resolvedName, resolvedDescriptor)
+                .orElse(null); // method not found
     }
 
     private void injectHookCalls(CtBehavior behavior) throws NotFoundException, CannotCompileException {
