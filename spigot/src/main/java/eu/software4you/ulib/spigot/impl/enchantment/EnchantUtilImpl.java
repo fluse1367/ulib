@@ -158,8 +158,10 @@ public final class EnchantUtilImpl {
 
     private boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
         Map<NamespacedKey, Enchantment> byKey = ReflectUtil.call(Map.class, Enchantment.class, null, "byKey")
+                .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
                 .orElseThrow();
         Map<String, Enchantment> byName = ReflectUtil.call(Map.class, Enchantment.class, null, "byName")
+                .map(map -> Conversions.safecast(String.class, Enchantment.class, map).orElse(null))
                 .orElseThrow();
 
         return fun.apply(byKey, byName);

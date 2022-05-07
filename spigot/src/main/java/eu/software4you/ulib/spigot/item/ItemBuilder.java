@@ -67,7 +67,7 @@ public class ItemBuilder {
      */
     public <T extends ItemMeta> T getMeta(Class<T> metaClass) {
         try {
-            return (T) meta;
+            return metaClass.cast(meta);
         } catch (ClassCastException e) {
             return null;
         }
