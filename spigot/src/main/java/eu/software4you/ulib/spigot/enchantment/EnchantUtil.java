@@ -16,7 +16,6 @@ public final class EnchantUtil {
      * Control characters to determine custom enchantment lores. They will be appended to any custom enchantment lore line.
      */
     public static final String ENCHANTMENT_LORE_CONTROL_CHARS = "§3§o §r ";
-    private static final EnchantUtilImpl impl = new EnchantUtilImpl();
 
     /**
      * Returns an immutable copy of the currently registered custom enchantments.
@@ -24,7 +23,7 @@ public final class EnchantUtil {
      * @return an immutable copy of the currently registered custom enchantments
      */
     public static Set<CustomEnchantment> getCustomEnchantments() {
-        return impl.getCustomEnchantments();
+        return EnchantUtilImpl.READONLY_ENCHANTS;
     }
 
     /**
@@ -85,7 +84,7 @@ public final class EnchantUtil {
      * @see Enchantment#getName()
      */
     public static void updateCustomEnchantmentLore(ItemStack stack) {
-        impl.updateCustomEnchantmentLore(stack);
+        EnchantUtilImpl.updateCustomEnchantmentLore(stack);
     }
 
     /**
@@ -100,7 +99,7 @@ public final class EnchantUtil {
     }
 
     public static void setRepairCost(AnvilInventory inv, int lvl) {
-        impl.setRepairCost(inv, lvl);
+        EnchantUtilImpl.setRepairCost(inv, lvl);
     }
 
     /**
@@ -114,7 +113,7 @@ public final class EnchantUtil {
      * @see <a href="https://minecraft.gamepedia.com/Anvil_mechanics#Costs_for_combining_enchantments">https://minecraft.gamepedia.com/Anvil_mechanics#Costs_for_combining_enchantments</a>
      */
     public static int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {
-        return impl.combineEnchantmentsSafe(targetStack, target, sacrifice);
+        return EnchantUtilImpl.combineEnchantmentsSafe(targetStack, target, sacrifice);
     }
 
     /**
@@ -128,7 +127,7 @@ public final class EnchantUtil {
      * @return if the registration was successful
      */
     public static boolean registerCustomEnchantment(CustomEnchantment enchantment) {
-        return impl.registerCustomEnchantment(enchantment);
+        return EnchantUtilImpl.registerCustomEnchantment(enchantment);
     }
 
     /**
@@ -138,11 +137,11 @@ public final class EnchantUtil {
      * @return if the removal was successful
      */
     public static boolean unregisterCustomEnchantment(CustomEnchantment enchantment) {
-        return impl.unregisterCustomEnchantment(enchantment);
+        return EnchantUtilImpl.unregisterCustomEnchantment(enchantment);
     }
 
     public static int getItemEnchantability(ItemStack stack) {
-        return impl.getItemEnchantability(stack);
+        return EnchantUtilImpl.getItemEnchantability(stack);
     }
 
     /**
@@ -152,6 +151,6 @@ public final class EnchantUtil {
      * @return the rarity
      */
     public static EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
-        return impl.getEnchantRarity(enchantment);
+        return EnchantUtilImpl.getEnchantRarity(enchantment);
     }
 }

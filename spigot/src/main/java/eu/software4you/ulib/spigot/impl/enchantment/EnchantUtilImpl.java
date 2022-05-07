@@ -20,11 +20,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 
 public final class EnchantUtilImpl {
-    private final Set<CustomEnchantment> customEnchantments = new HashSet<>();
-    private String methodName_enchantment_getRarity;
-    private String methodName_item_getEnchantmentValue; // enchantability
+    private static final Set<CustomEnchantment> customEnchantments = new HashSet<>();
+    public static final Set<CustomEnchantment> READONLY_ENCHANTS = Collections.unmodifiableSet(customEnchantments);
+    // method names for reflective access
+    private static String methodName_enchantment_getRarity, methodName_item_getEnchantmentValue /*enchantability*/;
 
-    public EnchantUtilImpl() {
+    static {
         // Use mappings API to get Enchantment#getRarity() and Item#getEnchantmentValue()
         Tasks.run(() -> {
             var mapping = Mappings.getMixedMapping();
@@ -37,11 +38,7 @@ public final class EnchantUtilImpl {
         });
     }
 
-    public Set<CustomEnchantment> getCustomEnchantments() {
-        return Collections.unmodifiableSet(customEnchantments);
-    }
-
-    public void updateCustomEnchantmentLore(ItemStack stack) {
+    public static void updateCustomEnchantmentLore(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
 
         // remove all custom enchantment lines
@@ -80,11 +77,11 @@ public final class EnchantUtilImpl {
         stack.setItemMeta(meta);
     }
 
-    public void setRepairCost(AnvilInventory inv, int lvl) {
+    public static void setRepairCost(AnvilInventory inv, int lvl) {
         PluginSubst.getInstance().sync(() -> inv.setRepairCost(lvl));
     }
 
-    public int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {
+    public static int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {
         boolean targetIsBook = target instanceof EnchantmentStorageMeta;
 
         Function<Enchantment, Integer> lvlGet = targetIsBook ?
@@ -121,7 +118,7 @@ public final class EnchantUtilImpl {
         return cost.get();
     }
 
-    public boolean registerCustomEnchantment(CustomEnchantment enchantment) {
+    public static boolean registerCustomEnchantment(CustomEnchantment enchantment) {
         if (!customEnchantments.add(enchantment))
             return false;
 
@@ -142,7 +139,7 @@ public final class EnchantUtilImpl {
         });
     }
 
-    public boolean unregisterCustomEnchantment(CustomEnchantment enchantment) {
+    public static boolean unregisterCustomEnchantment(CustomEnchantment enchantment) {
         if (!customEnchantments.remove(enchantment))
             return false;
 
@@ -150,13 +147,13 @@ public final class EnchantUtilImpl {
     }
 
     @SneakyThrows
-    public int getItemEnchantability(ItemStack stack) {
+    public static int getItemEnchantability(ItemStack stack) {
         return ReflectUtil.call(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"), null,
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
                 Param.single(ItemStack.class, stack)).orElseThrow();
     }
 
-    private boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
+    private static boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
         Map<NamespacedKey, Enchantment> byKey = ReflectUtil.call(Map.class, Enchantment.class, null, "byKey")
                 .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
                 .orElseThrow();
@@ -168,7 +165,7 @@ public final class EnchantUtilImpl {
     }
 
     @SneakyThrows
-    public EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
+    public static EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
         if (enchantment instanceof CustomEnchantment ce)
             return ce.getEnchantmentRarity();
 
