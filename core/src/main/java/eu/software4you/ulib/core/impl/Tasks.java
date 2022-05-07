@@ -1,12 +1,13 @@
 package eu.software4you.ulib.core.impl;
 
+import eu.software4you.ulib.core.function.Func;
+import eu.software4you.ulib.core.function.Task;
 import eu.software4you.ulib.core.util.ArrayUtil;
 import lombok.SneakyThrows;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public final class Tasks {
     private static final boolean SYNC = Internal.isForceSync();
@@ -20,16 +21,15 @@ public final class Tasks {
     });
 
     @SafeVarargs
-    public static <T> List<T> await(Callable<T> task, Callable<T>... tasks) {
-        List<Future<T>> futs = new ArrayList<>();
-        for (Callable<T> t : ArrayUtil.concat(task, tasks)) {
-            futs.add(run(t));
-        }
-        return futs.stream().map(Tasks::get).collect(Collectors.toList());
+    public static <T> List<T> await(Func<T, ?> task, Func<T, ?>... tasks) {
+        return Arrays.stream(ArrayUtil.concat(task, tasks))
+                .map(Tasks::run)
+                .map(Tasks::get)
+                .toList();
     }
 
     // does this method even make sense?
-    public static <T> T await(Callable<T> task) {
+    public static <T> T await(Func<T, ?> task) {
         return get(run(task));
     }
 
@@ -38,21 +38,21 @@ public final class Tasks {
         return fut.get();
     }
 
-    public static <T> Future<T> run(Callable<T> task) {
+    public static <T> Future<T> run(Func<T, ?> task) {
         return RUNNER.submit(() -> catching(task));
     }
 
-    public static <T> Future<T> run(Runnable task, T result) {
+    public static <T> Future<T> run(Task<?> task, T result) {
         return RUNNER.submit(() -> catching(task), result);
     }
 
-    public static Future<?> run(Runnable task) {
+    public static Future<?> run(Task<?> task) {
         return RUNNER.submit(() -> catching(task));
     }
 
-    private static void catching(Runnable r) {
+    private static void catching(Task<?> r) {
         try {
-            r.run();
+            r.execute();
         } catch (Throwable thr) {
             System.err.println("An error occurred while executing a task.");
             thr.printStackTrace();
