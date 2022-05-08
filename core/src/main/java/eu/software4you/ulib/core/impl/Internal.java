@@ -117,7 +117,7 @@ public final class Internal {
 
         AccessibleObjectTransformer.acquirePrivileges();
         widenModuleAccess();
-        PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY);
+        PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY, InjectionManager.PROXY_KEY);
     }
 
     @SneakyThrows

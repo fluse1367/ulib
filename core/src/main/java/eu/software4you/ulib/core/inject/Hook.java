@@ -47,7 +47,7 @@ public @interface Hook {
     /**
      * The method to be hooked into. A descriptor (as specified in the JNI documentation) can be specified.
      *
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html" target="_blank">https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html</a>
+     * @see Spec#target()
      */
     @NotNull
     String value();
@@ -59,8 +59,8 @@ public @interface Hook {
     String clazz() default "";
 
     /**
-     * Specifies where in the method to hook.
+     * Specifies where and what in the method to hook.
      */
     @NotNull
-    HookPoint at() default HookPoint.HEAD;
+    Spec spec() default @Spec();
 }

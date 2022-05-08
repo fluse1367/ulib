@@ -13,4 +13,19 @@ public enum HookPoint {
      * At any return statement.
      */
     RETURN,
+
+    /**
+     * At a method call.
+     */
+    METHOD_CALL,
+
+    /**
+     * At a read-access of a field.
+     */
+    FIELD_READ,
+
+    /**
+     * At a write-access of a field.
+     */
+    FIELD_WRITE,
 }

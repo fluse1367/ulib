@@ -43,10 +43,10 @@ public final class InjectionSupport {
         };
     }
 
-    public static String resolveDescriptor(Hook hook, Class<?> target) {
+    public static String resolveSignature(Hook hook, Class<?> target) {
         String descriptor = hook.value();
 
-        var resolved = resolveMethod(hook);
+        var resolved = splitSignature(hook);
         if (!resolved.getSecond().isBlank())
             return descriptor;
 
@@ -111,19 +111,25 @@ public final class InjectionSupport {
         }
     }
 
-    public static Pair<String, String> resolveMethod(Hook hook) {
-        return resolveMethod(hook.value());
+    /**
+     * @return pair(name, descriptor)
+     */
+    public static Pair<String, String> splitSignature(Hook hook) {
+        return splitSignature(hook.value());
     }
 
-    public static Pair<String, String> resolveMethod(String methodDesc) {
-        if (methodDesc.contains("(")) {
-            int index = methodDesc.indexOf("(");
-            String name = methodDesc.substring(0, index);
-            String descriptor = methodDesc.substring(index);
+    /**
+     * @return pair(name, descriptor)
+     */
+    public static Pair<String, String> splitSignature(String methodSignature) {
+        if (methodSignature.contains("(")) {
+            int index = methodSignature.indexOf("(");
+            String name = methodSignature.substring(0, index);
+            String descriptor = methodSignature.substring(index);
             return new Pair<>(name, descriptor);
         }
 
-        return new Pair<>(methodDesc, "");
+        return new Pair<>(methodSignature, "");
     }
 
     public static void checkInvoke(Method hook, Object invoke) {

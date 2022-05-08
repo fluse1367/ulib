@@ -1,11 +1,13 @@
 package eu.software4you.ulib.core.impl.inject;
 
 import eu.software4you.ulib.core.function.BiParamTask;
-import eu.software4you.ulib.core.inject.Callback;
-import eu.software4you.ulib.core.inject.HookPoint;
-import lombok.*;
+import eu.software4you.ulib.core.inject.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
+
+import static eu.software4you.ulib.core.util.Conditions.in;
 
 @RequiredArgsConstructor
 @Getter
@@ -15,28 +17,57 @@ public class InjectionConfiguration {
     private final Map<String, Hooks<?>> hooks = new HashMap<>();
 
 
-    public <R> InjectionConfiguration with(String targetMethod, HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
-        //noinspection unchecked
-        ((Hooks<R>) hooks.computeIfAbsent(targetMethod, Hooks::new))
-                .with(at, call);
+    @SuppressWarnings("unchecked")
+    public <R> InjectionConfiguration with(String targetMethodSignature, Spec spec, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+        if (Arrays.stream(targetClass.getDeclaredMethods())
+                .map(InjectionSupport::getSignature)
+                .noneMatch(targetMethodSignature::equals))
+            throw new IllegalArgumentException("Hook target `%s` not found in %s".formatted(targetMethodSignature, targetClass.getName()));
+
+        var cont = ((Hooks<R>) hooks.computeIfAbsent(targetMethodSignature, sig -> new Hooks<>()));
+        var at = spec.point();
+
+        switch (at) {
+            case HEAD, RETURN -> cont.addCall(at, call);
+            case METHOD_CALL, FIELD_READ, FIELD_WRITE ->
+                    cont.addProxy(at, spec.target(), spec.n(), (BiParamTask<? super Object[], ? super Callback<?>, ?>) call);
+            default -> throw new InternalError();
+        }
+
         return this;
     }
 
 
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    final class Hooks<R> {
-        private final String targetMethod; // JNI descriptor
-        @Getter
+    /**
+     * Houses method specific hooks
+     */
+    @Getter
+    static final class Hooks<R> {
+        // hook point -> calls
         private final Map<Integer, Collection<BiParamTask<? super Object[], ? super Callback<R>, ?>>> callbacks = new HashMap<>();
 
-        private void with(HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
-            if (Arrays.stream(targetClass.getDeclaredMethods())
-                    .map(InjectionSupport::getSignature)
-                    .noneMatch(targetMethod::equals))
-                throw new IllegalArgumentException("Hook target `%s` not found in %s".formatted(targetMethod, targetClass.getName()));
+        // hook point -> ( target method/field signature (full) -> ( occurrence/n -> calls ) )
+        // full signature: sig of class + sig of method/field
+        private final Map<Integer, Map<String, Map<Integer, Collection<BiParamTask<? super Object[], ? super Callback<?>, ?>>>>> proxyCallbacks = new HashMap<>();
+
+        private void addCall(HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+            if (!in(at, HookPoint.HEAD, HookPoint.RETURN))
+                throw new IllegalArgumentException();
 
             callbacks.computeIfAbsent(at.ordinal(), ArrayList::new)
                     .add(call);
+        }
+
+        private void addProxy(HookPoint at, String target, int[] ns, BiParamTask<? super Object[], ? super Callback<?>, ?> call) {
+            if (!in(at, HookPoint.METHOD_CALL, HookPoint.FIELD_READ, HookPoint.FIELD_WRITE))
+                throw new IllegalArgumentException();
+
+            var proxyMap = proxyCallbacks.computeIfAbsent(at.ordinal(), i -> new HashMap<>());
+            var callsMap = proxyMap.computeIfAbsent(target, sig -> new HashMap<>());
+            for (int n : ns) {
+                var calls = callsMap.computeIfAbsent(n, i -> new LinkedList<>());
+                calls.add(call);
+            }
         }
     }
 }

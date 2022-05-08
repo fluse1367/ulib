@@ -90,7 +90,7 @@ public class PropertiesLock {
         testAndThrow(key, cb);
     }
 
-    @Hook(value = "entrySet", at = HookPoint.RETURN)
+    @Hook(value = "entrySet", spec = @Spec(point = HookPoint.RETURN))
     public void hook_entrySet(Callback<Set<Map.Entry<Object, Object>>> cb) {
         if (cb.self().orElse(null) != this.self)
             return;
@@ -109,7 +109,7 @@ public class PropertiesLock {
         });
     }
 
-    @Hook(value = "keySet", at = HookPoint.RETURN)
+    @Hook(value = "keySet", spec = @Spec(point = HookPoint.RETURN))
     public void hook_keySet(Callback<Set<Object>> cb) {
         if (cb.self().orElse(null) != this.self)
             return;

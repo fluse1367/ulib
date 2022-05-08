@@ -9,20 +9,38 @@ import java.util.Optional;
 
 final class CallbackImpl<T> implements Callback<T> {
 
+    private final boolean isProxy;
     private final Class<T> returnType;
-    private final Object self;
+    private final Object self, proxyInst;
     private final Class<?> callerClass;
     private T returnValue;
     private boolean hasReturnValue;
     @Getter
     private boolean canceled;
 
+    // for hooks
     public CallbackImpl(Class<T> returnType, T returnValue, boolean hasReturnValue, Object self, Class<?> callerClass) {
+        this(false, returnType, returnValue, hasReturnValue, self, null, callerClass);
+    }
+
+    // for proxies
+    public CallbackImpl(Class<T> returnType, Object self, Object proxyInst, Class<?> callerClass) {
+        this(true, returnType, null, false, self, proxyInst, callerClass);
+    }
+
+    private CallbackImpl(boolean isProxy, Class<T> returnType, T returnValue, boolean hasReturnValue, Object self, Object proxyInst, Class<?> callerClass) {
+        this.isProxy = isProxy;
         this.returnType = returnType;
         this.returnValue = returnValue;
         this.hasReturnValue = hasReturnValue;
         this.self = self;
+        this.proxyInst = proxyInst;
         this.callerClass = callerClass;
+    }
+
+    @Override
+    public @NotNull Optional<Object> proxyInst() {
+        return Optional.ofNullable(proxyInst);
     }
 
     @Override
@@ -64,7 +82,7 @@ final class CallbackImpl<T> implements Callback<T> {
 
     @Override
     public void cancel() {
-        if (!hasReturnValue && returnType != void.class)
+        if (!isProxy && !hasReturnValue && returnType != void.class)
             throw new IllegalStateException("Cannot cancel with no return value");
         canceled = true;
     }

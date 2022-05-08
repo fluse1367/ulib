@@ -1,10 +1,13 @@
 package eu.software4you.ulib.core.inject;
 
 import eu.software4you.ulib.core.impl.inject.ClassLoaderDelegationHook;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
+import eu.software4you.ulib.core.util.LazyValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -14,6 +17,39 @@ import java.util.function.Predicate;
  * @see HookInjection
  */
 public class InjectUtil {
+    private static final LazyValue<Spec> DEFAULT_SPEC = LazyValue.immutable(() -> createHookingSpec(null, null, (Integer[]) null));
+
+    @NotNull
+    public static Spec defaultHookingSpec() {
+        return DEFAULT_SPEC.getIfAvailable().orElseThrow();
+    }
+
+    @NotNull
+    public static Spec createHookingSpec(@Nullable HookPoint point, @Nullable String target, @Nullable Integer... n) {
+        Map<String, Object> vals = new HashMap<>(3, 1f);
+
+        if (point != null)
+            vals.put("point", point);
+
+        if (target != null)
+            vals.put("target", target);
+
+        if (n != null) {
+            // convert into primitive array
+            int[] array = new int[n.length];
+            for (int i = 0; i < n.length; i++) {
+                array[i] = n[i];
+            }
+            vals.put("n", array);
+        }
+
+        return ReflectUtil.instantiateAnnotation(Spec.class, vals);
+    }
+
+    @NotNull
+    public static Spec createHookingSpec(@Nullable HookPoint point) {
+        return createHookingSpec(point, null, (Integer[]) null);
+    }
 
     /**
      * @see #injectLoaderDelegation(ClassLoaderDelegation, Predicate, BiPredicate, Class)

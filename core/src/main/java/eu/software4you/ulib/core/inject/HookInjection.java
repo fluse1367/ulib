@@ -25,6 +25,8 @@ import static eu.software4you.ulib.core.impl.inject.InjectionSupport.*;
  *      .addHook(hookClazz.getMethod("hook_someOtherMethod"), null);
  *  boolean success = !injection.inject().hasCaught();
  * }</pre>
+ *
+ * @see InjectUtil#createHookingSpec(HookPoint)
  */
 public class HookInjection {
 
@@ -52,7 +54,7 @@ public class HookInjection {
      * Adds the specified hook to the builder. The presence of a global target is assumed.
      *
      * @param methodDescriptor the target method JNI descriptor
-     * @param at               where to apply the hook
+     * @param spec             the hook specification
      * @param call             the callable object
      * @param <R>              the return type of the target method
      * @return this
@@ -61,10 +63,11 @@ public class HookInjection {
      */
     @NotNull
     @Contract("_, _, _ -> this")
-    public <R> HookInjection addHook(String methodDescriptor, HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+    public <R> HookInjection addHook(@NotNull String methodDescriptor, @NotNull Spec spec,
+                                     @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
         check();
         var cl = Objects.requireNonNull(target, "No global target declared");
-        return addHook(cl, methodDescriptor, at, call);
+        return addHook(cl, methodDescriptor, spec, call);
     }
 
     /**
@@ -72,7 +75,7 @@ public class HookInjection {
      *
      * @param target           the target class
      * @param methodDescriptor the target method JNI descriptor
-     * @param at               where to apply the hook
+     * @param spec             the hook specification
      * @param call             the callable object
      * @param <R>              the return type of the target method
      * @return this
@@ -80,10 +83,11 @@ public class HookInjection {
      */
     @NotNull
     @Contract("_, _, _, _ -> this")
-    public <R> HookInjection addHook(@NotNull Class<?> target, @NotNull String methodDescriptor, @NotNull HookPoint at, @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+    public <R> HookInjection addHook(@NotNull Class<?> target, @NotNull String methodDescriptor, @NotNull Spec spec,
+                                     @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
         check();
         instructions.computeIfAbsent(target, InjectionConfiguration::new)
-                .with(methodDescriptor, at, call);
+                .with(methodDescriptor, spec, call);
         return this;
     }
 
@@ -91,17 +95,18 @@ public class HookInjection {
      * Adds the specified hook to the builder.
      *
      * @param target the target method that is to be injected
-     * @param at     where to apply the hook
+     * @param spec   the hook specification
      * @param call   the callable object
      * @param <R>    the return type of the target method
      * @return this
      */
     @NotNull
     @Contract("_, _, _ -> this")
-    public <R> HookInjection addHook(@NotNull Method target, @NotNull HookPoint at, @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
+    public <R> HookInjection addHook(@NotNull Method target, @NotNull Spec spec,
+                                     @NotNull BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
         check();
         instructions.computeIfAbsent(target.getDeclaringClass(), InjectionConfiguration::new)
-                .with(getSignature(target), at, call);
+                .with(getSignature(target), spec, call);
         return this;
     }
 
@@ -124,10 +129,10 @@ public class HookInjection {
         Hook anno = hook.getAnnotation(Hook.class);
 
         var target = findTargetClass(anno, hook.getDeclaringClass(), ReflectUtil.getCallerClass().getClassLoader());
-        var descriptor = resolveDescriptor(anno, target);
+        var descriptor = resolveSignature(anno, target);
         var call = buildCall(hook, hookInvoke);
 
-        return addHook(target, descriptor, anno.at(), call);
+        return addHook(target, descriptor, anno.spec(), call);
     }
 
 
@@ -137,12 +142,12 @@ public class HookInjection {
      * @param hook       the hook method
      * @param hookInvoke the method invoke instance ({@code null} for static methods)
      * @param target     the target method
-     * @param at         the hook point
+     * @param spec       the hook specification
      * @return this
      */
     @NotNull
     @Contract("_, _, _, _ -> this")
-    public HookInjection addHook(@NotNull Method hook, @Nullable Object hookInvoke, @NotNull Method target, @NotNull HookPoint at) {
+    public HookInjection addHook(@NotNull Method hook, @Nullable Object hookInvoke, @NotNull Method target, @NotNull Spec spec) {
         check();
         checkInvoke(hook, hookInvoke);
 
@@ -150,7 +155,7 @@ public class HookInjection {
         var descriptor = getSignature(target);
         var call = buildCall(hook, hookInvoke);
 
-        return addHook(targetClazz, descriptor, at, call);
+        return addHook(targetClazz, descriptor, spec, call);
     }
 
     /**

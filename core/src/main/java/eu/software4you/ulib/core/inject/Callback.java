@@ -14,6 +14,12 @@ import java.util.Optional;
 public interface Callback<T> {
 
     /**
+     * Returns the object instance of proxied object (if present).
+     */
+    @NotNull
+    Optional<Object> proxyInst();
+
+    /**
      * Returns the object instance of the hooked method, or {@code null} if the hooked method is static.
      */
     @NotNull

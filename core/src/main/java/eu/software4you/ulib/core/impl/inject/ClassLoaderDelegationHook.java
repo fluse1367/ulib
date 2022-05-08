@@ -47,36 +47,38 @@ public final class ClassLoaderDelegationHook {
     public Expect<Void, Exception> inject() {
         // delegate class finding/loading
 
+        var headSpec = InjectUtil.createHookingSpec(HookPoint.HEAD, null, (Integer[]) null);
+
         ReflectUtil.findUnderlyingMethod(targetClazz, "findClass", true, String.class)
-                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.<Class<?>>addHook(into, headSpec,
                         (p, c) -> hook_findClass((String) p[0], c)
                 ));
 
         ReflectUtil.findUnderlyingMethod(targetClazz, "findClass", true, String.class, String.class)
-                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.<Class<?>>addHook(into, headSpec,
                         (p, c) -> hook_findClass((String) p[0], (String) p[1], c)
                 ));
 
         ReflectUtil.findUnderlyingMethod(targetClazz, "loadClass", true, String.class, boolean.class)
-                .ifPresent(into -> injection.<Class<?>>addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.<Class<?>>addHook(into, headSpec,
                         (p, c) -> hook_loadClass((String) p[0], (boolean) p[1], c)
                 ));
 
         additionalHooks.forEach((name, coll) -> coll.forEach(params -> ReflectUtil
                 .findUnderlyingMethod(targetClazz, name, true, params)
-                .ifPresent(into -> injection.addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.addHook(into, headSpec,
                         this::hookAdditional_findClass
                 ))));
 
         // delegate resource finding
 
         ReflectUtil.findUnderlyingMethod(targetClazz, "findResource", true, String.class)
-                .ifPresent(into -> injection.<URL>addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.<URL>addHook(into, headSpec,
                         (p, c) -> hook_findResource((String) p[0], c)
                 ));
 
         ReflectUtil.findUnderlyingMethod(targetClazz, "findResource", true, String.class, String.class)
-                .ifPresent(into -> injection.<URL>addHook(into, HookPoint.HEAD,
+                .ifPresent(into -> injection.<URL>addHook(into, headSpec,
                         (p, c) -> hook_findResource((String) p[0], (String) p[1], c)
                 ));
 
