@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.StackWalker.StackFrame;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -162,6 +164,40 @@ public class ReflectUtil {
         });
     }
 
+    /**
+     * Creates a new instance of the given annotation type.
+     *
+     * @param type    the type to create an instance of
+     * @param members the member -> value map
+     * @return the new annotation instance
+     * @throws IncompleteAnnotationException If the member map is missing a required member
+     */
+    @NotNull
+    public static <T extends Annotation> T instantiateAnnotation(@NotNull Class<T> type, @NotNull Map<String, ?> members)
+            throws IncompleteAnnotationException {
+
+        var methods = type.getDeclaredMethods();
+        Map<String, Object> annoValues = new HashMap<>(methods.length, 1f);
+
+        // validate & acquire members
+        for (Method method : methods) {
+            var name = method.getName();
+
+            var value = Expect.ofNullable((Object) members.get(name))
+                    .orElseGet(method::getDefaultValue)
+                    .orElseThrow(() -> new IncompleteAnnotationException(type, name));
+
+            annoValues.put(name, value);
+        }
+
+        var cl = forName("sun.reflect.annotation.AnnotationParser", true, ClassLoader.getSystemClassLoader())
+                .orElseThrow();
+
+        return scall(Annotation.class, cl, "annotationForMap()",
+                Param.listOf(Class.class, type, Map.class, annoValues))
+                .map(type::cast)
+                .orElseThrow();
+    }
 
     /**
      * Determines if a particular (ulib) class is considered hidden in a call stack.
