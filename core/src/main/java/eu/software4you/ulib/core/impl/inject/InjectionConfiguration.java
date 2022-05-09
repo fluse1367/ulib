@@ -44,17 +44,17 @@ public class InjectionConfiguration {
     @Getter
     static final class Hooks<R> {
         // hook point -> calls
-        private final Map<Integer, Collection<BiParamTask<? super Object[], ? super Callback<R>, ?>>> callbacks = new HashMap<>();
+        private final Map<Integer, Set<BiParamTask<? super Object[], ? super Callback<R>, ?>>> callbacks = new HashMap<>();
 
         // hook point -> ( target method/field signature (full) -> ( occurrence/n -> calls ) )
         // full signature: sig of class + sig of method/field
-        private final Map<Integer, Map<String, Map<Integer, Collection<BiParamTask<? super Object[], ? super Callback<?>, ?>>>>> proxyCallbacks = new HashMap<>();
+        private final Map<Integer, Map<String, Map<Integer, Set<BiParamTask<? super Object[], ? super Callback<?>, ?>>>>> proxyCallbacks = new HashMap<>();
 
         private void addCall(HookPoint at, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
             if (!in(at, HookPoint.HEAD, HookPoint.RETURN))
                 throw new IllegalArgumentException();
 
-            callbacks.computeIfAbsent(at.ordinal(), ArrayList::new)
+            callbacks.computeIfAbsent(at.ordinal(), o -> new LinkedHashSet<>())
                     .add(call);
         }
 
@@ -65,7 +65,7 @@ public class InjectionConfiguration {
             var proxyMap = proxyCallbacks.computeIfAbsent(at.ordinal(), i -> new HashMap<>());
             var callsMap = proxyMap.computeIfAbsent(target, sig -> new HashMap<>());
             for (int n : ns) {
-                var calls = callsMap.computeIfAbsent(n, i -> new LinkedList<>());
+                var calls = callsMap.computeIfAbsent(n, i -> new LinkedHashSet<>());
                 calls.add(call);
             }
         }

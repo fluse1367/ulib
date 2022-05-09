@@ -135,19 +135,21 @@ public class InjectionManager {
                 .map(callsMap -> {
                     // region collect & merge calls with defaults
                     // collect default calls
-                    var defaultLi = Optional.ofNullable(callsMap.get(0)).orElse(Collections.emptyList());
-                    var li = Optional.ofNullable(callsMap.get(n)).orElse(Collections.emptyList());
+                    var defaultCalls = Optional.ofNullable(callsMap.get(0))
+                            .orElse(Collections.emptySet());
+                    var additionalCalls = Optional.ofNullable(callsMap.get(n))
+                            .orElse(Collections.emptySet());
 
-                    if (defaultLi.isEmpty() && li.isEmpty())
+                    if (defaultCalls.isEmpty() && additionalCalls.isEmpty())
                         return null;
 
-                    Collection<BiParamTask<? super Object[], ? super Callback<?>, ?>> merged = new ArrayList<>(defaultLi.size() + li.size());
-                    merged.addAll(defaultLi);
-                    merged.addAll(li);
+                    Set<BiParamTask<? super Object[], ? super Callback<?>, ?>> merged = new LinkedHashSet<>(defaultCalls.size() + additionalCalls.size(), 1);
+                    merged.addAll(defaultCalls);
+                    merged.addAll(additionalCalls);
                     return merged;
                     // endregion
                 })
-                .orElse(Collections.emptyList());
+                .orElse(Collections.emptySet());
 
         for (var call : calls) {
             try {
