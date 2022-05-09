@@ -76,36 +76,18 @@ public class InjectionManager {
         );
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @SneakyThrows
-    private CallbackImpl<?> runHooks(Class<?> clazz, Class<?> returnType, Object returnValue, boolean hasReturnValue,
-                                     Object self, Class<?> caller, String methodDescriptor, int at, Object[] params) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Callback<?> runHooks(Class<?> clazz, Class<?> returnType, Object returnValue, boolean hasReturnValue,
+                                 Object self, Class<?> caller, String methodDescriptor, int at, Object[] params) {
         CallbackImpl<?> cb = new CallbackImpl(returnType, returnValue, hasReturnValue, self, caller);
-        if (!injected.containsKey(clazz))
-            return cb;
 
-        var conf = injected.get(clazz);
-        if (!conf.getHooks().containsKey(methodDescriptor))
-            return cb;
+        var calls = Optional.ofNullable(injected.get(clazz))
+                .map(conf -> conf.getHooks().get(methodDescriptor))
+                .map(Hooks::getCallbacks)
+                .map(map -> map.get(at))
+                .orElse(Collections.emptySet());
 
-        var callbacks = conf.getHooks().get(methodDescriptor).getCallbacks();
-        if (!callbacks.containsKey(at))
-            return cb;
-
-
-        for (BiParamTask call : callbacks.get(at)) {
-            try {
-                call.execute(params, cb);
-            } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof HookException he)
-                    throw he.getCause();
-                throw e.getCause();
-            }
-            if (cb.isCanceled())
-                break; // cancel all future hook processing
-        }
-
-        return cb;
+        return processCalls((Set) calls, params, cb);
     }
 
     private Callback<?> runProxies(Object[] params) {
@@ -123,7 +105,6 @@ public class InjectionManager {
         );
     }
 
-    @SneakyThrows
     private Callback<?> runProxies(Class<?> clazz, Class<?> resultType, Object self, Object proxyInst, Class<?> caller,
                                    String methodSignature, String fullTargetSignature, int n, int at, Object[] params) {
         CallbackImpl<?> cb = new CallbackImpl<>(resultType, self, proxyInst, caller);
@@ -151,20 +132,26 @@ public class InjectionManager {
                 })
                 .orElse(Collections.emptySet());
 
+        return processCalls(calls, params, cb);
+    }
+
+    @SneakyThrows
+    private Callback<?> processCalls(Set<BiParamTask<? super Object[], ? super Callback<?>, ?>> calls, Object[] params, CallbackImpl<?> callback) {
         for (var call : calls) {
             try {
-                //noinspection RedundantCast,unchecked
-                ((BiParamTask<Object, Object, Exception>) call).execute(params, cb);
+                call.execute(params.clone(), callback);
             } catch (InvocationTargetException e) {
                 if (e.getCause() instanceof HookException he)
                     throw he.getCause();
                 throw e.getCause();
+            } catch (HookException he) {
+                throw he.getCause();
             }
-            if (cb.isCanceled())
-                break;
+            if (callback.isCanceled())
+                break; // cancel all future hook processing
         }
 
-        return cb;
+        return callback;
     }
 
     boolean shouldProcess(Class<?> clazz) {
