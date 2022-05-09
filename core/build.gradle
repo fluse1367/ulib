@@ -31,7 +31,3 @@ extraJavaModuleInfo {
 }
 
 doPubliblishment(true)
-
-compileJava {
-    options.compilerArgs << "--add-exports" << "java.base/sun.reflect.annotation=ulib.core"
-}
