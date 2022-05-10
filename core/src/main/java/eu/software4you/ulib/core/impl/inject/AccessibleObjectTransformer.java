@@ -33,9 +33,9 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String clName, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] byteCode) throws IllegalClassFormatException {
+        if (!clName.equals("java/lang/reflect/AccessibleObject"))
+            return null;
         final String className = clName.replace('/', '.');
-        if (!className.equals("java.lang.reflect.AccessibleObject"))
-            return byteCode;
 
 
         try {
@@ -59,7 +59,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             thr.printStackTrace();
         }
 
-        return byteCode;
+        return null;
     }
 
 }
