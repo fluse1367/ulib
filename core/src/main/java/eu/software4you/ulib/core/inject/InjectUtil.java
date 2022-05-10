@@ -34,7 +34,7 @@ public class InjectUtil {
         if (target != null)
             vals.put("target", target);
 
-        if (n != null) {
+        if (n != null && n.length > 0) {
             // convert into primitive array
             int[] array = new int[n.length];
             for (int i = 0; i < n.length; i++) {

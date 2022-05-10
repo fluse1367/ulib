@@ -95,19 +95,23 @@ public class InjectionManager {
                 ReflectUtil.getCallerClass(),
                 (Class<?>) params[0],
                 params[1],
-                params[2],
-                (Class<?>) params[3],
-                (String) params[4],
-                (String) params[5],
-                (int) params[6],
-                (int) params[7],
-                (Object[]) params[8]
+                (boolean) params[2],
+                params[3],
+                params[4],
+                (Class<?>) params[5],
+                (String) params[6],
+                (String) params[7],
+                (int) params[8],
+                (int) params[9],
+                (Object[]) params[10]
         );
     }
 
-    private Callback<?> runProxies(Class<?> clazz, Class<?> resultType, Object self, Object proxyInst, Class<?> caller,
+    private Callback<?> runProxies(Class<?> clazz, Class<?> resultType, Object initialValue, boolean hasInitialValue,
+                                   Object self, Object proxyInst, Class<?> caller,
                                    String methodSignature, String fullTargetSignature, int n, int at, Object[] params) {
-        CallbackImpl<?> cb = new CallbackImpl<>(resultType, self, proxyInst, caller);
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        CallbackImpl<?> cb = new CallbackImpl(resultType, initialValue, hasInitialValue, self, proxyInst, caller);
 
         var calls = Optional.ofNullable(injected.get(clazz))
                 .map(spec -> spec.getHooks().get(methodSignature))

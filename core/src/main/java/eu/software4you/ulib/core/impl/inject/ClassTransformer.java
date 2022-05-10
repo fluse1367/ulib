@@ -12,6 +12,8 @@ import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static eu.software4you.ulib.core.inject.HookPoint.*;
+
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ClassTransformer implements ClassFileTransformer {
 
@@ -144,8 +146,45 @@ public final class ClassTransformer implements ClassFileTransformer {
         }
     }
 
+    @SneakyThrows
+    private String buildProxyInjection(final CtBehavior box, final CtClass returnType, final HookPoint where, final String fullTargetSignature, final int n) {
+        var boxSignature = box.getName() + box.getSignature();
+
+        return String.format("""
+                        {
+                          Object[] arr = (Object[]) System.getProperties().get("%s");
+                          Function funcProxyRunner = (Function) arr[0];
+                          Function funcIsReturning = (Function) arr[1];
+                          Function funcHasReturnValue = (Function) arr[2];
+                          Function funcGetReturnValue = (Function) arr[3];
+                          Supplier funcDetermineCaller = (Supplier) arr[4];
+                          
+                          Object caller = funcDetermineCaller.get();
+                          Object[] params = {%s.class, %s, %s, $0, caller, "%s", "%s", Integer.valueOf(%d), Integer.valueOf(%d), $args};
+                          Object callback = funcProxyRunner.apply((Object) params);
+                          Boolean isReturning = (Boolean) funcIsReturning.apply(callback);
+                          
+                          if (isReturning.booleanValue()) {
+                            Boolean hasVal = (Boolean) funcHasReturnValue.apply(callback);
+                            
+                            if (hasVal.booleanValue()) {
+                                $_ = ($r) funcGetReturnValue.apply((Object) callback);
+                            }
+                          } else {
+                            $_ = $proceed(%s);
+                          }
+                        }""",
+                InjectionManager.PROXY_KEY,
+                /* return type */   returnType == CtClass.voidType ? "void" : returnType.getName(),
+                /* initial value */ where == METHOD_CALL || where == FIELD_READ ? "null, Boolean.FALSE" : "$1, Boolean.TRUE",
+                /* self */          Modifier.isStatic(box.getModifiers()) ? "null" : "this",
+                boxSignature, fullTargetSignature, n, where.ordinal(),
+                /* proceed */       where == FIELD_READ ? "" : "$$"
+        );
+    }
+
     private void injectProxies(Class<?> cl, CtBehavior behavior) throws CannotCompileException {
-        final var methodSignature = behavior.getName() + behavior.getSignature();
+        final var boxSignature = behavior.getName() + behavior.getSignature();
 
         final Map<String, AtomicInteger> methodCallNs = new HashMap<>();
         final Map<String, AtomicInteger> fieldReadNs = new HashMap<>();
@@ -161,75 +200,37 @@ public final class ClassTransformer implements ClassFileTransformer {
 
                 int n = methodCallNs.computeIfAbsent(fullTargetSignature, sig -> new AtomicInteger(0))
                         .incrementAndGet(); // increment method occurrence counter
-                if (!man.shouldProxy(cl, methodSignature, HookPoint.METHOD_CALL, fullTargetSignature, n))
+                if (!man.shouldProxy(cl, boxSignature, METHOD_CALL, fullTargetSignature, n))
                     return;
 
-                var ctMethod = m.getMethod();
-                var type = ctMethod.getReturnType();
-
-                String stmt = String.format("""
-                                {
-                                  Object[] arr = (Object[]) System.getProperties().get("%s");
-                                  Function funcProxyRunner = (Function) arr[0];
-                                  Function funcIsReturning = (Function) arr[1];
-                                  Function funcHasReturnValue = (Function) arr[2];
-                                  Function funcGetReturnValue = (Function) arr[3];
-                                  Supplier funcDetermineCaller = (Supplier) arr[4];
-                                  
-                                  Object caller = funcDetermineCaller.get();
-                                  Object[] params = {%s.class, %s, $0, caller, "%s", "%s", Integer.valueOf(%d), Integer.valueOf(%d), $args};
-                                  Object callback = funcProxyRunner.apply((Object) params);
-                                  Boolean isReturning = (Boolean) funcIsReturning.apply(callback);
-                                  
-                                  if (isReturning.booleanValue()) {
-                                    Boolean hasVal = (Boolean) funcHasReturnValue.apply(callback);
-                                    
-                                    if (hasVal.booleanValue()) {
-                                        $_ = ($r) funcGetReturnValue.apply((Object) callback);
-                                    }
-                                  } else {
-                                    $_ = $proceed($$);
-                                  }
-                                }""",
-                        InjectionManager.PROXY_KEY,
-                        type != CtClass.voidType ? type.getName() : "void", Modifier.isStatic(ctMethod.getModifiers()) ? "null" : "this",
-                        methodSignature, fullTargetSignature, n, HookPoint.METHOD_CALL.ordinal()
-                );
-                m.replace(stmt);
+                m.replace(buildProxyInjection(m.where(), m.getMethod().getReturnType(), METHOD_CALL, fullTargetSignature, n));
             }
 
+            @SneakyThrows
             @Override
             public void edit(FieldAccess f) throws CannotCompileException {
+                HookPoint where;
                 if (f.isReader()) {
-                    editR(f);
+                    where = FIELD_READ;
                 } else if (f.isWriter()) {
-                    editW(f);
+                    where = FIELD_WRITE;
                 } else {
                     throw new InternalError();
                 }
-            }
 
-            private void editR(FieldAccess f) {
-                int n = fieldReadNs.computeIfAbsent(f.getSignature(), sig -> new AtomicInteger(0))
+                final String fullTargetSignature = "L%s;".formatted(f.getClassName().replace(".", "/")) +
+                                                   f.getFieldName() + ";" + f.getSignature();
+
+                int n = (where == FIELD_READ ? fieldReadNs : fieldWriteNs)
+                        .computeIfAbsent(f.getSignature(), sig -> new AtomicInteger(0))
                         .incrementAndGet();
 
-                if (!man.shouldProxy(cl, methodSignature, HookPoint.FIELD_READ, f.getSignature(), n))
+                if (!man.shouldProxy(cl, boxSignature, where, fullTargetSignature, n))
                     return;
 
-                // TODO
-                // f.replace();
+                f.replace(buildProxyInjection(f.where(), f.getField().getType(), where, fullTargetSignature, n));
             }
 
-            private void editW(FieldAccess f) {
-                int n = fieldWriteNs.computeIfAbsent(f.getSignature(), sig -> new AtomicInteger(0))
-                        .incrementAndGet();
-
-                if (!man.shouldProxy(cl, methodSignature, HookPoint.FIELD_WRITE, f.getSignature(), n))
-                    return;
-
-                // TODO
-                // f.replace();
-            }
         });
     }
 }

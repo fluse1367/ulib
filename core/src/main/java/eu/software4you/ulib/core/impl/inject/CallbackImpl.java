@@ -6,15 +6,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 final class CallbackImpl<T> implements Callback<T> {
 
     private final boolean isProxy;
+    private final AtomicReference<T> initialReturnValue;
+
     private final Class<T> returnType;
     private final Object self, proxyInst;
     private final Class<?> callerClass;
-    private T returnValue;
-    private boolean hasReturnValue;
+    private AtomicReference<T> returnValue;
     @Getter
     private boolean canceled;
 
@@ -24,15 +26,17 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     // for proxies
-    public CallbackImpl(Class<T> returnType, Object self, Object proxyInst, Class<?> callerClass) {
-        this(true, returnType, null, false, self, proxyInst, callerClass);
+    public CallbackImpl(Class<T> returnType, T initialValue, boolean hasInitialValue, Object self, Object proxyInst, Class<?> callerClass) {
+        this(true, returnType, initialValue, hasInitialValue, self, proxyInst, callerClass);
     }
 
     private CallbackImpl(boolean isProxy, Class<T> returnType, T returnValue, boolean hasReturnValue, Object self, Object proxyInst, Class<?> callerClass) {
         this.isProxy = isProxy;
+
         this.returnType = returnType;
-        this.returnValue = returnValue;
-        this.hasReturnValue = hasReturnValue;
+        this.returnValue = hasReturnValue ? new AtomicReference<>(returnValue) : null;
+        this.initialReturnValue = this.returnValue;
+
         this.self = self;
         this.proxyInst = proxyInst;
         this.callerClass = callerClass;
@@ -56,35 +60,42 @@ final class CallbackImpl<T> implements Callback<T> {
 
     @Override
     public boolean hasReturnValue() {
-        return this.hasReturnValue;
+        return returnValue != null;
     }
 
     @Override
     public @Nullable T getReturnValue() {
-        if (!hasReturnValue)
-            throw new IllegalStateException("No return value provided");
-        return this.returnValue;
+        if (returnValue == null)
+            throw new IllegalStateException("No return value present");
+        return this.returnValue.get();
     }
 
     @Override
-    public T setReturnValue(@Nullable T value) {
+    public T setReturnValue(final @Nullable T value) {
         if (returnType == void.class)
             throw new IllegalArgumentException("Return type void cannot have a return value");
-        hasReturnValue = true;
-        return this.returnValue = value;
+
+        if (this.returnValue == null) {
+            this.returnValue = new AtomicReference<>(value);
+        } else {
+            this.returnValue.set(value);
+        }
+
+        return value;
     }
 
     @Override
     public void clearReturnValue() {
-        hasReturnValue = false;
         this.returnValue = null;
     }
 
     @Override
     public void cancel() {
-        if (!isProxy && !hasReturnValue && returnType != void.class)
+        if (!this.isProxy
+            && this.returnType != void.class
+            && this.returnValue == null)
             throw new IllegalStateException("Cannot cancel with no return value");
-        canceled = true;
+        this.canceled = true;
     }
 
     @Override
@@ -93,6 +104,14 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     boolean isReturning() {
-        return canceled || hasReturnValue;
+        if (canceled)
+            return true;
+
+        if (isProxy && returnValue == initialReturnValue) {
+            // do not cancel control flow if initial return value is unmodified
+            return false;
+        }
+
+        return hasReturnValue();
     }
 }
