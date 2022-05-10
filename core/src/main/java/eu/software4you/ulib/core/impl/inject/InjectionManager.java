@@ -139,7 +139,8 @@ public class InjectionManager {
     private Callback<?> processCalls(Set<BiParamTask<? super Object[], ? super Callback<?>, ?>> calls, Object[] params, CallbackImpl<?> callback) {
         for (var call : calls) {
             try {
-                call.execute(params.clone(), callback);
+                //noinspection RedundantCast,unchecked
+                ((BiParamTask<Object, Object, Exception>) call).execute(params.clone(), callback);
             } catch (InvocationTargetException e) {
                 if (e.getCause() instanceof HookException he)
                     throw he.getCause();
