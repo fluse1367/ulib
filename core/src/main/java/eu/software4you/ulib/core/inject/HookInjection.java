@@ -18,8 +18,9 @@ import static eu.software4you.ulib.core.impl.inject.InjectionSupport.*;
  * <p>
  * Example:
  * <pre>{@code
+ *  Spec headSpec = InjectUtil.createHookingSpec(HookPoint.HEAD);
  *  HookInjection injection = new HookInjection(targetClazz)
- *      .<ReturnType>addHook("someMethod", HookPoint.HEAD, (params, cb) -> {
+ *      .<ReturnType>addHook("someMethod", spec, (params, cb) -> {
  *          // someMethod(...) was called!
  *      })
  *      .addHook(hookClazz.getMethod("hook_someOtherMethod"), null);
