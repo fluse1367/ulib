@@ -10,12 +10,16 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.AccessibleObject;
 import java.security.ProtectionDomain;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccessibleObjectTransformer implements ClassFileTransformer {
+    private static final AtomicReference<Exception> ERROR = new AtomicReference<>();
+
     public static final String SUDO_KEY = "ulib.sudo";
 
     public static void acquirePrivileges() {
@@ -26,9 +30,12 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
 
         var inst = Internal.getInstrumentation();
         inst.addTransformer(new AccessibleObjectTransformer(), true);
-        Expect.compute(() -> inst.retransformClasses(AccessibleObject.class)).getCaught().ifPresent(cause -> {
-            throw new RuntimeException("Failed to transform object", cause);
-        });
+
+        Expect.compute(() -> inst.retransformClasses(AccessibleObject.class))
+                .getCaught().or(() -> Optional.ofNullable(ERROR.getAndSet(null)))
+                .ifPresent(cause -> {
+                    throw new RuntimeException("Failed to transform object", cause);
+                });
     }
 
     @Override
@@ -55,8 +62,8 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
                     """.formatted(SUDO_KEY));
 
             return cc.toBytecode();
-        } catch (Throwable thr) {
-            thr.printStackTrace();
+        } catch (Exception e) {
+            ERROR.set(e);
         }
 
         return null;
