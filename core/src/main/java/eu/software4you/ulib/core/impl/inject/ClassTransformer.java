@@ -47,11 +47,11 @@ public final class ClassTransformer implements ClassFileTransformer {
                         // indicate error if behavior cannot get obtained
                         .orElseThrow(() -> new NoSuchElementException("Descriptor %s not found in %s".formatted(descriptor, name)));
 
-                // inject hooks
-                injectHookCalls(behavior);
-
                 // inject proxies
                 injectProxies(classBeingRedefined, behavior);
+
+                // inject hooks
+                injectHookCalls(behavior);
             } catch (Throwable thr) {
                 man.getTransformThrowings().computeIfPresent(Thread.currentThread(), (t, old) -> thr);
                 return null;
