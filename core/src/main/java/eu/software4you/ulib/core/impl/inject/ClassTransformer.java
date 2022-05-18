@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.impl.inject;
 
+import eu.software4you.ulib.core.inject.ConfigurationSatisfactionException;
 import eu.software4you.ulib.core.inject.HookPoint;
 import eu.software4you.ulib.core.util.Expect;
 import javassist.*;
@@ -47,10 +48,12 @@ public final class ClassTransformer implements ClassFileTransformer {
                 // obtain behavior target
                 var behavior = Optional.ofNullable(find(clazz, descriptor))
                         // indicate error if behavior cannot get obtained
-                        .orElseThrow(() -> new NoSuchElementException("Descriptor %s not found in %s".formatted(descriptor, name)));
+                        .orElseThrow(() -> new ConfigurationSatisfactionException("Descriptor %s not found in %s".formatted(descriptor, name)));
 
                 // inject proxies
-                injectProxies(classBeingRedefined, behavior);
+                var done = injectProxies(classBeingRedefined, behavior);
+                // check if configuration is satisfied
+                man.ensureProxySatisfaction(classBeingRedefined, descriptor, done);
 
                 // inject hooks
                 injectHookCalls(behavior);
@@ -183,12 +186,17 @@ public final class ClassTransformer implements ClassFileTransformer {
         );
     }
 
-    private void injectProxies(Class<?> cl, CtBehavior behavior) throws CannotCompileException {
+    /**
+     * @return map containing information what has been proxied ( proxy point -> ( full target signature -> collection of ns ) )
+     */
+    private Map<HookPoint, Map<String, Collection<Integer>>> injectProxies(Class<?> cl, CtBehavior behavior) throws CannotCompileException {
         final var boxSignature = behavior.getName() + behavior.getSignature();
 
         final Map<String, AtomicInteger> methodCallNs = new HashMap<>();
         final Map<String, AtomicInteger> fieldReadNs = new HashMap<>();
         final Map<String, AtomicInteger> fieldWriteNs = new HashMap<>();
+
+        final Map<HookPoint, Map<String, Collection<Integer>>> instrumented = new HashMap<>();
 
         behavior.instrument(new ExprEditor() {
 
@@ -198,12 +206,17 @@ public final class ClassTransformer implements ClassFileTransformer {
                 final String fullTargetSignature = "L%s;".formatted(m.getClassName().replace(".", "/")) +
                                                    m.getMethodName() + m.getSignature();
 
+                var occurrences = instrumented
+                        .computeIfAbsent(METHOD_CALL, hp -> new HashMap<>())
+                        .computeIfAbsent(fullTargetSignature, sig -> new HashSet<>());
+
                 int n = methodCallNs.computeIfAbsent(fullTargetSignature, sig -> new AtomicInteger(0))
                         .incrementAndGet(); // increment method occurrence counter
                 if (!man.shouldProxy(cl, boxSignature, METHOD_CALL, fullTargetSignature, n))
                     return;
 
                 m.replace(buildProxyInjection(m.where(), m.getMethod().getReturnType(), METHOD_CALL, fullTargetSignature, n));
+                occurrences.add(n);
             }
 
             @SneakyThrows
@@ -221,6 +234,10 @@ public final class ClassTransformer implements ClassFileTransformer {
                 final String fullTargetSignature = "L%s;".formatted(f.getClassName().replace(".", "/")) +
                                                    f.getFieldName() + ";" + f.getSignature();
 
+                var occurrences = instrumented
+                        .computeIfAbsent(where, hp -> new HashMap<>())
+                        .computeIfAbsent(fullTargetSignature, sig -> new HashSet<>());
+
                 int n = (where == FIELD_READ ? fieldReadNs : fieldWriteNs)
                         .computeIfAbsent(f.getSignature(), sig -> new AtomicInteger(0))
                         .incrementAndGet();
@@ -229,8 +246,11 @@ public final class ClassTransformer implements ClassFileTransformer {
                     return;
 
                 f.replace(buildProxyInjection(f.where(), f.getField().getType(), where, fullTargetSignature, n));
+                occurrences.add(n);
             }
 
         });
+
+        return instrumented;
     }
 }

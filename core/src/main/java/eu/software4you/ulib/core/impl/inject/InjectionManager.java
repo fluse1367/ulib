@@ -3,8 +3,7 @@ package eu.software4you.ulib.core.impl.inject;
 import eu.software4you.ulib.core.function.BiParamTask;
 import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.impl.inject.InjectionConfiguration.Hooks;
-import eu.software4you.ulib.core.inject.Callback;
-import eu.software4you.ulib.core.inject.HookPoint;
+import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import lombok.*;
 
@@ -182,7 +181,51 @@ public class InjectionManager {
                 .orElse(false);
     }
 
+    void ensureProxySatisfaction(Class<?> clazz, String methodSignature, Map<HookPoint, Map<String, Collection<Integer>>> done) throws ConfigurationSatisfactionException {
+
+        var cont = Optional.ofNullable(injected.get(clazz))
+                .map(conf -> conf.getHooks().get(methodSignature))
+                .orElseThrow(IllegalArgumentException::new);
+
+
+        for (var en : cont.getProxyCallbacks().entrySet()) {
+            var point = HookPoint.values()[en.getKey()];
+
+            if (!done.containsKey(point))
+                throw new ConfigurationSatisfactionException("Hook Point %s not found in `%s`"
+                        .formatted(point, methodSignature));
+            var doneTargets = done.get(point);
+
+            var targets = en.getValue();
+
+            for (var targetEn : targets.entrySet()) {
+                var target = targetEn.getKey();
+
+                if (!doneTargets.containsKey(target))
+                    throw new ConfigurationSatisfactionException("Target `%s` for %s not found in %s"
+                            .formatted(target, point, methodSignature));
+                var doneNs = doneTargets.get(target);
+
+                for (int n : targetEn.getValue().keySet()) {
+                    if (n == 0) { // 0 means all
+                        if (doneNs.isEmpty()) // throw if not a single injection happened
+                            throw new ConfigurationSatisfactionException("No occurrence of target `%s`for %s found in %s"
+                                    .formatted(target, point, methodSignature));
+                        continue;
+                    }
+
+                    if (!doneNs.contains(n))
+                        throw new ConfigurationSatisfactionException("Nth occurrence (%d) of target `%s` for %s not found in %s"
+                                .formatted(n, target, point, methodSignature));
+                }
+
+            }
+
+        }
+    }
+
     public void injectionsJoin(Map<Class<?>, InjectionConfiguration> instructions) throws Exception {
+        // TODO: transition from merge operation in hard-code to dynamic code?
         var op = new MergeOp(this.injected, instructions);
         op.merge();
 
