@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.inject;
 import eu.software4you.ulib.core.function.BiParamTask;
 import eu.software4you.ulib.core.impl.inject.InjectionConfiguration;
 import eu.software4you.ulib.core.impl.inject.InjectionManager;
-import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.*;
 
@@ -129,7 +128,7 @@ public class HookInjection {
 
         Hook anno = hook.getAnnotation(Hook.class);
 
-        var target = findTargetClass(anno, hook.getDeclaringClass(), ReflectUtil.getCallerClass().getClassLoader());
+        var target = findTargetClass(anno, hook.getDeclaringClass(), Thread.currentThread().getContextClassLoader());
         var descriptor = resolveSignature(anno, target);
         var call = buildCall(hook, hookInvoke);
 
