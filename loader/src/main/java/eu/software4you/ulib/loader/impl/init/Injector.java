@@ -37,14 +37,14 @@ public class Injector {
 
         var env = EnvironmentProvider.get();
         return
-                // access to core API
-                request.startsWith("eu.software4you.ulib.core.") && !request.startsWith("eu.software4you.ulib.core.impl.") /* no access to impl */
-                // access to minecraft api
-                || env != STANDALONE && request.startsWith("eu.software4you.ulib.minecraft.api.")
-                // access to velocity api
-                || env == VELOCITY && request.startsWith("eu.software4you.ulib.velocity.api.")
-                // access to spigot api
-                || env == SPIGOT && request.startsWith("eu.software4you.ulib.spigot.api.")
+                // access to core
+                request.startsWith("eu.software4you.ulib.core.") && !request.startsWith("eu.software4you.ulib.core.impl.")
+                // access to minecraft
+                || env != STANDALONE && request.startsWith("eu.software4you.ulib.minecraft.") && !request.startsWith("eu.software4you.ulib.minecraft.impl.")
+                // access to velocity
+                || env == VELOCITY && request.startsWith("eu.software4you.ulib.velocity.") && !request.startsWith("eu.software4you.ulib.velocity.impl.")
+                // access to spigot
+                || env == SPIGOT && request.startsWith("eu.software4you.ulib.spigot.") && !request.startsWith("eu.software4you.ulib.spigot.impl.")
                 ;
     }
 
