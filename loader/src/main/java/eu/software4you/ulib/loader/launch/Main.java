@@ -10,6 +10,8 @@ final public class Main {
     @SneakyThrows
     public static void main(String[] args) {
         Installer.installMe();
+        InjTest.test();
+        if (true) return;
         Dependencies.requireInject("{{maven.jopt-simple}}", Repository.mavenCentral(), Main.class.getClassLoader())
                 .rethrow();
         Launcher.launch(args);
