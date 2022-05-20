@@ -11,6 +11,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.IncompleteAnnotationException;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ReflectUtil {
 
@@ -254,7 +255,9 @@ public class ReflectUtil {
     }
 
     /**
-     * Determines the {@link Class} the current method is being called from
+     * Determines the currently calling {@link Class} from the perspective of the caller of this method.
+     * <p>
+     * This method is equal to directly calling {@link #getCallerClass(int) getCallerClass(1)}.
      *
      * @return the calling {@link Class}
      * @see #getCallerClass(int)
@@ -264,9 +267,10 @@ public class ReflectUtil {
     }
 
     /**
-     * Determines the n-th calling {@link Class} of the current stack trace, where 1 is the current calling {@link Class}
+     * Determines the n-th calling {@link Class} of the current stack trace,
+     * where 1 is the currently calling {@link Class} from the perspective of the caller of this method.
      *
-     * @param depth the index of the calling stack trace element, where 1 is the current calling {@link Class}
+     * @param depth the index of the calling stack trace element, where 1 is the currently calling {@link Class}
      *              and 0 the {@link Class} this method is being called from
      * @return the calling {@link Class}
      */
@@ -275,7 +279,9 @@ public class ReflectUtil {
     }
 
     /**
-     * Determines the currently calling {@link StackFrame frame} of the current stack trace
+     * Determines the currently calling {@link StackFrame frame} from the perspective of the caller of this method.
+     * <p>
+     * This method is equal to directly calling {@link #getCaller(int) getCaller(1)}.
      *
      * @return the calling {@link StackFrame frame}
      */
@@ -284,19 +290,22 @@ public class ReflectUtil {
     }
 
     /**
-     * Determines the n-th calling {@link StackFrame frame} of the current stack trace, where 1 is the current calling {@link StackFrame frame}
+     * Determines the n-th calling {@link StackFrame frame} of the current stack trace,
+     * where 1 is the currently calling {@link StackFrame frame} from the perspective of the caller of this method.
      *
      * @param depth the index of the calling stack trace element
      * @return the calling {@link StackFrame frame}
      */
     public static StackFrame getCaller(int depth) {
-        var stack = getCallerStack();
-        Objects.checkIndex(depth, stack.length);
-        return stack[depth];
+        return getCallerStackAsStream()
+                .skip(depth)
+                .findFirst()
+                .orElseThrow();
     }
 
     /**
-     * Builds the calling stack
+     * Builds the calling stack, where the first element is the currently calling {@link StackFrame frame}
+     * from the perspective of the caller of this method.
      *
      * @return the stack array
      */
@@ -305,6 +314,19 @@ public class ReflectUtil {
                 .walk(st -> st.skip(2) // skip this
                         .toArray(StackFrame[]::new));
     }
+
+    /**
+     * Builds the calling stack, where the first element is the currently calling {@link StackFrame frame}
+     * from the perspective of the caller of this method.
+     *
+     * @return the stack array
+     */
+    public static Stream<StackFrame> getCallerStackAsStream() {
+        return Arrays.stream(getCallerStack())
+                .skip(1) // skip this
+                ;
+    }
+
 
     /**
      * Attempts to load a certain class.
