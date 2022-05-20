@@ -3,6 +3,7 @@ package eu.software4you.ulib.core.inject;
 import eu.software4you.ulib.core.function.BiParamTask;
 import eu.software4you.ulib.core.impl.inject.InjectionConfiguration;
 import eu.software4you.ulib.core.impl.inject.InjectionManager;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.*;
 
@@ -128,7 +129,13 @@ public class HookInjection {
 
         Hook anno = hook.getAnnotation(Hook.class);
 
-        var target = findTargetClass(anno, hook.getDeclaringClass(), Thread.currentThread().getContextClassLoader());
+        var caller = ReflectUtil.getCallerStackAsStream()
+                .map(StackWalker.StackFrame::getDeclaringClass)
+                .dropWhile(clazz -> clazz == HookInjection.class)
+                .findFirst()
+                .orElseThrow();
+
+        var target = findTargetClass(anno, hook.getDeclaringClass(), caller.getClassLoader());
         var descriptor = resolveSignature(anno, target);
         var call = buildCall(hook, hookInvoke);
 
@@ -168,10 +175,15 @@ public class HookInjection {
     @NotNull
     @Contract("_, _ -> this")
     public HookInjection addHook(Class<?> hook, Object invoke) {
-        Arrays.stream(hook.getMethods())
+        var mts = Arrays.stream(hook.getMethods())
                 .filter(method -> method.isAnnotationPresent(Hook.class))
                 .filter(method -> !Modifier.isStatic(method.getModifiers()))
-                .forEach(method -> addHook(method, invoke));
+                .toList();
+
+        // not using #forEach in stream to preserve caller finding
+        for (Method mt : mts) {
+            addHook(mt, invoke);
+        }
 
         return this;
     }
