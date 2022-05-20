@@ -1,17 +1,16 @@
 package eu.software4you.ulib.core.impl.inject;
 
 import eu.software4you.ulib.core.inject.*;
+import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
 
 import java.lang.StackWalker.StackFrame;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public final class ClassLoaderDelegationHook {
@@ -85,6 +84,8 @@ public final class ClassLoaderDelegationHook {
         return injection.inject();
     }
 
+    // access check
+
     private Class<?> identifyClassLoadingRequestSource() {
         // walk through stack and find first class that is not a class loader anymore
         var frames = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
@@ -114,6 +115,8 @@ public final class ClassLoaderDelegationHook {
                && filterLoadingRequest.test(identifyClassLoadingRequestSource(), name);
     }
 
+    // recursion protection
+
     private boolean enter(int id, String resourceIden) {
         var accessMap = threadAccess.computeIfAbsent(id, m -> new ConcurrentHashMap<>());
         var coll = accessMap.computeIfAbsent(resourceIden, rec -> new ConcurrentLinkedQueue<>());
@@ -142,6 +145,22 @@ public final class ClassLoaderDelegationHook {
         coll.remove(Thread.currentThread());
     }
 
+    // class lookup
+
+    private void putClass(String methodPrefix, List<Param<?>> methodParams, Callback<Class<?>> cb, Supplier<Class<?>> delegate) {
+        cb.self()
+                // try parent
+                .map(ClassLoader.class::cast)
+                .map(ClassLoader::getParent)
+                .map(parent -> ReflectUtil.icall(Class.class, parent, methodPrefix + "Class()", methodParams).orElse(null))
+
+                // try delegate
+                .or(() -> Optional.ofNullable(delegate.get()))
+
+                // put if success
+                .ifPresent(cb::setReturnValue);
+    }
+
 
     // - actual hooks -
 
@@ -151,10 +170,8 @@ public final class ClassLoaderDelegationHook {
         if (!enter(0, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
-        var cl = delegation.findClass(name);
-        if (cl != null) {
-            cb.setReturnValue(cl);
-        }
+        putClass("find", Param.single(String.class, name), cb,
+                () -> delegation.findClass(name));
 
         leave(0, "CLASS: " + name);
     }
@@ -174,10 +191,8 @@ public final class ClassLoaderDelegationHook {
         if (!enter(1, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
-        var cl = delegation.findClass(module, name);
-        if (cl != null) {
-            cb.setReturnValue(cl);
-        }
+        putClass("find", Param.listOf(String.class, module, String.class, name),
+                cb, () -> delegation.findClass(module, name));
 
         leave(1, "CLASS: " + name);
     }
@@ -186,10 +201,8 @@ public final class ClassLoaderDelegationHook {
         if (!enter(2, "CLASS: " + name) || !checkClassRequest(cb.self().orElseThrow(), name))
             return;
 
-        var cl = delegation.loadClass(name, resolve);
-        if (cl != null) {
-            cb.setReturnValue(cl);
-        }
+        putClass("load", Param.listOf(String.class, name, boolean.class, resolve),
+                cb, () -> delegation.loadClass(name, resolve));
 
         leave(2, "CLASS: " + name);
     }
