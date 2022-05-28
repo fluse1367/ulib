@@ -30,12 +30,6 @@ unsafe-operations: deny
 
 # Directories settings
 directories:
-  # Where the log files will be placed.
-  # If the value is '' the 'logs' directory will be placed inside the ulib-data-directory.
-  # Default: ''
-  # Command line equivalent: -Dulib.directory.logs=YOUR_VALUE
-  logs: ''
-
   # Where cached files will be placed.
   # If the value is '' the 'cache' directory will be placed inside the ulib-data-directory.
   # Default: ''
