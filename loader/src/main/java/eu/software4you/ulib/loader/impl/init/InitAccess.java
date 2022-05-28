@@ -36,11 +36,7 @@ public class InitAccess {
     private boolean init;
 
     public void install(ClassLoader cl, Module publish) throws ReflectiveOperationException {
-        try {
-            init();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        ensureInit();
 
         injector.getClass().getMethod("installLoaders", ClassLoader.class)
                 .invoke(injector, cl);
@@ -55,6 +51,15 @@ public class InitAccess {
             return (ModuleLayer) initializer.getClass().getMethod("getLayer").invoke(initializer);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return null;
+        }
+    }
+
+    public void ensureInit() {
+        try {
+            init();
+        } catch (URISyntaxException | ReflectiveOperationException e) {
+            Throwable cause = e instanceof InvocationTargetException ite ? ite.getCause() : e;
+            throw new RuntimeException("Failure while initializing ulib", cause);
         }
     }
 

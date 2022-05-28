@@ -51,4 +51,17 @@ public final class Installer {
     public static ModuleLayer getLayer() {
         return access.layer();
     }
+
+    /**
+     * Ensures the library is initialized. Attempts to initialize the library if necessary.
+     *
+     * @throws IllegalStateException if the initialization failed
+     */
+    public static void ensureInitialization() throws IllegalStateException {
+        try {
+            access.ensureInit();
+        } catch (RuntimeException re) {
+            throw new IllegalStateException(re.getMessage(), re.getCause());
+        }
+    }
 }
