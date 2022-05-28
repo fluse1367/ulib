@@ -11,9 +11,16 @@ cache:
   when: always
 
 stages:
-  #- test
   - build # ready-for-use files
+  - test # test that stuff!
   - publish # api files for maven repository
+
+test:
+  stage: test
+  script: "$GRADLE_EXEC test"
+  # only run if this is triggered via the web
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'web' # only via web
 
 # snapshots
 snapshot build:
