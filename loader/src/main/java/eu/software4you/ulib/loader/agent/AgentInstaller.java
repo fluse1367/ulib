@@ -60,6 +60,9 @@ public final class AgentInstaller {
                 return false;
             } else return p.exitValue() == 0;
         } finally {
+            if (p.isAlive())
+                p.destroyForcibly();
+
             if (thrOut.isAlive()) {
                 thrOut.interrupt();
             }
