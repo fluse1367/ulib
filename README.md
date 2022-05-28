@@ -15,9 +15,10 @@ Please also refer to the [documentation](docs/Readme.md).
 | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) | ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=yellow&label=ulib-bungeecord-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-bungeecord-api%2Fmaven-metadata.xml) |
 |       ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |       ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=aqua&label=ulib-velocity-api&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-velocity-api%2Fmaven-metadata.xml) |
 
-## Important Things to Know
+## Things to Know
 
-- This library depends on recent paper/waterfall versions. That means it may not work as expected or may not work at all
+- This library depends on recent spigot/bungeecord/velocity versions. That means it may not work as expected or may not
+  work at all
   on older server versions. You will not receive any support, when using another server version than the one this
   library is built for. <br><br>
   If you want to use older server versions, consider a cross-version compatibility tool, like
@@ -32,180 +33,10 @@ Please also refer to the [documentation](docs/Readme.md).
 - When launching uLib for the first time (or if the respective caching folder was removed), it will download a few of
   dependencies/libraries.
 
-### Disclaimer
+## Disclaimer
 
 Note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The contributors of this
 project do not take any responsibility/liability in any way.
-
-
----
-
-# Developing with uLib
-
-## Repository
-
-See the versions table to find out the most recent versions.  
-Make sure you only include the `loader` as runtime library.
-
-<details><summary>Gradle</summary>
-
-```groovy
-repositories {
-    /* ... */
-    maven {
-        url 'https://repo.software4you.eu/'
-        // or url 'https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/'
-    }
-    /* ... */
-}
-dependencies {
-    /* ... */
-    implementation 'eu.software4you.ulib:ulib-loader:VERSION'
-    compileOnly 'eu.software4you.ulib:ulib-core-api:VERSION'
-    compileOnly 'eu.software4you.ulib:ulib-spigot-api:VERSION'
-    compileOnly 'eu.software4you.ulib:ulib-bungeecord-api:VERSION'
-    compileOnly 'eu.software4you.ulib:ulib-velocity-api:VERSION'
-    /* ... */
-}
-```
-
-</details>
-<details><summary>Maven</summary>
-
-```xml
-
-<project>
-    <!-- ... -->
-    <repositories>
-        <!-- ... -->
-        <repository>
-            <id>software4you-repo</id>
-            <url>https://repo.software4you.eu/</url>
-            <!-- or <url>https://gitlab.com/api/v4/groups/software4you.eu/-/packages/maven/</url> -->
-        </repository>
-        <!-- ... -->
-    </repositories>
-    <dependencies>
-        <!-- ... -->
-        <dependency>
-            <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-loader</artifactId>
-            <version>VERSION</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-core-api</artifactId>
-            <version>VERSION</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-spigot-api</artifactId>
-            <version>VERSION</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-bungeecord-api</artifactId>
-            <version>VERSION</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.software4you.ulib</groupId>
-            <artifactId>ulib-velocity-api</artifactId>
-            <version>VERSION</version>
-        </dependency>
-        <!-- ... -->
-    </dependencies>
-    <!-- ... -->
-</project>
-```
-
-</details>
-
-## Loading uLib into the Runtime
-
-Before you do anything with uLib, get sure you load the library with its loader.
-
-When using the one of the Plugins implementations, you don't have to take care of loading it; It's enough to put the
-loader in the respective `plugins` folder, but don't forget to declare uLib as dependency!
-
-When using the standalone implementation, you have to load the library class by yourself. There are several ways how to
-do this.
-
-If you put uLib into your classpath, you can use the `Installer` class from the loader and load uLib into your current
-class loader:
-
-```java
-// eu.software4you.ulib.loader.install.Installer
-Installer.installTo(getClass().getClassLoader());
-```
-
-Also, if you are installing it into a modular context, you have to add a `reads` record to that module before using
-uLib. Otherwise, your module won't have access to the uLib API. This example shows how it can be done easily:
-
-```java
-getClass().getModule().addReads(Installer.getModule());
-```
-
-Make sure installing uLib properly into the runtime **before** you do _anything_ with uLib (this includes loading one of
-ulib's classes!).
-
-### Alternatives
-
-Another way is to use the launch function. For this, run the loader directly. Supply either the
-argument `--launch /path/to/application.jar` (the loader will look up the main class in the manifest file)
-or `--main path.to.MainClass` (here the jar file with this class have to be already in the classpath).
-
-With both options you can also specify arguments that should be passed to the main class, use `:::` as argument
-separator:
-
-`--args "--arg:::arg2"`
-
-Your arguments will be passed to your program like this:
-
-(arg0) `--arg`, (arg1) `arg2`
-
-By don't using `:::` (e.g. `--args "--arg arg2"`), your given argument will include a space bar and be passed to your
-program like this:
-
-(arg0) `--arg arg2`
-
-All in all, your command could look like this:
-
-```shell
-java -jar ulib-loader-VERSION.jar --launch my-application.jar --args "--mode:::simple:::--name:::John Doe"
-```
-
-or this:
-
-```shell
-java -cp ulib-loader-VERSION.jar:my-application.jar eu.software4you.ulib.loader.launch.Main --main my.application.Main --args "--mode:::simple:::--name:::John Doe"
-```
-
-## About the Javaagent
-
-ULib realizes several things utilizing a so-called Javaagent. This agent is **crucial** for the library to run.  
-In fact, the loader even depends on it, to properly load it. **Without this agent, uLib will fail in every extend.**
-
-By default, the loader uses a workaround method to self-initialize the Javaagent, however this should be avoided it
-possible.
-
-The best solution is to supply the loader as javaagent to the JVM (with an additional flag):
-
-```shell
-java -javaagent:path/to/ulib-loader.jar ...
-```
-
-If the solution above does not work for you, another thing you can try is to allow the application to self-attach a
-javaagent (again, with an additional flag):
-
-```shell
-java -Djdk.attach.allowAttachSelf=true ... 
-```
-
 
 
 # Included Software

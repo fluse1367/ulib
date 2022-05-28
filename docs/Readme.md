@@ -11,8 +11,6 @@ Please also refer to the main [README](../README.md) and [LICENSE](../LICENSE) f
     2. In a spigot/bungeecord/velocity environment **_(TBD)_**
     3. [Troubleshooting](Troubleshooting.md)
 3. Configuration
-    1. [config.yml](../core/src/main/resources/META-INF/coreconfig.yml)
-    2. [System Properties](System-Properties.md)
-4. Developer-Only Reference
-    1. [Build-Instructions](dev/Build-Instructions.md)
-    2. [Troubleshooting](dev/Troubleshooting.md)
+   1. [config.yml](../core/src/main/resources/META-INF/coreconfig.yml)
+   2. [System Properties](System-Properties.md)
+4. [Developer-Only Reference](DevRef.md)
