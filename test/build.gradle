@@ -1,0 +1,28 @@
+dependencies {
+    // junit
+    testImplementation 'junit:junit:4.13'
+
+    // ulib modules
+    testImplementation(project(':loader')) {
+        exclude group: '*' // only the loader as runtime dependency
+    }
+
+    // compile only dependency, let the loader inject the necessary stuff
+    testCompileOnly project(':core')
+    testCompileOnly project(':minecraft')
+
+}
+
+test {
+    useJUnit()
+
+    // trigger ulib self installation to SCL
+    jvmArgs "-javaagent:${project(':loader').tasks.jar.archiveFile.get().asFile.path}"
+    systemProperty 'ulib.install.agent_trigger', 'selfinstall'
+
+    // set working dir
+    var wd = file("${project.buildDir}/run/")
+    if (!wd.exists() && !wd.mkdirs())
+        throw new IllegalStateException("Cannot create Working dir")
+    workingDir wd
+}
