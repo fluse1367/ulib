@@ -1,5 +1,6 @@
 package eu.software4you.ulib.loader.agent;
 
+import eu.software4you.ulib.loader.install.Installer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,17 @@ public final class AgentMain {
     }
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-
         System.getProperties().put("ulib.javaagent", inst);
+
+        switch (System.getProperty("ulib.install.agent_trigger", "")) {
+            case "init": {
+                Installer.ensureInitialization();
+            }
+            case "selfinstall": {
+                Installer.ensureInitialization();
+                Installer.installTo(ClassLoader.getSystemClassLoader());
+            }
+        }
+
     }
 }
