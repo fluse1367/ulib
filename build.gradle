@@ -130,6 +130,15 @@ subprojects {
             'Created-By'            : "Gradle ${gradle.gradleVersion}",
     ])
 
+
+    // include license
+    jar.from(rootProject.projectDir) {
+        include "LICENSE"
+        include "README.md"
+        into "META-INF"
+    }
+
+
     // lazyLib
     ext {
         lazyLib = { coords, name ->
