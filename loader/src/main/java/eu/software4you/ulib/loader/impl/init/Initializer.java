@@ -99,7 +99,7 @@ public class Initializer {
         List<ModuleLayer> parentLayers = new ArrayList<>(1);
 
         boolean comply = false;
-        switch (System.getProperty("ulib.install.module_layer", "default")) {
+        switch (System.getProperty("ulib.install.module_layer", "parent")) {
             case "boot":
                 System.err.println("[ulib-loader] Ignoring parent module layer");
                 break;
@@ -107,7 +107,7 @@ public class Initializer {
                 System.err.println("[ulib-loader] Respecting parent modules");
                 comply = true;
                 // fallthrough
-            case "default":
+            case "parent":
                 // fallthrough
             default:
                 parentLayers.add(directParent);

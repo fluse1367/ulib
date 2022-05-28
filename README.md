@@ -5,6 +5,8 @@ This library is designed to ease process of developing standalone applications, 
 Copyright (c) 2021 [fluse1367](https://gitlab.com/fluse1367) / [software4you.eu](https://gitlab.com/software4you.eu)   
 See "Included Software" (at the bottom) for copyright and license notice of included software.
 
+Please also refer to the [documentation](docs/Readme.md).
+
 |                                                                                                                                                                                                                                                        RELEASE BUILD |                                                                                                                                                                                                                                                       SNAPSHOT BUILD |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 |                   ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-loader&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F19415500%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-loader%2Fmaven-metadata.xml) |                   ![Maven metadata URL](https://img.shields.io/maven-metadata/v?color=blue&label=ulib-loader&metadataUrl=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F26647460%2Fpackages%2Fmaven%2Feu%2Fsoftware4you%2Fulib%2Fulib-loader%2Fmaven-metadata.xml) |
@@ -204,66 +206,7 @@ javaagent (again, with an additional flag):
 java -Djdk.attach.allowAttachSelf=true ... 
 ```
 
-## Troubleshooting
 
-Because ulib uses complex mechanics to inject itself into your desired class loader context, it is fairly easy for it to
-fail. Analyzing and understanding what went wrong can be pretty tough. Common malfunctions and possible fixes listed are
-listed below.
-
-- ```
-  Module ulib.core.api not found, required by mymodule
-  ```
-  Because uLib is loaded by the installer **after** the initialization of the boot layer, the uLib API module is not
-  available at the time of initialization. Change the `requires ulib.core.api;` record in your module info file
-  to `requires static`.
-- ```
-  class myclass (in module mymodule) cannot access class ulibclass (in module ulib.core.api) ...
-  ```
-  Because the `reads` record in your module info file is declared as static, you must add a `reads` record to your
-  module manually before you can access the uLib API: `getClass().getModule().addReads(Installer.getModule());`
-- ```
-  Module some-module reads more than one module named other-module
-  ```
-  Some of uLib's dependencies are already loaded by a higher module layer of your runtime. Try to add the java startup
-  flag `-Dulib.install.module_layer=boot`. If that doesn't work try `-Dulib.install.module_layer=comply`.
-
----
-
-# Build Instructions
-
-1. **Clone this repository**
-   ```shell
-   git clone https://gitlab.com/software4you.eu/ulib.git
-   ```
-2. **`cd` into the directory**
-   ```shell
-   cd ulib
-   ```
-3. <details><summary><b>Switch to another branch</b> (Optional)</summary>
-
-   ```shell
-   git checkout BRANCH_NAME
-   ```
-   </details>
-
-
-4. **Build it**
-
-   Linux (bash):
-
-   ```shell
-   ./gradlew build
-   ```
-
-   Windows (cmd):
-
-   ```shell
-   ./gradlew.bat build
-   ```
-
-   You will find the loader in `loader/build/libs/`.
-
----
 
 # Included Software
 
