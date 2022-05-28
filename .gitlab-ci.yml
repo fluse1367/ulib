@@ -42,7 +42,6 @@ snapshot build:
 snapshot publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=snapshot"
-  artifacts: *artifacts
   rules: *rules_snapshot
 
 # releases
@@ -58,5 +57,4 @@ release build:
 release publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=release"
-  artifacts: *artifacts
   rules: *rules_release
