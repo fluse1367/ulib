@@ -324,7 +324,10 @@ public final class Expect<T, X extends Exception> {
     public <XX extends Exception> Expect<Void, XX> ifPresent(@NotNull ParamTask<? super T, XX> task) {
         Objects.requireNonNull(task);
 
-        return isPresent() ? compute(() -> task.execute(value)) : empty();
+        return map(val -> {
+            task.execute(val);
+            return null;
+        });
     }
 
     /**
@@ -392,7 +395,9 @@ public final class Expect<T, X extends Exception> {
     public <U, XX extends Exception> Expect<U, XX> map(@NotNull ParamFunc<? super T, U, XX> mapper) {
         Objects.requireNonNull(mapper);
 
-        return isPresent() ? compute(() -> mapper.execute(value)) : empty();
+        return isPresent() ? compute(() -> mapper.execute(value))
+                : hasCaught() ? new Expect<>(null, new IllegalStateException("Previous execution failed", caught))
+                : empty();
     }
 
     @Override
