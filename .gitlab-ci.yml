@@ -26,9 +26,14 @@ test:
 snapshot build:
   stage: build
   script: "$GRADLE_EXEC build -Pvariation=snapshot"
-  artifacts: &artifacts_build
+  artifacts: &artifacts
     paths:
       - loader/build/libs/ulib-loader-*.jar
+      - core/build/libs/*jar
+      - minecraft/build/libs/*jar
+      - spigot/build/libs/*jar
+      - velocity/build/libs/*jar
+      - bungeecord/build/libs/*jar
   # only run if this is a snapshot, triggered via the web
   rules: &rules_snapshot
     - if: $FULL_RELEASE != null  # cancel if release
@@ -37,16 +42,14 @@ snapshot build:
 snapshot publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=snapshot"
-  artifacts: &artifacts_publication
-    paths:
-      - "*-api/build/libs/*.jar"
+  artifacts: *artifacts
   rules: *rules_snapshot
 
 # releases
 release build:
   stage: build
   script: "$GRADLE_EXEC build -Pvariation=release"
-  artifacts: *artifacts_build
+  artifacts: *artifacts
   # only run if this is a full release, triggered via the web
   rules: &rules_release
     - if: $CI_PIPELINE_SOURCE != 'web' # cancel if not web
@@ -55,5 +58,5 @@ release build:
 release publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=release"
-  artifacts: *artifacts_publication
+  artifacts: *artifacts
   rules: *rules_release
