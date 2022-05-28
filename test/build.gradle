@@ -3,14 +3,9 @@ dependencies {
     testImplementation 'junit:junit:4.13'
 
     // ulib modules
-    testImplementation(project(':loader')) {
-        exclude group: '*' // only the loader as runtime dependency
-    }
-
-    // compile only dependency, let the loader inject the necessary stuff
+    testCompileOnly(project(':loader'))
     testCompileOnly project(':core')
     testCompileOnly project(':minecraft')
-
 }
 
 test {
