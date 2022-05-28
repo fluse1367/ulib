@@ -3,9 +3,9 @@ package eu.software4you.ulib.loader.agent;
 import com.sun.tools.attach.VirtualMachine;
 import lombok.SneakyThrows;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
@@ -40,7 +40,7 @@ public final class AgentInstaller {
 
     @SneakyThrows
     private boolean attachEx() {
-        String bin = AgentUtil.getJavaBin();
+        String bin = getJavaBin();
 
         if (bin == null) {
             return false;
@@ -87,5 +87,12 @@ public final class AgentInstaller {
     private void attachSelf() {
         VirtualMachine vm = VirtualMachine.attach(pid);
         vm.loadAgent(path);
+    }
+
+    private String getJavaBin() {
+        return ProcessHandle.current().info().command().orElseGet(() -> {
+            var bin = Path.of(System.getProperty("java.home"), "bin", "java");
+            return !Files.exists(bin) && !Files.exists(bin = bin.resolve(".exe")) ? null : bin.toString();
+        });
     }
 }
