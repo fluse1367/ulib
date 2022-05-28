@@ -14,7 +14,6 @@ stages:
   #- test
   - build # ready-for-use files
   - publish # api files for maven repository
-  - docs # javadocs
 
 # snapshots
 snapshot build:
@@ -50,11 +49,4 @@ release publication:
   stage: publish
   script: "$GRADLE_EXEC publish -Pvariation=release"
   artifacts: *artifacts_publication
-  rules: *rules_release
-pages:
-  stage: docs
-  script: '$GRADLE_EXEC docsWebpage -Pvariation=release'
-  artifacts:
-    paths:
-      - public
   rules: *rules_release

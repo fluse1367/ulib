@@ -263,28 +263,6 @@ listed below.
 
    You will find the loader in `loader/build/libs/`.
 
-
-5. <details><summary><b>Build the javadocs webpage</b> (Optional)</summary>
-
-   Building the javadocs webpage is probably more interesting for developers who are using the development
-   snapshots  (`develop` branch) of ulib, because the javadocs of them won't get published.
-
-   Linux (bash):
-
-    ```shell
-    ./gradlew docsWebpage
-    ```
-
-   Windows (cmd):
-
-    ```shell
-    ./gradlew.bat docsWebpage
-    ```
-
-   You'll find the webpage in the directory `public`.
-
-</details>
-
 ---
 
 # Included Software
