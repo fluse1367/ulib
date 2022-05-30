@@ -28,11 +28,7 @@ public interface YamlConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<YamlConfiguration, IOException> loadYaml(@NotNull Reader reader) {
-        return Expect.compute(() -> {
-            try (reader) {
-                return YamlSerializer.getInstance().deserialize(reader);
-            }
-        });
+        return Expect.compute(() -> YamlSerializer.getInstance().deserialize(reader));
     }
 
     /**
@@ -54,7 +50,11 @@ public interface YamlConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<YamlConfiguration, IOException> loadYaml(@NotNull File file) {
-        return Expect.compute(() -> loadYaml(new FileInputStream(file)).orElseRethrow(IOException.class));
+        return Expect.compute(() -> {
+            try (var reader = new FileReader(file)) {
+                return loadYaml(reader).orElseRethrow(IOException.class);
+            }
+        });
     }
 
 

@@ -31,11 +31,7 @@ public interface JsonConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<JsonConfiguration, IOException> loadJson(@NotNull Reader reader) {
-        return Expect.compute(() -> {
-            try (reader) {
-                return JsonSerializer.getInstance().deserialize(reader);
-            }
-        });
+        return Expect.compute(() -> JsonSerializer.getInstance().deserialize(reader));
     }
 
     /**
@@ -57,7 +53,11 @@ public interface JsonConfiguration extends ConfigurationReinit {
      */
     @NotNull
     static Expect<JsonConfiguration, IOException> loadJson(@NotNull File file) {
-        return Expect.compute(() -> loadJson(new FileInputStream(file)).orElseRethrow(IOException.class));
+        return Expect.compute(() -> {
+            try (var reader = new FileReader(file)) {
+                return loadJson(reader).orElseRethrow(IOException.class);
+            }
+        });
     }
 
     @Override
