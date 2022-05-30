@@ -2,6 +2,10 @@ dependencies {
     // junit
     testImplementation 'junit:junit:4.13'
 
+    // annotation processing
+    testImplementation 'org.javassist:javassist:3.28.0-GA'
+    testImplementation 'org.jetbrains:annotations:22.0.0'
+
     // ulib modules
     testCompileOnly(project(':loader'))
     testCompileOnly project(':core')
