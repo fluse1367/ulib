@@ -6,8 +6,7 @@ import eu.software4you.ulib.loader.install.Installer;
 import javassist.*;
 import javassist.bytecode.AccessFlag;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
@@ -44,7 +43,7 @@ public class AnnotationTest {
                     return;
 
                 // fields need to have either @NotNull OR @Nullable
-                assertTrue(errMsg.formatted("1"), ctf.hasAnnotation(NotNull.class) != ctf.hasAnnotation(Nullable.class));
+                assertTrue(errMsg.formatted("1"), annotationThere(ctf));
                 return;
             }
 
@@ -70,7 +69,7 @@ public class AnnotationTest {
                 // params need to have either @NotNull OR @Nullable
                 assertTrue((errMsg + " %s (parameter index: %d)").formatted(
                         Math.max(1, ctb.getMethodInfo().getLineNumber(0)), Arrays.toString(annos), i
-                ), in(NotNull.class, annos) != in(Nullable.class, annos));
+                ), annotationThere(annos));
             }
 
 
@@ -82,11 +81,23 @@ public class AnnotationTest {
                     return;
 
                 assertTrue(errMsg.formatted(Math.max(1, ctb.getMethodInfo().getLineNumber(0))) + " (return type)",
-                        ctm.hasAnnotation(NotNull.class) != ctm.hasAnnotation(Nullable.class));
+                        annotationThere(ctm));
             }
 
         });
 
+    }
+
+    private boolean annotationThere(CtMember mem) {
+        return mem.hasAnnotation(NotNull.class)
+               ^ mem.hasAnnotation(Nullable.class)
+               ^ mem.hasAnnotation(UnknownNullability.class);
+    }
+
+    private boolean annotationThere(Object[] annotations) {
+        return in(NotNull.class, annotations)
+               ^ in(Nullable.class, annotations)
+               ^ in(UnknownNullability.class, annotations);
     }
 
     private boolean annotatable(CtClass type) {
@@ -117,16 +128,22 @@ public class AnnotationTest {
                             .filter(c -> java.lang.reflect.Modifier.isPublic(c.getModifiers()))
                             .map(cl -> Expect.compute(pool::get, cl.getName()).orElseThrow())
                             .flatMap(ct -> Stream.concat(Stream.of(ct.getDeclaredBehaviors()), Stream.of(ct.getDeclaredFields())))
+
+                            // filter out non-public members
                             .filter(ctm -> Modifier.isPublic(ctm.getModifiers()))
+                            // filter out synthetic members
                             .filter(ctm -> (ctm.getModifiers() & AccessFlag.SYNTHETIC) == 0)
-                            .filter(ctm -> { // filter out Enum#values()
+                            // filter out constants
+                            .filter(ctm -> !(ctm instanceof CtField ctf) || !Modifier.isStatic(ctf.getModifiers()))
+                            // filter out Enum#values() and #valueOf
+                            .filter(ctm -> {
                                 if (!ctm.getDeclaringClass().isEnum()
                                     || !(ctm instanceof CtMethod cm)
-                                    || !cm.getName().equals("values"))
+                                    || !(cm.getName().equals("values") || cm.getName().equals("valueOf")))
                                     return true;
                                 return Expect.compute(cm::getParameterTypes)
                                                .map(t -> t.length)
-                                               .orElse(0) != 0;
+                                               .orElse(0) != (cm.getName().equals("values") ? 0 : 1);
                             })
                             ;
                 }));
