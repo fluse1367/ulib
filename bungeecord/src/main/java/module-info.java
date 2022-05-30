@@ -2,7 +2,7 @@ module ulib.bungeecord {
     // static
     requires static lombok;
     requires static org.jetbrains.annotations;
-    requires bungeecord.api;
+    requires static bungeecord.api;
 
     // java
     requires java.logging;

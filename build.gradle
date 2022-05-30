@@ -79,7 +79,7 @@ subprojects {
     }; // <- for somewhat reason the build fails without this semicolon
 
 
-    // dependencies
+    // default dependencies
     {
         repositories {
             mavenCentral()
@@ -87,31 +87,6 @@ subprojects {
 
         dependencies {
             compileOnly 'org.jetbrains:annotations:22.0.0'
-        }
-
-        // quick functions to declare dependencies dynamically
-        ext {
-            // spigot
-            dependencySpigot = {
-                repositories {
-                    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-                    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for bungeecord chat
-                }
-                dependencies {
-                    compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
-                }
-            }
-
-            // velocity
-            dependencyVelocity = {
-                repositories {
-                    maven { url 'https://nexus.velocitypowered.com/repository/maven-public/' }
-                }
-                dependencies {
-                    compileOnly 'com.velocitypowered:velocity-api:3.0.1'
-                    annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
-                }
-            }
         }
     }
 

@@ -84,13 +84,53 @@ private static Predicate<String> startsWithFilter(String... whitelisted) {
 subprojects {
     ext {
         // manual dependencies
-        manualDependency = { String name, String modName ->
+        manualDependency = { String name, String modName, boolean test = false ->
             rootProject.downloadManualDependencies
             dependencies {
-                compileOnly files("$rootProject.rootDir/.libs/${name}.jar")
+                var f = files("$rootProject.rootDir/.libs/${name}.jar")
+                if (test) {
+                    testImplementation f
+                } else {
+                    compileOnly f
+                }
             }
             extraJavaModuleInfo {
                 automaticModule("${name}.jar", modName)
+            }
+        }
+
+        // quick functions to declare dependencies dynamically
+
+        // spigot
+        dependencySpigot = { boolean test = false ->
+            repositories {
+                maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+                maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // for bungeecord chat
+            }
+            dependencies {
+                var coords = 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
+                if (test) {
+                    testImplementation coords
+                } else {
+                    compileOnly coords
+
+                }
+            }
+        }
+
+        // velocity
+        dependencyVelocity = { boolean test = false ->
+            repositories {
+                maven { url 'https://nexus.velocitypowered.com/repository/maven-public/' }
+            }
+            dependencies {
+                var coords = 'com.velocitypowered:velocity-api:3.0.1'
+                annotationProcessor coords
+                if (test) {
+                    testImplementation coords
+                } else {
+                    compileOnly coords
+                }
             }
         }
     }
