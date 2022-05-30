@@ -1,8 +1,12 @@
 package eu.software4you.ulib.loader.impl;
 
+import lombok.Getter;
+
 import java.util.*;
 
 public class EnvironmentProvider {
+
+    private static final String MOD_DEF = "core", MOD_ADD = "minecraft";
 
     private static Environment env;
 
@@ -17,20 +21,25 @@ public class EnvironmentProvider {
     }
 
     public enum Environment {
-        /* 0 */ SPIGOT(Map.of("loadClass0", Collections.singletonList(new Class<?>[]{String.class, boolean.class, boolean.class, boolean.class}))),
-        /* 1 */ BUNGEECORD,
-        /* 2 */ VELOCITY,
-        /* 3 */ STANDALONE,
+        SPIGOT(Map.of("loadClass0", Collections.singletonList(new Class<?>[]{String.class, boolean.class, boolean.class, boolean.class})),
+                MOD_DEF, MOD_ADD, "spigot"),
+        BUNGEECORD(MOD_DEF, MOD_ADD, "bungeecord"),
+        VELOCITY(MOD_DEF, MOD_ADD, "velocity"),
+        STANDALONE(MOD_DEF),
+        TEST(MOD_DEF, MOD_ADD, "spigot", "bungeecord", "velocity"),
         ;
 
+        @Getter
+        private final Collection<String> modules;
         private final Map<String, Collection<Class<?>[]>> hooks;
 
-        Environment() {
-            this(Map.of());
+        Environment(String... modules) {
+            this(Map.of(), modules);
         }
 
-        Environment(Map<String, Collection<Class<?>[]>> hooks) {
+        Environment(Map<String, Collection<Class<?>[]>> hooks, String... modules) {
             this.hooks = hooks;
+            this.modules = Set.of(modules);
         }
 
         public Map<String, Collection<Class<?>[]>> getAdditionalClassLoaderHookings() {

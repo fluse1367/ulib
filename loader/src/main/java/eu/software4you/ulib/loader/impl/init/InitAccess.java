@@ -1,5 +1,6 @@
 package eu.software4you.ulib.loader.impl.init;
 
+import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.impl.Util;
 import eu.software4you.ulib.loader.impl.install.ModuleClassProvider;
 import eu.software4you.ulib.loader.install.Installer;
@@ -10,8 +11,7 @@ import lombok.Synchronized;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class InitAccess {
 
@@ -75,10 +75,11 @@ public class InitAccess {
         if (init)
             return;
         init = true;
+        final var env = getEnv();
 
         if (getClass().getModule().isNamed()) {
             // loader already loaded as module
-            var initializer = Initializer.provide();
+            var initializer = Initializer.provide(env.ordinal());
             this.initializer = initializer;
             this.injector = initializer.getInjector();
             return;
@@ -93,10 +94,25 @@ public class InitAccess {
         var loader = provider.getLayer().findLoader("ulib.loader");
 
         this.initializer = Class.forName("eu.software4you.ulib.loader.impl.init.Initializer", true, loader)
-                .getMethod("provide")
-                .invoke(null);
+                .getMethod("provide", int.class)
+                .invoke(null, env.ordinal());
 
         this.injector = initializer.getClass().getMethod("getInjector").invoke(this.initializer);
+    }
+
+    private EnvironmentProvider.Environment getEnv() {
+        return Optional.ofNullable(System.getProperty("ulib.install.env_overwrite"))
+                .map(envName -> {
+                    try {
+                        var env = EnvironmentProvider.Environment.valueOf(envName);
+                        System.err.println("(ulib) Overwriting environment with " + env.name());
+                        return env;
+                    } catch (IllegalArgumentException e) {
+                        // ignored
+                    }
+                    return null;
+                })
+                .orElseGet(EnvironmentProvider::get);
     }
 
 }

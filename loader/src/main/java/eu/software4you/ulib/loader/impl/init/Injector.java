@@ -1,14 +1,11 @@
 package eu.software4you.ulib.loader.impl.init;
 
-import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import lombok.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-
-import static eu.software4you.ulib.loader.impl.EnvironmentProvider.Environment.*;
 
 // handles injection of ulib
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -35,17 +32,20 @@ public class Injector {
             return false;
         }
 
-        var env = EnvironmentProvider.get();
-        return
-                // access to core
-                request.startsWith("eu.software4you.ulib.core.") && !request.startsWith("eu.software4you.ulib.core.impl.")
-                // access to minecraft
-                || env != STANDALONE && request.startsWith("eu.software4you.ulib.minecraft.") && !request.startsWith("eu.software4you.ulib.minecraft.impl.")
-                // access to velocity
-                || env == VELOCITY && request.startsWith("eu.software4you.ulib.velocity.") && !request.startsWith("eu.software4you.ulib.velocity.impl.")
-                // access to spigot
-                || env == SPIGOT && request.startsWith("eu.software4you.ulib.spigot.") && !request.startsWith("eu.software4you.ulib.spigot.impl.")
-                ;
+        var pfx = "eu.software4you.ulib.";
+
+        // dont handle other requests
+        if (!request.startsWith(pfx))
+            return false;
+        request = request.substring(pfx.length());
+
+        // deny access to implementation
+        int i = request.indexOf(".");
+        if (request.substring(i + 1).startsWith("impl."))
+            return false;
+
+        var requestedModule = request.substring(0, i);
+        return initializer.getEnvironment().getModules().contains(requestedModule);
     }
 
     @SneakyThrows

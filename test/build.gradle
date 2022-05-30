@@ -19,7 +19,10 @@ test {
 
     // trigger ulib self installation to SCL
     jvmArgs "-javaagent:${project(':loader').tasks.jar.archiveFile.get().asFile.path}"
-    systemProperty 'ulib.install.agent_trigger', 'selfinstall'
+    systemProperties([
+            'ulib.install.agent_trigger': 'selfinstall',
+            'ulib.install.env_overwrite': 'TEST',
+    ])
 
     // set working dir
     var wd = file("${project.buildDir}/run/")

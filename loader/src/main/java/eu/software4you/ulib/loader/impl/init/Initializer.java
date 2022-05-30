@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.software4you.ulib.loader.impl.EnvironmentProvider.Environment.STANDALONE;
 import static eu.software4you.ulib.loader.impl.EnvironmentProvider.Environment.VELOCITY;
 
 // initializes ulib
@@ -22,12 +21,15 @@ public class Initializer {
     private static Initializer instance;
 
     @Synchronized
-    public static Initializer provide() {
+    public static Initializer provide(int ordinal) {
         if (instance == null) {
-            instance = new Initializer();
+            instance = new Initializer(EnvironmentProvider.Environment.values()[ordinal]);
         }
         return instance;
     }
+
+    @Getter
+    private final EnvironmentProvider.Environment environment;
 
     @Getter
     private final Injector injector;
@@ -43,7 +45,8 @@ public class Initializer {
     private ModuleLayer layer;
     private final ClassLoader coreLoader;
 
-    private Initializer() {
+    private Initializer(EnvironmentProvider.Environment env) {
+        this.environment = env;
         this.injector = new Injector(this);
 
         provideDependencies();
@@ -72,19 +75,13 @@ public class Initializer {
     }
 
     private void provideDependencies() {
-        List<String> modules = new ArrayList<>(1);
-        modules.add("core");
-        var env = EnvironmentProvider.get();
-        if (env != STANDALONE) {
-            modules.add("minecraft");
-            modules.add(env.name().toLowerCase());
-        }
+        var modules = environment.getModules();
         this.filesModules = dependencyProvider.extractModules(modules);
 
         var transformer = new DependencyTransformer();
 
         Predicate<String> filter = coords ->
-                !(env == VELOCITY && coords.startsWith("org.slf4j:"));
+                !(environment == VELOCITY && coords.startsWith("org.slf4j:"));
         this.filesAdditional = dependencyProvider.downloadLibraries(modules, filter, transformer::transform);
     }
 

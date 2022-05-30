@@ -25,12 +25,13 @@ java -Dsystem.property.key=my_value ...
 
 The following settings are changeable with the system properties:
 
-| Property                     | Default       | Description                                                                                                             |
-|:-----------------------------|---------------|:------------------------------------------------------------------------------------------------------------------------|
-| `ulib.directory.main`        | "`.ulib`"     | The main data-directory.                                                                                                |
-| `ulib.directory.cache`       | "`cache`"     | Directory where cached files will be placed. By default it will be placed inside the data-directory.                    |
-| `ulib.directory.libraries`   | "`libraries`" | Directory where library files will be placed. By default it will be placed inside the data-directory.                   |
-| `ulib.install.module_layer`  | "`parent`"    | Specifies the loader behavior. Possible values: `boot`, `comply`, `parent`.                                             |
-| `ulib.install.agent_trigger` | -             | Enables the self-initialization or self-installation of ulib on java agent init. Possible values: `init`, `selfinstall` |
+| Property                     | Default       | Description                                                                                                                      |
+|:-----------------------------|---------------|:---------------------------------------------------------------------------------------------------------------------------------|
+| `ulib.directory.main`        | "`.ulib`"     | The main data-directory.                                                                                                         |
+| `ulib.directory.cache`       | "`cache`"     | Directory where cached files will be placed. By default it will be placed inside the data-directory.                             |
+| `ulib.directory.libraries`   | "`libraries`" | Directory where library files will be placed. By default it will be placed inside the data-directory.                            |
+| `ulib.install.module_layer`  | "`parent`"    | Specifies the loader behavior. Possible values: `boot`, `comply`, `parent`.                                                      |
+| `ulib.install.agent_trigger` | -             | (Unsafe) Enables the self-initialization or self-installation of ulib on java agent init. Possible values: `init`, `selfinstall` |
+| `ulib.install.env_overwrite` | -             | (Unsafe) Overwrites the environment type. Possible values: `STANDALONE`, `SPIGOT`, `BUNGEECORD`, `VELOCITY`, `TEST`              |
 
 The properties have to be set before starting java/ulib, changing them during runtime takes no effect.
