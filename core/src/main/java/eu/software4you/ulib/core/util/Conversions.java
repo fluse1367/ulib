@@ -17,7 +17,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Integer, NumberFormatException> tryInt(Object o) {
-        return compute(() -> o instanceof Integer i ? i : Integer.parseInt(o.toString()));
+        return compute(() -> o instanceof Number n ? n.intValue() : Integer.parseInt(o.toString()));
     }
 
     /**
@@ -28,7 +28,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Long, NumberFormatException> tryLong(Object o) {
-        return compute(() -> o instanceof Long l ? l : Long.parseLong(o.toString()));
+        return compute(() -> o instanceof Number n ? n.longValue() : Long.parseLong(o.toString()));
     }
 
     /**
@@ -39,7 +39,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Float, NumberFormatException> tryFloat(Object o) {
-        return compute(() -> o instanceof Float f ? f : Float.parseFloat(o.toString()));
+        return compute(() -> o instanceof Number n ? n.floatValue() : Float.parseFloat(o.toString()));
     }
 
     /**
@@ -50,7 +50,7 @@ public class Conversions {
      */
     @NotNull
     public static Expect<Double, NumberFormatException> tryDouble(Object o) {
-        return compute(() -> o instanceof Double d ? d : Double.parseDouble(o.toString()));
+        return compute(() -> o instanceof Number n ? n.doubleValue() : Double.parseDouble(o.toString()));
     }
 
     /**
