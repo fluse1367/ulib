@@ -1,5 +1,7 @@
 package eu.software4you.ulib.minecraft.plugin.controllers;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,7 +17,8 @@ public interface SyncSchedulerController<R> extends SchedulerControllerBase {
      * @param runnable the task to run
      * @return the task object
      */
-    R sync(Runnable runnable);
+    @NotNull
+    R sync(@NotNull Runnable runnable);
 
     /**
      * Runs a synchronous task after a certain delay.
@@ -25,7 +28,8 @@ public interface SyncSchedulerController<R> extends SchedulerControllerBase {
      * @param unit     the delay's unit
      * @return the task object
      */
-    R sync(Runnable runnable, long delay, TimeUnit unit);
+    @NotNull
+    R sync(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit);
 
     /**
      * Runs a synchronous task after a certain delay.
@@ -34,7 +38,8 @@ public interface SyncSchedulerController<R> extends SchedulerControllerBase {
      * @param delay    the delay in milliseconds
      * @return the task object
      */
-    default R sync(Runnable runnable, long delay) {
+    @NotNull
+    default R sync(@NotNull Runnable runnable, long delay) {
         return sync(runnable, delay, TimeUnit.MILLISECONDS);
     }
 
@@ -47,7 +52,8 @@ public interface SyncSchedulerController<R> extends SchedulerControllerBase {
      * @param unit     the delay/period unit
      * @return the task object
      */
-    R sync(Runnable runnable, long delay, long period, TimeUnit unit);
+    @NotNull
+    R sync(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit);
 
     /**
      * Runs a synchronous task after a certain delay and repeats it periodically.
@@ -57,7 +63,8 @@ public interface SyncSchedulerController<R> extends SchedulerControllerBase {
      * @param period   the delay in milliseconds between each period
      * @return the task object
      */
-    default R sync(Runnable runnable, long delay, long period) {
+    @NotNull
+    default R sync(@NotNull Runnable runnable, long delay, long period) {
         return sync(runnable, delay, period, TimeUnit.MILLISECONDS);
     }
 }

@@ -98,17 +98,17 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable) {
         return getProxy().getScheduler().runAsync(this, runnable);
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit) {
         return getProxy().getScheduler().schedule(this, runnable, delay, unit);
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit) {
         return getProxy().getScheduler().schedule(this, runnable, delay, period, unit);
     }
 
@@ -118,12 +118,12 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public void registerEvents(Listener listener) {
+    public void registerEvents(@NotNull Listener listener) {
         getProxy().getPluginManager().registerListener(this, listener);
     }
 
     @Override
-    public void unregisterEvents(Listener listener) {
+    public void unregisterEvents(@NotNull Listener listener) {
         getProxy().getPluginManager().unregisterListener(listener);
     }
 
@@ -148,17 +148,17 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public ScheduledTask sync(Runnable runnable) {
+    public @NotNull ScheduledTask sync(@NotNull Runnable runnable) {
         throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
     }
 
     @Override
-    public ScheduledTask sync(Runnable runnable, long delay, TimeUnit unit) {
+    public @NotNull ScheduledTask sync(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit) {
         throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
     }
 
     @Override
-    public ScheduledTask sync(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public @NotNull ScheduledTask sync(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit) {
         throw new UnsupportedOperationException("Bungeecord does not provide synchronous tasks.");
     }
 }

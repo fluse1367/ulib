@@ -12,6 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class ProxyServerBridgeImpl extends AbstractProxyServerBridge implements 
     }
 
     @Override
-    public Future<byte[]> request(String targetServer, String line, final long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String targetServer, @NotNull String line, final long timeout) {
         ServerInfo server = findServer(targetServer);
         Message message = new Message(UUID.randomUUID(), null, MessageType.REQUEST, line.getBytes(StandardCharsets.UTF_8));
         sendMessage(server, message);
@@ -43,20 +44,20 @@ public class ProxyServerBridgeImpl extends AbstractProxyServerBridge implements 
     }
 
     @Override
-    public Future<byte[]> request(String line, long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String line, long timeout) {
         if (lastReceivedRequest == null)
             throw new IllegalStateException("No target server known");
         return request(lastReceivedRequest.getName(), line, timeout);
     }
 
     @Override
-    public void trigger(String targetServer, String line) {
+    public void trigger(@NotNull String targetServer, @NotNull String line) {
         ServerInfo server = findServer(targetServer);
         sendMessage(server, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override
-    public void trigger(String line) {
+    public void trigger(@NotNull String line) {
         if (lastReceivedCommand == null)
             throw new IllegalStateException("No target server known");
         sendMessage(lastReceivedCommand, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));

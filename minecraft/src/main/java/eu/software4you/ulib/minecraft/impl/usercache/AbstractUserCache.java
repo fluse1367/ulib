@@ -7,10 +7,10 @@ import eu.software4you.ulib.core.util.SingletonInstance;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
@@ -67,8 +67,8 @@ public abstract class AbstractUserCache implements UserCache {
     }
 
     @SneakyThrows
-    public void cache(UUID uuid, String name) {
-        if (getUsername(uuid) == null) {
+    public void cache(@NotNull UUID uuid, @NotNull String name) {
+        if (getUsername(uuid).isEmpty()) {
             table.insert(uuid.toString(), name);
         } else {
             table.update().setP("name", name).where("uuid").isEqualToP(uuid.toString());
@@ -77,33 +77,30 @@ public abstract class AbstractUserCache implements UserCache {
     }
 
     @SneakyThrows
-    public void purge(UUID uuid) {
-        if (getUsername(uuid) == null)
+    public void purge(@NotNull UUID uuid) {
+        if (getUsername(uuid).isEmpty())
             return;
         table.delete().where("uuid").isEqualToP(uuid.toString()).update();
         cache.remove(uuid);
     }
 
-    public void purge(String username) {
-        UUID uuid;
-        if ((uuid = getUUID(username)) == null)
-            return;
-        purge(uuid);
+    public void purge(@NotNull String username) {
+        getUUID(username).ifPresent(this::purge);
     }
 
     @SneakyThrows
-    public String getUsername(UUID uuid) {
+    public @NotNull Optional<String> getUsername(@NotNull UUID uuid) {
         if (!cache.containsKey(uuid)) {
             var rs = table.select("name").where("uuid").isEqualToP(uuid.toString()).query();
             if (rs.next()) {
                 cache.put(uuid, rs.getString("name"));
             }
         }
-        return cache.get(uuid);
+        return Optional.ofNullable(cache.get(uuid));
     }
 
     @SneakyThrows
-    public UUID getUUID(String username) {
+    public @NotNull Optional<UUID> getUUID(@NotNull String username) {
         if (!cache.containsValue(username)) {
             var rs = table.select("uuid").where("name").isEqualToP(username).query();
             if (rs.next()) {
@@ -112,8 +109,8 @@ public abstract class AbstractUserCache implements UserCache {
         }
         for (Map.Entry<UUID, String> entry : cache.entrySet()) {
             if (entry.getValue().equals(username))
-                return entry.getKey();
+                return Optional.ofNullable(entry.getKey());
         }
-        return null;
+        return Optional.empty();
     }
 }

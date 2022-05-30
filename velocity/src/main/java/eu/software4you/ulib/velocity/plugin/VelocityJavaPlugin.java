@@ -130,19 +130,19 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable) {
         return proxyServer.getScheduler().buildTask(getPluginObject(), runnable).schedule();
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable, long delay, TimeUnit unit) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit) {
         return proxyServer.getScheduler().buildTask(getPluginObject(), runnable)
                 .delay(delay, unit)
                 .schedule();
     }
 
     @Override
-    public ScheduledTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public @NotNull ScheduledTask async(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit) {
         return proxyServer.getScheduler().buildTask(getPluginObject(), runnable)
                 .delay(delay, unit)
                 .repeat(period, unit)
@@ -162,12 +162,12 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     }
 
     @Override
-    public void registerEvents(Object listener) {
+    public void registerEvents(@NotNull Object listener) {
         proxyServer.getEventManager().register(getPluginObject(), listener);
     }
 
     @Override
-    public void unregisterEvents(Object listener) {
+    public void unregisterEvents(@NotNull Object listener) {
         proxyServer.getEventManager().unregisterListener(getPluginObject(), listener);
     }
 

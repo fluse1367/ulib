@@ -48,26 +48,26 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge imple
     }
 
     @Override
-    public Future<byte[]> request(String targetServer, String line, long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String targetServer, @NotNull String line, long timeout) {
         Message message = new Message(UUID.randomUUID(), thisServer, MessageType.REQUEST, line.getBytes(StandardCharsets.UTF_8));
         sendMessage(targetServer, message);
         return awaitData(message.getId(), timeout);
     }
 
     @Override
-    public Future<byte[]> request(String line, long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String line, long timeout) {
         if (lastReceivedRequest == null)
             throw new IllegalStateException("No target server known");
         return request(lastReceivedRequest, line, timeout);
     }
 
     @Override
-    public void trigger(String targetServer, String line) {
+    public void trigger(@NotNull String targetServer, @NotNull String line) {
         sendMessage(targetServer, new Message(UUID.randomUUID(), thisServer, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override
-    public void trigger(String line) {
+    public void trigger(@NotNull String line) {
         if (lastReceivedCommand == null)
             throw new IllegalStateException("No target server known");
         trigger(lastReceivedCommand, line);

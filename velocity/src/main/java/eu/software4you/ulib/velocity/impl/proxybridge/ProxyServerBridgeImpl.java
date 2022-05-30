@@ -13,6 +13,7 @@ import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
 import eu.software4you.ulib.velocity.plugin.VelocityPlugin;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge {
     }
 
     @Override
-    public Future<byte[]> request(String targetServer, String line, final long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String targetServer, @NotNull String line, final long timeout) {
         RegisteredServer server = findServer(targetServer);
         Message message = new Message(UUID.randomUUID(), null, MessageType.REQUEST, line.getBytes(StandardCharsets.UTF_8));
         sendMessage(server, message);
@@ -50,20 +51,20 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge {
     }
 
     @Override
-    public Future<byte[]> request(String line, long timeout) {
+    public @NotNull Future<byte[]> request(@NotNull String line, long timeout) {
         if (lastReceivedRequest == null)
             throw new IllegalStateException("No target server known");
         return request(lastReceivedRequest.getServerInfo().getName(), line, timeout);
     }
 
     @Override
-    public void trigger(String targetServer, String line) {
+    public void trigger(@NotNull String targetServer, @NotNull String line) {
         RegisteredServer server = findServer(targetServer);
         sendMessage(server, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override
-    public void trigger(String line) {
+    public void trigger(@NotNull String line) {
         if (lastReceivedCommand == null)
             throw new IllegalStateException("No target server known");
         sendMessage(lastReceivedCommand, new Message(UUID.randomUUID(), null, MessageType.COMMAND, line.getBytes(StandardCharsets.UTF_8)));

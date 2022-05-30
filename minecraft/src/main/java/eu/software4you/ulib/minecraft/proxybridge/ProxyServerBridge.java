@@ -2,6 +2,7 @@ package eu.software4you.ulib.minecraft.proxybridge;
 
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.command.CommandManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Future;
 
@@ -16,6 +17,7 @@ public abstract class ProxyServerBridge extends CommandManager {
      *
      * @return the current instance
      */
+    @NotNull
     public static ProxyServerBridge getInstance() {
         return AbstractProxyServerBridge.INSTANCE.get();
     }
@@ -30,7 +32,8 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @throws IllegalArgumentException if the targetServer was not found
      * @throws IllegalArgumentException if the sender and the target is the same server
      */
-    public abstract Future<byte[]> request(String targetServer, String line, long timeout);
+    @NotNull
+    public abstract Future<byte[]> request(@NotNull String targetServer, @NotNull String line, long timeout);
 
     /**
      * Requests data from a specific server. Use {@link #PROXY_SERVER_NAME} to send the request to the proxy itself.
@@ -40,7 +43,8 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @return a {@link Future} representing the action
      * @throws IllegalArgumentException if the targetServer was not found
      */
-    public Future<byte[]> request(String targetServer, String line) {
+    @NotNull
+    public Future<byte[]> request(@NotNull String targetServer, @NotNull String line) {
         return request(targetServer, line, -1);
     }
 
@@ -52,7 +56,8 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @return a {@link Future} representing the action
      * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
      */
-    public abstract Future<byte[]> request(String line, long timeout);
+    @NotNull
+    public abstract Future<byte[]> request(@NotNull String line, long timeout);
 
     /**
      * Requests data from the server the last request was received from.
@@ -61,7 +66,8 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @return a {@link Future} representing the action
      * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
      */
-    public Future<byte[]> request(String line) {
+    @NotNull
+    public Future<byte[]> request(@NotNull String line) {
         return request(line, -1);
     }
 
@@ -74,7 +80,7 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @throws IllegalArgumentException if the targetServer was not found
      * @throws IllegalArgumentException if the sender and the target is the same server
      */
-    public abstract void trigger(String targetServer, String line);
+    public abstract void trigger(@NotNull String targetServer, @NotNull String line);
 
     /**
      * Sends a command to the server the last command was received from.
@@ -82,6 +88,6 @@ public abstract class ProxyServerBridge extends CommandManager {
      * @param line the command line
      * @throws IllegalStateException if no command was ever received and thus no server to send the command to is known
      */
-    public abstract void trigger(String line);
+    public abstract void trigger(@NotNull String line);
 
 }

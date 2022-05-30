@@ -65,52 +65,52 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public BukkitTask sync(Runnable runnable) {
+    public @NotNull BukkitTask sync(@NotNull Runnable runnable) {
         return Bukkit.getScheduler().runTask(getPluginObject(), runnable);
     }
 
     @Override
-    public BukkitTask sync(Runnable runnable, long delay, TimeUnit unit) {
+    public @NotNull BukkitTask sync(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit) {
         return sync(runnable, unit.toMillis(delay) / 50);
     }
 
     @Override
-    public BukkitTask sync(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public @NotNull BukkitTask sync(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit) {
         return sync(runnable, unit.toMillis(delay) / 50, unit.toMillis(period) / 50);
     }
 
     @Override
-    public BukkitTask sync(Runnable runnable, long delay) {
+    public @NotNull BukkitTask sync(@NotNull Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLater(getPluginObject(), runnable, delay);
     }
 
     @Override
-    public BukkitTask sync(Runnable runnable, long delay, long period) {
+    public @NotNull BukkitTask sync(@NotNull Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimer(getPluginObject(), runnable, delay, period);
     }
 
     @Override
-    public BukkitTask async(Runnable runnable) {
+    public @NotNull BukkitTask async(@NotNull Runnable runnable) {
         return Bukkit.getScheduler().runTaskAsynchronously(getPluginObject(), runnable);
     }
 
     @Override
-    public BukkitTask async(Runnable runnable, long delay, long period) {
+    public @NotNull BukkitTask async(@NotNull Runnable runnable, long delay, long period) {
         return Bukkit.getScheduler().runTaskTimerAsynchronously(getPluginObject(), runnable, delay, period);
     }
 
     @Override
-    public BukkitTask async(Runnable runnable, long delay, TimeUnit unit) {
+    public @NotNull BukkitTask async(@NotNull Runnable runnable, long delay, @NotNull TimeUnit unit) {
         return async(runnable, unit.toMillis(delay) / 50);
     }
 
     @Override
-    public BukkitTask async(Runnable runnable, long delay, long period, TimeUnit unit) {
+    public @NotNull BukkitTask async(@NotNull Runnable runnable, long delay, long period, @NotNull TimeUnit unit) {
         return async(runnable, unit.toMillis(delay) / 50, unit.toMillis(period) / 50);
     }
 
     @Override
-    public BukkitTask async(Runnable runnable, long delay) {
+    public @NotNull BukkitTask async(@NotNull Runnable runnable, long delay) {
         return Bukkit.getScheduler().runTaskLaterAsynchronously(getPluginObject(), runnable, delay);
     }
 
@@ -120,12 +120,12 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public void registerEvents(Listener listener) {
+    public void registerEvents(@NotNull Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, getPluginObject());
     }
 
     @Override
-    public void unregisterEvents(Listener listener) {
+    public void unregisterEvents(@NotNull Listener listener) {
         HandlerList.unregisterAll(listener);
     }
 

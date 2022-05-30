@@ -1,5 +1,7 @@
 package eu.software4you.ulib.minecraft.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Utility for minecraft (chat) colors/formatting.
  */
@@ -24,7 +26,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String replaceColors(String input) {
+    @NotNull
+    public static String replaceColors(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_RAW_COLORS, REGEX_REPLACE_RAW);
     }
 
@@ -34,7 +37,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String replaceFormats(String input) {
+    @NotNull
+    public static String replaceFormats(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_RAW_FORMATS, REGEX_REPLACE_RAW);
     }
 
@@ -44,7 +48,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String replaceMagic(String input) {
+    @NotNull
+    public static String replaceMagic(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_RAW_MAGIC, REGEX_REPLACE_RAW);
     }
 
@@ -54,7 +59,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String replaceAll(String input) {
+    @NotNull
+    public static String replaceAll(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_RAW_ALL, REGEX_REPLACE_RAW);
     }
 
@@ -64,7 +70,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String unreplaceColors(String input) {
+    @NotNull
+    public static String unreplaceColors(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_COLORS, REGEX_REPLACE_FORMATTED);
     }
 
@@ -74,7 +81,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String unreplaceFormats(String input) {
+    @NotNull
+    public static String unreplaceFormats(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_FORMATS, REGEX_REPLACE_FORMATTED);
     }
 
@@ -84,7 +92,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String unreplaceMagic(String input) {
+    @NotNull
+    public static String unreplaceMagic(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_MAGIC, REGEX_REPLACE_FORMATTED);
     }
 
@@ -94,7 +103,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String unreplaceAll(String input) {
+    @NotNull
+    public static String unreplaceAll(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_ALL, REGEX_REPLACE_FORMATTED);
     }
 
@@ -104,7 +114,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String stripColors(String input) {
+    @NotNull
+    public static String stripColors(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_COLORS, "");
     }
 
@@ -114,7 +125,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String stripFormats(String input) {
+    @NotNull
+    public static String stripFormats(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_FORMATS, "");
     }
 
@@ -124,7 +136,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String stripMagic(String input) {
+    @NotNull
+    public static String stripMagic(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_MAGIC, "");
     }
 
@@ -134,7 +147,8 @@ public class ColorUtil {
      * @param input the string
      * @return the processed string
      */
-    public static String stripAll(String input) {
+    @NotNull
+    public static String stripAll(@NotNull String input) {
         return input.replaceAll(REGEX_TARGET_FORMATTED_ALL, "");
     }
 }
