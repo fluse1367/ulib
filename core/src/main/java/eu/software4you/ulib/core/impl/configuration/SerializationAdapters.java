@@ -25,6 +25,9 @@ public class SerializationAdapters {
 
     public void addHook(BiConsumer<Class<?>, Adapter<?>> registerHook) {
         registerHooks.add(registerHook);
+
+        // run hook for each already registered adapter
+        registry.forEach(p -> registerHook.accept(p.getFirst(), p.getSecond()));
     }
 
     public <T> void registerAdapter(Class<T> serialization, Adapter<? extends T> adapter) {
