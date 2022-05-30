@@ -5,7 +5,7 @@
 - Keep static members separated from instanced ones (e.g. designate the upper half of the class for static members and
   the lower for instance ones).
 - Use [JetBrains annotations](https://www.jetbrains.com/help/idea/annotating-source-code.html#bundled-annotations) to
-  indicate behavior (especially `NonNull`, `Nullable` and `Contract`).
+  indicate behavior (especially `NonNull`, `Nullable` and `Contract`). Functional interfaces are exempt.
 
 ## API
 

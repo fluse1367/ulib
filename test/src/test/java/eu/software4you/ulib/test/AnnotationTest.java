@@ -126,6 +126,10 @@ public class AnnotationTest {
 
                     return findClasses(m.getClassLoader(), pack).stream()
                             .filter(c -> java.lang.reflect.Modifier.isPublic(c.getModifiers()))
+                            // filter out functional interfaces
+                            .filter(c -> !c.isAnnotationPresent(FunctionalInterface.class))
+
+                            // fetch ct
                             .map(cl -> Expect.compute(pool::get, cl.getName()).orElseThrow())
                             .flatMap(ct -> Stream.concat(Stream.of(ct.getDeclaredBehaviors()), Stream.of(ct.getDeclaredFields())))
 
