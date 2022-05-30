@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.http;
 
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -27,7 +28,8 @@ public class HttpUtil {
      * @return the response
      * @see Map#of(Object, Object)
      */
-    public static Expect<HttpResponse<InputStream>, Exception> POST(URI uri, Map<String, String> fields) {
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> POST(@NotNull URI uri, @NotNull Map<String, String> fields) {
         return Expect.compute(() -> {
             var body = x_www_form_urlencoded(fields).getBytes(UTF_8);
 
@@ -48,7 +50,8 @@ public class HttpUtil {
      * @return the response
      * @see Map#of(Object, Object)
      */
-    public static Expect<HttpResponse<InputStream>, Exception> GET(URI baseUri, Map<String, String> fields) {
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI baseUri, @NotNull Map<String, String> fields) {
         return Expect.compute(() -> {
             var connect = baseUri.toString().endsWith("/") ? "?" : "/?";
             var uri = baseUri.resolve(connect.concat(x_www_form_urlencoded(fields)));
@@ -62,7 +65,8 @@ public class HttpUtil {
      * @param uri the uri
      * @return the response
      */
-    public static Expect<HttpResponse<InputStream>, Exception> GET(URI uri) {
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI uri) {
         return Expect.compute(() -> {
             var request = HttpRequest.newBuilder(uri).GET().build();
             return DEFAULT_CLIENT.send(request, ofInputStream());

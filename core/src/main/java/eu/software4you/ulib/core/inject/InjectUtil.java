@@ -54,16 +54,18 @@ public class InjectUtil {
     /**
      * @see #injectLoaderDelegation(ClassLoaderDelegation, Predicate, BiPredicate, Class)
      */
-    public static Expect<Void, Exception> injectLoaderDelegation(ClassLoaderDelegation delegation, ClassLoader target) {
+    @NotNull
+    public static Expect<Void, Exception> injectLoaderDelegation(@NotNull ClassLoaderDelegation delegation, @NotNull ClassLoader target) {
         return injectLoaderDelegation(delegation, (requester, request) -> true, target);
     }
 
     /**
      * @see #injectLoaderDelegation(ClassLoaderDelegation, Predicate, BiPredicate, Class)
      */
-    public static Expect<Void, Exception> injectLoaderDelegation(ClassLoaderDelegation delegation,
-                                                                 BiPredicate<Class<?>, String> filter,
-                                                                 ClassLoader target) {
+    @NotNull
+    public static Expect<Void, Exception> injectLoaderDelegation(@NotNull ClassLoaderDelegation delegation,
+                                                                 @NotNull BiPredicate<Class<?>, String> filter,
+                                                                 @NotNull ClassLoader target) {
         return injectLoaderDelegation(delegation, cl -> cl == target, filter, target.getClass());
     }
 
@@ -92,10 +94,10 @@ public class InjectUtil {
      * @see ClassLoaderDelegation#ClassLoaderDelegation(ClassLoader)
      */
     @NotNull
-    public static Expect<Void, Exception> injectLoaderDelegation(ClassLoaderDelegation delegation,
-                                                                 Predicate<ClassLoader> filterLoader,
-                                                                 BiPredicate<Class<?>, String> filterRequest,
-                                                                 Class<? extends ClassLoader> target) {
+    public static Expect<Void, Exception> injectLoaderDelegation(@NotNull ClassLoaderDelegation delegation,
+                                                                 @NotNull Predicate<ClassLoader> filterLoader,
+                                                                 @NotNull BiPredicate<Class<?>, String> filterRequest,
+                                                                 @NotNull Class<? extends ClassLoader> target) {
         return new ClassLoaderDelegationHook(target, Collections.emptyMap(), delegation,
                 filterLoader, filterRequest).inject();
     }

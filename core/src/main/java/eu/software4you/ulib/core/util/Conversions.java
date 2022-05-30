@@ -16,7 +16,7 @@ public class Conversions {
      * @return an expect object wrapping the operation result
      */
     @NotNull
-    public static Expect<Integer, NumberFormatException> tryInt(Object o) {
+    public static Expect<Integer, NumberFormatException> tryInt(@Nullable Object o) {
         return compute(() -> o instanceof Number n ? n.intValue() : Integer.parseInt(o.toString()));
     }
 
@@ -27,7 +27,7 @@ public class Conversions {
      * @return an expect object wrapping the operation result
      */
     @NotNull
-    public static Expect<Long, NumberFormatException> tryLong(Object o) {
+    public static Expect<Long, NumberFormatException> tryLong(@Nullable Object o) {
         return compute(() -> o instanceof Number n ? n.longValue() : Long.parseLong(o.toString()));
     }
 
@@ -38,7 +38,7 @@ public class Conversions {
      * @return an expect object wrapping the operation result
      */
     @NotNull
-    public static Expect<Float, NumberFormatException> tryFloat(Object o) {
+    public static Expect<Float, NumberFormatException> tryFloat(@Nullable Object o) {
         return compute(() -> o instanceof Number n ? n.floatValue() : Float.parseFloat(o.toString()));
     }
 
@@ -49,7 +49,7 @@ public class Conversions {
      * @return an expect object wrapping the operation result
      */
     @NotNull
-    public static Expect<Double, NumberFormatException> tryDouble(Object o) {
+    public static Expect<Double, NumberFormatException> tryDouble(@Nullable Object o) {
         return compute(() -> o instanceof Number n ? n.doubleValue() : Double.parseDouble(o.toString()));
     }
 
@@ -126,6 +126,7 @@ public class Conversions {
      * @param map   the input map
      * @return an optional wrapping the cast map
      */
+    @NotNull
     public static <K, V> Optional<Map<K, V>> safecast(@NotNull Class<K> kType, @NotNull Class<V> vType, @NotNull Map<?, ?> map) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             var key = entry.getKey();

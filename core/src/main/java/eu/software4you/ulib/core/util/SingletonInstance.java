@@ -64,7 +64,7 @@ public final class SingletonInstance<T> {
      * @param instance the instance to set
      * @throws IllegalStateException if the instance has already been set
      */
-    public void setInstance(T instance) {
+    public void setInstance(@NotNull T instance) {
         if (isSet())
             throw new IllegalStateException("Instance already set");
         this.instance = instance;

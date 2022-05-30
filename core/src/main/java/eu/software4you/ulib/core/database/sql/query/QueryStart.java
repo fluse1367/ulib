@@ -13,6 +13,7 @@ public interface QueryStart {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> where(@NotNull Column<?> column);
 
     /**
@@ -21,6 +22,7 @@ public interface QueryStart {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> where(@NotNull String column);
 
     /**
@@ -29,5 +31,6 @@ public interface QueryStart {
      * @param condition the whole condition string, e.g. "column_1 = 0"
      * @return this
      */
+    @NotNull
     Where whereRaw(@NotNull String condition);
 }

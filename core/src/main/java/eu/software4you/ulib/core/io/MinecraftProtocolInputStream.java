@@ -3,19 +3,22 @@ package eu.software4you.ulib.core.io;
 
 import eu.software4you.ulib.core.collection.Triple;
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.UUID;
 
 public class MinecraftProtocolInputStream extends DataInputStream {
-    public MinecraftProtocolInputStream(InputStream in) {
+    public MinecraftProtocolInputStream(@NotNull InputStream in) {
         super(in);
     }
 
+    @NotNull
     public static MinecraftProtocolInputStream wrap(byte[] buffer) {
         return new MinecraftProtocolInputStream(new ByteArrayInputStream(buffer));
     }
 
+    @NotNull
     public Expect<Integer, IOException> readVarInt() {
         return Expect.compute(() -> {
             int decodedInt = 0;
@@ -34,6 +37,7 @@ public class MinecraftProtocolInputStream extends DataInputStream {
         });
     }
 
+    @NotNull
     public Expect<Long, IOException> readVarLong() {
         return Expect.compute(() -> {
             long decodedLong = 0;
@@ -52,6 +56,7 @@ public class MinecraftProtocolInputStream extends DataInputStream {
         });
     }
 
+    @NotNull
     public Expect<String, IOException> readString() {
         return Expect.compute(() -> {
             int len = readVarInt().orElseRethrow(IOException.class);
@@ -64,10 +69,12 @@ public class MinecraftProtocolInputStream extends DataInputStream {
         });
     }
 
+    @NotNull
     public Expect<UUID, IOException> readUUID() {
         return Expect.compute(() -> new UUID(readLong(), readLong()));
     }
 
+    @NotNull
     public Expect<Triple<Integer, Integer, Integer>, IOException> readBlockPosition() {
         return Expect.compute(() -> {
             var val = readLong();

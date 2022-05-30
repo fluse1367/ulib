@@ -1,11 +1,13 @@
 package eu.software4you.ulib.core.configuration.serialization;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SerializationException extends RuntimeException {
-    public SerializationException(String message) {
+    public SerializationException(@NotNull String message) {
         super(message);
     }
 
-    public SerializationException(Throwable cause) {
+    public SerializationException(@NotNull Throwable cause) {
         super(cause);
     }
 }

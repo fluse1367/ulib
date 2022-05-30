@@ -1,5 +1,8 @@
 package eu.software4you.ulib.core.database.sql.query;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -17,7 +20,8 @@ public interface QueryEndpoint {
      * @see PreparedStatement#executeQuery()
      * @see PreparedStatement#setObject(int, Object)
      */
-    ResultSet query(Object... parameters);
+    @NotNull
+    ResultSet query(@NotNull Object... parameters);
 
     /**
      * Builds and executes the query.
@@ -28,13 +32,14 @@ public interface QueryEndpoint {
      * @see PreparedStatement#executeUpdate()
      * @see PreparedStatement#setObject(int, Object)
      */
-    int update(Object... parameters);
+    int update(@NotNull Object... parameters);
 
     /**
      * Builds the query with potentially added parameters.
      *
      * @return the built query
      */
+    @NotNull
     PreparedStatement build();
 
     /**
@@ -42,6 +47,7 @@ public interface QueryEndpoint {
      *
      * @return the query string.
      */
+    @NotNull
     String buildRawQuery();
 
     /**
@@ -52,7 +58,8 @@ public interface QueryEndpoint {
      * @return the built query
      * @see PreparedStatement#setObject(int, Object)
      */
-    PreparedStatement build(Object... parameters);
+    @NotNull
+    PreparedStatement build(@NotNull Object... parameters);
 
     /**
      * Limits the result set to a specific amount of rows.<br>
@@ -62,5 +69,7 @@ public interface QueryEndpoint {
      * @param limit the amount
      * @return this
      */
+    @NotNull
+    @Contract("_ -> this")
     QueryEndpoint limit(long limit);
 }

@@ -78,7 +78,7 @@ public interface Database {
      * @see URLEncoder#encode(String, String)
      */
     @NotNull
-    static MySQLDatabase prepare(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
+    static MySQLDatabase prepare(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, @NotNull String... parameters) {
         return Databases.prepare(host, port, database, user, password, parameters);
     }
 
@@ -126,7 +126,7 @@ public interface Database {
      * @see URLEncoder#encode(String, String)
      */
     @NotNull
-    static MySQLDatabase connect(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, String... parameters) {
+    static MySQLDatabase connect(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String password, @NotNull String... parameters) {
         var db = prepare(host, port, database, user, password, parameters);
         db.connect();
         return db;

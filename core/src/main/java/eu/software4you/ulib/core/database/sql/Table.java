@@ -66,7 +66,7 @@ public interface Table extends Keyable<String> {
      * @param whatElse additional columns to select
      * @return the query builder
      */
-    @NotNull Query select(@NotNull String what, String... whatElse);
+    @NotNull Query select(@NotNull String what, @NotNull String... whatElse);
 
     /**
      * Selects only different values from the table.
@@ -75,7 +75,7 @@ public interface Table extends Keyable<String> {
      * @param whatElse additional columns to select
      * @return the query builder
      */
-    @NotNull Query selectDistinct(@NotNull String what, String... whatElse);
+    @NotNull Query selectDistinct(@NotNull String what, @NotNull String... whatElse);
 
     /**
      * Updates the table.
@@ -92,7 +92,7 @@ public interface Table extends Keyable<String> {
      * @param values additional values to insert
      * @return {@code true}, if the operation was successful
      */
-    boolean insert(@NotNull Object value, Object... values);
+    boolean insert(@NotNull Object value, @NotNull Object... values);
 
     /**
      * Inserts values into the table.
@@ -103,7 +103,7 @@ public interface Table extends Keyable<String> {
      */
     // @SafeVarargs
     @SuppressWarnings("unchecked")
-    boolean insert(@NotNull Pair<String, Object> value, Pair<String, Object>... values);
+    boolean insert(@NotNull Pair<String, Object> value, @NotNull Pair<String, Object>... values);
 
     /**
      * Deletes rows from the table.

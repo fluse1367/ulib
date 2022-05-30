@@ -17,6 +17,8 @@
  */
 package eu.software4you.ulib.core.util;
 
+import org.jetbrains.annotations.*;
+
 import java.io.File;
 
 /**
@@ -1641,7 +1643,9 @@ public class SystemUtils {
      * @return the environment variable value or {@code defaultValue} if a security problem occurs
      * @since 3.8
      */
-    public static String getEnvironmentVariable(final String name, final String defaultValue) {
+    @Nullable
+    @Contract("_, !null -> !null")
+    public static String getEnvironmentVariable(@NotNull String name, @Nullable String defaultValue) {
         try {
             final String value = System.getenv(name);
             return value == null ? defaultValue : value;
@@ -1663,6 +1667,7 @@ public class SystemUtils {
      * @return the host name. Will be {@code null} if the environment variable is not defined.
      * @since 3.6
      */
+    @Nullable
     public static String getHostName() {
         return IS_OS_WINDOWS ? System.getenv("COMPUTERNAME") : System.getenv("HOSTNAME");
     }
@@ -1678,6 +1683,7 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 2.1
      */
+    @NotNull
     public static File getJavaHome() {
         return new File(System.getProperty(JAVA_HOME_KEY));
     }
@@ -1693,6 +1699,7 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 2.1
      */
+    @NotNull
     public static File getJavaIoTmpDir() {
         return new File(System.getProperty(JAVA_IO_TMPDIR_KEY));
     }
@@ -1705,7 +1712,7 @@ public class SystemUtils {
      * @param versionPrefix the prefix for the java version
      * @return true if matches, or false if not or can't determine
      */
-    private static boolean getJavaVersionMatches(final String versionPrefix) {
+    private static boolean getJavaVersionMatches(@NotNull String versionPrefix) {
         return isJavaVersionMatch(JAVA_SPECIFICATION_VERSION, versionPrefix);
     }
 
@@ -1716,7 +1723,7 @@ public class SystemUtils {
      * @param osVersionPrefix the prefix for the version
      * @return true if matches, or false if not or can't determine
      */
-    private static boolean getOsMatches(final String osNamePrefix, final String osVersionPrefix) {
+    private static boolean getOsMatches(@NotNull String osNamePrefix, @NotNull String osVersionPrefix) {
         return isOSMatch(OS_NAME, OS_VERSION, osNamePrefix, osVersionPrefix);
     }
 
@@ -1726,7 +1733,7 @@ public class SystemUtils {
      * @param osNamePrefix the prefix for the OS name
      * @return true if matches, or false if not or can't determine
      */
-    private static boolean getOsMatchesName(final String osNamePrefix) {
+    private static boolean getOsMatchesName(@NotNull String osNamePrefix) {
         return isOSNameMatch(OS_NAME, osNamePrefix);
     }
 
@@ -1744,7 +1751,8 @@ public class SystemUtils {
      * @param property the system property name
      * @return the system property value or {@code null} if a security problem occurs
      */
-    private static String getSystemProperty(final String property) {
+    @Nullable
+    private static String getSystemProperty(@NotNull String property) {
         try {
             return System.getProperty(property);
         } catch (final SecurityException ex) {
@@ -1766,6 +1774,7 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 2.1
      */
+    @NotNull
     public static File getUserDir() {
         return new File(System.getProperty(USER_DIR_KEY));
     }
@@ -1781,6 +1790,7 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 2.1
      */
+    @NotNull
     public static File getUserHome() {
         return new File(System.getProperty(USER_HOME_KEY));
     }
@@ -1796,6 +1806,7 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 3.10
      */
+    @Nullable
     public static String getUserName() {
         return System.getProperty(USER_NAME_KEY);
     }
@@ -1812,7 +1823,9 @@ public class SystemUtils {
      * @see System#getProperty(String)
      * @since 3.10
      */
-    public static String getUserName(final String defaultValue) {
+    @Nullable
+    @Contract("!null -> !null")
+    public static String getUserName(@Nullable String defaultValue) {
         return System.getProperty(USER_NAME_KEY, defaultValue);
     }
 
@@ -1836,7 +1849,7 @@ public class SystemUtils {
      * @param requiredVersion the required version, for example 1.31f
      * @return {@code true} if the actual version is equal or greater than the required version
      */
-    public static boolean isJavaVersionAtLeast(final JavaVersion requiredVersion) {
+    public static boolean isJavaVersionAtLeast(@NotNull JavaVersion requiredVersion) {
         return JAVA_SPECIFICATION_VERSION_AS_ENUM.atLeast(requiredVersion);
     }
 
@@ -1852,7 +1865,7 @@ public class SystemUtils {
      * @return {@code true} if the actual version is equal or less than the required version
      * @since 3.9
      */
-    public static boolean isJavaVersionAtMost(final JavaVersion requiredVersion) {
+    public static boolean isJavaVersionAtMost(@NotNull JavaVersion requiredVersion) {
         return JAVA_SPECIFICATION_VERSION_AS_ENUM.atMost(requiredVersion);
     }
 
@@ -1868,7 +1881,8 @@ public class SystemUtils {
      * @param versionPrefix the prefix for the expected Java version
      * @return true if matches, or false if not or can't determine
      */
-    static boolean isJavaVersionMatch(final String version, final String versionPrefix) {
+    @Contract("null, _ -> false")
+    static boolean isJavaVersionMatch(@Nullable String version, @NotNull String versionPrefix) {
         if (version == null) {
             return false;
         }

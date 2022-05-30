@@ -17,6 +17,9 @@
  */
 package eu.software4you.ulib.core.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * <p>An enum representing all the versions of the Java specification.
  * This is intended to mirror available values from the
@@ -184,7 +187,7 @@ public enum JavaVersion {
      * @param requiredVersion the version to check against, not null
      * @return true if this version is equal to or greater than the specified version
      */
-    public boolean atLeast(final JavaVersion requiredVersion) {
+    public boolean atLeast(@NotNull JavaVersion requiredVersion) {
         return this.value >= requiredVersion.value;
     }
 
@@ -198,7 +201,7 @@ public enum JavaVersion {
      * @return true if this version is equal to or greater than the specified version
      * @since 3.9
      */
-    public boolean atMost(final JavaVersion requiredVersion) {
+    public boolean atMost(@NotNull JavaVersion requiredVersion) {
         return this.value <= requiredVersion.value;
     }
 
@@ -212,7 +215,8 @@ public enum JavaVersion {
      * version is unknown
      */
     // helper for static importing
-    static JavaVersion getJavaVersion(final String versionStr) {
+    @Nullable
+    static JavaVersion getJavaVersion(@Nullable String versionStr) {
         return get(versionStr);
     }
 
@@ -225,7 +229,8 @@ public enum JavaVersion {
      * @return the corresponding enumeration constant or <b>null</b> if the
      * version is unknown
      */
-    static JavaVersion get(final String versionStr) {
+    @Nullable
+    static JavaVersion get(@Nullable String versionStr) {
         if (versionStr == null) {
             return null;
         }
@@ -291,6 +296,7 @@ public enum JavaVersion {
      * @return the name, not null
      */
     @Override
+    @NotNull
     public String toString() {
         return name;
     }
@@ -311,7 +317,7 @@ public enum JavaVersion {
      * @param value the String to parse.
      * @return the float value represented by the string or -1 if the given String can not be parsed.
      */
-    private static float toFloatVersion(final String value) {
+    private static float toFloatVersion(@NotNull String value) {
         final var defaultReturnValue = -1f;
         if (!value.contains(".")) {
             return Conversions.tryFloat(value).orElse(defaultReturnValue);

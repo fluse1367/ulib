@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.inject;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -13,5 +15,6 @@ public @interface Hooks {
     /**
      * The fully qualified class name of the class that is to be hooked.
      */
+    @NotNull
     String value();
 }

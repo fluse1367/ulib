@@ -1,8 +1,7 @@
 package eu.software4you.ulib.core.database.sql.query;
 
 import eu.software4you.ulib.core.database.sql.Column;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 /**
  * The start of a query, that attempts to set values.
@@ -15,6 +14,8 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
+    @NotNull
+    @Contract("_, _ -> this")
     SetQuery set(@NotNull Column<?> column, @NotNull Object to);
 
     /**
@@ -28,6 +29,8 @@ public interface SetQuery extends Query {
      * @see QueryEndpoint#update(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
+    @Contract("_ -> this")
     SetQuery setP(@NotNull Column<?> column);
 
     /**
@@ -37,6 +40,8 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
+    @NotNull
+    @Contract("_, _ -> this")
     SetQuery setP(@NotNull Column<?> column, @Nullable Object to);
 
     /**
@@ -46,6 +51,8 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
+    @NotNull
+    @Contract("_, _ -> this")
     SetQuery set(@NotNull String column, @NotNull Object to);
 
     /**
@@ -58,6 +65,8 @@ public interface SetQuery extends Query {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
+    @Contract("_ -> this")
     SetQuery setP(@NotNull String column);
 
     /**
@@ -67,5 +76,7 @@ public interface SetQuery extends Query {
      * @param to     the value
      * @return this
      */
+    @NotNull
+    @Contract("_, _ -> this")
     SetQuery setP(@NotNull String column, @Nullable Object to);
 }

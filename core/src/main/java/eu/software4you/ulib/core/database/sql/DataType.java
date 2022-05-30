@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.database.sql;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Representation of all Sql data types.
@@ -158,13 +159,14 @@ public enum DataType {
     @Getter
     private final long maximumSize;
     @Getter
+    @NotNull
     private final Class<?> clazz;
 
-    DataType(Class<?> clazz, long maximumSize) {
+    DataType(@NotNull Class<?> clazz, long maximumSize) {
         this(clazz, -1, maximumSize);
     }
 
-    DataType(Class<?> clazz, int defaultSize, long maximumSize) {
+    DataType(@NotNull Class<?> clazz, int defaultSize, long maximumSize) {
         this.clazz = clazz;
         this.defaultSize = defaultSize;
         this.maximumSize = maximumSize;

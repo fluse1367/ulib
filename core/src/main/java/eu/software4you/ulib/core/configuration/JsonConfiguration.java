@@ -13,12 +13,12 @@ import java.util.Optional;
  */
 public interface JsonConfiguration extends ConfigurationReinit {
 
-
     /**
      * Creates a new empty JSON-Typed {@link Configuration}.
      *
      * @return the newly created sub
      */
+    @NotNull
     static JsonConfiguration newJson() {
         return JsonSerializer.getInstance().createNew();
     }

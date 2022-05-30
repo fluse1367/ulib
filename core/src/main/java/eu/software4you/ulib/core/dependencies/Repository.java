@@ -15,6 +15,7 @@ public interface Repository {
      *
      * @see <a href="https://maven.apache.org/repository/" target="_blank">https://maven.apache.org/repository/</a>
      */
+    @NotNull
     static Repository mavenCentral() {
         return RepositoryImpl.of("central");
     }
@@ -25,6 +26,7 @@ public interface Repository {
      *
      * @see <a href="https://jitpack.io" target="_blank">https://jitpack.io</a>
      */
+    @NotNull
     static Repository jitpack() {
         return RepositoryImpl.of("jitpack");
     }
@@ -34,6 +36,7 @@ public interface Repository {
      *
      * @see <a href="https://bintray.com/" target="_blank">https://bintray.com/</a>
      */
+    @NotNull
     static Repository jcenter() {
         return RepositoryImpl.of("jcenter");
     }
@@ -43,6 +46,7 @@ public interface Repository {
      *
      * @see <a href="https://oss.sonatype.org/" target="_blank">https://oss.sonatype.org/</a>
      */
+    @NotNull
     static Repository sonatype() {
         return RepositoryImpl.of("sonatype");
     }
@@ -73,11 +77,13 @@ public interface Repository {
     /**
      * @return the id of the repository
      */
+    @NotNull
     String getId();
 
     /**
      * @return the url of the repository
      */
+    @NotNull
     String getUrl();
 
 }

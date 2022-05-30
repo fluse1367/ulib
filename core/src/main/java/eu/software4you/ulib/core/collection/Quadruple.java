@@ -56,6 +56,7 @@ public final class Quadruple<T, U, V, W> extends Triple<T, U, V> {
     /**
      * @return the fourth element
      */
+    @Nullable
     public W getFourth() {
         return (W) get(3);
     }
@@ -68,7 +69,8 @@ public final class Quadruple<T, U, V, W> extends Triple<T, U, V> {
      * @throws UnsupportedOperationException if this pair is immutable
      * @throws IllegalArgumentException      if this pair does not allow empty element and the element is {@code null}
      */
-    public W setFourth(W w) {
+    @Nullable
+    public W setFourth(@Nullable W w) {
         return (W) set(3, w);
     }
 }

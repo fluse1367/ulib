@@ -29,6 +29,7 @@ public class HashUtil {
      * @return the computed hash
      * @see Conversions#toHex(byte[])
      */
+    @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
         return Expect.compute(() -> {
             var buff = new byte[1024];
@@ -48,6 +49,7 @@ public class HashUtil {
      * @return the computed hash
      * @see Conversions#toHex(byte[])
      */
+    @NotNull
     public static byte[] computeHash(byte[] bytes, @NotNull MessageDigest digest) {
         digest.update(bytes);
         return digest.digest();
@@ -61,6 +63,7 @@ public class HashUtil {
      * @see InputStream#read()
      * @see InputStream#close()
      */
+    @NotNull
     public static Expect<Long, IOException> computeCRC32(@NotNull InputStream in) {
         return Expect.compute(() -> {
             Checksum sum = new CRC32();

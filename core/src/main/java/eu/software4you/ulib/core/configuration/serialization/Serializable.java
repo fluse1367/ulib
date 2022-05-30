@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.configuration.serialization;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 
@@ -44,5 +46,6 @@ public interface Serializable<T extends DeSerializationFactory<?>> {
      *
      * @return map with serialized data
      */
+    @Nullable
     Map<String, Object> serialize();
 }

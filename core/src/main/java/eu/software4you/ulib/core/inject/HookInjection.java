@@ -174,10 +174,10 @@ public class HookInjection {
      */
     @NotNull
     @Contract("_, _ -> this")
-    public HookInjection addHook(Class<?> hook, Object invoke) {
+    public HookInjection addHook(@NotNull Class<?> hook, @Nullable Object invoke) {
         var mts = Arrays.stream(hook.getMethods())
                 .filter(method -> method.isAnnotationPresent(Hook.class))
-                .filter(method -> !Modifier.isStatic(method.getModifiers()))
+                .filter(method -> (invoke == null) == Modifier.isStatic(method.getModifiers()))
                 .toList();
 
         // not using #forEach in stream to preserve caller finding

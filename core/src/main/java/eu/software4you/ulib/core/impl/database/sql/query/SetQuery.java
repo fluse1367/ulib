@@ -17,24 +17,24 @@ public final class SetQuery extends Query implements eu.software4you.ulib.core.d
     }
 
     @Override
-    public SetQuery setP(@NotNull Column<?> column) {
+    public @NotNull SetQuery setP(@NotNull Column<?> column) {
         return setP(column.getName());
     }
 
     @Override
-    public SetQuery setP(@NotNull String column) {
+    public @NotNull SetQuery setP(@NotNull String column) {
         meta.skipParam();
         sets.add(new Pair<>(column, "?"));
         return this;
     }
 
     @Override
-    public SetQuery setP(@NotNull Column<?> column, Object to) {
+    public eu.software4you.ulib.core.database.sql.query.@NotNull SetQuery setP(@NotNull Column<?> column, Object to) {
         return setP(column.getName(), to);
     }
 
     @Override
-    public SetQuery setP(@NotNull String column, Object to) {
+    public eu.software4you.ulib.core.database.sql.query.@NotNull SetQuery setP(@NotNull String column, Object to) {
         meta.opObj(to);
         sets.add(new Pair<>(column, "?"));
         return this;
@@ -46,7 +46,7 @@ public final class SetQuery extends Query implements eu.software4you.ulib.core.d
     }
 
     @Override
-    public SetQuery set(@NotNull String column, @NotNull Object to) {
+    public @NotNull SetQuery set(@NotNull String column, @NotNull Object to) {
         sets.add(new Pair<>(column, to));
         return this;
     }
@@ -58,25 +58,25 @@ public final class SetQuery extends Query implements eu.software4you.ulib.core.d
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull Column<?> column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull Column<?> column) {
         append();
         return super.where(column);
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull String column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull String column) {
         append();
         return super.where(column);
     }
 
     @Override
-    public Where whereRaw(@NotNull String condition) {
+    public @NotNull Where whereRaw(@NotNull String condition) {
         append();
         return super.whereRaw(condition);
     }
 
     @Override
-    public PreparedStatement build() {
+    public @NotNull PreparedStatement build() {
         append();
         return super.build();
     }

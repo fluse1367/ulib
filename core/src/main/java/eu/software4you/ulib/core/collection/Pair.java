@@ -53,6 +53,7 @@ public sealed class Pair<T, U> extends FixedList<Object> permits Triple, Param {
     /**
      * @return the first element
      */
+    @Nullable
     public T getFirst() {
         return (T) get(0);
     }
@@ -65,13 +66,15 @@ public sealed class Pair<T, U> extends FixedList<Object> permits Triple, Param {
      * @throws UnsupportedOperationException if this pair is immutable
      * @throws IllegalArgumentException      if this pair does not allow empty element and the element is {@code null}
      */
-    public T setFirst(T t) {
+    @Nullable
+    public T setFirst(@Nullable T t) {
         return (T) set(0, t);
     }
 
     /**
      * @return the second element
      */
+    @Nullable
     public U getSecond() {
         return (U) get(1);
     }
@@ -84,12 +87,14 @@ public sealed class Pair<T, U> extends FixedList<Object> permits Triple, Param {
      * @throws UnsupportedOperationException if this pair is immutable
      * @throws IllegalArgumentException      if this pair does not allow empty element and the element is {@code null}
      */
-    public U setSecond(U u) {
+    @Nullable
+    public U setSecond(@Nullable U u) {
         return (U) set(1, u);
     }
 
     @Override
-    public Object set(int index, Object element) {
+    @Nullable
+    public Object set(int index, @Nullable Object element) {
         if (!Pair.class.isAssignableFrom(ReflectUtil.getCallerClass()))
             throw new UnsupportedOperationException("Direct write-access is not supported");
         return super.set(index, element);

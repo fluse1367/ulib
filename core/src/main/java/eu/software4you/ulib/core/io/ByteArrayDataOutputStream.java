@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.io;
 
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -19,7 +20,8 @@ public class ByteArrayDataOutputStream extends DataOutputStream {
     /**
      * @see ByteArrayOutputStream#writeTo(OutputStream)
      */
-    public Expect<Void, IOException> writeTo(OutputStream out) {
+    @NotNull
+    public Expect<Void, IOException> writeTo(@NotNull OutputStream out) {
         return Expect.compute(() -> bout.writeTo(out));
     }
 
@@ -40,6 +42,7 @@ public class ByteArrayDataOutputStream extends DataOutputStream {
     /**
      * @see ByteArrayOutputStream#toString()
      */
+    @NotNull
     public String toString() {
         return bout.toString();
     }
@@ -47,14 +50,16 @@ public class ByteArrayDataOutputStream extends DataOutputStream {
     /**
      * @see ByteArrayOutputStream#toString(String)
      */
-    public Expect<String, UnsupportedEncodingException> toString(String charsetName) {
+    @NotNull
+    public Expect<String, UnsupportedEncodingException> toString(@NotNull String charsetName) {
         return Expect.compute(() -> bout.toString(charsetName));
     }
 
     /**
      * @see ByteArrayOutputStream#toString(Charset)
      */
-    public String toString(Charset charset) {
+    @NotNull
+    public String toString(@NotNull Charset charset) {
         return bout.toString(charset);
     }
 }

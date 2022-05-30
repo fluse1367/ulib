@@ -1,8 +1,7 @@
 package eu.software4you.ulib.core.database.sql.query;
 
 import eu.software4you.ulib.core.database.sql.Column;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 /**
  * Represents a condition that is to be completed.
@@ -15,6 +14,8 @@ public interface Condition<R> {
      *
      * @return this
      */
+    @NotNull
+    @Contract("-> this")
     Condition<R> not();
 
     /**
@@ -23,7 +24,8 @@ public interface Condition<R> {
      * @param what the value to test for
      * @return R
      */
-    R isEqualTo(@NotNull Object what);
+    @NotNull
+    R isEqualTo(@Nullable Object what);
 
     /**
      * Tests for equality with a specific value using a parameterized sql query.
@@ -34,6 +36,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isEqualToP();
 
     /**
@@ -45,6 +48,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isEqualToP(@Nullable Object what);
 
     /**
@@ -53,6 +57,7 @@ public interface Condition<R> {
      * @param than another value
      * @return R
      */
+    @NotNull
     R isGreaterThan(@NotNull Object than);
 
     /**
@@ -64,6 +69,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isGreaterThanP();
 
     /**
@@ -75,7 +81,8 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
-    R isGreaterThanP(@Nullable Object than);
+    @NotNull
+    R isGreaterThanP(@NotNull Object than);
 
     /**
      * Tests if a value is greater than or equals another value.
@@ -83,6 +90,7 @@ public interface Condition<R> {
      * @param than another value
      * @return R
      */
+    @NotNull
     R isGreaterOrEquals(@NotNull Object than);
 
     /**
@@ -94,6 +102,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isGreaterOrEqualsP();
 
     /**
@@ -105,7 +114,8 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
-    R isGreaterOrEqualsP(@Nullable Object than);
+    @NotNull
+    R isGreaterOrEqualsP(@NotNull Object than);
 
     /**
      * Tests if a value is less than another value.
@@ -113,6 +123,7 @@ public interface Condition<R> {
      * @param than another value
      * @return R
      */
+    @NotNull
     R isLessThan(@NotNull Object than);
 
     /**
@@ -124,6 +135,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isLessThanP();
 
     /**
@@ -135,7 +147,8 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
-    R isLessThanP(@Nullable Object than);
+    @NotNull
+    R isLessThanP(@NotNull Object than);
 
     /**
      * Tests if a value is less than or equals another value.
@@ -143,6 +156,7 @@ public interface Condition<R> {
      * @param than another value
      * @return R
      */
+    @NotNull
     R isLessOrEquals(@NotNull Object than);
 
     /**
@@ -154,6 +168,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isLessOrEqualsP();
 
     /**
@@ -165,7 +180,8 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
-    R isLessOrEqualsP(@Nullable Object than);
+    @NotNull
+    R isLessOrEqualsP(@NotNull Object than);
 
     /**
      * Tests if a value is between two other values.
@@ -174,6 +190,7 @@ public interface Condition<R> {
      * @param b the second value
      * @return R
      */
+    @NotNull
     R isBetween(@NotNull Object a, @NotNull Object b);
 
     /**
@@ -185,6 +202,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isBetweenP();
 
     /**
@@ -197,6 +215,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isBetweenP(@NotNull Object a, @NotNull Object b);
 
     /**
@@ -205,7 +224,8 @@ public interface Condition<R> {
      * @param pattern the pattern
      * @return R
      */
-    R isLike(String pattern);
+    @NotNull
+    R isLike(@NotNull String pattern);
 
     /**
      * Tests if a value matches a specific pattern using a parameterized sql query.
@@ -216,6 +236,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isLikeP();
 
     /**
@@ -227,6 +248,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isLikeP(@NotNull String pattern);
 
     /**
@@ -239,7 +261,8 @@ public interface Condition<R> {
      * @see Where#or(Column)
      * @see Where#orRaw(String)
      */
-    R isIn(@NotNull Object val, Object... vals);
+    @NotNull
+    R isIn(@NotNull Object val, @NotNull Object... vals);
 
     /**
      * Tests if a value is within a pool of other values using a parameterized sql query.
@@ -254,6 +277,7 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
+    @NotNull
     R isInP(int amount);
 
     /**
@@ -269,5 +293,6 @@ public interface Condition<R> {
      * @see QueryEndpoint#query(Object...)
      * @see QueryEndpoint#update(Object...)
      */
-    R isInP(@NotNull Object val, Object... vals);
+    @NotNull
+    R isInP(@NotNull Object val, @NotNull Object... vals);
 }

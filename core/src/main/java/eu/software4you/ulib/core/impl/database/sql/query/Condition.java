@@ -37,121 +37,121 @@ final class Condition<R> implements eu.software4you.ulib.core.database.sql.query
     }
 
     @Override
-    public Condition<R> not() {
+    public @NotNull Condition<R> not() {
         this.not = true;
         return this;
     }
 
     @Override
-    public R isEqualToP() {
+    public @NotNull R isEqualToP() {
         return opP("=");
     }
 
     @Override
-    public R isEqualToP(Object what) {
+    public @NotNull R isEqualToP(Object what) {
         return opP("=", what);
     }
 
     @Override
-    public R isEqualTo(@NotNull Object what) {
+    public @NotNull R isEqualTo(@NotNull Object what) {
         return op("=", what);
     }
 
     @Override
-    public R isGreaterThan(@NotNull Object than) {
+    public @NotNull R isGreaterThan(@NotNull Object than) {
         return op(">", than);
     }
 
     @Override
-    public R isGreaterThanP() {
+    public @NotNull R isGreaterThanP() {
         return opP(">");
     }
 
     @Override
-    public R isGreaterThanP(Object than) {
+    public @NotNull R isGreaterThanP(@NotNull Object than) {
         return opP(">", than);
     }
 
     @Override
-    public R isGreaterOrEquals(@NotNull Object than) {
+    public @NotNull R isGreaterOrEquals(@NotNull Object than) {
         return op(">=", than);
     }
 
     @Override
-    public R isGreaterOrEqualsP() {
+    public @NotNull R isGreaterOrEqualsP() {
         return opP(">=");
     }
 
     @Override
-    public R isGreaterOrEqualsP(Object than) {
+    public @NotNull R isGreaterOrEqualsP(Object than) {
         return opP(">=", than);
     }
 
     @Override
-    public R isLessThan(@NotNull Object than) {
+    public @NotNull R isLessThan(@NotNull Object than) {
         return op("<", than);
     }
 
     @Override
-    public R isLessThanP() {
+    public @NotNull R isLessThanP() {
         return opP("<");
     }
 
     @Override
-    public R isLessThanP(Object than) {
+    public @NotNull R isLessThanP(Object than) {
         return opP("<", than);
     }
 
     @Override
-    public R isLessOrEquals(@NotNull Object than) {
+    public @NotNull R isLessOrEquals(@NotNull Object than) {
         return op("<=", than);
     }
 
     @Override
-    public R isLessOrEqualsP() {
+    public @NotNull R isLessOrEqualsP() {
         return opP("<=");
     }
 
     @Override
-    public R isLessOrEqualsP(Object than) {
+    public @NotNull R isLessOrEqualsP(Object than) {
         return opP("<=", than);
     }
 
     @Override
-    public R isBetween(@NotNull Object a, @NotNull Object b) {
+    public @NotNull R isBetween(@NotNull Object a, @NotNull Object b) {
         return op("BETWEEN", String.format("%s AND %s", a, b));
     }
 
     @Override
-    public R isBetweenP() {
+    public @NotNull R isBetweenP() {
         return op("BETWEEN", "? AND ?");
     }
 
     @Override
-    public R isBetweenP(@NotNull Object a, @NotNull Object b) {
+    public @NotNull R isBetweenP(@NotNull Object a, @NotNull Object b) {
         meta.opObj(a);
         meta.opObj(b);
         return isBetweenP();
     }
 
     @Override
-    public R isLike(String pattern) {
+    public @NotNull R isLike(@NotNull String pattern) {
         return op("LIKE", pattern);
     }
 
     @Override
-    public R isLikeP() {
+    public @NotNull R isLikeP() {
         return opP("LIKE");
     }
 
     @Override
-    public R isLikeP(@NotNull String pattern) {
+    public @NotNull R isLikeP(@NotNull String pattern) {
         meta.op((i, st) -> Metadata.setString(st, i, pattern));
         return op("LIKE", "?");
     }
 
     @Override
-    public R isIn(@NotNull Object val, Object... vals) {
+    public @NotNull R isIn(@NotNull Object val, Object... vals) {
         StringJoiner sj = new StringJoiner(", ", "(", ")");
         sj.setEmptyValue("");
         for (Object v : concat(val, vals)) {
@@ -161,7 +161,7 @@ final class Condition<R> implements eu.software4you.ulib.core.database.sql.query
     }
 
     @Override
-    public R isInP(int amount) {
+    public @NotNull R isInP(int amount) {
         StringJoiner sj = new StringJoiner(", ", "(", ")");
         sj.setEmptyValue("");
         for (int i = 0; i < amount; i++) {
@@ -171,7 +171,7 @@ final class Condition<R> implements eu.software4you.ulib.core.database.sql.query
     }
 
     @Override
-    public R isInP(@NotNull Object val, Object... vals) {
+    public @NotNull R isInP(@NotNull Object val, Object... vals) {
         for (Object v : concat(val, vals)) {
             meta.opObj(v);
         }

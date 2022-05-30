@@ -3,6 +3,7 @@ package eu.software4you.ulib.core.impl.configuration.json;
 import eu.software4you.ulib.core.configuration.JsonConfiguration;
 import eu.software4you.ulib.core.impl.configuration.ConfigurationBase;
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
     // IO
 
     @Override
-    public Expect<Void, IOException> reinit(Reader reader) {
+    public @NotNull Expect<Void, IOException> reinit(@NotNull Reader reader) {
         return Expect.compute(() -> {
             clear();
             var opCaught = Expect.compute(() -> serializer.deserialize(reader, this)).getCaught();
@@ -41,7 +42,7 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
     }
 
     @Override
-    public Expect<Void, IOException> dump(Writer writer) {
+    public @NotNull Expect<Void, IOException> dump(@NotNull Writer writer) {
         return Expect.compute(() -> serializer.serialize(writer, this));
     }
 

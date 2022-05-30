@@ -1,15 +1,17 @@
 package eu.software4you.ulib.core.io;
 
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.UUID;
 
 public class MinecraftProtocolOutputStream extends DataOutputStream {
-    public MinecraftProtocolOutputStream(OutputStream out) {
+    public MinecraftProtocolOutputStream(@NotNull OutputStream out) {
         super(out);
     }
 
+    @NotNull
     public Expect<Void, IOException> writeVarInt(final int value) {
         return Expect.compute(() -> {
             int val = value;
@@ -24,6 +26,7 @@ public class MinecraftProtocolOutputStream extends DataOutputStream {
         });
     }
 
+    @NotNull
     public Expect<Void, IOException> writeVarLong(final long value) {
         return Expect.compute(() -> {
             long val = value;
@@ -38,7 +41,8 @@ public class MinecraftProtocolOutputStream extends DataOutputStream {
         });
     }
 
-    public Expect<Void, IOException> writeString(String string) {
+    @NotNull
+    public Expect<Void, IOException> writeString(@NotNull String string) {
         return Expect.compute(() -> {
             byte[] buf = string.getBytes();
             writeVarInt(buf.length).rethrow(IOException.class);
@@ -46,14 +50,15 @@ public class MinecraftProtocolOutputStream extends DataOutputStream {
         });
     }
 
-    public Expect<Void, IOException> writeUUID(UUID uuid) {
+    @NotNull
+    public Expect<Void, IOException> writeUUID(@NotNull UUID uuid) {
         return Expect.compute(() -> {
             writeLong(uuid.getMostSignificantBits());
             writeLong(uuid.getLeastSignificantBits());
         });
     }
 
-
+    @NotNull
     public Expect<Void, IOException> writeBlockPosition(int x, int y, int z) {
         return Expect.compute(() ->
                 writeLong(((x & 0x3FFFFFF) << 38) | ((z & 0x3FFFFFF) << 12) | (y & 0xFFF)));

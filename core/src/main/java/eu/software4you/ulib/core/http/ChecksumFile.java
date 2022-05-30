@@ -16,11 +16,16 @@ import java.util.function.Consumer;
 /**
  * File with validity checks.
  */
+// TODO: replace File with Path
 @Getter
 public class ChecksumFile {
+    @NotNull
     protected final String algorithm;
+    @Nullable
     protected final String checksum;
+    @NotNull
     protected final File file;
+    @NotNull
     protected final File checksumFile;
     @Getter(AccessLevel.NONE)
     protected final Consumer<File> generate;

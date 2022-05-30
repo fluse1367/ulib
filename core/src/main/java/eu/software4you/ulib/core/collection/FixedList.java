@@ -3,7 +3,7 @@ package eu.software4you.ulib.core.collection;
 import eu.software4you.ulib.core.util.Conditions;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 
@@ -65,6 +65,7 @@ public class FixedList<E> extends AbstractList<E> {
     }
 
     @Override
+    @Nullable
     public E get(int index) {
         Objects.checkIndex(index, size);
 
@@ -77,7 +78,8 @@ public class FixedList<E> extends AbstractList<E> {
     }
 
     @Override
-    public E set(int index, E element) {
+    @Nullable
+    public E set(int index, @Nullable E element) {
         ensureMutability(index, element);
 
         @SuppressWarnings("unchecked")
@@ -92,17 +94,19 @@ public class FixedList<E> extends AbstractList<E> {
     }
 
     @Override
-    public boolean add(E e) {
+    public boolean add(@Nullable E e) {
         set(size, e);
         return true;
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends E> c) {
+    @Contract("_, _ -> fail")
+    public boolean addAll(int index, @Nullable Collection<? extends E> c) {
         throw new UnsupportedOperationException(); // no adding at arbitrary indices
     }
 
     @Override
+    @Nullable
     public E remove(int index) {
         var e = set(index, null);
         size--;

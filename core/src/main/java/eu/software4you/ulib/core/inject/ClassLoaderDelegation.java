@@ -24,23 +24,23 @@ public final class ClassLoaderDelegation {
     /**
      * Flag for enabling delegation of {@link ClassLoader#loadClass(String)}.
      */
-    public static int FLAG_DELEGATE_LOAD_CLASS = 0x01;
+    public static final int FLAG_DELEGATE_LOAD_CLASS = 0x01;
     /**
      * Flag for enabling delegation of {@link ClassLoader#findClass(String)}.
      */
-    public static int FLAG_DELEGATE_FIND_CLASS = 0x02;
+    public static final int FLAG_DELEGATE_FIND_CLASS = 0x02;
     /**
      * Flag for enabling delegation of {@link ClassLoader#findClass(String, String)}.
      */
-    public static int FLAG_DELEGATE_FIND_MODULE_CLASS = 0x04;
+    public static final int FLAG_DELEGATE_FIND_MODULE_CLASS = 0x04;
     /**
      * Flag for enabling delegation of {@link ClassLoader#findResource(String)}.
      */
-    public static int FLAG_DELEGATE_FIND_RESOURCE = 0x08;
+    public static final int FLAG_DELEGATE_FIND_RESOURCE = 0x08;
     /**
      * Flag for enabling delegation of {@link ClassLoader#findResource(String, String)}.
      */
-    public static int FLAG_DELEGATE_FIND_MODULE_RESOURCE = 0x10;
+    public static final int FLAG_DELEGATE_FIND_MODULE_RESOURCE = 0x10;
 
     // default delegation does nothing
     private static final BiParamFunc<String, Boolean, Class<?>, Exception> DEFAULT_DELEGATE_LOAD_CLASS = (name, resolve) -> null;
@@ -63,9 +63,9 @@ public final class ClassLoaderDelegation {
      * @param delegateFindClass       see {@link ClassLoader#findClass(String)}
      * @param delegateFindModuleClass see {@link ClassLoader#findClass(String, String)}
      */
-    public ClassLoaderDelegation(BiParamFunc<String, Boolean, Class<?>, Exception> delegateLoadClass,
-                                 ParamFunc<String, Class<?>, Exception> delegateFindClass,
-                                 BiParamFunc<String, String, Class<?>, Exception> delegateFindModuleClass) {
+    public ClassLoaderDelegation(@NotNull BiParamFunc<String, Boolean, Class<?>, Exception> delegateLoadClass,
+                                 @NotNull ParamFunc<String, Class<?>, Exception> delegateFindClass,
+                                 @NotNull BiParamFunc<String, String, Class<?>, Exception> delegateFindModuleClass) {
         this(delegateLoadClass, delegateFindClass, delegateFindModuleClass,
                 DEFAULT_DELEGATE_FIND_MODULE_RESOURCE, DEFAULT_DELEGATE_FIND_RESOURCE);
     }
@@ -79,11 +79,11 @@ public final class ClassLoaderDelegation {
      * @param delegateFindModuleResource see {@link ClassLoader#findResource(String, String)}
      * @param delegateFindResource       see {@link ClassLoader#findResource(String)}
      */
-    public ClassLoaderDelegation(BiParamFunc<String, Boolean, Class<?>, Exception> delegateLoadClass,
-                                 ParamFunc<String, Class<?>, Exception> delegateFindClass,
-                                 BiParamFunc<String, String, Class<?>, Exception> delegateFindModuleClass,
-                                 BiParamFunc<String, String, URL, IOException> delegateFindModuleResource,
-                                 ParamFunc<String, URL, IOException> delegateFindResource) {
+    public ClassLoaderDelegation(@NotNull BiParamFunc<String, Boolean, Class<?>, Exception> delegateLoadClass,
+                                 @NotNull ParamFunc<String, Class<?>, Exception> delegateFindClass,
+                                 @NotNull BiParamFunc<String, String, Class<?>, Exception> delegateFindModuleClass,
+                                 @NotNull BiParamFunc<String, String, URL, IOException> delegateFindModuleResource,
+                                 @NotNull ParamFunc<String, URL, IOException> delegateFindResource) {
         this.target = null;
         this.delegateLoadClass = delegateLoadClass;
         this.delegateFindClass = delegateFindClass;
@@ -98,7 +98,7 @@ public final class ClassLoaderDelegation {
      *
      * @param delegateTarget the class loader the requests should be forwarded to
      */
-    public ClassLoaderDelegation(ClassLoader delegateTarget) {
+    public ClassLoaderDelegation(@NotNull ClassLoader delegateTarget) {
         this(delegateTarget,
                 FLAG_DELEGATE_LOAD_CLASS
                 | FLAG_DELEGATE_FIND_CLASS
@@ -160,31 +160,32 @@ public final class ClassLoaderDelegation {
     }
 
     @Nullable
-    public Class<?> loadClass(String name, boolean resolve) {
-        return Expect.compute(delegateLoadClass, name, resolve).getValue();
+    public Class<?> loadClass(@NotNull String name, boolean resolve) {
+        return Expect.compute(delegateLoadClass, name, resolve).orElse(null);
     }
 
     @Nullable
-    public Class<?> findClass(String name) {
-        return Expect.compute(delegateFindClass, name).getValue();
+    public Class<?> findClass(@NotNull String name) {
+        return Expect.compute(delegateFindClass, name).orElse(null);
     }
 
     @Nullable
-    public Class<?> findClass(String module, String name) {
-        return Expect.compute(delegateFindModuleClass, module, name).getValue();
+    public Class<?> findClass(@NotNull String module, @NotNull String name) {
+        return Expect.compute(delegateFindModuleClass, module, name).orElse(null);
     }
 
     @Nullable
-    public URL findResource(String module, String name) {
-        return Expect.compute(delegateFindModuleResource, module, name).getValue();
+    public URL findResource(@NotNull String module, @NotNull String name) {
+        return Expect.compute(delegateFindModuleResource, module, name).orElse(null);
     }
 
     @Nullable
-    public URL findResource(String name) {
-        return Expect.compute(delegateFindResource, name).getValue();
+    public URL findResource(@NotNull String name) {
+        return Expect.compute(delegateFindResource, name).orElse(null);
     }
 
     @Override
+    @NotNull
     public String toString() {
         return target != null ?
                 "ClassLoaderDelegation[target=%s,resource-delegation:%s]".formatted(target,

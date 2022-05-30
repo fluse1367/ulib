@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.inject;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 import java.lang.annotation.*;
@@ -14,6 +15,7 @@ public @interface Spec {
     /**
      * What to hook.
      */
+    @NotNull
     HookPoint point() default HookPoint.HEAD;
 
     /**
@@ -38,5 +40,6 @@ public @interface Spec {
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html" target="_blank">JNI Types</a>
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/types.html#type_signatures" target="_blank">JNI Type Signatures</a>
      */
+    @NotNull
     String target() default "";
 }

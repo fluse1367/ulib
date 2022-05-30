@@ -1,5 +1,7 @@
 package eu.software4you.ulib.core.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -12,7 +14,8 @@ public class ArrayUtil {
      * @param <T> the array type
      * @return the concatenated result
      */
-    public static <T> T[] concat(T t, T[] arr) {
+    @NotNull
+    public static <T> T[] concat(@NotNull T t, @NotNull T[] arr) {
         @SuppressWarnings("unchecked")
         T[] array = (T[]) Array.newInstance(arr.getClass().getComponentType(), arr.length + 1);
         array[0] = t;
@@ -28,7 +31,8 @@ public class ArrayUtil {
      * @param <T> the array type
      * @return the concatenated result
      */
-    public static <T> T[] concat(T[] arr, T t) {
+    @NotNull
+    public static <T> T[] concat(@NotNull T[] arr, @NotNull T t) {
         T[] array = Arrays.copyOf(arr, arr.length + 1);
         array[arr.length] = t;
         return array;
@@ -42,7 +46,8 @@ public class ArrayUtil {
      * @param <T> the array type
      * @return the concatenated result
      */
-    public static <T> T[] concat(T[] a, T[] b) {
+    @NotNull
+    public static <T> T[] concat(@NotNull T[] a, @NotNull T[] b) {
         T[] array = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, array, a.length, b.length);
         return array;

@@ -82,5 +82,5 @@ public interface Callback<T> {
      *
      * @param t the object to throw
      */
-    void throwNow(Throwable t);
+    void throwNow(@NotNull Throwable t);
 }

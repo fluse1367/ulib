@@ -90,12 +90,12 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     }
 
     @Override
-    public Expect<Void, IOException> reinit(Reader reader) {
+    public @NotNull Expect<Void, IOException> reinit(@NotNull Reader reader) {
         return Expect.compute(() -> serializer.deserialize(reader, this));
     }
 
     @Override
-    public Expect<Void, IOException> dump(Writer writer) {
+    public @NotNull Expect<Void, IOException> dump(@NotNull Writer writer) {
         return Expect.compute(() -> serializer.serialize(this, writer));
     }
 

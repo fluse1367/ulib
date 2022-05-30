@@ -16,6 +16,7 @@ public interface YamlConfiguration extends ConfigurationReinit {
      *
      * @return the newly created sub
      */
+    @NotNull
     static YamlConfiguration newYaml() {
         return YamlSerializer.getInstance().createNew();
     }
@@ -74,7 +75,7 @@ public interface YamlConfiguration extends ConfigurationReinit {
      * @param lines the comment lines to set
      * @throws IllegalArgumentException if path is not found
      */
-    void setComments(@NotNull String path, String... lines) throws IllegalArgumentException;
+    void setComments(@NotNull String path, @NotNull String... lines) throws IllegalArgumentException;
 
     /**
      * Sets the comments of a specific key.

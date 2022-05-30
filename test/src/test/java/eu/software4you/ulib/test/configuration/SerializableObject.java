@@ -5,6 +5,7 @@ import eu.software4you.ulib.core.configuration.serialization.Serializable;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Conversions;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 public class SerializableObject implements Serializable<SerializableObject.Factory> {
     public static class Factory implements DeSerializationFactory<SerializableObject> {
         @Override
-        public SerializableObject deserialize(Map<String, Object> serialized) {
+        public SerializableObject deserialize(@NotNull Map<String, Object> serialized) {
             return new SerializableObject(
                     Conversions.tryInt(serialized.get("someInt")).orElseThrow(),
                     (String) serialized.get("someString")

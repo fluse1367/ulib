@@ -13,6 +13,7 @@ public interface Where extends QueryEndpoint {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> and(@NotNull Column<?> column);
 
     /**
@@ -21,6 +22,7 @@ public interface Where extends QueryEndpoint {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> and(@NotNull String column);
 
     /**
@@ -29,6 +31,7 @@ public interface Where extends QueryEndpoint {
      * @param condition the whole condition string, e.g. "column_1 = 0"
      * @return this
      */
+    @NotNull
     Where andRaw(@NotNull String condition);
 
     /**
@@ -37,6 +40,7 @@ public interface Where extends QueryEndpoint {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> or(@NotNull Column<?> column);
 
     /**
@@ -45,6 +49,7 @@ public interface Where extends QueryEndpoint {
      * @param column the column
      * @return the condition builder to complete the condition
      */
+    @NotNull
     Condition<Where> or(@NotNull String column);
 
     /**
@@ -53,5 +58,6 @@ public interface Where extends QueryEndpoint {
      * @param condition the whole condition string, e.g. "column_1 = 0"
      * @return this
      */
+    @NotNull
     Where orRaw(@NotNull String condition);
 }

@@ -2,20 +2,24 @@ package eu.software4you.ulib.core.database.sql;
 
 import eu.software4you.ulib.core.impl.database.sql.ColBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A builder for {@link Column}s.
  */
 public interface ColumnBuilder<T> {
-    static <T> ColumnBuilder<T> of(Class<T> t, String name, DataType dataType) {
+    @NotNull
+    static <T> ColumnBuilder<T> of(@Nullable Class<T> t, @NotNull String name, @NotNull DataType dataType) {
         return new ColBuilder<>(t, name, dataType);
     }
 
-    static ColumnBuilder<Object> of(String name, DataType dataType) {
+    @NotNull
+    static ColumnBuilder<Object> of(@NotNull String name, @NotNull DataType dataType) {
         return of(null, name, dataType);
     }
 
-    static ColumnBuilder<?> of(DataType dataType, String name) {
+    @NotNull
+    static ColumnBuilder<?> of(@NotNull DataType dataType, @NotNull String name) {
         return of(dataType.getClazz(), name, dataType);
     }
 
@@ -39,7 +43,7 @@ public interface ColumnBuilder<T> {
      * @param index the index attribute
      * @return this
      */
-    @NotNull ColumnBuilder<T> index(Column.Index index);
+    @NotNull ColumnBuilder<T> index(@Nullable Column.Index index);
 
     /**
      * Sets this column as {@code PRIMARY} in a table.
@@ -97,7 +101,7 @@ public interface ColumnBuilder<T> {
      * @param defaultValue the value
      * @return this
      */
-    @NotNull ColumnBuilder<T> def(T defaultValue);
+    @NotNull ColumnBuilder<T> def(@Nullable T defaultValue);
 
     /**
      * Adds a object to the list of accepted values.
@@ -105,7 +109,7 @@ public interface ColumnBuilder<T> {
      * @param val the value
      * @return this
      */
-    @NotNull ColumnBuilder<T> accept(T val);
+    @NotNull ColumnBuilder<T> accept(@NotNull T val);
 
     /**
      * Adds one or more objects to the list of accepted values.
@@ -114,7 +118,8 @@ public interface ColumnBuilder<T> {
      * @param vals the other values
      * @return this
      */
-    @NotNull ColumnBuilder<T> accept(T val, T... vals);
+    @SuppressWarnings("unchecked")
+    @NotNull ColumnBuilder<T> accept(@NotNull T val, @NotNull T... vals);
 
     /**
      * Builds the column.

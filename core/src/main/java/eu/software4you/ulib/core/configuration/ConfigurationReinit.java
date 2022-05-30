@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.configuration;
 
 import eu.software4you.ulib.core.util.Expect;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 
@@ -13,14 +14,16 @@ public interface ConfigurationReinit extends Configuration {
      *
      * @param reader the data
      */
-    Expect<Void, IOException> reinit(Reader reader);
+    @NotNull
+    Expect<Void, IOException> reinit(@NotNull Reader reader);
 
     /**
      * Writes this sub to a writer.
      *
      * @param writer the writer to write to
      */
-    Expect<Void, IOException> dump(Writer writer);
+    @NotNull
+    Expect<Void, IOException> dump(@NotNull Writer writer);
 
     /**
      * Clears all data from this sub.

@@ -53,6 +53,7 @@ public sealed class Triple<T, U, V> extends Pair<T, U> permits Quadruple {
     /**
      * @return the third element
      */
+    @Nullable
     public V getThird() {
         return (V) get(2);
     }
@@ -65,7 +66,8 @@ public sealed class Triple<T, U, V> extends Pair<T, U> permits Quadruple {
      * @throws UnsupportedOperationException if this pair is immutable
      * @throws IllegalArgumentException      if this pair does not allow empty element and the element is {@code null}
      */
-    public V setThird(V v) {
+    @Nullable
+    public V setThird(@Nullable V v) {
         return (V) set(2, v);
     }
 }

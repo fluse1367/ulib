@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.database.exception;
 
 import eu.software4you.ulib.core.database.Database;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Superclass for all {@link Database} related exceptions.
@@ -8,26 +9,26 @@ import eu.software4you.ulib.core.database.Database;
 public class DatabaseException extends RuntimeException {
     private final Database database;
 
-    public DatabaseException(Database database) {
+    public DatabaseException(@NotNull Database database) {
         this.database = database;
     }
 
-    public DatabaseException(String message, Database database) {
+    public DatabaseException(@NotNull String message, @NotNull Database database) {
         super(message);
         this.database = database;
     }
 
-    public DatabaseException(String message, Throwable cause, Database database) {
+    public DatabaseException(@NotNull String message, @NotNull Throwable cause, @NotNull Database database) {
         super(message, cause);
         this.database = database;
     }
 
-    public DatabaseException(Throwable cause, Database database) {
+    public DatabaseException(@NotNull Throwable cause, @NotNull Database database) {
         super(cause);
         this.database = database;
     }
 
-    public DatabaseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, Database database) {
+    public DatabaseException(@NotNull String message, @NotNull Throwable cause, boolean enableSuppression, boolean writableStackTrace, @NotNull Database database) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.database = database;
     }

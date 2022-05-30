@@ -88,13 +88,14 @@ public class ColBuilder<T> implements ColumnBuilder<T> {
     }
 
     @NotNull
-    public ColumnBuilder<T> accept(T val) {
+    public ColumnBuilder<T> accept(@NotNull T val) {
         accept.add(val);
         return this;
     }
 
+    @SafeVarargs
     @NotNull
-    public ColumnBuilder<T> accept(T val, T... vals) {
+    public final ColumnBuilder<T> accept(@NotNull T val, T @NotNull ... vals) {
         accept(val);
         accept.addAll(Arrays.asList(vals));
         return this;

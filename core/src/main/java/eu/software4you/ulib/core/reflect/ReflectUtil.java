@@ -28,6 +28,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static Expect<Object, ReflectiveOperationException> icall(@NotNull Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(invoke.getClass(), invoke, call, params);
     }
@@ -46,6 +47,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static <R> Expect<R, ReflectiveOperationException> icall(@NotNull Class<R> returnType, @NotNull Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(returnType, invoke.getClass(), invoke, call, params);
     }
@@ -63,6 +65,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static Expect<Object, ReflectiveOperationException> scall(@NotNull Class<?> invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(invoke, null, call, params);
     }
@@ -81,6 +84,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static <R> Expect<R, ReflectiveOperationException> scall(@NotNull Class<R> returnType, @NotNull Class<?> invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(returnType, invoke, null, call, params);
     }
@@ -99,6 +103,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static Expect<Object, ReflectiveOperationException> call(@NotNull Class<?> entry, @Nullable Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(entry, invoke, ReflectSupport.buildFramePath(call, params));
     }
@@ -118,6 +123,7 @@ public class ReflectUtil {
      * @see #call(Class, Object, CallFrame...)
      */
     @SafeVarargs
+    @NotNull
     public static <R> Expect<R, ReflectiveOperationException> call(@NotNull Class<R> returnType, @NotNull Class<?> entry, @Nullable Object invoke, @NotNull String call, @Nullable List<Param<?>>... params) {
         return call(returnType, entry, invoke, ReflectSupport.buildFramePath(call, params));
     }
@@ -262,6 +268,7 @@ public class ReflectUtil {
      * @return the calling {@link Class}
      * @see #getCallerClass(int)
      */
+    @NotNull
     public static Class<?> getCallerClass() {
         return getCallerClass(2);
     }
@@ -274,6 +281,7 @@ public class ReflectUtil {
      *              and 0 the {@link Class} this method is being called from
      * @return the calling {@link Class}
      */
+    @NotNull
     public static Class<?> getCallerClass(int depth) {
         return getCaller(depth + 1).getDeclaringClass();
     }
@@ -285,6 +293,7 @@ public class ReflectUtil {
      *
      * @return the calling {@link StackFrame frame}
      */
+    @NotNull
     public static StackFrame getCaller() {
         return getCaller(2);
     }
@@ -296,6 +305,7 @@ public class ReflectUtil {
      * @param depth the index of the calling stack trace element
      * @return the calling {@link StackFrame frame}
      */
+    @NotNull
     public static StackFrame getCaller(int depth) {
         return getCallerStackAsStream()
                 .skip(depth)
@@ -309,6 +319,7 @@ public class ReflectUtil {
      *
      * @return the stack array
      */
+    @NotNull
     public static StackFrame[] getCallerStack() {
         return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
                 .walk(st -> st.skip(2) // skip this
@@ -321,6 +332,7 @@ public class ReflectUtil {
      *
      * @return the stack array
      */
+    @NotNull
     public static Stream<StackFrame> getCallerStackAsStream() {
         return Arrays.stream(getCallerStack())
                 .skip(1) // skip this
@@ -349,7 +361,7 @@ public class ReflectUtil {
      * @return a {@link Expect} object wrapping the operation result
      */
     @NotNull
-    public static Expect<Class<?>, ClassNotFoundException> forName(@NotNull String name, boolean init, ClassLoader loader) {
+    public static Expect<Class<?>, ClassNotFoundException> forName(@NotNull String name, boolean init, @NotNull ClassLoader loader) {
         return Expect.compute(Class::forName, name, init, loader);
     }
 

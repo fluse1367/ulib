@@ -98,15 +98,18 @@ public final class Expect<T, X extends Exception> {
         }
     }
 
-    public static <T, R, X extends Exception> Expect<R, X> compute(@NotNull ParamFunc<T, R, X> func, T t) {
+    @NotNull
+    public static <T, R, X extends Exception> Expect<R, X> compute(@NotNull ParamFunc<T, R, X> func, @Nullable T t) {
         return compute(() -> func.execute(t));
     }
 
-    public static <T, U, R, X extends Exception> Expect<R, X> compute(@NotNull BiParamFunc<T, U, R, X> func, T t, U u) {
+    @NotNull
+    public static <T, U, R, X extends Exception> Expect<R, X> compute(@NotNull BiParamFunc<T, U, R, X> func, @Nullable T t, @Nullable U u) {
         return compute(() -> func.execute(t, u));
     }
 
-    public static <T, U, V, R, X extends Exception> Expect<R, X> compute(@NotNull TriParamFunc<T, U, V, R, X> func, T t, U u, V v) {
+    @NotNull
+    public static <T, U, V, R, X extends Exception> Expect<R, X> compute(@NotNull TriParamFunc<T, U, V, R, X> func, @Nullable T t, @Nullable U u, @Nullable V v) {
         return compute(() -> func.execute(t, u, v));
     }
 

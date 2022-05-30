@@ -274,7 +274,7 @@ public interface Configuration {
      * @see String#format(String, Object...)
      */
     @NotNull
-    default Optional<String> string(@NotNull String path, Object... replacements) {
+    default Optional<String> string(@NotNull String path, @NotNull Object... replacements) {
         return get(String.class, path)
                 .map(str -> str.formatted(replacements));
     }
@@ -290,7 +290,7 @@ public interface Configuration {
      * @see String#format(String, Object...)
      */
     @NotNull
-    default Optional<List<String>> stringList(@NotNull String path, Object... replacements) {
+    default Optional<List<String>> stringList(@NotNull String path, @NotNull Object... replacements) {
         return list(String.class, path)
                 .map(list -> {
                     var res = new ArrayList<String>(list.size());

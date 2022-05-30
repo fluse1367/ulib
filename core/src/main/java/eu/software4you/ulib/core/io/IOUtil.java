@@ -23,6 +23,7 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
+    @NotNull
     public static Expect<Void, IOException> write(@NotNull InputStream in, @NotNull OutputStream out) {
         return Expect.compute(() -> {
             byte[] buff = new byte[1024];
@@ -45,6 +46,7 @@ public class IOUtil {
      * @see OutputStream#flush()
      * @see OutputStream#close()
      */
+    @NotNull
     public static Expect<Void, IOException> write(@NotNull Reader in, @NotNull Writer out) {
         return Expect.compute(() -> {
             char[] buff = new char[1024];
@@ -63,6 +65,7 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
+    @NotNull
     public static Expect<byte[], IOException> read(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
@@ -79,6 +82,7 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
+    @NotNull
     public static Expect<char[], IOException> read(@NotNull Reader reader) {
         return Expect.compute(() -> {
             try (var cout = new CharArrayWriter()) {
@@ -95,6 +99,7 @@ public class IOUtil {
      * @return the bytes read
      * @see #write(InputStream, OutputStream)
      */
+    @NotNull
     public static Expect<String, IOException> toString(@NotNull InputStream in) {
         return Expect.compute(() -> {
             try (var bout = new ByteArrayOutputStream()) {
@@ -114,7 +119,8 @@ public class IOUtil {
      * @return the thread
      * @see #write(InputStream, OutputStream)
      */
-    public static Thread redirect(InputStream in, OutputStream out) {
+    @NotNull
+    public static Thread redirect(@NotNull InputStream in, @NotNull OutputStream out) {
         return redirect(in, out, Thread::new);
     }
 
@@ -130,7 +136,8 @@ public class IOUtil {
      * @return the thread
      * @see #write(InputStream, OutputStream)
      */
-    public static Thread redirect(InputStream in, OutputStream out, ThreadFactory factory) {
+    @NotNull
+    public static Thread redirect(@NotNull InputStream in, @NotNull OutputStream out, @NotNull ThreadFactory factory) {
         return factory.newThread(prepareRedirect(in, out));
     }
 
@@ -143,7 +150,8 @@ public class IOUtil {
      * @return the runnable
      * @see #write(InputStream, OutputStream)
      */
-    public static Task<IOException> prepareRedirect(InputStream in, OutputStream out) {
+    @NotNull
+    public static Task<IOException> prepareRedirect(@NotNull InputStream in, @NotNull OutputStream out) {
         return () -> {
             int b;
             while (!Thread.currentThread().isInterrupted() && (b = in.read()) != -1) {

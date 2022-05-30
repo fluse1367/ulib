@@ -1,5 +1,8 @@
 package eu.software4you.ulib.core.configuration.serialization;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 /**
@@ -21,5 +24,6 @@ public interface DeSerializationFactory<T extends Serializable<?>> {
      * @param serialized the serialized data
      * @return the newly created object
      */
-    T deserialize(Map<String, Object> serialized);
+    @Nullable
+    T deserialize(@NotNull Map<String, Object> serialized);
 }

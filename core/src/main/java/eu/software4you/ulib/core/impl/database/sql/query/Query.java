@@ -12,17 +12,17 @@ public class Query extends QueryEndpoint implements eu.software4you.ulib.core.da
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull Column<?> column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull Column<?> column) {
         return where(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull String column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> where(@NotNull String column) {
         return new Condition<>(meta, column, Where::new);
     }
 
     @Override
-    public Where whereRaw(@NotNull String condition) {
+    public @NotNull Where whereRaw(@NotNull String condition) {
         return new Where(meta, condition);
     }
 }

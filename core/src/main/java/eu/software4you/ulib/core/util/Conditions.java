@@ -95,7 +95,7 @@ public class Conditions {
      * @param o the object to test
      * @return {@code true} if conversation can be accomplished, {@code false} otherwise
      */
-    public static boolean int32(Object o) {
+    public static boolean int32(@Nullable Object o) {
         return Conversions.tryInt(o).isPresent();
     }
 
@@ -105,7 +105,7 @@ public class Conditions {
      * @param o the object to test
      * @return {@code true} if conversation can be accomplished, {@code false} otherwise
      */
-    public static boolean int64(Object o) {
+    public static boolean int64(@Nullable Object o) {
         return Conversions.tryLong(o).isPresent();
     }
 
@@ -115,7 +115,7 @@ public class Conditions {
      * @param o the object to test
      * @return {@code true} if conversation can be accomplished, {@code false} otherwise
      */
-    public static boolean dec32(Object o) {
+    public static boolean dec32(@Nullable Object o) {
         return Conversions.tryFloat(o).isPresent();
     }
 
@@ -125,7 +125,7 @@ public class Conditions {
      * @param o the object to test
      * @return {@code true} if conversation can be accomplished, {@code false} otherwise
      */
-    public static boolean dec64(Object o) {
+    public static boolean dec64(@Nullable Object o) {
         return Conversions.tryDouble(o).isPresent();
     }
 
@@ -137,7 +137,7 @@ public class Conditions {
      * @param objects the objects to check
      * @return {@code true} if the array is empty or all elements are null, {@code false} otherwise
      */
-    public static boolean nil(Object... objects) {
+    public static boolean nil(@Nullable Object... objects) {
         return Stream.of(objects).noneMatch(Objects::nonNull);
     }
 
@@ -181,7 +181,7 @@ public class Conditions {
      * @param array the array to test
      * @return {@code true} if the array is not empty and all elements equal {@code obj}, {@code false} otherwise
      */
-    public static boolean all(Object obj, Object... array) {
+    public static boolean all(@NotNull Object obj, @Nullable Object... array) {
         return nNil(obj, array)
                && array.length > 0
                && Stream.of(array).allMatch(obj::equals);
@@ -208,7 +208,7 @@ public class Conditions {
      * @param strings the array to search the string in
      * @return {@code true} if {@code s} occurs within {@code strings}, {@code false} otherwise
      */
-    public static boolean inIC(@Nullable String s, @Nullable String... strings) {
+    public static boolean inIC(@NotNull String s, @Nullable String... strings) {
         return nNil(s, strings)
                && Stream.of(strings).anyMatch(s::equalsIgnoreCase);
     }

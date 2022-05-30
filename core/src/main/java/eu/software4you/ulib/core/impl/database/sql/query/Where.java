@@ -26,33 +26,33 @@ final class Where extends QueryEndpoint implements eu.software4you.ulib.core.dat
 
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> and(@NotNull Column<?> column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> and(@NotNull Column<?> column) {
         return and(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> and(@NotNull String column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> and(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " and"));
     }
 
     @Override
-    public Where andRaw(@NotNull String condition) {
+    public @NotNull Where andRaw(@NotNull String condition) {
         append("and", condition);
         return this;
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> or(@NotNull Column<?> column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> or(@NotNull Column<?> column) {
         return or(column.getName());
     }
 
     @Override
-    public Condition<eu.software4you.ulib.core.database.sql.query.Where> or(@NotNull String column) {
+    public @NotNull Condition<eu.software4you.ulib.core.database.sql.query.Where> or(@NotNull String column) {
         return new Condition<>(meta, column, c -> new Where(c, " or"));
     }
 
     @Override
-    public Where orRaw(@NotNull String condition) {
+    public @NotNull Where orRaw(@NotNull String condition) {
         append("or", condition);
         return this;
     }

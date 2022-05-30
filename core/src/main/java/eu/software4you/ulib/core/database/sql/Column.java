@@ -77,6 +77,7 @@ public interface Column<T> extends Keyable<String>, Sizable {
         SPATIAL("spatial"),
         ;
         @Getter
+        @NotNull
         private final String sql;
     }
 }

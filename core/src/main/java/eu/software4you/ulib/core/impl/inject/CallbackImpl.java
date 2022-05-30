@@ -99,7 +99,7 @@ final class CallbackImpl<T> implements Callback<T> {
     }
 
     @Override
-    public void throwNow(Throwable t) {
+    public void throwNow(@NotNull Throwable t) {
         throw new HookException(t);
     }
 

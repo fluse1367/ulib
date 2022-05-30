@@ -1,6 +1,8 @@
 package eu.software4you.ulib.core.function;
 
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;
 
@@ -14,6 +16,8 @@ public interface Task<X extends Exception> extends Callable<Void>, Runnable {
     void execute() throws X;
 
     @Override
+    @Nullable
+    @Contract("-> null")
     default Void call() throws Exception {
         execute();
         return null;
