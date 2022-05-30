@@ -10,13 +10,11 @@
 ## API
 
 - Use `Optional` if a method may not have a value to return, **never** return `null`.
-- Methods may not declare any throwing Exceptions;
+- Methods may not declare any checked Exceptions;
   Use [`Expect`](core-api/src/main/java/eu/software4you/ulib/core/api/util/value/Expect.java) to wrap any underlying
-  exception.
+  checked exception.
 - Document classes/methods with javadocs.
-- No major static code: use interfaces in conjunction with service providers and final classes with static accessor
-  methods instead (e.g. the interface `SomeApiInst` and the final class `SomeApi`)
-- Service interfaces must have a static `get` method to obtain their service instance.
+- Keep the API clean, put the heavy code into the implementation.
 
 ## Implementation
 
