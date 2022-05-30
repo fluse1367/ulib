@@ -3,6 +3,7 @@ package eu.software4you.ulib.test.configuration;
 import eu.software4you.ulib.core.configuration.serialization.DeSerializationFactory;
 import eu.software4you.ulib.core.configuration.serialization.Serializable;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.Conversions;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ public class SerializableObject implements Serializable<SerializableObject.Facto
         @Override
         public SerializableObject deserialize(Map<String, Object> serialized) {
             return new SerializableObject(
-                    (int) serialized.get("someInt"),
+                    Conversions.tryInt(serialized.get("someInt")).orElseThrow(),
                     (String) serialized.get("someString")
             );
         }
