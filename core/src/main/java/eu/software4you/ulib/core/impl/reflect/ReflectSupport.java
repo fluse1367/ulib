@@ -1,8 +1,12 @@
 package eu.software4you.ulib.core.impl.reflect;
 
+import eu.software4you.ulib.core.collection.FixedList;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.reflect.*;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -119,5 +123,84 @@ public final class ReflectSupport {
 
         // loop ended and no recursion found
         return false;
+    }
+
+    @SneakyThrows
+    public static boolean deepEquals(@NotNull Object a, @NotNull Object b) {
+        // compare all fields
+        var clazz = a.getClass();
+        do {
+            for (Field field : clazz.getDeclaredFields()) {
+                final int mod = field.getModifiers();
+                if (field.isSynthetic()
+                    || Modifier.isTransient(mod)
+                    || Modifier.isStatic(mod))
+                    continue; // skip on synthetic, transient or static fields
+
+                field.setAccessible(true);
+
+                Object someFieldObj = field.get(a);
+                Object otherFieldObj = field.get(b);
+
+                if (!Objects.equals(someFieldObj, otherFieldObj))
+                    return false; // fields are not equal
+            }
+
+        } while ((clazz = clazz.getSuperclass()) != null && !clazz.isPrimitive() && !clazz.isInterface()
+                 && clazz != Object.class);
+
+        // no object found that is not equal
+        return true;
+    }
+
+    public static int deepHash(@NotNull final Object obj, @NotNull final Class<?> anchor, boolean useImpl) {
+        // attempt using implementation
+        if (useImpl) {
+            try {
+                return (int) anchor.getMethod("hashCode").invoke(obj);
+            } catch (InvocationTargetException e) {
+                var cause = e.getTargetException();
+                if (cause instanceof RuntimeException re)
+                    throw re; // rethrow
+
+                // definition in Object#hashCode() prevents declaration of check exceptions
+                throw new InternalError("Unexpected checked exception", e);
+            } catch (IllegalAccessException | ClassCastException e) {
+                // should not happen as #hashCode() is defined in Object
+                // so, make the compiler happy:
+                throw new InternalError(e);
+            } catch (NoSuchMethodException e) {
+                // fallthrough
+            }
+        }
+
+        // auto compute hash
+
+        var fields = Arrays.stream(anchor.getDeclaredFields())
+                .filter(f -> !f.isSynthetic())
+                .filter(f -> {
+                    int mod = f.getModifiers();
+                    return !Modifier.isStatic(mod) && !Modifier.isTransient(mod);
+                })
+                .toArray(Field[]::new);
+        List<Object> objs = new FixedList<>(fields.length + 1);
+
+        // collect subsequent object for hash computation
+        for (Field declaredField : fields) {
+            declaredField.setAccessible(true);
+            try {
+                objs.add(declaredField.get(obj));
+            } catch (IllegalAccessException e) {
+                throw new InternalError(e); // should not happen because ulib has sudo privileges
+            }
+        }
+
+        // superclass hash?
+        Class<?> superClazz = anchor.getSuperclass();
+        if (superClazz != null && !superClazz.isPrimitive() && !superClazz.isInterface()
+            && superClazz != Object.class)
+            objs.add(deepHash(obj, superClazz, true));
+
+        return Objects.hash(objs.toArray());
     }
 }

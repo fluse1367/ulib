@@ -437,4 +437,54 @@ public class ReflectUtil {
         } while ((current = current.getSuperclass()) != null);
         return Optional.empty();
     }
+
+    /**
+     * Automatically checks two objects for equality.
+     * <p>
+     * The subsequent implementation does not use {@link Object#equals(Object)} on the given objects.
+     * Instead, the hash values or the underlying fields itself are compared against each other.
+     *
+     * @param someObject  the first object
+     * @param otherObject the second object
+     * @return {@code true} if the given objects are considered equal, {@code false} otherwise
+     * @see #autoHash(Object)
+     */
+    public static boolean autoEquals(@Nullable Object someObject, @Nullable Object otherObject) {
+        if (someObject == otherObject)
+            return true; // same instance
+
+        if (someObject == null || otherObject == null
+            || someObject.getClass() != otherObject.getClass())
+            return false;
+
+        // try to "prove" equality by hash codes
+        if (autoHash(someObject) == autoHash(otherObject))
+            return true;
+
+        // check all fields
+        return ReflectSupport.deepEquals(someObject, otherObject);
+    }
+
+    /**
+     * Automatically computes a hash code of the given object.
+     * <p>
+     * The Subsequent implementation does not depend on {@link Object#hashCode()}, however it will use it in case it is implemented.
+     * In <b>no case</b> the {@link System#identityHashCode(Object) identity hash code} is used.
+     * <p>
+     * If {@link Object#hashCode()} is not implemented, a hash code is automatically computed from all fields
+     * (including fields from super classes; excluding static, synthetic and transient fields) of the given object.
+     *
+     * @param obj the object of whose to compute the hash
+     * @return a hash code
+     */
+    public static int autoHash(@Nullable Object obj) {
+        if (obj == null)
+            return 0;
+
+        var caller = getCaller();
+        boolean isImpl = caller.getMethodName().equals("hashCode") && caller.getMethodType().parameterCount() == 0;
+
+        return ReflectSupport.deepHash(obj, obj.getClass(), !isImpl);
+    }
+
 }
