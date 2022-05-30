@@ -9,6 +9,8 @@ dependencies {
 }
 
 test {
+    dependsOn ':loader:jar'
+
     useJUnit()
 
     // trigger ulib self installation to SCL
