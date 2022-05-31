@@ -46,17 +46,6 @@ The following 3rd-party software is included within this project:
 - NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/62e8919f10415aaff73f86aa8d4561f2ec4de791))
   Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
   the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/62e8919f10415aaff73f86aa8d4561f2ec4de791/LICENSE)
-- ParticleEffect
-  Library ([click](https://github.com/DarkBlade12/ParticleEffect/tree/df3f57fa3f1ecd82ad8efac24dcf8371b993c019))
-  Copyright (c) 2016 [DarkBlade12](https://github.com/DarkBlade12), custom license (see
-  [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/BukkitReflectionUtils.java)
-  and [here](https://gitlab.com/software4you.eu/ulib/-/blob/master/ulib-spigot-api/src/main/java/eu/software4you/minecraft/multiversion/ParticleEffect.java))
-- CloudNet v3 (Copyright (c) 2019 [CloudNetService](https://github.com/CloudNetService), licensed under
-  the [Apache License 2.0](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/LICENSE)):
-    - Pair
-      Class ([click](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/cloudnet-common/src/main/java/de/dytanic/cloudnet/common/collection/Pair.java))
-    - Triple
-      Class ([click](https://github.com/CloudNetService/CloudNet-v3/blob/2fcc7b6e3bd0d8120effce2cf349eea4ee3a595d/cloudnet-common/src/main/java/de/dytanic/cloudnet/common/collection/Triple.java))
 - Apache Commons Lang v3 (Copyright (c) 2022 [The Apache Software Foundation](https://www.apache.org/), licensed under
   the [Apache License 2.0](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/LICENSE.txt)):
     - SystemUtils
