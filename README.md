@@ -43,14 +43,15 @@ project do not take any responsibility/liability in any way.
 
 The following 3rd-party software is included within this project:
 
-- NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/tree/62e8919f10415aaff73f86aa8d4561f2ec4de791))
-  Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
-  the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/62e8919f10415aaff73f86aa8d4561f2ec4de791/LICENSE)
+-
+NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/src/main/java/io/github/bananapuncher714/nbteditor/NBTEditor.java))
+Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
+the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/LICENSE)
 - Apache Commons Lang v3 (Copyright (c) 2022 [The Apache Software Foundation](https://www.apache.org/), licensed under
   the [Apache License 2.0](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/LICENSE.txt)):
-    - SystemUtils
-      Class ([click](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/src/main/java/org/apache/commons/lang3/SystemUtils.java))
-    - JavaVersion
-      Class ([click](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/src/main/java/org/apache/commons/lang3/JavaVersion.java))
+  - SystemUtils
+    Class ([click](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/src/main/java/org/apache/commons/lang3/SystemUtils.java))
+  - JavaVersion
+    Class ([click](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/src/main/java/org/apache/commons/lang3/JavaVersion.java))
 
 ---

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * Spigot: https://www.spigotmc.org/threads/269621/
  *
  * @author BananaPuncher714
- * @version 7.18.1
+ * @version 7.18.2
  */
 public final class NBTEditor {
     private static final Map<String, Class<?>> classCache;
@@ -31,6 +31,11 @@ public final class NBTEditor {
     private static Field NBTCompoundMap;
     private static final String VERSION;
     private static final MinecraftVersion LOCAL_VERSION;
+
+    public static final Type COMPOUND = Type.COMPOUND;
+    public static final Type LIST = Type.LIST;
+    public static final Type NEW_ELEMENT = Type.NEW_ELEMENT;
+    public static final Type DELETE = Type.DELETE;
 
     static {
         VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
@@ -1193,6 +1198,10 @@ public final class NBTEditor {
                 notCompound = ((NBTCompound) value).tag;
             } else if (getNMSClass("NBTTagList").isInstance(value) || getNMSClass("NBTTagCompound").isInstance(value)) {
                 notCompound = value;
+            } else if (value == Type.COMPOUND) {
+                notCompound = getNMSClass("NBTTagCompound").newInstance();
+            } else if (value == Type.LIST) {
+                notCompound = getNMSClass("NBTTagList").newInstance();
             } else {
                 if (value instanceof Boolean) {
                     value = (byte) ((Boolean) value == true ? 1 : 0);
@@ -1208,12 +1217,18 @@ public final class NBTEditor {
             Object key = keys[index];
             Object oldCompound = compound;
             if (key instanceof Integer) {
-                compound = ((List<?>) NBTListData.get(compound)).get((int) key);
+                int keyIndex = (int) key;
+                List<?> tagList = (List<?>) NBTListData.get(compound);
+                if (keyIndex >= 0 && keyIndex < tagList.size()) {
+                    compound = tagList.get(keyIndex);
+                } else {
+                    compound = null;
+                }
             } else if (key != null) {
                 compound = getMethod("get").invoke(compound, key);
             }
-            if (compound == null || key == null) {
-                if (keys[index + 1] == null || keys[index + 1] instanceof Integer) {
+            if (compound == null || key == null || key == Type.NEW_ELEMENT) {
+                if (keys[index + 1] == null || keys[index + 1] instanceof Integer || keys[index + 1] == Type.NEW_ELEMENT) {
                     compound = getNMSClass("NBTTagList").newInstance();
                 } else {
                     compound = getNMSClass("NBTTagCompound").newInstance();
@@ -1231,20 +1246,20 @@ public final class NBTEditor {
         }
         if (keys.length > 0) {
             Object lastKey = keys[keys.length - 1];
-            if (lastKey == null) {
+            if (lastKey == null || lastKey == Type.NEW_ELEMENT) {
                 if (LOCAL_VERSION.greaterThanOrEqualTo(MinecraftVersion.v1_14)) {
                     getMethod("add").invoke(compound, getMethod("getTypeId").invoke(notCompound), notCompound);
                 } else {
                     getMethod("add").invoke(compound, notCompound);
                 }
             } else if (lastKey instanceof Integer) {
-                if (notCompound == null) {
+                if (notCompound == null || notCompound == Type.DELETE) {
                     getMethod("listRemove").invoke(compound, lastKey);
                 } else {
                     getMethod("setIndex").invoke(compound, lastKey, notCompound);
                 }
             } else {
-                if (notCompound == null) {
+                if (notCompound == null || notCompound == Type.DELETE) {
                     getMethod("remove").invoke(compound, lastKey);
                 } else {
                     getMethod("set").invoke(compound, lastKey, notCompound);
@@ -1276,7 +1291,13 @@ public final class NBTEditor {
             } else if (getNMSClass("NBTTagCompound").isInstance(compound)) {
                 compound = getMethod("get").invoke(compound, key);
             } else if (getNMSClass("NBTTagList").isInstance(compound)) {
-                compound = ((List<?>) NBTListData.get(compound)).get((int) key);
+                int keyIndex = (int) key;
+                List<?> tagList = (List<?>) NBTListData.get(compound);
+                if (keyIndex >= 0 && keyIndex < tagList.size()) {
+                    compound = tagList.get(keyIndex);
+                } else {
+                    compound = null;
+                }
             }
         }
         return new NBTCompound(compound);
@@ -1295,7 +1316,13 @@ public final class NBTEditor {
             } else if (getNMSClass("NBTTagCompound").isInstance(notCompound)) {
                 notCompound = getMethod("get").invoke(notCompound, key);
             } else if (getNMSClass("NBTTagList").isInstance(notCompound)) {
-                notCompound = ((List<?>) NBTListData.get(notCompound)).get((int) key);
+                int keyIndex = (int) key;
+                List<?> tagList = (List<?>) NBTListData.get(notCompound);
+                if (keyIndex >= 0 && keyIndex < tagList.size()) {
+                    notCompound = tagList.get(keyIndex);
+                } else {
+                    notCompound = null;
+                }
             } else {
                 return getNBTVar(notCompound);
             }
@@ -1449,5 +1476,9 @@ public final class NBTEditor {
             }
             return null;
         }
+    }
+
+    private enum Type {
+        COMPOUND, LIST, NEW_ELEMENT, DELETE
     }
 }
