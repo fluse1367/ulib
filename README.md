@@ -38,15 +38,14 @@ Please also refer to the [documentation](docs/Readme.md).
 Note the copyright and [license of this project](./LICENSE). Use this library at your own risk! The contributors of this
 project do not take any responsibility/liability in any way.
 
-
 # Included Software
 
 The following 3rd-party software is included within this project:
 
--
-NBTEditor ([click](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/src/main/java/io/github/bananapuncher714/nbteditor/NBTEditor.java))
-Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
-the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/LICENSE)
+- NBTEditor
+  ([click](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/src/main/java/io/github/bananapuncher714/nbteditor/NBTEditor.java))
+  Copyright (c) 2018 [BananaPuncher714](https://github.com/BananaPuncher714), licensed under
+  the [MIT license](https://github.com/BananaPuncher714/NBTEditor/blob/ff303d06e16eed119079bae92b8ef5700ec35d87/LICENSE)
 - Apache Commons Lang v3 (Copyright (c) 2022 [The Apache Software Foundation](https://www.apache.org/), licensed under
   the [Apache License 2.0](https://github.com/apache/commons-lang/blob/9f1ac974e1b52c58b1950acdaaf3e0d5881409df/LICENSE.txt)):
   - SystemUtils
