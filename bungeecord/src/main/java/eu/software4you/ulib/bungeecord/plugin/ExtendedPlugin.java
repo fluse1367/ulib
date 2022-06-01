@@ -20,7 +20,7 @@ public abstract class ExtendedPlugin extends Plugin implements PluginBase<Listen
         super();
     }
 
-    public ExtendedPlugin(ProxyServer proxy, PluginDescription description) {
+    public ExtendedPlugin(@NotNull ProxyServer proxy, @NotNull PluginDescription description) {
         super(proxy, description);
     }
 
@@ -29,5 +29,5 @@ public abstract class ExtendedPlugin extends Plugin implements PluginBase<Listen
         return getDescription().getName();
     }
 
-    public abstract void saveResource(String resourcePath, boolean replace);
+    public abstract void saveResource(@NotNull String resourcePath, boolean replace);
 }

@@ -30,7 +30,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
         super();
     }
 
-    public ExtendedProxyPlugin(ProxyServer proxy, PluginDescription description) {
+    public ExtendedProxyPlugin(@NotNull ProxyServer proxy, @NotNull PluginDescription description) {
         super(proxy, description);
     }
 
@@ -65,7 +65,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public void saveResource(String resourcePath, boolean replace) {
+    public void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -133,12 +133,12 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     }
 
     @Override
-    public void registerCommand(Command command) {
+    public void registerCommand(@NotNull Command command) {
         getProxy().getPluginManager().registerCommand(this, command);
     }
 
     @Override
-    public void unregisterCommand(Command command) {
+    public void unregisterCommand(@NotNull Command command) {
         getProxy().getPluginManager().unregisterCommand(command);
     }
 

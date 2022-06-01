@@ -3,6 +3,7 @@ package eu.software4you.ulib.bungeecord.player;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.PermissionCheckEvent;
 import net.md_5.bungee.util.CaseInsensitiveSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -14,18 +15,19 @@ public class PermissionsDummyProxiedPlayer extends DummyProxiedPlayer {
     private final Collection<String> groups = new CaseInsensitiveSet();
     private final Collection<String> permissions = new CaseInsensitiveSet();
 
-    public PermissionsDummyProxiedPlayer(UUID uniqueId) {
+    public PermissionsDummyProxiedPlayer(@NotNull UUID uniqueId) {
         super(uniqueId);
         bungee = ProxyServer.getInstance();
     }
 
     @Override
+    @NotNull
     public Collection<String> getGroups() {
         return Collections.unmodifiableCollection(groups);
     }
 
     @Override
-    public void addGroups(String... groups) {
+    public void addGroups(@NotNull String... groups) {
         for (String group : groups) {
             this.groups.add(group);
             for (String permission : bungee.getConfigurationAdapter().getPermissions(group)) {
@@ -35,7 +37,7 @@ public class PermissionsDummyProxiedPlayer extends DummyProxiedPlayer {
     }
 
     @Override
-    public void removeGroups(String... groups) {
+    public void removeGroups(@NotNull String... groups) {
         for (String group : groups) {
             this.groups.remove(group);
             for (String permission : bungee.getConfigurationAdapter().getPermissions(group)) {
@@ -45,12 +47,12 @@ public class PermissionsDummyProxiedPlayer extends DummyProxiedPlayer {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(@NotNull String permission) {
         return bungee.getPluginManager().callEvent(new PermissionCheckEvent(this, permission, permissions.contains(permission))).hasPermission();
     }
 
     @Override
-    public void setPermission(String permission, boolean value) {
+    public void setPermission(@NotNull String permission, boolean value) {
         if (value) {
             permissions.add(permission);
         } else {
@@ -59,6 +61,7 @@ public class PermissionsDummyProxiedPlayer extends DummyProxiedPlayer {
     }
 
     @Override
+    @NotNull
     public Collection<String> getPermissions() {
         return Collections.unmodifiableCollection(permissions);
     }
