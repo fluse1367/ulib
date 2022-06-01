@@ -133,6 +133,9 @@ public class AnnotationTest {
                             .map(cl -> Expect.compute(pool::get, cl.getName()).orElseThrow())
                             .flatMap(ct -> Stream.concat(Stream.of(ct.getDeclaredBehaviors()), Stream.of(ct.getDeclaredFields())))
 
+                            // filter out explicitly ignored classes
+                            .filter(ct -> !ct.hasAnnotation("eu.software4you.ulib.core.impl.BypassAnnotationEnforcement"))
+
                             // filter out non-public members
                             .filter(ctm -> Modifier.isPublic(ctm.getModifiers()))
                             // filter out synthetic members

@@ -35,6 +35,6 @@ module ulib.core {
     exports eu.software4you.ulib.core.impl.init to ulib.loader;
 
     // impl exports
-    exports eu.software4you.ulib.core.impl to ulib.spigot;
+    exports eu.software4you.ulib.core.impl to ulib.minecraft, ulib.spigot, ulib.bungeecord, ulib.velocity;
     exports eu.software4you.ulib.core.impl.configuration to ulib.spigot;
 }
