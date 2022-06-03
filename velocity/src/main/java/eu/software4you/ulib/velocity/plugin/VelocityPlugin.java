@@ -54,7 +54,7 @@ public interface VelocityPlugin extends PluginBase<Object, ScheduledTask> {
      * @param replace      {@code true}, if the resource should be overwritten if the file already exists
      * @see #getDataFolder()
      */
-    void saveResource(String resourcePath, boolean replace);
+    void saveResource(@NotNull String resourcePath, boolean replace);
 
     /**
      * @deprecated Velocity does officially not support batch task cancellation.

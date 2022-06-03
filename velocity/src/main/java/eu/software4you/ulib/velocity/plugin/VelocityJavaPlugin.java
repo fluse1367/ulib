@@ -51,6 +51,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     @NotNull
     private final File dataFolder;
     @Getter
+    @NotNull
     private final File file = FileUtil.getClassFile(getClass()).getValue();
     private final YamlConfiguration config = YamlConfiguration.newYaml();
     private boolean configInit;
@@ -97,7 +98,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
 
     @Override
-    public void saveResource(String resourcePath, boolean replace) {
+    public void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
