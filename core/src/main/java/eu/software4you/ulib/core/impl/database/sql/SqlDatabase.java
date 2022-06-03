@@ -71,7 +71,9 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
     @Override
     @NotNull
     public Optional<eu.software4you.ulib.core.database.sql.Table> getTable(@NotNull String name) {
-        // TODO: attempt fetching tables if `name` does not occur in the map?
+        // attempt fetching tables if `name` does not occur in the map
+        if (!tables.containsKey(name))
+            initExistingTables();
         return Optional.ofNullable(tables.get(name));
     }
 
@@ -101,7 +103,7 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
 
             var cols = fetchColumns(meta, tableCatalog, tableSchema, tableName);
 
-            tables.put(tableName, createTable(tableName, cols));
+            tables.putIfAbsent(tableName, createTable(tableName, cols));
         }
     }
 
