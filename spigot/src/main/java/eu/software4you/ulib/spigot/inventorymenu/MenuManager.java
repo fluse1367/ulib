@@ -9,6 +9,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -18,6 +20,7 @@ import java.util.function.Supplier;
  * <p>You have to call {@link #listen()} in order to make the manager effective.
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+// TODO: redesign as interface
 public abstract class MenuManager {
 
     private final Plugin plugin;
@@ -33,7 +36,8 @@ public abstract class MenuManager {
      * @param plugin the plugin which requests the manager
      * @return the newly created menu manager
      */
-    public static MenuManager of(Plugin plugin) {
+    @NotNull
+    public static MenuManager of(@NotNull Plugin plugin) {
         return new MenuManagerImpl(plugin);
     }
 
@@ -65,7 +69,7 @@ public abstract class MenuManager {
      *
      * @param menu the menu that should be managed
      */
-    public void registerMenu(Menu menu) {
+    public void registerMenu(@NotNull Menu menu) {
         menus.add(menu);
     }
 
@@ -74,7 +78,7 @@ public abstract class MenuManager {
      *
      * @param menu the menu whose registration should be deleted
      */
-    public void unregisterMenu(Menu menu) {
+    public void unregisterMenu(@NotNull Menu menu) {
         menus.remove(menu);
     }
 
@@ -84,7 +88,8 @@ public abstract class MenuManager {
      * @param inventory the inventory that the page displays
      * @return the page, or {@code null} of nothing found
      */
-    public Page getPage(Inventory inventory) {
+    @Nullable
+    public Page getPage(@NotNull Inventory inventory) {
         for (Menu m : menus) {
             if (m instanceof MultiPageMenu menu) {
                 for (Map.Entry<Integer, Page> entry : menu.getPages().entrySet()) {
@@ -106,7 +111,8 @@ public abstract class MenuManager {
      * @param page the page that the menu displays
      * @return the menu, or {@code null} of nothing found
      */
-    public Menu getMenu(Page page) {
+    @Nullable
+    public Menu getMenu(@NotNull Page page) {
         if (page instanceof SinglePageMenu)
             return (SinglePageMenu) page;
 
@@ -127,8 +133,10 @@ public abstract class MenuManager {
      * @param inventory the inventory that the menu displays
      * @return the menu, or {@code null} of nothing found
      */
-    public Menu getMenu(Inventory inventory) {
-        return getMenu(getPage(inventory));
+    @Nullable
+    public Menu getMenu(@NotNull Inventory inventory) {
+        var page = getPage(inventory);
+        return page == null ? null : getMenu(page);
     }
 
     /**
@@ -137,7 +145,8 @@ public abstract class MenuManager {
      * @param page the page to search for
      * @return the respective {@link MultiPageMenu} and the page index, or {@code null} of nothing found
      */
-    public Pair<MultiPageMenu, Integer> tryPage(Page page) {
+    @Nullable
+    public Pair<MultiPageMenu, Integer> tryPage(@NotNull Page page) {
         for (Menu m : menus) {
             if (m instanceof MultiPageMenu menu) {
                 for (Map.Entry<Integer, Page> entry : menu.getPages().entrySet()) {

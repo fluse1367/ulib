@@ -4,6 +4,7 @@ import eu.software4you.ulib.spigot.impl.inventorymenu.PageImpl;
 import eu.software4you.ulib.spigot.inventorymenu.entry.Entry;
 import eu.software4you.ulib.spigot.inventorymenu.menu.Page;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class PageBuilder {
     protected Consumer<Player> openHandler = null;
     protected Consumer<Player> closeHandler = null;
 
-    public PageBuilder(String title, int rows) {
+    public PageBuilder(@NotNull String title, @Range(from = 1, to = 6) int rows) {
         this.title = title;
         this.rows = rows;
     }
@@ -31,7 +32,9 @@ public class PageBuilder {
      * @return this
      * @see Page#setEntry(int, Entry)
      */
-    public PageBuilder addEntry(Entry entry) {
+    @NotNull
+    @Contract("_ -> this")
+    public PageBuilder addEntry(@NotNull Entry entry) {
         for (int i = 0; i < rows * 9; i++) {
             if (entries.containsKey(i))
                 continue;
@@ -49,7 +52,9 @@ public class PageBuilder {
      * @return this
      * @see Page#setEntry(int, Entry)
      */
-    public PageBuilder addEntries(Entry entry, Entry... entries) {
+    @NotNull
+    @Contract("_, _ -> this")
+    public PageBuilder addEntries(@NotNull Entry entry, @NotNull Entry... entries) {
         addEntry(entry);
         for (Entry en : entries) {
             addEntry(en);
@@ -60,7 +65,9 @@ public class PageBuilder {
     /**
      * @see Page#setEntry(int, Entry)
      */
-    public PageBuilder setEntry(int slot, Entry entry) {
+    @NotNull
+    @Contract("_, _ -> this")
+    public PageBuilder setEntry(int slot, @NotNull Entry entry) {
         entries.put(slot, entry);
         return this;
     }
@@ -68,7 +75,9 @@ public class PageBuilder {
     /**
      * @see Page#setOpenHandler(Consumer)
      */
-    public PageBuilder onOpen(Consumer<Player> handler) {
+    @NotNull
+    @Contract("_ -> this")
+    public PageBuilder onOpen(@NotNull Consumer<Player> handler) {
         this.openHandler = handler;
         return this;
     }
@@ -76,12 +85,16 @@ public class PageBuilder {
     /**
      * @see Page#setCloseHandler(Consumer)
      */
-    public PageBuilder onClose(Consumer<Player> handler) {
+    @NotNull
+    @Contract("_ -> this")
+    public PageBuilder onClose(@NotNull Consumer<Player> handler) {
         this.closeHandler = handler;
         return this;
     }
 
 
+    @NotNull
+    @Contract("-> new")
     public Page build() {
         return new PageImpl(title, rows, entries, openHandler, closeHandler);
     }

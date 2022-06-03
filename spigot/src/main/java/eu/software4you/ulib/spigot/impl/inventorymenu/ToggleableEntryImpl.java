@@ -4,8 +4,10 @@ import eu.software4you.ulib.spigot.inventorymenu.entry.ToggleableEntry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class ToggleableEntryImpl extends MultiStateEntryImpl<Boolean> implements ToggleableEntry {
@@ -16,12 +18,12 @@ public class ToggleableEntryImpl extends MultiStateEntryImpl<Boolean> implements
     }
 
     @Override
-    public ItemStack getToggledRepresentation() {
-        return super.getRepresentation(true);
+    public @NotNull ItemStack getToggledRepresentation() {
+        return Objects.requireNonNull(super.getRepresentation(true));
     }
 
     @Override
-    public void setToggledRepresentation(ItemStack representation) {
+    public void setToggledRepresentation(@NotNull ItemStack representation) {
         setRepresentation(true, representation);
     }
 

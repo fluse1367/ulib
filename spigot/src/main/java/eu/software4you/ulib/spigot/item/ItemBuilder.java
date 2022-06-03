@@ -1,6 +1,7 @@
 package eu.software4you.ulib.spigot.item;
 
 import com.google.common.collect.Multimap;
+import eu.software4you.ulib.core.util.Expect;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -9,9 +10,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -26,7 +27,7 @@ public class ItemBuilder {
      *
      * @param stack the item to wrap
      */
-    public ItemBuilder(ItemStack stack) {
+    public ItemBuilder(@NotNull ItemStack stack) {
         this.stack = stack.clone();
         this.meta = stack.getItemMeta();
     }
@@ -37,7 +38,7 @@ public class ItemBuilder {
      * @param stack the item to wrap
      * @param meta  the meta to wrap
      */
-    private ItemBuilder(ItemStack stack, ItemMeta meta) {
+    private ItemBuilder(@NotNull ItemStack stack, @NotNull ItemMeta meta) {
         this.stack = stack.clone();
         this.meta = meta.clone();
     }
@@ -45,7 +46,7 @@ public class ItemBuilder {
     /**
      * @param material The material the {@link ItemStack} should have
      */
-    public ItemBuilder(Material material) {
+    public ItemBuilder(@NotNull Material material) {
         this(material, 1);
     }
 
@@ -53,7 +54,7 @@ public class ItemBuilder {
      * @param material The material the {@link ItemStack} should have
      * @param amount   The amount the {@link ItemStack} should have
      */
-    public ItemBuilder(Material material, int amount) {
+    public ItemBuilder(@NotNull Material material, @Range(from = 1, to = 64) int amount) {
         this.stack = new ItemStack(material, amount);
         this.meta = this.stack.getItemMeta();
     }
@@ -65,17 +66,15 @@ public class ItemBuilder {
      * @param <T>       The meta type
      * @return the specific item metadata, or {@code null} if meta is not an instance of provided type
      */
-    public <T extends ItemMeta> T getMeta(Class<T> metaClass) {
-        try {
-            return metaClass.cast(meta);
-        } catch (ClassCastException e) {
-            return null;
-        }
+    @NotNull
+    public <T extends ItemMeta> Optional<T> getMeta(@NotNull Class<T> metaClass) {
+        return Expect.compute(metaClass::cast, meta).toOptional();
     }
 
     /**
      * @return the item metadata
      */
+    @NotNull
     public ItemMeta getMeta() {
         return meta;
     }
@@ -86,7 +85,9 @@ public class ItemBuilder {
      * @param mod the function
      * @return this
      */
-    public ItemBuilder meta(Consumer<ItemMeta> mod) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder meta(@NotNull Consumer<ItemMeta> mod) {
         mod.accept(meta);
         return this;
     }
@@ -99,8 +100,10 @@ public class ItemBuilder {
      * @param mod       the function
      * @return this
      */
-    public <T extends ItemMeta> ItemBuilder meta(Class<T> metaClass, Consumer<T> mod) {
-        mod.accept(getMeta(metaClass));
+    @NotNull
+    @Contract("_, _ -> this")
+    public <T extends ItemMeta> ItemBuilder meta(@NotNull Class<T> metaClass, @NotNull Consumer<T> mod) {
+        getMeta(metaClass).ifPresent(mod);
         return this;
     }
 
@@ -111,12 +114,23 @@ public class ItemBuilder {
      * @return this
      * @see ItemStack#setAmount(int)
      */
+    @NotNull
+    @Contract("_ -> this")
     public ItemBuilder amount(int amount) {
         stack.setAmount(amount);
         return this;
     }
 
-    public ItemBuilder customModelData(Integer data) {
+    /**
+     * Sets the custom model data.
+     *
+     * @param data the custom model data, {@code null} to clear
+     * @return this
+     * @see ItemMeta#setCustomModelData(Integer)
+     */
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder customModelData(@Nullable Integer data) {
         meta.setCustomModelData(data);
         return this;
     }
@@ -128,7 +142,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#setLore(List)
      */
-    public ItemBuilder lore(List<String> lore) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder lore(@NotNull List<String> lore) {
         meta.setLore(lore);
         return this;
     }
@@ -140,7 +156,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#setLore(List)
      */
-    public ItemBuilder lore(String... lines) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder lore(@NotNull String... lines) {
         meta.setLore(Arrays.asList(lines));
         return this;
     }
@@ -152,12 +170,17 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#setDisplayName(String)
      */
-    public ItemBuilder name(String name) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder name(@Nullable String name) {
         meta.setDisplayName(name);
         return this;
     }
 
-    public ItemBuilder localizedName(String localizedName) {
+
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder localizedName(@Nullable String localizedName) {
         meta.setLocalizedName(localizedName);
         return this;
     }
@@ -167,6 +190,8 @@ public class ItemBuilder {
      *
      * @return this
      */
+    @NotNull
+    @Contract("-> this")
     public ItemBuilder unbreakable() {
         return unbreakable(true);
     }
@@ -178,6 +203,8 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#setUnbreakable(boolean)
      */
+    @NotNull
+    @Contract("_ -> this")
     public ItemBuilder unbreakable(boolean unbreakable) {
         meta.setUnbreakable(unbreakable);
         return this;
@@ -190,7 +217,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#setAttributeModifiers(Multimap)
      */
-    public ItemBuilder modifiers(Multimap<Attribute, AttributeModifier> attributeModifiers) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder modifiers(@NotNull Multimap<Attribute, AttributeModifier> attributeModifiers) {
         meta.setAttributeModifiers(attributeModifiers);
         return this;
     }
@@ -203,7 +232,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#addAttributeModifier(Attribute, AttributeModifier)
      */
-    public ItemBuilder modifier(Attribute attribute, AttributeModifier modifier) {
+    @NotNull
+    @Contract("_, _ -> this")
+    public ItemBuilder modifier(@NotNull Attribute attribute, @NotNull AttributeModifier modifier) {
         meta.addAttributeModifier(attribute, modifier);
         return this;
     }
@@ -215,7 +246,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#addItemFlags(ItemFlag...)
      */
-    public ItemBuilder itemFlags(ItemFlag... flags) {
+    @NotNull
+    @Contract("_ -> this")
+    public ItemBuilder itemFlags(@NotNull ItemFlag... flags) {
         meta.addItemFlags(flags);
         return this;
     }
@@ -228,7 +261,9 @@ public class ItemBuilder {
      * @return this
      * @see ItemMeta#addEnchant(Enchantment, int, boolean)
      */
-    public ItemBuilder enchantment(Enchantment ench, int level) {
+    @NotNull
+    @Contract("_, _ -> this")
+    public ItemBuilder enchantment(@NotNull Enchantment ench, int level) {
         meta.addEnchant(ench, level, true);
         return this;
     }
@@ -240,6 +275,8 @@ public class ItemBuilder {
      * @return this
      * @see Damageable#setDamage(int)
      */
+    @NotNull
+    @Contract("_ -> this")
     public ItemBuilder damage(int damage) {
         if (meta instanceof Damageable)
             ((Damageable) meta).setDamage(damage);
@@ -247,9 +284,12 @@ public class ItemBuilder {
     }
 
     /**
+     * @return this
      * @see NBTEditor#set(Object, Object, Object...)
      */
-    public ItemBuilder nbtTag(Object value, Object... keys) {
+    @NotNull
+    @Contract("_, _ -> this")
+    public ItemBuilder nbtTag(@NotNull Object value, @NotNull Object... keys) {
         stack.setItemMeta(meta.clone());
         stack = NBTEditor.set(stack, value, keys);
         meta = stack.getItemMeta();
@@ -261,6 +301,7 @@ public class ItemBuilder {
      *
      * @return the built {@link ItemStack}
      */
+    @NotNull
     public ItemStack build() {
         stack.setItemMeta(meta.clone());
         return stack.clone();

@@ -3,10 +3,10 @@ package eu.software4you.ulib.spigot.enchantment;
 import eu.software4you.ulib.spigot.impl.enchantment.EnchantUtilImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +22,8 @@ public final class EnchantUtil {
      *
      * @return an immutable copy of the currently registered custom enchantments
      */
+    @NotNull
+    @UnmodifiableView
     public static Set<CustomEnchantment> getCustomEnchantments() {
         return EnchantUtilImpl.READONLY_ENCHANTS;
     }
@@ -33,7 +35,9 @@ public final class EnchantUtil {
      * @return the enchantments
      * @see #getItemEnchants(ItemMeta)
      */
-    public static Map<Enchantment, Integer> getItemEnchants(ItemStack stack) {
+    @NotNull
+    @Unmodifiable
+    public static Map<Enchantment, Integer> getItemEnchants(@NotNull ItemStack stack) {
         return getItemEnchants(stack.getItemMeta());
     }
 
@@ -44,7 +48,9 @@ public final class EnchantUtil {
      * @return the enchantments
      * @see #getItemEnchants(ItemStack)
      */
-    public static Map<Enchantment, Integer> getItemEnchants(ItemMeta meta) {
+    @NotNull
+    @Unmodifiable
+    public static Map<Enchantment, Integer> getItemEnchants(@NotNull ItemMeta meta) {
         if (meta instanceof EnchantmentStorageMeta)
             return ((EnchantmentStorageMeta) meta).getStoredEnchants();
         return meta.getEnchants();
@@ -57,8 +63,10 @@ public final class EnchantUtil {
      * @return the custom enchantments
      * @see #getCustomItemEnchants(ItemMeta)
      */
-    public static Map<CustomEnchantment, Integer> getCustomItemEnchants(ItemStack stack) {
-        return getCustomItemEnchants(stack.getItemMeta());
+    @NotNull
+    @Unmodifiable
+    public static Map<CustomEnchantment, Integer> getCustomItemEnchants(@NotNull ItemStack stack) {
+        return getCustomItemEnchants(Objects.requireNonNull(stack.getItemMeta()));
     }
 
     /**
@@ -68,7 +76,9 @@ public final class EnchantUtil {
      * @return the custom enchantments
      * @see #getCustomItemEnchants(ItemStack)
      */
-    public static Map<CustomEnchantment, Integer> getCustomItemEnchants(ItemMeta meta) {
+    @NotNull
+    @Unmodifiable
+    public static Map<CustomEnchantment, Integer> getCustomItemEnchants(@NotNull ItemMeta meta) {
         Map<Enchantment, Integer> enchants = getItemEnchants(meta);
         return enchants.keySet().stream().filter(enc -> enc instanceof CustomEnchantment)
                 .collect(Collectors.toMap(enchantment -> (CustomEnchantment) enchantment, enchants::get));
@@ -83,7 +93,7 @@ public final class EnchantUtil {
      * @see NamespacedKey#getKey()
      * @see Enchantment#getName()
      */
-    public static void updateCustomEnchantmentLore(ItemStack stack) {
+    public static void updateCustomEnchantmentLore(@NotNull ItemStack stack) {
         EnchantUtilImpl.updateCustomEnchantmentLore(stack);
     }
 
@@ -94,12 +104,11 @@ public final class EnchantUtil {
      * @param lore the list
      * @return the list without the custom enchantment lore lines
      */
-    public static List<String> filterLore(List<String> lore) {
-        return lore.stream().filter(line -> !line.endsWith(ENCHANTMENT_LORE_CONTROL_CHARS)).collect(Collectors.toList());
-    }
-
-    public static void setRepairCost(AnvilInventory inv, int lvl) {
-        EnchantUtilImpl.setRepairCost(inv, lvl);
+    @NotNull
+    public static List<String> filterLore(@NotNull List<String> lore) {
+        return lore.stream()
+                .filter(line -> !line.endsWith(ENCHANTMENT_LORE_CONTROL_CHARS))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -112,7 +121,7 @@ public final class EnchantUtil {
      * @see <a href="https://minecraft.gamepedia.com/Anvil_mechanics#Combining_items">https://minecraft.gamepedia.com/Anvil_mechanics#Combining_items</a>
      * @see <a href="https://minecraft.gamepedia.com/Anvil_mechanics#Costs_for_combining_enchantments">https://minecraft.gamepedia.com/Anvil_mechanics#Costs_for_combining_enchantments</a>
      */
-    public static int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {
+    public static int combineEnchantmentsSafe(@NotNull ItemStack targetStack, @NotNull ItemMeta target, @NotNull ItemMeta sacrifice) {
         return EnchantUtilImpl.combineEnchantmentsSafe(targetStack, target, sacrifice);
     }
 
@@ -126,7 +135,7 @@ public final class EnchantUtil {
      * @param enchantment the enchantment to register
      * @return if the registration was successful
      */
-    public static boolean registerCustomEnchantment(CustomEnchantment enchantment) {
+    public static boolean registerCustomEnchantment(@NotNull CustomEnchantment enchantment) {
         return EnchantUtilImpl.registerCustomEnchantment(enchantment);
     }
 
@@ -136,11 +145,11 @@ public final class EnchantUtil {
      * @param enchantment the enchantment to unregister
      * @return if the removal was successful
      */
-    public static boolean unregisterCustomEnchantment(CustomEnchantment enchantment) {
+    public static boolean unregisterCustomEnchantment(@NotNull CustomEnchantment enchantment) {
         return EnchantUtilImpl.unregisterCustomEnchantment(enchantment);
     }
 
-    public static int getItemEnchantability(ItemStack stack) {
+    public static int getItemEnchantability(@NotNull ItemStack stack) {
         return EnchantUtilImpl.getItemEnchantability(stack);
     }
 
@@ -150,7 +159,8 @@ public final class EnchantUtil {
      * @param enchantment the enchantment
      * @return the rarity
      */
-    public static EnchantmentRarity getEnchantRarity(Enchantment enchantment) {
+    @NotNull
+    public static EnchantmentRarity getEnchantRarity(@NotNull Enchantment enchantment) {
         return EnchantUtilImpl.getEnchantRarity(enchantment);
     }
 }

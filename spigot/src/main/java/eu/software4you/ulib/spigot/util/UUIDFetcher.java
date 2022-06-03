@@ -1,15 +1,22 @@
 package eu.software4you.ulib.spigot.util;
 
 import eu.software4you.ulib.core.io.IOUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * @deprecated this class is poorly designed
+ */
+// TODO: re-do this class -> maybe something like "MojangUtil" or "MojangRestAPI"?
+@Deprecated(since = "3.0")
 public class UUIDFetcher {
 
-    public static Optional<UUID> getUUID(final String playername) {
+    @NotNull
+    public static Optional<UUID> getUUID(@NotNull final String playername) {
         try (var in = URI.create("https://api.mojang.com/users/profiles/minecraft/" + playername).toURL().openStream()) {
             final String output = new String(IOUtil.read(new InputStreamReader(in)).orElseRethrow());
             final StringBuilder result = new StringBuilder();

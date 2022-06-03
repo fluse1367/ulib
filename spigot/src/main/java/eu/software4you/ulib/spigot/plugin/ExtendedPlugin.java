@@ -22,6 +22,7 @@ public interface ExtendedPlugin extends Plugin, PluginBase<Listener, BukkitTask>
      *
      * @return the main menu manager
      */
+    @NotNull
     MenuManager getMainMenuManager();
 
     /**
@@ -29,6 +30,7 @@ public interface ExtendedPlugin extends Plugin, PluginBase<Listener, BukkitTask>
      *
      * @return a new menu manager
      */
+    @NotNull
     default MenuManager getNewMenuManager() {
         return MenuManager.of(this);
     }

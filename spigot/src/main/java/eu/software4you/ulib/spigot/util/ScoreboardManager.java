@@ -1,5 +1,6 @@
 package eu.software4you.ulib.spigot.util;
 
+import eu.software4you.ulib.core.impl.BypassAnnotationEnforcement;
 import eu.software4you.ulib.spigot.plugin.ExtendedPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,6 +9,12 @@ import org.bukkit.scoreboard.*;
 
 import java.util.HashMap;
 
+/**
+ * @deprecated this class is poorly designed
+ */
+// TODO: re-do this class
+@Deprecated(since = "3.0")
+@BypassAnnotationEnforcement
 public class ScoreboardManager {
 
     private static ExtendedPlugin plugin;

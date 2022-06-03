@@ -21,7 +21,9 @@ public abstract class CustomEnchantment extends Enchantment {
     private final EnchantmentTarget itemTarget;
     private final EnchantmentRarity rarity;
 
-    public CustomEnchantment(@NotNull NamespacedKey key, boolean treasure, boolean cursed, boolean obtainableViaVillagerTrading, int startLevel, int maxLevel, EnchantmentTarget itemTarget, EnchantmentRarity rarity) {
+    public CustomEnchantment(@NotNull NamespacedKey key, boolean treasure, boolean cursed,
+                             boolean obtainableViaVillagerTrading, int startLevel, int maxLevel,
+                             @NotNull EnchantmentTarget itemTarget, @NotNull EnchantmentRarity rarity) {
         super(key);
 
         Validate.isTrue(startLevel > 0, "Minimum level for an enchantment is 1");
@@ -111,6 +113,7 @@ public abstract class CustomEnchantment extends Enchantment {
         return itemTarget;
     }
 
+    @NotNull
     public EnchantmentRarity getEnchantmentRarity() {
         return rarity;
     }
@@ -120,6 +123,7 @@ public abstract class CustomEnchantment extends Enchantment {
      *
      * @return the enchantment name, displayed in the lore.
      */
+    @NotNull
     public String getLoreLine() {
         return WordUtils.capitalize(getKey().getKey().toLowerCase().replace("_", " "));
     }

@@ -106,8 +106,11 @@ public enum Protocol {
     /**
      * @return the plain vanilla version string
      */
+    @NotNull
     public String getVersion() {
-        return versions.length == 0 ? null : versions[versions.length - 1];
+        if (versions.length == 0)
+            throw new UnsupportedOperationException("Protocol unknown");
+        return versions[versions.length - 1];
     }
 
     /**
@@ -123,7 +126,7 @@ public enum Protocol {
      * @param toCompare the protocol to compare
      * @return {@code true} if this protocol has a higher version number than the comparing one, {@code false} otherwise
      */
-    public boolean above(Protocol toCompare) {
+    public boolean above(@NotNull Protocol toCompare) {
         return protocol > toCompare.protocol;
     }
 
@@ -133,7 +136,7 @@ public enum Protocol {
      * @param toCompare the protocol to compare
      * @return {@code true} if this protocol has a higher or the same version number than the comparing one, {@code false} otherwise
      */
-    public boolean atLeast(Protocol toCompare) {
+    public boolean atLeast(@NotNull Protocol toCompare) {
         return protocol >= toCompare.protocol;
     }
 
@@ -143,7 +146,7 @@ public enum Protocol {
      * @param toCompare the protocol to compare
      * @return {@code true} if this protocol has a lower version number than the comparing one, {@code false} otherwise
      */
-    public boolean below(Protocol toCompare) {
+    public boolean below(@NotNull Protocol toCompare) {
         return protocol < toCompare.protocol;
     }
 
@@ -153,7 +156,7 @@ public enum Protocol {
      * @param toCompare the protocol to compare
      * @return {@code true} if this protocol has a lower or the same version number than the comparing one, {@code false} otherwise
      */
-    public boolean atTheMost(Protocol toCompare) {
+    public boolean atTheMost(@NotNull Protocol toCompare) {
         return protocol <= toCompare.protocol;
     }
 }

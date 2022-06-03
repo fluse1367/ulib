@@ -25,7 +25,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Optional<MappedField> fieldFromSource(String sourceName);
+    Optional<MappedField> fieldFromSource(@NotNull String sourceName);
 
     /**
      * Returns a specific field.
@@ -34,7 +34,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Optional<MappedField> fieldFromMapped(String mappedName);
+    Optional<MappedField> fieldFromMapped(@NotNull String mappedName);
 
     /**
      * Returns all method mappings.
@@ -53,7 +53,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Collection<MappedMethod> methodsFromSource(String sourceName);
+    Collection<MappedMethod> methodsFromSource(@NotNull String sourceName);
 
     /**
      * Returns a specific method.
@@ -64,7 +64,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    default Optional<MappedMethod> methodFromSource(String sourceName) {
+    default Optional<MappedMethod> methodFromSource(@NotNull String sourceName) {
         return methodsFromSource(sourceName).stream().findFirst();
     }
 
@@ -79,7 +79,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    default Optional<MappedMethod> methodFromSource(String sourceName, MappedClass param0, MappedClass... params) {
+    default Optional<MappedMethod> methodFromSource(@NotNull String sourceName, @NotNull MappedClass param0, @NotNull MappedClass... params) {
         return methodFromSource(sourceName, ArrayUtil.concat(param0, params));
     }
 
@@ -93,7 +93,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Optional<MappedMethod> methodFromSource(String sourceName, MappedClass[] params);
+    Optional<MappedMethod> methodFromSource(@NotNull String sourceName, @NotNull MappedClass[] params);
 
     /**
      * Returns all methods with a certain name.
@@ -104,7 +104,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Collection<MappedMethod> methodsFromMapped(String mappedName);
+    Collection<MappedMethod> methodsFromMapped(@NotNull String mappedName);
 
     /**
      * Returns a specific method.
@@ -115,7 +115,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    default Optional<MappedMethod> methodFromMapped(String mappedName) {
+    default Optional<MappedMethod> methodFromMapped(@NotNull String mappedName) {
         return methodsFromMapped(mappedName).stream().findFirst();
     }
 
@@ -130,7 +130,7 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    default Optional<MappedMethod> methodFromMapped(String mappedName, MappedClass param0, MappedClass... params) {
+    default Optional<MappedMethod> methodFromMapped(@NotNull String mappedName, @NotNull MappedClass param0, @NotNull MappedClass... params) {
         return methodFromMapped(mappedName, ArrayUtil.concat(param0, params));
     }
 
@@ -144,5 +144,5 @@ public interface ClassMapping extends MappedClass {
      * @return the mapping, or {@code null} if not found
      */
     @NotNull
-    Optional<MappedMethod> methodFromMapped(String mappedName, MappedClass[] params);
+    Optional<MappedMethod> methodFromMapped(@NotNull String mappedName, @NotNull MappedClass[] params);
 }

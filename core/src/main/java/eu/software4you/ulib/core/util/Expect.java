@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * @see Optional
  * @see CompletableFuture
  */
-@SuppressWarnings("ClassCanBeRecord")
+// TODO: #peek and #orElsePeek
 public final class Expect<T, X extends Exception> {
     private static final Expect<?, ?> EMPTY = new Expect<>(null, null);
 

@@ -6,7 +6,8 @@ import eu.software4you.ulib.loader.install.Installer;
 import javassist.*;
 import javassist.bytecode.AccessFlag;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
@@ -88,16 +89,15 @@ public class AnnotationTest {
 
     }
 
+    @SneakyThrows
     private boolean annotationThere(CtMember mem) {
         return mem.hasAnnotation(NotNull.class)
-               ^ mem.hasAnnotation(Nullable.class)
-               ^ mem.hasAnnotation(UnknownNullability.class);
+               ^ mem.hasAnnotation(Nullable.class);
     }
 
     private boolean annotationThere(Object[] annotations) {
         return in(NotNull.class, annotations)
-               ^ in(Nullable.class, annotations)
-               ^ in(UnknownNullability.class, annotations);
+               ^ in(Nullable.class, annotations);
     }
 
     private boolean annotatable(CtClass type) {
@@ -131,10 +131,12 @@ public class AnnotationTest {
 
                             // fetch ct
                             .map(cl -> Expect.compute(pool::get, cl.getName()).orElseThrow())
-                            .flatMap(ct -> Stream.concat(Stream.of(ct.getDeclaredBehaviors()), Stream.of(ct.getDeclaredFields())))
 
                             // filter out explicitly ignored classes
                             .filter(ct -> !ct.hasAnnotation("eu.software4you.ulib.core.impl.BypassAnnotationEnforcement"))
+
+                            // obtain members
+                            .flatMap(ct -> Stream.concat(Stream.of(ct.getDeclaredBehaviors()), Stream.of(ct.getDeclaredFields())))
 
                             // filter out non-public members
                             .filter(ctm -> Modifier.isPublic(ctm.getModifiers()))
@@ -177,7 +179,7 @@ public class AnnotationTest {
                     .filter(e -> e.startsWith(prefix) && e.endsWith(".class"))
                     .map(e -> e.substring(0, e.length() - 6))
                     .map(e -> e.replace("/", "."))
-                    .map(name -> ReflectUtil.forName(name, true, loader).orElseThrow())
+                    .map(name -> ReflectUtil.forName(name, false, loader).orElseThrow())
                     .collect(Collectors.toSet());
 
         }

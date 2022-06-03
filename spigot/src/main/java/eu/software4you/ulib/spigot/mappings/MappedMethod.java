@@ -39,7 +39,8 @@ public interface MappedMethod extends Mapped<Method> {
      * @throws IndexOutOfBoundsException if the method has more params than provided
      * @see ReflectUtil#call(Class, Object, String, List[])
      */
-    default List<Param<?>> asParams(Object... params) {
+    @NotNull
+    default List<Param<?>> asParams(@NotNull Object... params) {
         AtomicInteger i = new AtomicInteger(0);
         return Arrays.stream(parameterTypes())
                 .map(MappedClass::find)

@@ -3,6 +3,7 @@ package eu.software4you.ulib.spigot.inventorymenu.handlers;
 import eu.software4you.ulib.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.ulib.spigot.inventorymenu.menu.Page;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an operation that handles the event when a player switches a {@link Page} in a {@link MultiPageMenu}.
@@ -18,5 +19,5 @@ public interface PageSwitchHandler {
      * @param page              the page that was opened
      * @param pageIndex         the index of the page
      */
-    void handle(Player player, Page previousPage, int previousPageIndex, Page page, int pageIndex);
+    void handle(@NotNull Player player, @NotNull Page previousPage, int previousPageIndex, @NotNull Page page, int pageIndex);
 }

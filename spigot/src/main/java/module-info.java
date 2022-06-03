@@ -19,6 +19,7 @@ module ulib.spigot {
     // api exports
     exports eu.software4you.ulib.spigot.enchantment;
     exports eu.software4you.ulib.spigot.inventorymenu.builder;
+    exports eu.software4you.ulib.spigot.inventorymenu.entry;
     exports eu.software4you.ulib.spigot.inventorymenu.handlers;
     exports eu.software4you.ulib.spigot.inventorymenu.menu;
     exports eu.software4you.ulib.spigot.inventorymenu;

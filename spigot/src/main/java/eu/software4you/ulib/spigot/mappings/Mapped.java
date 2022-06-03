@@ -41,5 +41,6 @@ public interface Mapped<T> {
      * @return T
      */
     @NotNull
+    // TODO: replace with optional
     T find();
 }

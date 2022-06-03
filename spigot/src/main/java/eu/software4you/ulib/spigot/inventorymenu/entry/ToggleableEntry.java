@@ -1,6 +1,7 @@
 package eu.software4you.ulib.spigot.inventorymenu.entry;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an {@link Entry} which can be toggled.
@@ -15,6 +16,7 @@ public interface ToggleableEntry extends Entry {
      *
      * @return the representing item stack
      */
+    @NotNull
     ItemStack getToggledRepresentation();
 
     /**
@@ -22,7 +24,7 @@ public interface ToggleableEntry extends Entry {
      *
      * @param representation the item stack
      */
-    void setToggledRepresentation(ItemStack representation);
+    void setToggledRepresentation(@NotNull ItemStack representation);
 
     /**
      * Gets if the entry is toggled.

@@ -1,6 +1,7 @@
 package eu.software4you.ulib.spigot.inventorymenu.menu;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an openable Inventory-Menu.
@@ -14,12 +15,13 @@ public interface Menu extends PageHandleable {
      *
      * @param player the player the menu will be shown to
      */
-    void open(Player player);
+    void open(@NotNull Player player);
 
     /**
      * Gets the title of this menu.
      *
      * @return the title
      */
+    @NotNull
     String getTitle();
 }

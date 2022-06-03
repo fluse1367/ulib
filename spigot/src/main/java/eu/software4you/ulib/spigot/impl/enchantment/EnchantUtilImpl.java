@@ -5,12 +5,10 @@ import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Conversions;
 import eu.software4you.ulib.spigot.enchantment.*;
-import eu.software4you.ulib.spigot.impl.PluginSubst;
 import eu.software4you.ulib.spigot.mappings.Mappings;
 import lombok.SneakyThrows;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -75,10 +73,6 @@ public final class EnchantUtilImpl {
         });
 
         stack.setItemMeta(meta);
-    }
-
-    public static void setRepairCost(AnvilInventory inv, int lvl) {
-        PluginSubst.getInstance().sync(() -> inv.setRepairCost(lvl));
     }
 
     public static int combineEnchantmentsSafe(ItemStack targetStack, ItemMeta target, ItemMeta sacrifice) {

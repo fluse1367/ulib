@@ -1,5 +1,6 @@
 package eu.software4you.ulib.spigot.item;
 
+import eu.software4you.ulib.core.impl.BypassAnnotationEnforcement;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
  * @author BananaPuncher714
  * @version 7.18.2
  */
+@BypassAnnotationEnforcement
 public final class NBTEditor {
     private static final Map<String, Class<?>> classCache;
     private static final Map<String, Method> methodCache;
@@ -1373,6 +1375,7 @@ public final class NBTEditor {
     /**
      * A class for holding NBTTagCompounds
      */
+    @BypassAnnotationEnforcement
     public static final class NBTCompound {
         protected final Object tag;
 
@@ -1436,6 +1439,7 @@ public final class NBTEditor {
      *
      * @author BananaPuncher714
      */
+    @BypassAnnotationEnforcement
     public enum MinecraftVersion {
         v1_8("1_8", 0),
         v1_9("1_9", 1),

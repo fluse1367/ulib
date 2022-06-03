@@ -4,6 +4,7 @@ import eu.software4you.ulib.spigot.inventorymenu.entry.MultiStateEntry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
@@ -25,12 +26,12 @@ public class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry
     }
 
     @Override
-    public T getState() {
+    public @NotNull T getState() {
         return currentState;
     }
 
     @Override
-    public void setState(T state) {
+    public void setState(@NotNull T state) {
         currentState = state;
         ItemStack representation = representations.get(state);
         if (representation == null)
@@ -39,19 +40,19 @@ public class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry
     }
 
     @Override
-    public T getDefaultState() {
+    public @NotNull T getDefaultState() {
         return defaultState;
     }
 
     @Override
-    public void setDefaultState(T state) {
+    public void setDefaultState(@NotNull T state) {
         if (currentState.equals(defaultState))
             setState(state);
         defaultState = state;
     }
 
     @Override
-    public ItemStack getRepresentation(T state) {
+    public ItemStack getRepresentation(@NotNull T state) {
         ItemStack representation = representations.get(state);
         if (representation == null)
             return null;
@@ -59,7 +60,7 @@ public class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry
     }
 
     @Override
-    public void setRepresentation(T state, ItemStack representation) {
+    public void setRepresentation(@NotNull T state, @NotNull ItemStack representation) {
         ItemStack stack = representation.clone();
         representations.put(state, stack);
         if (state.equals(currentState))
@@ -67,12 +68,12 @@ public class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry
     }
 
     @Override
-    public Map<T, ItemStack> getRepresentations() {
+    public @NotNull Map<T, ItemStack> getRepresentations() {
         return Collections.unmodifiableMap(representations);
     }
 
     @Override
-    public void setClickHandler(T state, BiConsumer<Player, ClickType> handler) {
+    public void setClickHandler(@NotNull T state, BiConsumer<Player, ClickType> handler) {
         if (handler == null)
             handlers.remove(state);
         else
@@ -80,7 +81,7 @@ public class MultiStateEntryImpl<T> extends EntryImpl implements MultiStateEntry
     }
 
     @Override
-    public BiConsumer<Player, ClickType> getClickHandler(T state) {
+    public BiConsumer<Player, ClickType> getClickHandler(@NotNull T state) {
         return handlers.get(state);
     }
 

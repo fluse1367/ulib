@@ -6,6 +6,7 @@ import eu.software4you.ulib.spigot.inventorymenu.menu.MultiPageMenu;
 import eu.software4you.ulib.spigot.inventorymenu.menu.Page;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class MultiPageMenuImpl implements MultiPageMenu {
     }
 
     @Override
-    public Map<Integer, Page> getPages() {
+    public @NotNull Map<Integer, Page> getPages() {
         return Collections.unmodifiableMap(pages);
     }
 
@@ -81,21 +82,21 @@ public class MultiPageMenuImpl implements MultiPageMenu {
 
     @Override
     public Pair<ItemStack, ItemStack> getPageSwitchButtons() {
-        return new Pair<>(previousPageButton.clone(), nextPageButton.clone());
+        return previousPageButton == null || nextPageButton == null ? null : new Pair<>(previousPageButton.clone(), nextPageButton.clone());
     }
 
     @Override
-    public void open(Player player) {
+    public void open(@NotNull Player player) {
         open(player, 0);
     }
 
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return title;
     }
 
     @Override
-    public void open(Player player, int pageIndex) {
+    public void open(@NotNull Player player, int pageIndex) {
         getPage(pageIndex).open(player);
     }
 

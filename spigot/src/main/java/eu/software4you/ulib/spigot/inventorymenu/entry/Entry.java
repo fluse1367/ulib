@@ -3,6 +3,8 @@ package eu.software4you.ulib.spigot.inventorymenu.entry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
@@ -17,6 +19,7 @@ public interface Entry {
      *
      * @return a copy of the representing item stack
      */
+    @NotNull
     ItemStack getRepresentation();
 
     /**
@@ -24,13 +27,14 @@ public interface Entry {
      *
      * @param representation the item stack
      */
-    void setRepresentation(ItemStack representation);
+    void setRepresentation(@NotNull ItemStack representation);
 
     /**
      * Gets the permission a player needs in order to click this entry.
      *
      * @return the permission
      */
+    @NotNull
     String getClickPermission();
 
     /**
@@ -38,13 +42,14 @@ public interface Entry {
      *
      * @param permission the permission to set, {@code null} or an empty string if no permission is required
      */
-    void setClickPermission(String permission);
+    void setClickPermission(@Nullable String permission);
 
     /**
      * Gets the handler that will be called on a successful click from a player.
      *
      * @return the handler that will be called on a successful click from a player
      */
+    @Nullable
     BiConsumer<Player, ClickType> getClickHandler();
 
     /**
@@ -52,5 +57,5 @@ public interface Entry {
      *
      * @param handler the handler that will be called on a successful click from a player
      */
-    void setClickHandler(BiConsumer<Player, ClickType> handler);
+    void setClickHandler(@Nullable BiConsumer<Player, ClickType> handler);
 }

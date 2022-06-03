@@ -3,8 +3,10 @@ package eu.software4you.ulib.spigot.inventorymenu.entry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.*;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -19,6 +21,7 @@ public interface MultiStateEntry<T> extends Entry {
      *
      * @return the current state
      */
+    @NotNull
     T getState();
 
     /**
@@ -26,13 +29,14 @@ public interface MultiStateEntry<T> extends Entry {
      *
      * @param state the state to set
      */
-    void setState(T state);
+    void setState(@NotNull T state);
 
     /**
      * Gets the default state of this entry.
      *
      * @return the default state
      */
+    @NotNull
     T getDefaultState();
 
     /**
@@ -40,14 +44,15 @@ public interface MultiStateEntry<T> extends Entry {
      *
      * @param state the state to set
      */
-    void setDefaultState(T state);
+    void setDefaultState(@NotNull T state);
 
     /**
      * Gets the representing item stack in the inventory associated with the state.
      *
      * @return the representing item stack
      */
-    ItemStack getRepresentation(T state);
+    @Nullable
+    ItemStack getRepresentation(@NotNull T state);
 
     /**
      * Sets the representing item stack for a specific state.
@@ -55,15 +60,17 @@ public interface MultiStateEntry<T> extends Entry {
      * @param state          the state to set the item for
      * @param representation the item stack
      */
-    void setRepresentation(T state, ItemStack representation);
+    // TODO: provide way to reset state to default representation
+    void setRepresentation(@NotNull T state, @NotNull ItemStack representation);
 
     /**
      * Gets the default state representation.
      *
      * @return the default state representation
      */
+    @NotNull
     default ItemStack getDefaultRepresentation() {
-        return getRepresentation(getDefaultState());
+        return Objects.requireNonNull(getRepresentation(getDefaultState()));
     }
 
     /**
@@ -71,6 +78,8 @@ public interface MultiStateEntry<T> extends Entry {
      *
      * @return an immutable map with all states and their associated representation
      */
+    @NotNull
+    @UnmodifiableView
     Map<T, ItemStack> getRepresentations();
 
 
@@ -81,7 +90,7 @@ public interface MultiStateEntry<T> extends Entry {
      * @param state   the state to set the handler for
      * @param handler the handler that will be called, or {@code null} to remove the handler
      */
-    void setClickHandler(T state, BiConsumer<Player, ClickType> handler);
+    void setClickHandler(@NotNull T state, @Nullable BiConsumer<Player, ClickType> handler);
 
     /**
      * Gets the handler that will be called on a successful click from a player at a certain state.
@@ -89,5 +98,6 @@ public interface MultiStateEntry<T> extends Entry {
      * @param state the state to set the handler for
      * @return the handler that will be called on a successful click from a player at a certain state
      */
-    BiConsumer<Player, ClickType> getClickHandler(T state);
+    @Nullable
+    BiConsumer<Player, ClickType> getClickHandler(@NotNull T state);
 }

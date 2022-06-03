@@ -3,6 +3,7 @@ package eu.software4you.ulib.spigot.inventorymenu.menu;
 import eu.software4you.ulib.spigot.inventorymenu.entry.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.*;
 
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public interface Page extends PageHandleable {
      *
      * @return the title
      */
+    @NotNull
     String getTitle();
 
     /**
@@ -25,6 +27,7 @@ public interface Page extends PageHandleable {
      *
      * @return the row count of this page
      */
+    @Range(from = 1, to = 6)
     int getRows();
 
     /**
@@ -33,6 +36,8 @@ public interface Page extends PageHandleable {
      *
      * @return a immutable map with all entries
      */
+    @NotNull
+    @UnmodifiableView
     Map<Integer, Entry> getEntries();
 
     /**
@@ -43,13 +48,14 @@ public interface Page extends PageHandleable {
      * @throws IllegalArgumentException if the slot is reserved for a page switch button
      * @throws IllegalStateException    if the entry belongs to another page
      */
-    void setEntry(int slot, Entry entry);
+    void setEntry(int slot, @Nullable Entry entry);
 
     /**
      * Gets the inventory instance.
      *
      * @return the inventory
      */
+    @NotNull
     Inventory getInventory();
 
     /**
@@ -57,5 +63,5 @@ public interface Page extends PageHandleable {
      *
      * @param player the player this page will be shown to
      */
-    void open(Player player);
+    void open(@NotNull Player player);
 }

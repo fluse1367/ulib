@@ -36,7 +36,8 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
         super();
     }
 
-    public ExtendedJavaPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    public ExtendedJavaPlugin(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description,
+                              @NotNull File dataFolder, @NotNull File file) {
         super(loader, description, dataFolder, file);
     }
 
@@ -135,7 +136,7 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     }
 
     @Override
-    public MenuManager getMainMenuManager() {
+    public @NotNull MenuManager getMainMenuManager() {
         if (mainMenuManager == null)
             mainMenuManager = getNewMenuManager();
         return mainMenuManager;

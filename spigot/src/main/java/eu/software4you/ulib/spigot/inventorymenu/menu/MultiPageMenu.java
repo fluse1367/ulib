@@ -4,6 +4,7 @@ import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.spigot.inventorymenu.handlers.PageSwitchHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.*;
 
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public interface MultiPageMenu extends Menu {
      *
      * @return an immutable map with all pages
      */
+    @NotNull
+    @UnmodifiableView
     Map<Integer, Page> getPages();
 
     /**
@@ -28,6 +31,7 @@ public interface MultiPageMenu extends Menu {
      * @param index the page index
      * @return the page, or {@code null} if page does not exist
      */
+    @Nullable
     Page getPage(int index);
 
     /**
@@ -38,7 +42,7 @@ public interface MultiPageMenu extends Menu {
      * @throws IndexOutOfBoundsException if the index is negative
      * @throws IllegalArgumentException  if page would be created with a gap to another page
      */
-    void setPage(int index, Page page);
+    void setPage(int index, @Nullable Page page);
 
     /**
      * Sets the page switch buttons. They will only be displayed if needed.
@@ -48,14 +52,15 @@ public interface MultiPageMenu extends Menu {
      * @param previousPageButton the button to click for the previous page
      * @param nextPageButton     the button to click to the next page
      */
-    void setPageSwitchButtons(ItemStack previousPageButton, ItemStack nextPageButton);
+    void setPageSwitchButtons(@Nullable ItemStack previousPageButton, @Nullable ItemStack nextPageButton);
 
     /**
      * Gets the page switch buttons.
      * {@link Pair#getFirst()} is the previous page button, {@link Pair#getSecond()} is the next page button.
      *
-     * @return a copy of the page switch buttons
+     * @return a copy of the page switch buttons, or {@code null} if they are disabled
      */
+    @Nullable
     Pair<ItemStack, ItemStack> getPageSwitchButtons();
 
     /**
@@ -64,13 +69,14 @@ public interface MultiPageMenu extends Menu {
      * @param player    the player the page will be shown to
      * @param pageIndex the page to show
      */
-    void open(Player player, int pageIndex);
+    void open(@NotNull Player player, int pageIndex);
 
     /**
      * Gets the handler that will be called when a player switches the page to another.
      *
      * @return the handler that will be called when a player switches the page to another
      */
+    @Nullable
     PageSwitchHandler getPageSwitchHandler();
 
     /**
@@ -78,5 +84,5 @@ public interface MultiPageMenu extends Menu {
      *
      * @param handler the handler that will be called when a player switches the page to another
      */
-    void setPageSwitchHandler(PageSwitchHandler handler);
+    void setPageSwitchHandler(@Nullable PageSwitchHandler handler);
 }

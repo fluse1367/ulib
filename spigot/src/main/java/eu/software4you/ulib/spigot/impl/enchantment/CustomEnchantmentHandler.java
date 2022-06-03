@@ -208,7 +208,7 @@ public class CustomEnchantmentHandler {
         if (cost < 1)
             return; // no cost, means no combing at all
         //inv.setRepairCost(cost);
-        EnchantUtil.setRepairCost(inv, cost);
+        PluginSubst.getInstance().sync(() -> inv.setRepairCost(cost));
         resultMeta.setDisplayName(e.getInventory().getRenameText());
 
         result.setItemMeta(resultMeta);

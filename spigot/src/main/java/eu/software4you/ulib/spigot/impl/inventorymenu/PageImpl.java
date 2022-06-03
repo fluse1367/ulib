@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return this.title;
     }
 
@@ -51,7 +52,7 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public Map<Integer, Entry> getEntries() {
+    public @NotNull Map<Integer, Entry> getEntries() {
         return Collections.unmodifiableMap(entries);
     }
 
@@ -78,12 +79,12 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return inventory;
     }
 
     @Override
-    public void open(Player player) {
+    public void open(@NotNull Player player) {
         player.openInventory(inventory);
     }
 

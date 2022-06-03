@@ -4,7 +4,9 @@ import eu.software4you.ulib.spigot.inventorymenu.entry.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class EntryImpl implements Entry {
@@ -21,9 +23,9 @@ public class EntryImpl implements Entry {
     }
 
     @Override
-    public ItemStack getRepresentation() {
+    public @NotNull ItemStack getRepresentation() {
         if (representation == null)
-            return null;
+            return null; // TODO: throw error?
         return representation.clone();
     }
 
@@ -36,13 +38,13 @@ public class EntryImpl implements Entry {
     }
 
     @Override
-    public String getClickPermission() {
+    public @NotNull String getClickPermission() {
         return clickPermission;
     }
 
     @Override
     public void setClickPermission(String permission) {
-        clickPermission = permission;
+        clickPermission = Objects.requireNonNullElse(permission, "");
     }
 
     PageImpl getParent() {
