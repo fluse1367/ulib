@@ -17,7 +17,7 @@ public class PropertiesLock {
         new HookInjection()
                 .addHook(PropertiesLock.class, new PropertiesLock(System.getProperties(),
                         o -> o instanceof String s && Conditions.in(s, (Object[]) locks)))
-                .inject().getCaught().ifPresent(cause -> {
+                .inject().ifCaught(cause -> {
                     throw new RuntimeException("Properties lock failed", cause);
                 });
     }
