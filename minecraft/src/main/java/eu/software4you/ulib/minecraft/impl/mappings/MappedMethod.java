@@ -1,11 +1,11 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
-final class MappedMethod extends Mapped<Method> implements eu.software4you.ulib.spigot.mappings.MappedMethod {
+final class MappedMethod extends Mapped<Method> implements eu.software4you.ulib.minecraft.mappings.MappedMethod {
     private final MappedClass parent;
     private final MappedClass returnType;
     private final MappedClass[] parameterTypes;

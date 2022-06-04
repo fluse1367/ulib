@@ -1,4 +1,4 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.collection.Triple;
 import eu.software4you.ulib.core.util.LazyValue;
@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-final class ClassMapping extends MappedClass implements eu.software4you.ulib.spigot.mappings.ClassMapping {
+final class ClassMapping extends MappedClass implements eu.software4you.ulib.minecraft.mappings.ClassMapping {
     protected final Map<String, LazyValue<MappedField>> fieldsBySourceName;
     protected final Map<String, LazyValue<MappedField>> fieldsByMappedName;
     protected final Map<String, LazyValue<List<MappedMethod>>> methodsBySourceName;
@@ -59,24 +59,24 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.ulib.spigot.mappings.MappedField> fields() {
+    public @NotNull Collection<eu.software4you.ulib.minecraft.mappings.MappedField> fields() {
         return Collections.unmodifiableCollection(fieldsBySourceName.values().stream()
                 .map(LazyValue::get)
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedField> fieldFromSource(@NotNull String originalName) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.MappedField> fieldFromSource(@NotNull String originalName) {
         return Optional.ofNullable(fieldsBySourceName.get(originalName)).map(LazyValue::get);
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedField> fieldFromMapped(@NotNull String mappedName) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.MappedField> fieldFromMapped(@NotNull String mappedName) {
         return Optional.ofNullable(fieldsByMappedName.get(mappedName)).map(LazyValue::get);
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.ulib.spigot.mappings.MappedMethod> methods() {
+    public @NotNull Collection<eu.software4you.ulib.minecraft.mappings.MappedMethod> methods() {
         return Collections.unmodifiableCollection(methodsBySourceName.values().stream()
                 .map(LazyValue::get)
                 .flatMap(Collection::stream)
@@ -84,31 +84,31 @@ final class ClassMapping extends MappedClass implements eu.software4you.ulib.spi
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.ulib.spigot.mappings.MappedMethod> methodsFromSource(@NotNull String sourceName) {
+    public @NotNull Collection<eu.software4you.ulib.minecraft.mappings.MappedMethod> methodsFromSource(@NotNull String sourceName) {
         return Collections.unmodifiableCollection(Optional.ofNullable(methodsBySourceName.get(sourceName))
                 .map(LazyValue::get)
                 .orElse(Collections.emptyList()));
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> methodFromSource(@NotNull String sourceName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.MappedMethod> methodFromSource(@NotNull String sourceName, eu.software4you.ulib.minecraft.mappings.MappedClass[] params) {
         return method(methodsBySourceName, sourceName, params);
     }
 
     @Override
-    public @NotNull Collection<eu.software4you.ulib.spigot.mappings.MappedMethod> methodsFromMapped(@NotNull String mappedName) {
+    public @NotNull Collection<eu.software4you.ulib.minecraft.mappings.MappedMethod> methodsFromMapped(@NotNull String mappedName) {
         return Collections.unmodifiableCollection(Optional.ofNullable(methodsByMappedName.get(mappedName))
                 .map(LazyValue::get)
                 .orElse(Collections.emptyList()));
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> methodFromMapped(@NotNull String mappedName, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.MappedMethod> methodFromMapped(@NotNull String mappedName, eu.software4you.ulib.minecraft.mappings.MappedClass[] params) {
         return method(methodsByMappedName, mappedName, params);
     }
 
-    private Optional<eu.software4you.ulib.spigot.mappings.MappedMethod> method(Map<String, LazyValue<List<MappedMethod>>> map,
-                                                                               String name, eu.software4you.ulib.spigot.mappings.MappedClass[] params) {
+    private Optional<eu.software4you.ulib.minecraft.mappings.MappedMethod> method(Map<String, LazyValue<List<MappedMethod>>> map,
+                                                                                  String name, eu.software4you.ulib.minecraft.mappings.MappedClass[] params) {
         return Optional.ofNullable(map.get(name))
                 .map(LazyValue::get)
                 .flatMap(li -> li.stream()

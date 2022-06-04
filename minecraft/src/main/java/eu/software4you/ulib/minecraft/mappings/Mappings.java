@@ -1,8 +1,8 @@
-package eu.software4you.ulib.spigot.mappings;
+package eu.software4you.ulib.minecraft.mappings;
 
+import eu.software4you.ulib.minecraft.impl.mappings.MappingsImpl;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
-import eu.software4you.ulib.spigot.impl.mappings.MappingsImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

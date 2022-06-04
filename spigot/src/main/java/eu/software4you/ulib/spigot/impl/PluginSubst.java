@@ -2,10 +2,11 @@ package eu.software4you.ulib.spigot.impl;
 
 import eu.software4you.ulib.core.impl.configuration.SerializationAdapters;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.LazyValue;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
+import eu.software4you.ulib.minecraft.util.Protocol;
 import eu.software4you.ulib.spigot.impl.configuration.BukkitSerializationAdapter;
 import eu.software4you.ulib.spigot.impl.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.spigot.impl.usercache.UserCacheImpl;
@@ -23,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class PluginSubst extends ExtendedJavaPlugin implements Listener {
-    private static final LazyValue<String> PLAIN_MC_VERSION;
     private static final String PROP_KEY = "ulib.plugin_status";
     private static PluginSubst instance = null;
 
@@ -35,10 +35,25 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
             throw new IllegalStateException("Reloading not supported");
         }
 
-        var server = Bukkit.getServer();
-        PLAIN_MC_VERSION = LazyValue.immutable(() -> ReflectUtil.icall(String.class, server, "getServer().getVersion()")
+        // populate constants
+        final var server = Bukkit.getServer();
+        SharedConstants.MC_VER.setInstance(ReflectUtil.icall(String.class, server, "getServer().getVersion()")
                 .orElseThrow());
 
+
+        // determine current mc version
+        Protocol current;
+        try {
+            // org.bukkit.craftbukkit.v?_??_R?
+            String mcVer = server.getClass().getPackage().getName().substring(23);
+            current = Protocol.valueOf(mcVer);
+        } catch (Throwable t) {
+            current = Protocol.UNKNOWN;
+        }
+        SharedConstants.MC_PROTOCOL.setInstance(current);
+
+
+        // misc
         SerializationAdapters.getInstance().registerAdapter(ConfigurationSerializable.class, new BukkitSerializationAdapter());
 
         System.setProperty(PROP_KEY, "cinit");
@@ -53,10 +68,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
 
     public static PluginSubst getInstance() {
         return instance;
-    }
-
-    public static String getPlainMcVersion() {
-        return PLAIN_MC_VERSION.get();
     }
 
     @Override

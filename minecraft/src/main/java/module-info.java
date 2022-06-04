@@ -13,6 +13,7 @@ module ulib.minecraft {
 
     // api exports
     exports eu.software4you.ulib.minecraft.launchermeta;
+    exports eu.software4you.ulib.minecraft.mappings;
     exports eu.software4you.ulib.minecraft.plugin.controllers;
     exports eu.software4you.ulib.minecraft.plugin;
     exports eu.software4you.ulib.minecraft.proxybridge.command;
@@ -22,6 +23,7 @@ module ulib.minecraft {
     exports eu.software4you.ulib.minecraft.util;
 
     // impl exports
+    exports eu.software4you.ulib.minecraft.impl to ulib.spigot;
     exports eu.software4you.ulib.minecraft.impl.proxybridge to ulib.velocity, ulib.bungeecord, ulib.spigot;
     exports eu.software4you.ulib.minecraft.impl.usercache to ulib.velocity, ulib.bungeecord, ulib.spigot;
     exports eu.software4you.ulib.minecraft.impl.launchermeta to ulib.spigot;

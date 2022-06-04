@@ -1,4 +1,4 @@
-package eu.software4you.ulib.spigot.mappings;
+package eu.software4you.ulib.minecraft.mappings;
 
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;

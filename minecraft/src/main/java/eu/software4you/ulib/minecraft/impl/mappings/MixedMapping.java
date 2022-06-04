@@ -1,4 +1,4 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
@@ -10,13 +10,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
-final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>> implements eu.software4you.ulib.spigot.mappings.MixedMapping {
+final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>> implements eu.software4you.ulib.minecraft.mappings.MixedMapping {
     MixedMapping(BukkitMapping bm, VanillaMapping vm) {
         super(new Pair<>(bm, vm));
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> from(@NotNull Class<?> source) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.ClassMapping> from(@NotNull Class<?> source) {
         return fromSource(source.getName());
     }
 
@@ -82,7 +82,7 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
                 String vanillaSourceName = vm.sourceName();
                 String vanillaObfName = vm.mappedName();
                 String bukkitName = bukkitResolve.methodFromSource(vanillaObfName, vm.parameterTypes())
-                        .map(eu.software4you.ulib.spigot.mappings.Mapped::mappedName)
+                        .map(eu.software4you.ulib.minecraft.mappings.Mapped::mappedName)
                         .orElse(vanillaObfName); // fall back to vanilla obf name
 
                 Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,

@@ -1,11 +1,11 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-abstract class Mapped<T> implements eu.software4you.ulib.spigot.mappings.Mapped<T> {
+abstract class Mapped<T> implements eu.software4you.ulib.minecraft.mappings.Mapped<T> {
     private final String sourceName;
     private final String mappedName;
 

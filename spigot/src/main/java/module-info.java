@@ -24,7 +24,6 @@ module ulib.spigot {
     exports eu.software4you.ulib.spigot.inventorymenu.menu;
     exports eu.software4you.ulib.spigot.inventorymenu;
     exports eu.software4you.ulib.spigot.item;
-    exports eu.software4you.ulib.spigot.mappings;
     exports eu.software4you.ulib.spigot.plugin;
     exports eu.software4you.ulib.spigot.util;
 

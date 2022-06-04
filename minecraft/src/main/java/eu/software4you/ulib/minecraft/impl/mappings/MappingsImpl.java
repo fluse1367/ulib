@@ -1,30 +1,31 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.impl.UnsafeOperations;
 import eu.software4you.ulib.core.io.IOUtil;
 import eu.software4you.ulib.core.util.LazyValue;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.launchermeta.VersionManifest;
 import eu.software4you.ulib.minecraft.launchermeta.VersionsMeta;
-import eu.software4you.ulib.spigot.util.Protocol;
+import eu.software4you.ulib.minecraft.util.Protocol;
 import lombok.SneakyThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Optional;
 
-import static eu.software4you.ulib.spigot.impl.PluginSubst.getPlainMcVersion;
 
 public final class MappingsImpl {
     private static final LazyValue<VanillaMapping> currentVanilla = LazyValue.immutable(() -> {
-        String ver = getPlainMcVersion();
+
+        var ver = SharedConstants.MC_VER.get();
         var manifest = VersionsMeta.getCurrent().get(ver)
                 .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));
         return loadVanilla(manifest);
     });
     private static final LazyValue<BukkitMapping> currentBukkit = LazyValue.immutable(() ->
-            loadBukkit(getPlainMcVersion()));
+            loadBukkit(SharedConstants.MC_VER.get()));
     private static final LazyValue<MixedMapping> currentMixed = LazyValue.immutable(() -> {
-        String ver = getPlainMcVersion();
+        var ver = SharedConstants.MC_VER.get();
         var manifest = VersionsMeta.getCurrent().get(ver)
                 .orElseThrow(() -> new IllegalStateException(String.format("launchermeta.mojang.com: Unknown Server Version (%s)", ver)));
         return loadMixed(manifest);
