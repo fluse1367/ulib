@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 
 final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>> implements eu.software4you.ulib.minecraft.mappings.MixedMapping {
@@ -22,23 +23,23 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
 
     @Override
     protected Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(Pair<BukkitMapping, VanillaMapping> mappingData) {
-        var bm = mappingData.getFirst();
-        var vm = mappingData.getSecond();
+        var bukkitMapping = Objects.requireNonNull(mappingData.getFirst());
+        var vanillaMapping = Objects.requireNonNull(mappingData.getSecond());
 
         Map<String, ClassMapping> byVanillaSource = new HashMap<>();
         Map<String, ClassMapping> byBukkit = new HashMap<>();
 
-        bm.byMappedName.forEach((name, cm) -> {
-            String bukkitName = cm.mappedName();
+        bukkitMapping.byMappedName.forEach((name, bukkitClassMapping) -> {
+            String bukkitName = bukkitClassMapping.mappedName();
 
-            String vanillaObfName = cm.sourceName();
-            var vc = vm.byMappedName.get(vanillaObfName);
+            String vanillaObfName = bukkitClassMapping.sourceName();
+            var vc = vanillaMapping.byMappedName.get(vanillaObfName);
 
             String vanillaSourceName = vc.sourceName();
 
             ClassMapping switched = new ClassMapping(vanillaSourceName, bukkitName,
-                    mapFields(vc.fieldsBySourceName.values(), cm),
-                    mapMethods(vc.methodsBySourceName.values(), cm));
+                    mapFields(vc.fieldsBySourceName.values(), bukkitClassMapping),
+                    mapMethods(vc.methodsBySourceName.values(), bukkitClassMapping));
 
             byVanillaSource.put(vanillaSourceName, switched);
             byBukkit.put(bukkitName, switched);
@@ -53,17 +54,22 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         List<Triple<String, String, Function<MappedClass, Supplier<MappedField>>>> fields = new ArrayList<>();
 
         vanillaFields.forEach(loader -> {
-            var vf = loader.get();
+            var vanillaField = loader.get();
 
-            String vanillaSourceName = vf.sourceName();
-            String vanillaObfName = vf.mappedName();
+            String vanillaSourceName = vanillaField.sourceName();
+            String vanillaObfName = vanillaField.mappedName();
             String bukkitName = Optional.ofNullable(bukkitResolve.fieldsBySourceName.get(vanillaObfName))
                     .map(LazyValue::get).map(Mapped::mappedName)
                     .orElse(vanillaObfName); // fall back to vanilla obf name
 
-            Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> new MappedField(
-                    parent, vf.type(), vanillaSourceName, bukkitName
-            );
+            Function<MappedClass, Supplier<MappedField>> loadTaskGenerator = parent -> () -> {
+                // resolve type
+                var type = (MappedClass) bySourceName.get(vanillaField.type().sourceName());
+                if (type == null) // fallback
+                    type = vanillaField.type();
+
+                return new MappedField(parent, type, vanillaSourceName, bukkitName);
+            };
             fields.add(new Triple<>(vanillaSourceName, bukkitName, loadTaskGenerator));
         });
 
@@ -75,22 +81,31 @@ final class MixedMapping extends MappingRoot<Pair<BukkitMapping, VanillaMapping>
         // triple: vanillaSourceName, bukkitName, loader
         List<Triple<String, String, Function<MappedClass, Supplier<MappedMethod>>>> methods = new ArrayList<>();
 
-        vanillaMethods.forEach(loader -> {
-            var li = loader.get();
+        vanillaMethods.forEach(loader -> Objects.requireNonNull(loader.get()).forEach(vanillaMapping -> {
+            String vanillaSourceName = vanillaMapping.sourceName();
+            String vanillaObfName = vanillaMapping.mappedName();
+            String bukkitName = bukkitResolve.methodFromSource(vanillaObfName, vanillaMapping.parameterTypes())
+                    .map(eu.software4you.ulib.minecraft.mappings.Mapped::mappedName)
+                    .orElse(vanillaObfName); // fall back to vanilla obf name
 
-            li.forEach(vm -> {
-                String vanillaSourceName = vm.sourceName();
-                String vanillaObfName = vm.mappedName();
-                String bukkitName = bukkitResolve.methodFromSource(vanillaObfName, vm.parameterTypes())
-                        .map(eu.software4you.ulib.minecraft.mappings.Mapped::mappedName)
-                        .orElse(vanillaObfName); // fall back to vanilla obf name
+            Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> {
+                // resolve return type
+                var returnType = (MappedClass) bySourceName.get(vanillaMapping.returnType().sourceName());
+                if (returnType == null) // fallback
+                    returnType = vanillaMapping.returnType();
 
-                Function<MappedClass, Supplier<MappedMethod>> loadTaskGenerator = parent -> () -> new MappedMethod(parent,
-                        vm.returnType(), vm.parameterTypes(), vanillaSourceName, bukkitName);
-                methods.add(new Triple<>(vanillaSourceName, bukkitName, loadTaskGenerator));
-            });
+                // resolve params
+                var paramTypes = Stream.of(vanillaMapping.parameterTypes())
+                        .map(mappedClass -> {
+                            var type = (MappedClass) bySourceName.get(mappedClass.sourceName());
+                            return type != null ? type : mappedClass /*fallback*/;
+                        })
+                        .toArray(MappedClass[]::new);
 
-        });
+                return new MappedMethod(parent, returnType, paramTypes, vanillaSourceName, bukkitName);
+            };
+            methods.add(new Triple<>(vanillaSourceName, bukkitName, loadTaskGenerator));
+        }));
 
         return methods;
     }
