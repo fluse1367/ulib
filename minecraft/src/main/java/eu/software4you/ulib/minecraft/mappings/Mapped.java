@@ -1,5 +1,6 @@
-package eu.software4you.ulib.spigot.mappings;
+package eu.software4you.ulib.minecraft.mappings;
 
+import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,12 +36,9 @@ public interface Mapped<T> {
 
     /**
      * Attempts to find the representing {@link T} using {@link #mappedName()} as source.
-     * <p>
-     * This method rather throws an exception than returning a {@code null} value on failure.
      *
      * @return T
      */
     @NotNull
-    // TODO: replace with optional
-    T find();
+    Expect<T, ?> find();
 }

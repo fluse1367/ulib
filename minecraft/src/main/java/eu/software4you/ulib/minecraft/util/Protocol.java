@@ -1,6 +1,6 @@
-package eu.software4you.ulib.spigot.util;
+package eu.software4you.ulib.minecraft.util;
 
-import org.bukkit.Bukkit;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -44,18 +44,9 @@ public enum Protocol {
     UNKNOWN(-1);
 
     private static final Map<String, Protocol> byVerStr = new HashMap<>();
-    private static final Protocol version;
 
     static {
-        // determine current mc version
-        Protocol current;
-        try {
-            String mcVer = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-            current = valueOf(mcVer);
-        } catch (Throwable t) {
-            current = UNKNOWN;
-        }
-        version = current;
+
 
         // populate map
         for (Protocol protocol : values()) {
@@ -70,7 +61,7 @@ public enum Protocol {
      */
     @NotNull
     public static Protocol getPlatformProtocol() {
-        return version;
+        return SharedConstants.MC_PROTOCOL.get();
     }
 
     /**

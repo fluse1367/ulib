@@ -1,4 +1,4 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.MULTILINE;
 
-final class VanillaMapping extends MappingRoot<String> implements eu.software4you.ulib.spigot.mappings.VanillaMapping {
+final class VanillaMapping extends MappingRoot<String> implements eu.software4you.ulib.minecraft.mappings.VanillaMapping {
     /*
      pattern to find a whole class mapping (including members)
      original regex:                    /^(\S+) -> (\S+):$\n?((?:^ {4}\S+ \S+ -> \S+$\n?)*)/gmi

@@ -3,6 +3,7 @@ package eu.software4you.ulib.velocity.impl;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import eu.software4you.ulib.velocity.impl.proxybridge.ProxyServerBridgeImpl;
@@ -30,7 +31,8 @@ public class PluginSubst extends VelocityJavaPlugin {
         registerEvents(proxyServerBridge);
         getProxyServer().getChannelRegistrar().register(ProxyServerBridgeImpl.IDENTIFIER);
 
-        AbstractUserCache.PLUGIN_INSTANCE.setInstance(this);
+        SharedConstants.BASE.setInstance(this);
+
         AbstractUserCache.PROVIDER.setInstance(UserCacheImpl::new);
     }
 

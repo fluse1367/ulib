@@ -1,8 +1,8 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
-import eu.software4you.ulib.spigot.util.Protocol;
+import eu.software4you.ulib.minecraft.util.Protocol;
 
 import java.util.*;
 import java.util.function.Function;
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> implements eu.software4you.ulib.spigot.mappings.BukkitMapping {
+final class BukkitMapping extends MappingRoot<Triple<String, String, Protocol>> implements eu.software4you.ulib.minecraft.mappings.BukkitMapping {
     // /^(\S++) (\S++)$/gmi
     private static final Pattern CLASS_MAPPING_PATTERN = Pattern.compile("^(\\S++) (\\S++)$",
             Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);

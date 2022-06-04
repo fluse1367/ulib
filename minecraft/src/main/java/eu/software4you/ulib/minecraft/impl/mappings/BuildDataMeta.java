@@ -1,15 +1,14 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
-import com.google.gson.*;
-import com.google.gson.stream.JsonWriter;
+import eu.software4you.ulib.core.configuration.JsonConfiguration;
 import eu.software4you.ulib.core.http.CachedResource;
 import eu.software4you.ulib.core.impl.Internal;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Optional;
 
 @Getter
 final class BuildDataMeta {
@@ -33,53 +32,51 @@ final class BuildDataMeta {
         this.memberMappings = (this.mm = mm) == null ? null : new CachedResource(mappingsUrl + this.mm + "?at=" + hash, null);
     }
 
-    private static BuildDataMeta fromJson(JsonObject json, String ver, String hash) {
-        String cm = json.get("classMappings").getAsString();
-        String mm = Optional.ofNullable(json.get("memberMappings"))
-                .map(JsonElement::getAsString)
-                .orElse(null);
+    private static BuildDataMeta fromJson(JsonConfiguration json, String ver, String hash) {
+        String cm = json.string("classMappings").orElseThrow();
+        String mm = json.string("memberMappings").orElse(null);
 
         return new BuildDataMeta(ver, hash, cm, mm);
     }
 
-    private static BuildDataMeta fromJson(JsonObject json, String ver) {
-        return fromJson(json, ver, json.get("hash").getAsString());
+    private static BuildDataMeta fromJson(JsonConfiguration json, String ver) {
+        return fromJson(json, ver, json.string("hash").orElseThrow());
     }
 
     @SneakyThrows
+    @Nullable
     private static BuildDataMeta fromCommit(String commitHash) {
         String url = SPIGOTMC_REST + "/raw/info.json?at=" + commitHash;
 
         var in = URI.create(url).toURL().openStream();
 
-        JsonObject json;
+        JsonConfiguration json;
         try (var reader = new InputStreamReader(in)) {
-            json = JsonParser.parseReader(reader).getAsJsonObject();
+            json = JsonConfiguration.loadJson(in).orElseRethrow();
         }
 
         // ensure json is valid
-        if (!json.has("minecraftVersion"))
+        if (!json.isSet("minecraftVersion"))
             return null;
 
-        return fromJson(json, json.get("minecraftVersion").getAsString(), commitHash);
+        return fromJson(json, json.string("minecraftVersion").orElseThrow(), commitHash);
     }
 
     @SneakyThrows
     static BuildDataMeta loadBuildData(String ver) {
 
         // load cached meta
-        JsonObject cachedMeta;
+        JsonConfiguration cachedMeta;
         File metaFile = new File(Internal.getCacheDir(), "bukkitbuilddata/versions.json");
         if (metaFile.exists()) {
-            cachedMeta = JsonParser.parseReader(new FileReader(metaFile)).getAsJsonObject();
+            cachedMeta = JsonConfiguration.loadJson(metaFile).orElseThrow();
         } else {
-            cachedMeta = new JsonObject();
+            cachedMeta = JsonConfiguration.newJson();
         }
 
         // load from versions.json
-        if (cachedMeta.has(ver)) {
-            var json = cachedMeta.getAsJsonObject(ver);
-            return fromJson(json, ver);
+        if (cachedMeta.isSub(ver)) {
+            return fromJson(cachedMeta.getSub(ver).orElseThrow(), ver);
         }
 
         // download json data
@@ -87,15 +84,15 @@ final class BuildDataMeta {
 
         String url = String.format("https://hub.spigotmc.org/versions/%s.json", ver);
         try (var reader = new InputStreamReader(new CachedResource(url, null).require().orElseThrow())) {
-            var json = JsonParser.parseReader(reader).getAsJsonObject();
-            String commit = json.getAsJsonObject("refs").get("BuildData").getAsString();
+            var json = JsonConfiguration.loadJson(reader).orElseThrow();
+            String commit = json.string("refs.BuildData").orElseThrow();
 
             buildData = fromCommit(commit);
             if (buildData == null) {
                 return null;
             }
 
-            cachedMeta.add(ver, buildData.toJson());
+            cachedMeta.set(ver, buildData.toJson());
         }
 
         // save meta.json
@@ -103,22 +100,17 @@ final class BuildDataMeta {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
-
-        try (var writer = new JsonWriter(new FileWriter(metaFile, false))) {
-            gson.toJson(cachedMeta, writer);
+        try (var wr = new FileWriter(metaFile, false)) {
+            cachedMeta.dump(wr).rethrowRE();
         }
         return buildData;
     }
 
-    public JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("hash", hash);
-        json.addProperty("classMappings", cm);
-        json.addProperty("memberMappings", mm);
+    public JsonConfiguration toJson() {
+        var json = JsonConfiguration.newJson();
+        json.set("hash", hash);
+        json.set("classMappings", cm);
+        json.set("memberMappings", mm);
         return json;
     }
 

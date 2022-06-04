@@ -3,11 +3,12 @@ package eu.software4you.ulib.spigot.impl.enchantment;
 import com.cryptomorin.xseries.XEnchantment;
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
+import eu.software4you.ulib.minecraft.mappings.Mappings;
+import eu.software4you.ulib.minecraft.plugin.controllers.SchedulerController;
 import eu.software4you.ulib.spigot.enchantment.CustomEnchantment;
 import eu.software4you.ulib.spigot.enchantment.EnchantUtil;
 import eu.software4you.ulib.spigot.impl.DelegationListener;
-import eu.software4you.ulib.spigot.impl.PluginSubst;
-import eu.software4you.ulib.spigot.mappings.Mappings;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -29,8 +30,7 @@ public class CustomEnchantmentHandler {
     static Listener handle;
 
     static void register() {
-        var pl = PluginSubst.getInstance();
-        var handler = new CustomEnchantmentHandler(pl);
+        var handler = new CustomEnchantmentHandler((SchedulerController<?>) SharedConstants.BASE.get());
 
         var d = DelegationListener.registerSingleDelegation(VillagerAcquireTradeEvent.class, handler::handle,
                 EventPriority.HIGHEST, true);
@@ -55,10 +55,10 @@ public class CustomEnchantmentHandler {
     }
 
     private String methodName_player_getEnchantment;
-    private final PluginSubst pl;
+    private final SchedulerController<?> schedulerController;
 
-    private CustomEnchantmentHandler(PluginSubst pl) {
-        this.pl = pl;
+    private CustomEnchantmentHandler(SchedulerController<?> schedulerController) {
+        this.schedulerController = schedulerController;
         // Use Mappings API to get xpSeed
         Tasks.run(() -> {
             methodName_player_getEnchantment = Mappings.getMixedMapping()
@@ -162,7 +162,7 @@ public class CustomEnchantmentHandler {
         }
 
 
-        pl.sync(() -> EnchantUtil.updateCustomEnchantmentLore(
+        schedulerController.sync(() -> EnchantUtil.updateCustomEnchantmentLore(
                 ((EnchantingInventory) e.getInventory()).getItem()
         ));
     }
@@ -208,7 +208,7 @@ public class CustomEnchantmentHandler {
         if (cost < 1)
             return; // no cost, means no combing at all
         //inv.setRepairCost(cost);
-        PluginSubst.getInstance().sync(() -> inv.setRepairCost(cost));
+        schedulerController.sync(() -> inv.setRepairCost(cost));
         resultMeta.setDisplayName(e.getInventory().getRenameText());
 
         result.setItemMeta(resultMeta);
@@ -232,7 +232,7 @@ public class CustomEnchantmentHandler {
         if (grindstone.getType() != InventoryType.GRINDSTONE) {
             return;
         }
-        pl.sync(() -> {
+        schedulerController.sync(() -> {
             ItemStack result = grindstone.getItem(2);
             if (result == null || result.getType() == Material.AIR)
                 return;

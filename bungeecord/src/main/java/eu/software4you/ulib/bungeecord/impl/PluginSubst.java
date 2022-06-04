@@ -3,6 +3,7 @@ package eu.software4you.ulib.bungeecord.impl;
 import eu.software4you.ulib.bungeecord.impl.proxybridge.ProxyServerBridgeImpl;
 import eu.software4you.ulib.bungeecord.impl.usercache.UserCacheImpl;
 import eu.software4you.ulib.bungeecord.plugin.ExtendedProxyPlugin;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import lombok.SneakyThrows;
@@ -18,6 +19,7 @@ public class PluginSubst extends ExtendedProxyPlugin {
     public PluginSubst(Plugin plugin, ProxyServer proxy, PluginDescription description) {
         super(proxy, description);
         this.plugin = plugin;
+        SharedConstants.BASE.setInstance(this);
     }
 
     @Override
@@ -28,7 +30,6 @@ public class PluginSubst extends ExtendedProxyPlugin {
             registerEvents(proxyServerBridgeImpl);
             getProxy().registerChannel(AbstractProxyServerBridge.CHANNEL);
 
-            AbstractUserCache.PLUGIN_INSTANCE.setInstance(this);
             AbstractUserCache.PROVIDER.setInstance(UserCacheImpl::new);
         } catch (Exception e) {
             e.printStackTrace();

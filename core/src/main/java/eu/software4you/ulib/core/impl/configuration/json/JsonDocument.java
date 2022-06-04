@@ -35,9 +35,9 @@ public class JsonDocument extends ConfigurationBase<JsonDocument> implements Jso
     public @NotNull Expect<Void, IOException> reinit(@NotNull Reader reader) {
         return Expect.compute(() -> {
             clear();
-            var opCaught = Expect.compute(() -> serializer.deserialize(reader, this)).getCaught();
-            if (opCaught.isPresent())
-                throw new IOException(opCaught.get());
+            Expect.compute(() -> serializer.deserialize(reader, this)).ifCaught(ex -> {
+                throw new IOException(ex);
+            });
         });
     }
 

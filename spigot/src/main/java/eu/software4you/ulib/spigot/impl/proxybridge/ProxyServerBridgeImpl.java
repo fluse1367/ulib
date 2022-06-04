@@ -2,6 +2,7 @@ package eu.software4you.ulib.spigot.impl.proxybridge;
 
 import com.google.common.io.*;
 import com.google.gson.*;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
@@ -118,7 +119,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge imple
     public void handle(PlayerJoinEvent e) {
         if (thisServer != null)
             return;
-        PluginSubst.getInstance().async(this::attemptSetThisServer);
+        SharedConstants.BASE.get().async(this::attemptSetThisServer);
     }
 
     @SneakyThrows // possible exception thrown in Future#get effectively never happens (see SBB.DataSupplier#get)

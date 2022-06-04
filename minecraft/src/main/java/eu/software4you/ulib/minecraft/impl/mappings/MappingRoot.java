@@ -1,8 +1,8 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.collection.Triple;
-import eu.software4you.ulib.spigot.mappings.JarMapping;
+import eu.software4you.ulib.minecraft.mappings.JarMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -28,17 +28,17 @@ abstract class MappingRoot<T> implements JarMapping {
     protected abstract Pair<Map<String, ClassMapping>, Map<String, ClassMapping>> generateMappings(T mappingData);
 
     @Override
-    public @NotNull Collection<eu.software4you.ulib.spigot.mappings.ClassMapping> all() {
+    public @NotNull Collection<eu.software4you.ulib.minecraft.mappings.ClassMapping> all() {
         return Collections.unmodifiableCollection(bySourceName.values());
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> fromSource(@NotNull String originalName) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.ClassMapping> fromSource(@NotNull String originalName) {
         return Optional.ofNullable(bySourceName.get(originalName));
     }
 
     @Override
-    public @NotNull Optional<eu.software4you.ulib.spigot.mappings.ClassMapping> fromMapped(@NotNull String mappedName) {
+    public @NotNull Optional<eu.software4you.ulib.minecraft.mappings.ClassMapping> fromMapped(@NotNull String mappedName) {
         return Optional.ofNullable(byMappedName.get(mappedName));
     }
 

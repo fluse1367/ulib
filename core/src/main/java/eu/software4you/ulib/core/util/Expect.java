@@ -21,7 +21,6 @@ import java.util.function.Supplier;
  * @see Optional
  * @see CompletableFuture
  */
-// TODO: #peek and #orElsePeek
 public final class Expect<T, X extends Exception> {
     private static final Expect<?, ?> EMPTY = new Expect<>(null, null);
 
@@ -347,6 +346,29 @@ public final class Expect<T, X extends Exception> {
         Objects.requireNonNull(other);
 
         return isPresent() ? compute(() -> task.execute(value)) : compute(() -> other.execute(getCaught()));
+    }
+
+    /**
+     * Runs the given task if a caught object is present.
+     *
+     * @param peeker the task
+     */
+    public <XX extends Exception> void ifCaught(@NotNull ParamTask<? super Exception, XX> peeker) throws XX {
+        if (hasCaught())
+            peeker.execute(caught);
+    }
+
+    /**
+     * Runs the given task if a caught object is present.
+     *
+     * @param peeker the task
+     * @return this
+     */
+    @NotNull
+    @Contract("_ -> this")
+    public <XX extends Exception> Expect<T, X> peekCaught(@NotNull ParamTask<? super Exception, XX> peeker) throws XX {
+        ifCaught(peeker);
+        return this;
     }
 
     /**

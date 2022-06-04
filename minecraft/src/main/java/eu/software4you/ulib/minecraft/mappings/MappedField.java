@@ -1,4 +1,4 @@
-package eu.software4you.ulib.spigot.mappings;
+package eu.software4you.ulib.minecraft.mappings;
 
 import org.jetbrains.annotations.NotNull;
 

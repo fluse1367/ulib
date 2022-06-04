@@ -1,11 +1,12 @@
-package eu.software4you.ulib.spigot.impl.mappings;
+package eu.software4you.ulib.minecraft.impl.mappings;
 
+import eu.software4you.ulib.core.util.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 
-final class MappedField extends Mapped<Field> implements eu.software4you.ulib.spigot.mappings.MappedField {
+final class MappedField extends Mapped<Field> implements eu.software4you.ulib.minecraft.mappings.MappedField {
     private final MappedClass parent;
     private final MappedClass type;
 
@@ -23,7 +24,8 @@ final class MappedField extends Mapped<Field> implements eu.software4you.ulib.sp
 
     @SneakyThrows
     @Override
-    public @NotNull Field find() {
-        return parent.find().getDeclaredField(mappedName());
+    public @NotNull Expect<Field, ?> find() {
+        return parent.find()
+                .map(cl -> cl.getDeclaredField(mappedName()));
     }
 }
