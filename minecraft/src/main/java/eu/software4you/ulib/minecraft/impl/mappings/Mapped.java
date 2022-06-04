@@ -25,4 +25,10 @@ abstract class Mapped<T> implements eu.software4you.ulib.minecraft.mappings.Mapp
     public String mappedName() {
         return mappedName;
     }
+
+    @Override
+    public String toString() {
+        return "{[%s@%x] %s -> %s}".formatted(getClass().getSimpleName(), hashCode(),
+                sourceName, mappedName);
+    }
 }
