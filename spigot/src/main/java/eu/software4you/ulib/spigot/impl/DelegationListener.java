@@ -1,5 +1,6 @@
 package eu.software4you.ulib.spigot.impl;
 
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import org.bukkit.event.*;
 import org.bukkit.plugin.Plugin;
 
@@ -39,7 +40,7 @@ public class DelegationListener implements Listener {
     }
 
     public static <T extends Event> void registerDelegation(Listener delegation, Class<T> clazz, Consumer<T> consumer, EventPriority priority, boolean ignoreCancelled) {
-        registerDelegation(delegation, clazz, consumer, priority, ignoreCancelled, PluginSubst.getInstance().getPluginObject());
+        registerDelegation(delegation, clazz, consumer, priority, ignoreCancelled, (Plugin) SharedConstants.BASE.get().getPluginObject());
     }
 
     public static <T extends Event> void registerDelegation(Listener delegation, Class<T> clazz, Consumer<T> consumer, EventPriority priority, boolean ignoreCancelled, Plugin pl) {

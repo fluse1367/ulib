@@ -25,7 +25,6 @@ import java.io.File;
 
 public class PluginSubst extends ExtendedJavaPlugin implements Listener {
     private static final String PROP_KEY = "ulib.plugin_status";
-    private static PluginSubst instance = null;
 
     static {
         // check for already existing instance
@@ -64,16 +63,13 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
     public PluginSubst(Plugin plugin, JavaPluginLoader loader, PluginDescriptionFile descriptionFile, File dataFolder, File file) {
         super(loader, descriptionFile, dataFolder, file);
         this.plugin = plugin;
-    }
-
-    public static PluginSubst getInstance() {
-        return instance;
+        SharedConstants.BASE.setInstance(this);
     }
 
     @Override
     public void onEnable() {
         try {
-            registerEvents(instance = this);
+            registerEvents(this);
 
             ProxyServerBridgeImpl proxyServerBridgeImpl = new ProxyServerBridgeImpl(this);
             AbstractProxyServerBridge.INSTANCE.setInstance(proxyServerBridgeImpl);
@@ -85,7 +81,6 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
             messenger.registerIncomingPluginChannel(this, "BungeeCord", proxyServerBridgeImpl);
 
 
-            AbstractUserCache.PLUGIN_INSTANCE.setInstance(this);
             AbstractUserCache.PROVIDER.setInstance(UserCacheImpl::new);
         } catch (Exception e) {
             e.printStackTrace();

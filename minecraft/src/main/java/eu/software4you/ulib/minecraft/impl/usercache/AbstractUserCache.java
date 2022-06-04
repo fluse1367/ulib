@@ -4,6 +4,7 @@ import eu.software4you.ulib.core.database.Database;
 import eu.software4you.ulib.core.database.sql.*;
 import eu.software4you.ulib.core.util.LazyValue;
 import eu.software4you.ulib.core.util.SingletonInstance;
+import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import eu.software4you.ulib.minecraft.usercache.UserCache;
 import lombok.SneakyThrows;
@@ -17,12 +18,11 @@ import java.util.function.BiFunction;
 public abstract class AbstractUserCache implements UserCache {
 
     public static final SingletonInstance<BiFunction<PluginBase<?, ?>, Table, AbstractUserCache>> PROVIDER = new SingletonInstance<>();
-    public static final SingletonInstance<PluginBase<?, ?>> PLUGIN_INSTANCE = new SingletonInstance<>();
     public static final LazyValue<UserCache> MAIN_CACHE = LazyValue.immutable(AbstractUserCache::getMainCache);
     public static final SingletonInstance<SqlDatabase> MAIN_CACHE_DB = new SingletonInstance<>();
 
     private static UserCache getMainCache() {
-        var plugin = PLUGIN_INSTANCE.get();
+        var plugin = SharedConstants.BASE.get();
 
         // init database connection
         SqlDatabase database;
