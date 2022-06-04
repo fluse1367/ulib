@@ -2,6 +2,7 @@ package eu.software4you.ulib.minecraft.mappings;
 
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -44,6 +45,7 @@ public interface MappedMethod extends Mapped<Method> {
         AtomicInteger i = new AtomicInteger(0);
         return Arrays.stream(parameterTypes())
                 .map(MappedClass::find)
+                .map(Expect::orElseThrow)
                 .map(cl -> {
                     Object param = params[i.getAndIncrement()];
 
