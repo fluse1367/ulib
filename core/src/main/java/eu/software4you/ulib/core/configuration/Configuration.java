@@ -276,7 +276,7 @@ public interface Configuration {
     @NotNull
     default Optional<String> string(@NotNull String path, @NotNull Object... replacements) {
         return get(String.class, path)
-                .map(str -> str.formatted(replacements));
+                .map(str -> replacements.length > 0 ? str.formatted(replacements) : str);
     }
 
 
@@ -293,6 +293,8 @@ public interface Configuration {
     default Optional<List<String>> stringList(@NotNull String path, @NotNull Object... replacements) {
         return list(String.class, path)
                 .map(list -> {
+                    if (replacements.length == 0)
+                        return list;
                     var res = new ArrayList<String>(list.size());
                     list.forEach(str -> {
                         res.add(str.formatted(replacements));
