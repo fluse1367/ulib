@@ -1,5 +1,6 @@
 package eu.software4you.ulib.minecraft.mappings;
 
+import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,5 +18,5 @@ public interface MappedClass extends Mapped<Class<?>> {
      * @see Class#forName(String)
      */
     @NotNull
-    Class<?> find();
+    Expect<Class<?>, ?> find();
 }

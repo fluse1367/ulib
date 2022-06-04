@@ -1,5 +1,6 @@
 package eu.software4you.ulib.minecraft.impl.mappings;
 
+import eu.software4you.ulib.core.util.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,11 +32,14 @@ final class MappedMethod extends Mapped<Method> implements eu.software4you.ulib.
 
     @SneakyThrows
     @Override
-    public @NotNull Method find() {
-        Class<?>[] types = new Class[parameterTypes.length];
-        for (int i = 0; i < parameterTypes.length; i++) {
-            types[i] = parameterTypes[i].find();
-        }
-        return parent.find().getDeclaredMethod(mappedName(), types);
+    public @NotNull Expect<Method, ?> find() {
+        return parent.find().map(cl -> {
+            Class<?>[] types = new Class[parameterTypes.length];
+            for (int i = 0; i < parameterTypes.length; i++) {
+                types[i] = parameterTypes[i].find().orElseRethrow();
+            }
+
+            return cl.getDeclaredMethod(mappedName(), types);
+        });
     }
 }

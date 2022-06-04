@@ -1,5 +1,6 @@
 package eu.software4you.ulib.minecraft.impl.mappings;
 
+import eu.software4you.ulib.core.util.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,8 @@ final class MappedField extends Mapped<Field> implements eu.software4you.ulib.mi
 
     @SneakyThrows
     @Override
-    public @NotNull Field find() {
-        return parent.find().getDeclaredField(mappedName());
+    public @NotNull Expect<Field, ?> find() {
+        return parent.find()
+                .map(cl -> cl.getDeclaredField(mappedName()));
     }
 }
