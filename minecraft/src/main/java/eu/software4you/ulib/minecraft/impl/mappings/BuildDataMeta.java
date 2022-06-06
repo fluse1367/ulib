@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Getter
 final class BuildDataMeta {
@@ -67,9 +69,9 @@ final class BuildDataMeta {
 
         // load cached meta
         JsonConfiguration cachedMeta;
-        File metaFile = new File(Internal.getCacheDir(), "bukkitbuilddata/versions.json");
-        if (metaFile.exists()) {
-            cachedMeta = JsonConfiguration.loadJson(metaFile.toPath()).orElseThrow();
+        Path metaFile = Internal.getCacheDir().resolve("bukkitbuilddata/versions.json");
+        if (Files.exists(metaFile)) {
+            cachedMeta = JsonConfiguration.loadJson(metaFile).orElseThrow();
         } else {
             cachedMeta = JsonConfiguration.newJson();
         }
@@ -96,13 +98,8 @@ final class BuildDataMeta {
         }
 
         // save meta.json
-        var dir = metaFile.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        try (var wr = new FileWriter(metaFile, false)) {
-            cachedMeta.dump(wr).rethrowRE();
-        }
+        Files.createDirectories(metaFile.getParent());
+        cachedMeta.dumpTo(metaFile).rethrow();
         return buildData;
     }
 

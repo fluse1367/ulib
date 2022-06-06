@@ -6,16 +6,19 @@ import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
 import eu.software4you.ulib.core.util.Conditions;
+import eu.software4you.ulib.core.util.Expect;
 import lombok.*;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public final class Internal {
 
     @Getter
-    private static final File dataDir, cacheDir, localMavenDir;
+    private static final Path dataDir, cacheDir, localMavenDir;
     @Getter
     private static final boolean unsafeOperations, forceSync;
     @Getter
@@ -25,16 +28,16 @@ public final class Internal {
     private static Boolean clOverride;
 
     static {
-        mkdirs(dataDir = new File(System.getProperty("ulib.directory.main", ".ulib")));
+        mkdirs(dataDir = Path.of(System.getProperty("ulib.directory.main", ".ulib")));
 
         yaml = loadConfig();
         clOverride = yaml.bool("override-command-line").orElse(false);
 
 
-        mkdirs(cacheDir = new File(get("directories.cache", "ulib.directory.cache",
-                String.format("%s%scache", dataDir.getPath(), File.separator))));
-        mkdirs(localMavenDir = new File(get("directories.libraries", "ulib.directory.libraries",
-                String.format("%s%slibraries", dataDir.getPath(), File.separator))));
+        mkdirs(cacheDir = Path.of(get("directories.cache", "ulib.directory.cache",
+                String.format("%s%scache", dataDir, File.separator))));
+        mkdirs(localMavenDir = Path.of(get("directories.libraries", "ulib.directory.libraries",
+                String.format("%s%slibraries", dataDir, File.separator))));
 
         forceSync = get("force-synchronous-work", "ulib.forcesync", "false").equalsIgnoreCase("true");
         unsafeOperations = get("unsafe-operations", "ulib.unsafe_operations", "deny").equalsIgnoreCase("allow");
@@ -57,11 +60,12 @@ public final class Internal {
         return def;
     }
 
-    @SneakyThrows
-    private static void mkdirs(File dir) {
-        if (!dir.exists()) {
-            if (!dir.mkdirs())
-                throw new Exception(String.format("Directory %s cannot be created ", dir));
+    private static void mkdirs(Path dir) {
+        if (!Files.exists(dir)) {
+            Expect.compute(() -> Files.createDirectories(dir))
+                    .ifCaught(ex -> {
+                        throw new RuntimeException(String.format("Directory %s cannot be created ", dir), ex);
+                    });
         }
     }
 
@@ -69,17 +73,19 @@ public final class Internal {
     private static YamlConfiguration loadConfig() {
         YamlSerializer serializer = YamlSerializer.getInstance();
 
-        var conf = new File(dataDir, "config.yml");
-        if (!conf.exists()) {
+        var conf = dataDir.resolve("config.yml");
+        if (!Files.exists(conf)) {
             try (var in = getCurrentConfig();
-                 var out = new FileOutputStream(conf);
-                 var reader = new FileReader(conf)) {
+                 var out = Files.newOutputStream(conf)) {
                 IOUtil.write(in, out).rethrow();
+            }
+            try (var reader = Files.newBufferedReader(conf)) {
                 return serializer.deserialize(reader);
             }
         }
         YamlConfiguration current, saved;
-        try (var in = new InputStreamReader(getCurrentConfig()); var reader = new FileReader(conf)) {
+        try (var in = new InputStreamReader(getCurrentConfig());
+             var reader = Files.newBufferedReader(conf)) {
             current = serializer.deserialize(in);
             saved = serializer.deserialize(reader);
         }
@@ -94,9 +100,7 @@ public final class Internal {
         saved.purge(true);
 
         // finally, save new config
-        try (var out = new FileWriter(conf)) {
-            saved.dump(out);
-        }
+        saved.dumpTo(conf).rethrow();
         return saved;
     }
 

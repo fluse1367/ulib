@@ -28,7 +28,7 @@ public class CachedResource extends ChecksumFile {
      * @param prefix prefix of local cache location path
      */
     public CachedResource(@NotNull String url, @Nullable String sha1, @NotNull String prefix) {
-        super("SHA-1", sha1, Internal.getCacheDir().toPath(), prefix, urlLoc(url));
+        super("SHA-1", sha1, Internal.getCacheDir(), prefix, urlLoc(url));
         this.url = url(url);
     }
 

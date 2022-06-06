@@ -43,7 +43,7 @@ public class MavenController {
         SESSION.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_FAIL);
 
 
-        LocalRepository lr = new LocalRepository(Internal.getLocalMavenDir());
+        LocalRepository lr = new LocalRepository(Internal.getLocalMavenDir().toFile());
         SESSION.setLocalRepositoryManager(REPOSITORY.newLocalRepositoryManager(SESSION, lr));
 
         // lock session
