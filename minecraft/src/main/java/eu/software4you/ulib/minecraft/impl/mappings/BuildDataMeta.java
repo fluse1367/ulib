@@ -69,7 +69,7 @@ final class BuildDataMeta {
         JsonConfiguration cachedMeta;
         File metaFile = new File(Internal.getCacheDir(), "bukkitbuilddata/versions.json");
         if (metaFile.exists()) {
-            cachedMeta = JsonConfiguration.loadJson(metaFile).orElseThrow();
+            cachedMeta = JsonConfiguration.loadJson(metaFile.toPath()).orElseThrow();
         } else {
             cachedMeta = JsonConfiguration.newJson();
         }

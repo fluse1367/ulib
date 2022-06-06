@@ -5,6 +5,8 @@ import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -44,15 +46,15 @@ public interface YamlConfiguration extends ConfigurationReinit {
     }
 
     /**
-     * Loads a YAML-Typed {@link Configuration} from a file.
+     * Loads a YAML-Typed {@link Configuration} from a certain path.
      *
-     * @param file the YAML document
+     * @param path the path to the YAML document
      * @return the loaded sub
      */
     @NotNull
-    static Expect<YamlConfiguration, IOException> loadYaml(@NotNull File file) {
+    static Expect<YamlConfiguration, IOException> loadYaml(@NotNull Path path) {
         return Expect.compute(() -> {
-            try (var reader = new FileReader(file)) {
+            try (var reader = Files.newBufferedReader(path)) {
                 return loadYaml(reader).orElseRethrow(IOException.class);
             }
         });

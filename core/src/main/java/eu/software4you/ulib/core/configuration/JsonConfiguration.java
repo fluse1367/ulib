@@ -5,6 +5,8 @@ import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -46,15 +48,15 @@ public interface JsonConfiguration extends ConfigurationReinit {
     }
 
     /**
-     * Loads a JSON-Typed {@link Configuration} from a file.
+     * Loads a JSON-Typed {@link Configuration} from a certain path.
      *
-     * @param file the JSON document
+     * @param path the path to the JSON document
      * @return the loaded sub
      */
     @NotNull
-    static Expect<JsonConfiguration, IOException> loadJson(@NotNull File file) {
+    static Expect<JsonConfiguration, IOException> loadJson(@NotNull Path path) {
         return Expect.compute(() -> {
-            try (var reader = new FileReader(file)) {
+            try (var reader = Files.newBufferedReader(path)) {
                 return loadJson(reader).orElseRethrow(IOException.class);
             }
         });
