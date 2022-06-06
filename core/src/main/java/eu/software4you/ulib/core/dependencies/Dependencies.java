@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @see Repository#of(String)
  */
-public class Dependencies {
+public final class Dependencies {
 
     /**
      * Attempts to require a maven artifact.
@@ -46,19 +46,19 @@ public class Dependencies {
     }
 
     /**
-     * Attempts to require a maven artifact and inject a class loading hook into the given class loader.
+     * Attempts to require maven artifacts and inject a class loading hook into the given class loader.
      *
-     * @param coords          the maven coordinates of the artifact
-     * @param repositories    the repositories to search the artifact in
-     * @param injectionTarget the class loader to inject the class loading hook in
+     * @param coordsRepositoriesMap the maven coordinates of an artifact mapped to the respective repositories to search the artifact in
+     * @param injectionTarget       the class loader to inject the class loading hook in
      * @return an expect object wrapping the execution result
      */
     @NotNull
-    public static Expect<Void, Exception> requireInject(@NotNull String coords, @NotNull Collection<Repository> repositories, @NotNull ClassLoader injectionTarget) {
+    public static Expect<Void, Exception> requireAndInject(@NotNull Map<String, Collection<Repository>> coordsRepositoriesMap,
+                                                           @NotNull ClassLoader injectionTarget) {
         return Expect.compute(() -> {
             // require artifacts and fetch file urls
-            var urls = require(coords, repositories)
-                    .orElseRethrow()
+            var urls = coordsRepositoriesMap.entrySet().stream()
+                    .flatMap(en -> require(en.getKey(), en.getValue()).orElseThrow())
                     .map(Path::toUri)
                     .map(uri -> Expect.compute(uri::toURL).orElseThrow())
                     .toArray(URL[]::new);
@@ -70,6 +70,69 @@ public class Dependencies {
     }
 
     /**
+     * Attempts to require maven artifacts and inject a class loading hook into the given class loader.
+     *
+     * @param coordsRepositoryMap the maven coordinates of an artifact mapped to the respective repository to search the artifact in
+     * @param injectionTarget     the class loader to inject the class loading hook in
+     * @return an expect object wrapping the execution result
+     */
+    @NotNull
+    public static Expect<Void, Exception> requireInject(@NotNull Map<String, Repository> coordsRepositoryMap, @NotNull ClassLoader injectionTarget) {
+        @SuppressWarnings("unchecked")
+        Map<String, Collection<Repository>> map = Map.ofEntries(
+                coordsRepositoryMap.entrySet().stream()
+                        .map(en -> new AbstractMap.SimpleEntry<>(en.getKey(), toColl(en.getValue())))
+                        .toArray(Map.Entry[]::new));
+        return requireAndInject(map, injectionTarget);
+    }
+
+    /**
+     * Attempts to require maven artifacts and inject a class loading hook into the given class loader.
+     *
+     * @param coords          the maven coordinates of the artifacts
+     * @param repositories    the repositories to search the artifact in
+     * @param injectionTarget the class loader to inject the class loading hook in
+     * @return an expect object wrapping the execution result
+     */
+    @NotNull
+    public static Expect<Void, Exception> requireInject(@NotNull Collection<String> coords, @NotNull Collection<Repository> repositories,
+                                                        @NotNull ClassLoader injectionTarget) {
+        @SuppressWarnings("unchecked")
+        Map<String, Collection<Repository>> map = Map.ofEntries(coords.stream()
+                .map(coords_ -> new AbstractMap.SimpleEntry<>(coords_, repositories))
+                .toArray(Map.Entry[]::new));
+        return requireAndInject(map, injectionTarget);
+    }
+
+    /**
+     * Attempts to require a maven artifact and inject a class loading hook into the given class loader.
+     *
+     * @param coords          the maven coordinates of the artifact
+     * @param repositories    the repositories to search the artifact in
+     * @param injectionTarget the class loader to inject the class loading hook in
+     * @return an expect object wrapping the execution result
+     */
+    @NotNull
+    public static Expect<Void, Exception> requireInject(@NotNull String coords, @NotNull Collection<Repository> repositories,
+                                                        @NotNull ClassLoader injectionTarget) {
+        return requireInject(Collections.singleton(coords), repositories, injectionTarget);
+    }
+
+    /**
+     * Attempts to require maven artifacts and inject a class loading hook into the given class loader.
+     *
+     * @param coords          the maven coordinates of the artifacts
+     * @param repository      the repository to search the artifacts in
+     * @param injectionTarget the class loader to inject the class loading hook in
+     * @return an expect object wrapping the execution result
+     */
+    @NotNull
+    public static Expect<Void, Exception> requireInject(@NotNull Collection<String> coords, @NotNull Repository repository,
+                                                        @NotNull ClassLoader injectionTarget) {
+        return requireInject(coords, toColl(repository), injectionTarget);
+    }
+
+    /**
      * Attempts to require a maven artifact and inject a class loading hook into the given class loader.
      *
      * @param coords          the maven coordinates of the artifact
@@ -78,8 +141,9 @@ public class Dependencies {
      * @return an expect object wrapping the execution result
      */
     @NotNull
-    public static Expect<Void, Exception> requireInject(@NotNull String coords, @NotNull Repository repository, @NotNull ClassLoader injectionTarget) {
-        return requireInject(coords, toColl(repository), injectionTarget);
+    public static Expect<Void, Exception> requireInject(@NotNull String coords, @NotNull Repository repository,
+                                                        @NotNull ClassLoader injectionTarget) {
+        return requireInject(Map.of(coords, repository), injectionTarget);
     }
 
     private static Collection<Repository> toColl(Repository repository) {
