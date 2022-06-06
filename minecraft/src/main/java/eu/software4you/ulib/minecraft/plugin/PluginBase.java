@@ -5,7 +5,7 @@ import eu.software4you.ulib.minecraft.plugin.controllers.ASyncSchedulerControlle
 import eu.software4you.ulib.minecraft.plugin.controllers.EventController;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * The base for plugins.
@@ -56,5 +56,13 @@ public interface PluginBase<L, R> extends EventController<L>, ASyncSchedulerCont
      * @return the data folder of the plugin
      */
     @NotNull
-    File getDataFolder();
+    Path getDataDir();
+
+    /**
+     * Returns the plugin's location in the file system.
+     *
+     * @return the location
+     */
+    @NotNull
+    Path getLocation();
 }

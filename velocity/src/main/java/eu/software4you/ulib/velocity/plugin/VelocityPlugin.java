@@ -6,8 +6,6 @@ import eu.software4you.ulib.minecraft.plugin.PluginBase;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.io.File;
-
 /**
  * Support class for velocity plugins.
  *
@@ -40,19 +38,11 @@ public interface VelocityPlugin extends PluginBase<Object, ScheduledTask> {
     Logger getLogger();
 
     /**
-     * Returns the jar-file of the plugin.
-     *
-     * @return the file
-     */
-    @NotNull
-    File getFile();
-
-    /**
      * Saves a resource that is embedded into the plugin's .jar file to the data folder.
      *
      * @param resourcePath the path of the embedded resource (without leading {@code /})
      * @param replace      {@code true}, if the resource should be overwritten if the file already exists
-     * @see #getDataFolder()
+     * @see #getDataDir()
      */
     void saveResource(@NotNull String resourcePath, boolean replace);
 

@@ -7,6 +7,8 @@ import net.md_5.bungee.api.plugin.*;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
+
 /**
  * Extended version of BungeeCord's {@link Plugin}.
  *
@@ -22,6 +24,16 @@ public abstract class ExtendedPlugin extends Plugin implements PluginBase<Listen
 
     public ExtendedPlugin(@NotNull ProxyServer proxy, @NotNull PluginDescription description) {
         super(proxy, description);
+    }
+
+    @Override
+    public @NotNull Path getDataDir() {
+        return getDataFolder().toPath();
+    }
+
+    @Override
+    public @NotNull Path getLocation() {
+        return getFile().toPath();
     }
 
     @Override

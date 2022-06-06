@@ -12,7 +12,6 @@ import eu.software4you.ulib.loader.install.Installer;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.nio.file.Path;
 
 @Plugin(
@@ -31,15 +30,15 @@ public class PluginVelocity {
 
     private final ProxyServer proxyServer;
     private final Logger logger;
-    private final File dataDir;
+    private final Path dataDir;
     @SuppressWarnings("FieldCanBeLocal") // prevent the substitute to be gc'd
     private Object pluginSubstitute;
 
     @Inject
-    public PluginVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataPath) {
+    public PluginVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDir) {
         this.proxyServer = proxyServer;
         this.logger = logger;
-        this.dataDir = dataPath.toFile();
+        this.dataDir = dataDir;
     }
 
     @SneakyThrows

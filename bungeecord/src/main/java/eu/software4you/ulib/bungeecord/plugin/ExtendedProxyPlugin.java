@@ -7,7 +7,10 @@ import net.md_5.bungee.api.plugin.*;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -41,7 +44,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
 
     @Override
     public void saveDefaultConfig() {
-        if (!new File(getDataFolder(), "config.yml").exists())
+        if (!Files.exists(getDataDir().resolve("config.yml")))
             saveResource("config.yml", false);
     }
 
@@ -58,7 +61,7 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
     public void reloadConfig() {
         saveDefaultConfig();
         try {
-            config.reinit(new FileReader(new File(getDataFolder(), "config.yml")));
+            config.reinitFrom(getDataDir().resolve("config.yml")).rethrow(IOException.class);
         } catch (IOException e) {
             getLogger().log(Level.WARNING, e, () -> "Failure while reloading config.yml!");
         }
@@ -73,27 +76,23 @@ public abstract class ExtendedProxyPlugin extends ExtendedPlugin {
         resourcePath = resourcePath.replace('\\', '/');
         InputStream in = getPluginObject().getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getFile().getPath());
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getLocation());
         }
 
-        File outFile = new File(getDataFolder(), resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(getDataFolder(), resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+        Path dest = getDataDir().resolve(resourcePath);
 
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
+        try {
+            Files.createDirectories(dest.getParent());
 
-        try (in) {
-            if (!outFile.exists() || replace) {
-                try (in; var out = new FileOutputStream(outFile)) {
+            if (!Files.exists(dest) || replace) {
+                try (in; var out = Files.newOutputStream(dest)) {
                     IOUtil.write(in, out);
                 }
             } else {
-                getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                getLogger().log(Level.WARNING, "Could not save " + dest.getFileName() + " to " + dest + " because " + dest.getFileName() + " already exists.");
             }
         } catch (IOException ex) {
-            getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
+            getLogger().log(Level.SEVERE, "Could not save " + dest.getFileName() + " to " + dest, ex);
         }
     }
 

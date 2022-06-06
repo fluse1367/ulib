@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -39,6 +40,16 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin implements ExtendedP
     public ExtendedJavaPlugin(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description,
                               @NotNull File dataFolder, @NotNull File file) {
         super(loader, description, dataFolder, file);
+    }
+
+    @Override
+    public @NotNull Path getDataDir() {
+        return getDataFolder().toPath();
+    }
+
+    @Override
+    public @NotNull Path getLocation() {
+        return getFile().toPath();
     }
 
     @Override

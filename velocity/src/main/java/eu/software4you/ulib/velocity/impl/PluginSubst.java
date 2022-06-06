@@ -13,15 +13,15 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class PluginSubst extends VelocityJavaPlugin {
 
     private final Object plugin;
     private final ProxyServerBridgeImpl proxyServerBridge;
 
-    public PluginSubst(Object plugin, ProxyServer proxyServer, Logger logger, File dataFolder) {
-        super("ulib", proxyServer, logger, dataFolder);
+    public PluginSubst(Object plugin, ProxyServer proxyServer, Logger logger, Path dataDir) {
+        super("ulib", proxyServer, logger, dataDir);
         this.plugin = plugin;
 
         registerEvents(this);

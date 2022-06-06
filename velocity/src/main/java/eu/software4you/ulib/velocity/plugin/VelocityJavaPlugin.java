@@ -13,7 +13,10 @@ import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,10 +52,10 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     private final Logger logger;
     @Getter
     @NotNull
-    private final File dataFolder;
+    private final Path dataDir;
     @Getter
     @NotNull
-    private final File file = FileUtil.getClassFile(getClass()).getValue();
+    private final Path location = FileUtil.getClassFile(getClass()).getValue().toPath();
     private final YamlConfiguration config = YamlConfiguration.newYaml();
     private boolean configInit;
 
@@ -73,7 +76,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
 
     @Override
     public void saveDefaultConfig() {
-        if (!new File(getDataFolder(), "config.yml").exists())
+        if (!Files.exists(getDataDir().resolve("config.yml")))
             saveResource("config.yml", false);
     }
 
@@ -90,7 +93,8 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     public void reloadConfig() {
         saveDefaultConfig();
         try {
-            config.reinit(new FileReader(new File(getDataFolder(), "config.yml")));
+            config.reinitFrom(getDataDir().resolve("config.yml"))
+                    .rethrow(IOException.class);
         } catch (IOException e) {
             getLogger().warn("Failure while reloading config.yml!", e);
         }
@@ -106,27 +110,24 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
         resourcePath = resourcePath.replace('\\', '/');
         InputStream in = getPluginObject().getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getFile().getPath());
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + getLocation());
         }
 
-        File outFile = new File(getDataFolder(), resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(getDataFolder(), resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
 
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
+        Path dest = getDataDir().resolve(resourcePath);
 
         try {
-            if (!outFile.exists() || replace) {
-                try (in; var out = new FileOutputStream(outFile)) {
+            Files.createDirectories(dest.getParent());
+
+            if (!Files.exists(dest) || replace) {
+                try (in; var out = Files.newOutputStream(dest)) {
                     IOUtil.write(in, out);
                 }
             } else {
-                logger.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.warn("Could not save " + dest.getFileName() + " to " + dest + " because " + dest.getFileName() + " already exists.");
             }
         } catch (IOException ex) {
-            logger.error("Could not save " + outFile.getName() + " to " + outFile, ex);
+            logger.error("Could not save " + dest.getFileName() + " to " + dest, ex);
         }
     }
 
