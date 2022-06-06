@@ -18,6 +18,7 @@ public final class RepositoryImpl implements Repository {
         of("jitpack", "https://jitpack.io");
         of("jcenter", "https://jcenter.bintray.com");
         of("sonatype", "https://oss.sonatype.org/content/repositories/releases");
+        of("sonatype-snapshot", "https://oss.sonatype.org/content/repositories/snapshots");
     }
 
     public static Repository of(String id, String url) {

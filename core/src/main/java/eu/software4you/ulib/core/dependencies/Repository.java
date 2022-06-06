@@ -52,6 +52,16 @@ public interface Repository {
     }
 
     /**
+     * Sonatype snapshot repository ({@code https://oss.sonatype.org/content/repositories/snapshots}).
+     *
+     * @see <a href="https://oss.sonatype.org/" target="_blank">https://oss.sonatype.org/</a>
+     */
+    @NotNull
+    static Repository sonatypeSnapshot() {
+        return RepositoryImpl.of("sonatype-snapshot");
+    }
+
+    /**
      * Creates a new repository instance (if cache does not already contain {@code id}).
      *
      * @param id  the id
