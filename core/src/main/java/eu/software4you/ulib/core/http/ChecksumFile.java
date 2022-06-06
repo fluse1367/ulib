@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.Objects;
@@ -24,24 +25,58 @@ public class ChecksumFile {
     @Nullable
     protected final String checksum;
     @NotNull
-    protected final File file;
+    protected final Path fileLocation;
     @NotNull
-    protected final File checksumFile;
+    protected final Path checksumFileLocation;
     @Getter(AccessLevel.NONE)
-    protected final Consumer<File> generate;
+    protected final Consumer<Path> generate;
 
     /**
+     * @param algorithm            the hash algorithm, using {@link MessageDigest}
+     * @param checksum             the checksum, may be {@code null}
+     * @param fileLocation         the local file
+     * @param checksumFileLocation the local file storing the checksum
+     * @param generate             function to (re-)generate the file
+     */
+    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull Path fileLocation,
+                        @NotNull Path checksumFileLocation, @Nullable Consumer<Path> generate) {
+        this.algorithm = algorithm;
+        this.checksum = checksum;
+        this.fileLocation = fileLocation;
+        this.checksumFileLocation = checksumFileLocation;
+        this.generate = generate;
+    }
+
+    /**
+     * When using this constructor the method {@link #generate()} must be overwritten!
+     *
+     * @param algorithm            the hash algorithm, using {@link MessageDigest}
+     * @param checksum             the checksum, may be {@code null}
+     * @param fileLocation         the local file
+     * @param checksumFileLocation the local file storing the checksum
+     */
+    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull Path fileLocation, @NotNull Path checksumFileLocation) {
+        this(algorithm, checksum, fileLocation, checksumFileLocation, null);
+    }
+
+    /**
+     * When using this constructor the method {@link #generate()} must be overwritten!
+     *
      * @param algorithm    the hash algorithm, using {@link MessageDigest}
      * @param checksum     the checksum, may be {@code null}
-     * @param file         the local file
-     * @param checksumFile the local file storing the checksum
+     * @param root         the root directory in which the files will be placed
+     * @param prefix       the file prefix
+     * @param fileLocation the path for the file
      * @param generate     function to (re-)generate the file
      */
-    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull File file, @NotNull File checksumFile, @Nullable Consumer<File> generate) {
+    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull Path root, @NotNull String prefix,
+                        @NotNull Path fileLocation, @Nullable Consumer<Path> generate) {
         this.algorithm = algorithm;
         this.checksum = checksum;
-        this.file = file;
-        this.checksumFile = checksumFile;
+        this.fileLocation = root.resolve(Path.of(prefix, "root")).resolve(fileLocation);
+        String algo = algorithm.toLowerCase().replace("-", "");
+        this.checksumFileLocation = root.resolve(Path.of(prefix, "checksum"))
+                .resolve(fileLocation.getParent()).resolve(fileLocation.getFileName().toString() + "." + algo);
         this.generate = generate;
     }
 
@@ -50,43 +85,12 @@ public class ChecksumFile {
      *
      * @param algorithm    the hash algorithm, using {@link MessageDigest}
      * @param checksum     the checksum, may be {@code null}
-     * @param file         the local file
-     * @param checksumFile the local file storing the checksum
+     * @param root         the root directory in which the files will be placed
+     * @param prefix       the file prefix
+     * @param fileLocation the path for the file
      */
-    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull File file, @NotNull File checksumFile) {
-        this(algorithm, checksum, file, checksumFile, null);
-    }
-
-    /**
-     * When using this constructor the method {@link #generate()} must be overwritten!
-     *
-     * @param algorithm the hash algorithm, using {@link MessageDigest}
-     * @param checksum  the checksum, may be {@code null}
-     * @param root      the root directory in which the files will be placed
-     * @param prefix    the file prefix
-     * @param file      the path for the file
-     * @param generate  function to (re-)generate the file
-     */
-    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull File root, @NotNull String prefix, @NotNull Path file, @Nullable Consumer<File> generate) {
-        this.algorithm = algorithm;
-        this.checksum = checksum;
-        this.file = new File(root, String.format("%s/root/%s", prefix, file));
-        String algo = algorithm.toLowerCase().replace("-", "");
-        this.checksumFile = new File(root, String.format("%s/checksum/%s.%s", prefix, file, algo));
-        this.generate = generate;
-    }
-
-    /**
-     * When using this constructor the method {@link #generate()} must be overwritten!
-     *
-     * @param algorithm the hash algorithm, using {@link MessageDigest}
-     * @param checksum  the checksum, may be {@code null}
-     * @param root      the root directory in which the files will be placed
-     * @param prefix    the file prefix
-     * @param file      the path for the file
-     */
-    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull File root, @NotNull String prefix, @NotNull Path file) {
-        this(algorithm, checksum, root, prefix, file, null);
+    public ChecksumFile(@NotNull String algorithm, @Nullable String checksum, @NotNull Path root, @NotNull String prefix, @NotNull Path fileLocation) {
+        this(algorithm, checksum, root, prefix, fileLocation, null);
     }
 
     /**
@@ -95,8 +99,9 @@ public class ChecksumFile {
      * @return {@code true}, if the local copy was deleted (or never existed in the first place), {@code false} on failure
      */
     public boolean purge() {
-        if (file.exists()) {
-            return file.delete() && (!checksumFile.exists() || checksumFile.delete());
+        if (Files.exists(fileLocation)) {
+            return !Expect.compute(() -> Files.delete(fileLocation)).hasCaught()
+                   && (!Files.exists(checksumFileLocation) || !Expect.compute(() -> Files.delete(checksumFileLocation)).hasCaught());
         }
         return true;
     }
@@ -109,9 +114,9 @@ public class ChecksumFile {
      * @return the file's contents
      */
     @NotNull
-    public Expect<InputStream, FileNotFoundException> require() {
+    public Expect<InputStream, IOException> require() {
         ensure();
-        return Expect.compute(() -> new FileInputStream(file));
+        return Expect.compute(() -> Files.newInputStream(fileLocation));
     }
 
     /**
@@ -125,8 +130,8 @@ public class ChecksumFile {
     }
 
     protected void generate() {
-        mkdirsp(file);
-        Objects.requireNonNull(generate).accept(this.file);
+        Expect.compute(() -> Files.createDirectories(fileLocation.getParent())).rethrowRE();
+        Objects.requireNonNull(generate).accept(this.fileLocation);
     }
 
     @SneakyThrows
@@ -135,26 +140,27 @@ public class ChecksumFile {
         if (checksum != null) {
             return;
         }
-        mkdirsp(checksumFile);
-        try (var in = new ByteArrayInputStream(hash().getBytes()); var out = new FileOutputStream(checksumFile)) {
-            IOUtil.write(in, out);
+        Files.createDirectories(checksumFileLocation.getParent());
+        try (var in = new ByteArrayInputStream(hash().getBytes());
+             var out = Files.newOutputStream(checksumFileLocation)) {
+            IOUtil.write(in, out).rethrow();
         }
     }
 
     @SneakyThrows
     private boolean validate() {
-        if (!file.exists())
+        if (!Files.exists(fileLocation))
             return false;
 
         String expected;
         // if file exists and checksum sum is not supplied, read checksum from file
         if (this.checksum == null) {
-            if (!checksumFile.exists()) {
+            if (!Files.exists(checksumFileLocation)) {
                 return false; // if checksum not saved, re-download and re-generated sha1File
             }
             var bout = new ByteArrayOutputStream();
-            try (var in = new FileInputStream(checksumFile)) {
-                IOUtil.write(in, bout);
+            try (var in = Files.newInputStream(checksumFileLocation)) {
+                IOUtil.write(in, bout).rethrow();
             }
             expected = bout.toString();
         } else {
@@ -166,16 +172,9 @@ public class ChecksumFile {
 
     @SneakyThrows
     private String hash() {
-        try (var in = new FileInputStream(file)) {
+        try (var in = Files.newInputStream(fileLocation)) {
             return HashUtil.computeHex(in, MessageDigest.getInstance(algorithm))
                     .orElseRethrow();
-        }
-    }
-
-    protected void mkdirsp(File child) {
-        var dir = child.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
         }
     }
 }

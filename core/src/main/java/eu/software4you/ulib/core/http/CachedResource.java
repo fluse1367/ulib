@@ -7,10 +7,10 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.Optional;
 
 /**
@@ -28,7 +28,7 @@ public class CachedResource extends ChecksumFile {
      * @param prefix prefix of local cache location path
      */
     public CachedResource(@NotNull String url, @Nullable String sha1, @NotNull String prefix) {
-        super("SHA-1", sha1, Internal.getCacheDir(), prefix, urlLoc(url));
+        super("SHA-1", sha1, Internal.getCacheDir().toPath(), prefix, urlLoc(url));
         this.url = url(url);
     }
 
@@ -61,8 +61,8 @@ public class CachedResource extends ChecksumFile {
     }
 
     @NotNull
-    public File getCacheLocation() {
-        return file;
+    public Path getCacheLocation() {
+        return fileLocation;
     }
 
     /**
@@ -79,10 +79,10 @@ public class CachedResource extends ChecksumFile {
     @Override
     protected void generate() {
         // download to file
-        mkdirsp(file);
+        Files.createDirectories(fileLocation.getParent());
         try (var in = request().orElseThrow();
-             var out = new FileOutputStream(file)) {
-            IOUtil.write(in, out);
+             var out = Files.newOutputStream(fileLocation)) {
+            IOUtil.write(in, out).rethrow();
         }
     }
 
