@@ -6,9 +6,9 @@ import eu.software4you.ulib.core.inject.InjectUtil;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -28,7 +28,7 @@ public class Dependencies {
      * @see Repository#of(String)
      */
     @NotNull
-    public static Expect<Stream<File>, Exception> require(@NotNull String coords, @NotNull Collection<Repository> repositories) {
+    public static Expect<Stream<Path>, Exception> require(@NotNull String coords, @NotNull Collection<Repository> repositories) {
         return Expect.compute(MavenController::require, coords, repositories);
     }
 
@@ -41,7 +41,7 @@ public class Dependencies {
      * @see Repository#of(String)
      */
     @NotNull
-    public static Expect<Stream<File>, Exception> require(@NotNull String coords, @NotNull Repository repository) {
+    public static Expect<Stream<Path>, Exception> require(@NotNull String coords, @NotNull Repository repository) {
         return require(coords, toColl(repository));
     }
 
@@ -59,7 +59,7 @@ public class Dependencies {
             // require artifacts and fetch file urls
             var urls = require(coords, repositories)
                     .orElseRethrow()
-                    .map(File::toURI)
+                    .map(Path::toUri)
                     .map(uri -> Expect.compute(uri::toURL).orElseThrow())
                     .toArray(URL[]::new);
 

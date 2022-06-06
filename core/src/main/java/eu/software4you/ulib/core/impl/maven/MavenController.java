@@ -20,6 +20,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -49,7 +50,7 @@ public class MavenController {
         SESSION.setReadOnly();
     }
 
-    public static Stream<File> require(String coords, Collection<Repository> repos) throws Exception {
+    public static Stream<Path> require(String coords, Collection<Repository> repos) throws Exception {
         Dependency dependency = new Dependency(new DefaultArtifact(coords), "compile");
 
 
@@ -66,6 +67,7 @@ public class MavenController {
         return res.getArtifactResults().stream()
                 .map(ArtifactResult::getArtifact)
                 .filter(Objects::nonNull) // filter out unresolved
-                .map(Artifact::getFile);
+                .map(Artifact::getFile)
+                .map(File::toPath);
     }
 }
