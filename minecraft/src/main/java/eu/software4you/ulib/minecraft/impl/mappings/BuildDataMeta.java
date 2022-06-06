@@ -67,6 +67,8 @@ final class BuildDataMeta {
     @SneakyThrows
     static BuildDataMeta loadBuildData(String ver) {
 
+        String verKey = ver.replace(".", "_");
+
         // load cached meta
         JsonConfiguration cachedMeta;
         Path metaFile = Internal.getCacheDir().resolve("bukkitbuilddata/versions.json");
@@ -77,8 +79,8 @@ final class BuildDataMeta {
         }
 
         // load from versions.json
-        if (cachedMeta.isSub(ver)) {
-            return fromJson(cachedMeta.getSub(ver).orElseThrow(), ver);
+        if (cachedMeta.isSub(verKey)) {
+            return fromJson(cachedMeta.getSub(verKey).orElseThrow(), ver);
         }
 
         // download json data
@@ -94,7 +96,7 @@ final class BuildDataMeta {
                 return null;
             }
 
-            cachedMeta.set(ver, buildData.toJson());
+            cachedMeta.set(verKey, buildData.toJson());
         }
 
         // save meta.json
