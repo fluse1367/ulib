@@ -4,8 +4,8 @@ import eu.software4you.ulib.core.database.sql.*;
 import eu.software4you.ulib.core.impl.database.Databases;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -55,13 +55,13 @@ public interface Database {
     /**
      * Prepares a new SQLite {@link Connection} and wraps it.
      *
-     * @param file the SQLite file
+     * @param path path to the SQLite file
      * @return the instance
      * @see DriverManager#getConnection(String)
      */
     @NotNull
-    static SQLiteDatabase prepare(@NotNull File file) {
-        return Databases.prepare(file);
+    static SQLiteDatabase prepare(@NotNull Path path) {
+        return Databases.prepare(path);
     }
 
     /**
@@ -101,13 +101,13 @@ public interface Database {
     /**
      * Creates a new SQLite {@link Connection} and wraps it.
      *
-     * @param file the SQLite file
+     * @param path path to the SQLite file
      * @return the instance
      * @see DriverManager#getConnection(String)
      */
     @NotNull
-    static SQLiteDatabase connect(@NotNull File file) {
-        var db = prepare(file);
+    static SQLiteDatabase connect(@NotNull Path path) {
+        var db = prepare(path);
         db.connect();
         return db;
     }

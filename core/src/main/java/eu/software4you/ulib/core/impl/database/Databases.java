@@ -6,9 +6,9 @@ import eu.software4you.ulib.core.impl.database.sql.mysql.MySQLDatabase;
 import eu.software4you.ulib.core.impl.database.sql.sqlite.SQLiteDatabase;
 import lombok.SneakyThrows;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.util.*;
 
@@ -58,8 +58,8 @@ public final class Databases {
         throw new IllegalArgumentException(String.format("Unknown protocol: %s", url));
     }
 
-    public static eu.software4you.ulib.core.database.sql.SQLiteDatabase prepare(File file) {
-        return (eu.software4you.ulib.core.database.sql.SQLiteDatabase) prepare(String.format("jdbc:sqlite:%s", file.getPath()), new Properties());
+    public static eu.software4you.ulib.core.database.sql.SQLiteDatabase prepare(Path path) {
+        return (eu.software4you.ulib.core.database.sql.SQLiteDatabase) prepare(String.format("jdbc:sqlite:%s", path.toString()), new Properties());
     }
 
     @SneakyThrows

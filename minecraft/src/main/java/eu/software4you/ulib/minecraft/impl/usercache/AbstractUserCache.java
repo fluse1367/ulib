@@ -10,7 +10,6 @@ import eu.software4you.ulib.minecraft.usercache.UserCache;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -28,7 +27,7 @@ public abstract class AbstractUserCache implements UserCache {
         SqlDatabase database;
         var backend = plugin.getConf().getSub("user-cache-backend").orElseThrow();
         switch (backend.string("type").orElse("FILE").toUpperCase()) {
-            case "FILE" -> database = Database.prepare(new File(plugin.getDataFolder(), "user_cache.db"));
+            case "FILE" -> database = Database.prepare(plugin.getDataFolder().toPath().resolve("user_cache.db"));
             case "MYSQL" -> {
                 var login = backend.getSub("login").orElseThrow();
                 database = Database.prepare(
