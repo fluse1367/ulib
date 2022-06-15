@@ -112,7 +112,7 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
             return;
 
         var meta = connection.getMetaData();
-        var resultTables = meta.getTables(null, null, null, new String[]{"TABLES"});
+        var resultTables = meta.getTables(null, null, null, new String[]{"TABLES", "TABLE"});
 
 
         while (resultTables.next()) {
