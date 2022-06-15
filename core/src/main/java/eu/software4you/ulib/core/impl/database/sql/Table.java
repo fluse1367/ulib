@@ -79,7 +79,12 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
 
         String sql = String.format("create table `%s` (%s);", name, sj);
 
-        return this.sql.prepareStatement(sql).executeUpdate() > 0;
+        try (var st = this.sql.prepareStatement(sql)) {
+            // rather let this throw something than returning `false`
+            // TODO: wrap in Expect object
+            st.executeUpdate();
+        }
+        return true;
     }
 
     @SneakyThrows
