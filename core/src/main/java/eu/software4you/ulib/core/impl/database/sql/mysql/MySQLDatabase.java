@@ -31,4 +31,9 @@ public final class MySQLDatabase extends SqlDatabase implements eu.software4you.
     protected boolean applyIndexBeforeAI() {
         return false;
     }
+
+    @Override
+    protected String driverCoordinates() {
+        return "{{maven.mysql}}";
+    }
 }

@@ -48,4 +48,9 @@ public final class SQLiteDatabase extends SqlDatabase implements eu.software4you
     protected boolean applyIndexBeforeAI() {
         return true;
     }
+
+    @Override
+    protected String driverCoordinates() {
+        return "{{maven.sqlite}}";
+    }
 }

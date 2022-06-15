@@ -1,11 +1,19 @@
 package eu.software4you.ulib.core.impl.database.sql;
 
 import eu.software4you.ulib.core.database.sql.*;
+import eu.software4you.ulib.core.dependencies.Dependencies;
+import eu.software4you.ulib.core.dependencies.Repository;
+import eu.software4you.ulib.core.impl.Internal;
+import eu.software4you.ulib.core.io.IOUtil;
+import eu.software4you.ulib.core.util.Expect;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.*;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public abstract class SqlDatabase implements eu.software4you.ulib.core.database.sql.SqlDatabase {
@@ -46,7 +54,18 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
             throw new IllegalStateException("Database already connected!");
         if (url == null)
             throw new IllegalArgumentException("Invalid database url: null");
-        connection = DriverManager.getConnection(url, info);
+        try {
+            connection = DriverManager.getConnection(url, info);
+        } catch (SQLException e) {
+            if (!e.getSQLState().equals("08001")) {
+                throw e;
+            }
+            // driver cloud not be loaded
+            loadDriver();
+
+            // try again
+            connection = DriverManager.getConnection(url, info);
+        }
         initExistingTables();
     }
 
@@ -147,6 +166,48 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
     protected abstract String autoIncrementKeyword();
 
     protected abstract boolean applyIndexBeforeAI();
+
+    protected void loadDriver() throws IOException {
+        // download all files
+        var files = Dependencies.require(driverCoordinates(), Repository.mavenCentral())
+                .orElseThrow()
+                .map(Path::toFile)
+                .map(f -> Expect.compute(JarFile::new, f).orElseThrow())
+                .toList();
+
+        // append them all to the system class loader
+        files.forEach(Internal.getInstrumentation()::appendToSystemClassLoaderSearch);
+
+        // load the driver(s)
+        for (JarFile file : files) {
+            try (file) {
+
+                // get the service
+                var serviceDeclaration = file.getJarEntry("META-INF/services/java.sql.Driver");
+                if (serviceDeclaration == null)
+                    continue; // no such service
+
+                // read the service class name
+                String service;
+                try (var in = file.getInputStream(serviceDeclaration)) {
+                    service = IOUtil.toString(in).orElseThrow()
+                            .lines().findFirst().orElseThrow();
+                }
+
+                // finally, load it!
+                try {
+                    Class.forName(service, true, ClassLoader.getSystemClassLoader());
+                } catch (ClassNotFoundException e) {
+                    throw new InternalError(e);
+                }
+            }
+        }
+
+    }
+
+    protected String driverCoordinates() {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public @NotNull Table addTable(@NotNull String name, @NotNull Column<?> column, Column<?>... columns) {
