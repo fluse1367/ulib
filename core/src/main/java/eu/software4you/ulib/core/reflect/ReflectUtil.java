@@ -374,20 +374,20 @@ public class ReflectUtil {
      */
     @NotNull
     public static <E extends Enum<?>> Expect<E, IllegalArgumentException> getEnumEntry(@NotNull Class<E> enumClass, @NotNull String enumEntry) {
-        //noinspection unchecked
         var res = Expect.compute(() -> enumClass.getMethod("valueOf", String.class)
                         .invoke(null, enumEntry))
-                .<E, ReflectiveOperationException>map(o -> (E) o);
+                .map(enumClass::cast);
 
         if (res.isPresent())
             //noinspection unchecked,rawtypes
             return (Expect) res;
 
-        if (res.getCaught().orElseThrow() instanceof InvocationTargetException ex)
-            return Expect.failed((IllegalArgumentException) ex.getTargetException());
+        if (res.getCaught().orElseThrow() instanceof InvocationTargetException ex
+            && ex.getTargetException() instanceof IllegalArgumentException iae)
+            return Expect.failed(iae);
 
         // should never happen
-        throw new IllegalStateException();
+        throw new InternalError(res.getCaught().orElse(null));
     }
 
     /**
