@@ -1,6 +1,5 @@
 package eu.software4you.ulib.core.impl.reflect;
 
-import eu.software4you.ulib.core.collection.FixedList;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.reflect.*;
 import lombok.SneakyThrows;
@@ -183,7 +182,7 @@ public final class ReflectSupport {
                     return !Modifier.isStatic(mod) && !Modifier.isTransient(mod);
                 })
                 .toArray(Field[]::new);
-        List<Object> objs = new FixedList<>(fields.length + 1);
+        List<Object> objs = new ArrayList<>(fields.length + 1);
 
         // collect subsequent object for hash computation
         for (Field declaredField : fields) {
