@@ -50,6 +50,11 @@ public final class SQLiteDatabase extends SqlDatabase implements eu.software4you
     }
 
     @Override
+    protected String lastInsertId() {
+        return "last_insert_rowid";
+    }
+
+    @Override
     protected String driverCoordinates() {
         return "{{maven.sqlite}}";
     }

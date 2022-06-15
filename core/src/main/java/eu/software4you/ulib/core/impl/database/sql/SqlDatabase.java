@@ -88,6 +88,15 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
     }
 
     @Override
+    @SneakyThrows
+    public int fetchLastAutoincrementInsertionId() {
+        try (var st = prepareStatement("select %s() limit 1;".formatted(lastInsertId()));
+             var res = st.executeQuery()) {
+            return res.getInt(1);
+        }
+    }
+
+    @Override
     @NotNull
     public Optional<eu.software4you.ulib.core.database.sql.Table> getTable(@NotNull String name) {
         // attempt fetching tables if `name` does not occur in the map
@@ -166,6 +175,8 @@ public abstract class SqlDatabase implements eu.software4you.ulib.core.database.
     protected abstract String autoIncrementKeyword();
 
     protected abstract boolean applyIndexBeforeAI();
+
+    protected abstract String lastInsertId();
 
     protected void loadDriver() throws IOException {
         // download all files

@@ -23,6 +23,13 @@ public interface SqlDatabase extends Database {
     Connection getConnection() throws IllegalStateException;
 
     /**
+     * Fetches the last number that was inserted in a table marked with auto increment over the current connection.
+     *
+     * @return the last inserted id
+     */
+    int fetchLastAutoincrementInsertionId();
+
+    /**
      * Wraps {@link Connection#prepareStatement(String)} for faster access.
      *
      * @param sql an SQL statement that may contain one or more '?' IN parameter placeholders

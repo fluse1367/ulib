@@ -51,9 +51,7 @@ public class SqliTest {
         Assert.assertTrue(
                 table.insert(new Pair<>("data", dummyData))
         );
-        try (var res = table.select("id").whereRaw("`id` = last_insert_rowid()").query()) {
-            insert_id = res.getInt(1);
-        }
+        insert_id = db.fetchLastAutoincrementInsertionId();
 
 
         // fetch data

@@ -33,6 +33,11 @@ public final class MySQLDatabase extends SqlDatabase implements eu.software4you.
     }
 
     @Override
+    protected String lastInsertId() {
+        return "last_insert_id";
+    }
+
+    @Override
     protected String driverCoordinates() {
         return "{{maven.mysql}}";
     }
