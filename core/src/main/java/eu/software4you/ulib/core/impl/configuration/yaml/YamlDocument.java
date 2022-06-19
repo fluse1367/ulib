@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 
 public class YamlDocument extends ConfigurationBase<YamlDocument> implements YamlConfiguration {
 
+    static MappingNode emptyNode() {
+        return new MappingNode(Tag.MAP, Collections.emptyList(), DumperOptions.FlowStyle.AUTO);
+    }
+
     final Map<String, Node> childNodes = new HashMap<>();
     private final YamlSerializer serializer;
     // node that this sub represents
@@ -26,7 +30,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     protected YamlDocument(YamlSerializer serializer) {
         super(); // init as root
         this.serializer = serializer;
-        this.node = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        this.node = emptyNode();
     }
 
     // constructor for deserialized root
@@ -70,7 +74,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
     @Override
     public void clear() {
         _clear();
-        Node newNode = new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        Node newNode = emptyNode();
         if (isRoot()) {
             node = newNode;
         } else {
@@ -136,7 +140,7 @@ public class YamlDocument extends ConfigurationBase<YamlDocument> implements Yam
 
     protected YamlDocument constructSub(String key) {
         // create new sub
-        Node keyNode, valueNode = key.isEmpty() ? null : new MappingNode(Tag.MAP, new ArrayList<>(), DumperOptions.FlowStyle.AUTO);
+        Node keyNode, valueNode = key.isEmpty() ? null : YamlDocument.emptyNode();
 
         if (children.containsKey(key)) {
             // replace old node

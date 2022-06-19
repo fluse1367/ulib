@@ -1,7 +1,6 @@
-package eu.software4you.ulib.test.configuration.yaml;
+package eu.software4you.ulib.test.configuration;
 
 import eu.software4you.ulib.core.configuration.JsonConfiguration;
-import eu.software4you.ulib.test.configuration.SerializableObject;
 import org.junit.Assert;
 import org.junit.Test;
 

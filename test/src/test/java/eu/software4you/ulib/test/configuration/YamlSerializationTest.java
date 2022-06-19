@@ -1,7 +1,6 @@
-package eu.software4you.ulib.test.configuration.yaml;
+package eu.software4you.ulib.test.configuration;
 
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
-import eu.software4you.ulib.test.configuration.SerializableObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,12 +11,23 @@ public class YamlSerializationTest {
 
 
     @Test
-    public void testSerialization() {
+    public void testFreshDocument() {
+        testSerialization(YamlConfiguration.newYaml());
+    }
+
+    @Test
+    public void testEmptyDocument() throws Exception {
+        var doc = YamlConfiguration.loadYaml(new StringReader(""))
+                .orElseRethrow();
+
+        testSerialization(doc);
+    }
+
+    private void testSerialization(YamlConfiguration yaml) {
         var serializableObject = new SerializableObject(42, "Hello World!");
 
 
         // serialize to string
-        var yaml = YamlConfiguration.newYaml();
         yaml.set("obj", serializableObject);
         StringWriter wr = new StringWriter();
         yaml.dump(wr).rethrowRE();
