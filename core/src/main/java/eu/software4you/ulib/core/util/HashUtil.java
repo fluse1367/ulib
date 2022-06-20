@@ -18,7 +18,8 @@ public class HashUtil {
      */
     @NotNull
     public static Expect<String, IOException> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
-        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest).orElseRethrow(IOException.class)));
+        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest)
+                .orElseRethrow(IOException.class)));
     }
 
     /**
@@ -32,10 +33,10 @@ public class HashUtil {
     @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
         return Expect.compute(() -> {
-            var buff = new byte[1024];
+            var buf = new byte[1024];
             int len;
-            while ((len = in.read()) != -1) {
-                digest.update(buff, 0, len);
+            while ((len = in.read(buf)) != -1) {
+                digest.update(buf, 0, len);
             }
             return digest.digest();
         });
@@ -49,7 +50,6 @@ public class HashUtil {
      * @return the computed hash
      * @see Conversions#toHex(byte[])
      */
-    @NotNull
     public static byte[] computeHash(byte[] bytes, @NotNull MessageDigest digest) {
         digest.update(bytes);
         return digest.digest();
@@ -68,10 +68,10 @@ public class HashUtil {
         return Expect.compute(() -> {
             Checksum sum = new CRC32();
 
-            byte[] buff = new byte[1024];
+            byte[] buf = new byte[1024];
             int len;
-            while ((len = in.read(buff)) != -1) {
-                sum.update(buff, 0, len);
+            while ((len = in.read(buf)) != -1) {
+                sum.update(buf, 0, len);
             }
 
             return sum.getValue();
