@@ -22,7 +22,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> updateBlockwise(@NotNull InputStream in,
-                                                            TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
+                                                            @NotNull TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
         return updateBlockwise(1024, in, consumer);
     }
 
@@ -34,7 +34,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> readBlockwise(@NotNull InputStream in,
-                                                          BiParamTask<byte[], Integer, ? extends IOException> consumer) {
+                                                          @NotNull BiParamTask<byte[], Integer, ? extends IOException> consumer) {
         return readBlockwise(1024, in, consumer);
     }
 
@@ -49,7 +49,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> updateBlockwise(int blockSize, @NotNull InputStream in,
-                                                            TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
+                                                            @NotNull TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
         return readBlockwise(blockSize, in, (buf, len) -> consumer.execute(buf, 0, len));
     }
 
@@ -63,7 +63,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> readBlockwise(int blockSize, @NotNull InputStream in,
-                                                          BiParamTask<byte[], Integer, ? extends IOException> consumer) {
+                                                          @NotNull BiParamTask<byte[], Integer, ? extends IOException> consumer) {
         if (blockSize <= 0)
             throw new IllegalArgumentException("Invalid blocksize");
 
@@ -87,7 +87,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> updateBlockwise(@NotNull Reader in,
-                                                            TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
+                                                            @NotNull TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
         return updateBlockwise(1024, in, consumer);
     }
 
@@ -99,7 +99,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> readBlockwise(@NotNull Reader in,
-                                                          BiParamTask<char[], Integer, ? extends IOException> consumer) {
+                                                          @NotNull BiParamTask<char[], Integer, ? extends IOException> consumer) {
         return readBlockwise(1024, in, consumer);
     }
 
@@ -114,7 +114,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> updateBlockwise(int blockSize, @NotNull Reader in,
-                                                            TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
+                                                            @NotNull TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
         return readBlockwise(blockSize, in, (buf, len) -> consumer.execute(buf, 0, len));
     }
 
@@ -127,7 +127,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> readBlockwise(int blockSize, @NotNull Reader in,
-                                                          BiParamTask<char[], Integer, ? extends IOException> consumer) {
+                                                          @NotNull BiParamTask<char[], Integer, ? extends IOException> consumer) {
         if (blockSize <= 0)
             throw new IllegalArgumentException("Invalid blocksize");
 
