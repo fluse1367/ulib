@@ -1,7 +1,6 @@
 package eu.software4you.ulib.core.io;
 
-import eu.software4you.ulib.core.function.BiParamTask;
-import eu.software4you.ulib.core.function.Task;
+import eu.software4you.ulib.core.function.*;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +13,20 @@ import java.util.concurrent.ThreadFactory;
 public class IOUtil {
 
     /**
+     * Convenience method to pass updating methods as reference into a blockwise read operation.
+     * <p>
+     * Reads all available bytes from an input stream in blocks of 1024 and calls a consumer with the respective buffer.
+     *
+     * @param in       the stream to read from
+     * @param consumer the consumer, called with the buffer, an offset (which is always {@code 0} and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> updateBlockwise(@NotNull InputStream in,
+                                                            TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
+        return updateBlockwise(1024, in, consumer);
+    }
+
+    /**
      * Reads all available bytes from an input stream in blocks of 1024 and calls a consumer with the respective buffer.
      *
      * @param in       the stream to read from
@@ -23,6 +36,21 @@ public class IOUtil {
     public static Expect<Void, IOException> readBlockwise(@NotNull InputStream in,
                                                           BiParamTask<byte[], Integer, ? extends IOException> consumer) {
         return readBlockwise(1024, in, consumer);
+    }
+
+    /**
+     * Convenience method to pass updating methods as reference into a blockwise read operation.
+     * <p>
+     * Reads all available bytes from an input stream in blocks of a certain size and calls a consumer with the respective buffer.
+     *
+     * @param blockSize the block size
+     * @param in        the stream to read from
+     * @param consumer  the consumer, called with the buffer, an offset (which is always {@code 0} and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> updateBlockwise(int blockSize, @NotNull InputStream in,
+                                                            TriParamTask<byte[], Integer, Integer, ? extends IOException> consumer) {
+        return readBlockwise(blockSize, in, (buf, len) -> consumer.execute(buf, 0, len));
     }
 
 
@@ -48,6 +76,21 @@ public class IOUtil {
         });
     }
 
+
+    /**
+     * Convenience method to pass updating methods as reference into a blockwise read operation.
+     * <p>
+     * Reads all available characters from a reader in blocks of 1024 and calls a consumer with the respective buffer.
+     *
+     * @param in       the stream to read from
+     * @param consumer the consumer, called with the buffer, an offset (which is always {@code 0} and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> updateBlockwise(@NotNull Reader in,
+                                                            TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
+        return updateBlockwise(1024, in, consumer);
+    }
+
     /**
      * Reads all available characters from a reader in blocks of 1024 and calls a consumer with the respective buffer.
      *
@@ -58,6 +101,21 @@ public class IOUtil {
     public static Expect<Void, IOException> readBlockwise(@NotNull Reader in,
                                                           BiParamTask<char[], Integer, ? extends IOException> consumer) {
         return readBlockwise(1024, in, consumer);
+    }
+
+    /**
+     * Convenience method to pass updating methods as reference into a blockwise read operation.
+     * <p>
+     * Reads all available characters from a reader in blocks of a certain size and calls a consumer with the respective buffer.
+     *
+     * @param blockSize the block size
+     * @param in        the stream to read from
+     * @param consumer  the consumer, called with the buffer, an offset (which is always {@code 0} and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> updateBlockwise(int blockSize, @NotNull Reader in,
+                                                            TriParamTask<char[], Integer, Integer, ? extends IOException> consumer) {
+        return readBlockwise(blockSize, in, (buf, len) -> consumer.execute(buf, 0, len));
     }
 
     /**

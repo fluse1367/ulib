@@ -34,7 +34,7 @@ public class HashUtil {
     @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
         return Expect.compute(() -> {
-            IOUtil.readBlockwise(in, (buf, len) -> digest.update(buf, 0, len))
+            IOUtil.updateBlockwise(in, digest::update)
                     .rethrow(IOException.class);
             return digest.digest();
         });
@@ -65,7 +65,7 @@ public class HashUtil {
     public static Expect<Long, IOException> computeCRC32(@NotNull InputStream in) {
         return Expect.compute(() -> {
             Checksum sum = new CRC32();
-            IOUtil.readBlockwise(in, (buf, len) -> sum.update(buf, 0, len))
+            IOUtil.updateBlockwise(in, sum::update)
                     .rethrow(IOException.class);
             return sum.getValue();
         });
