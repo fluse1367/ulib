@@ -150,8 +150,7 @@ public class Conversions {
     public static String toHex(byte[] bytes) {
         var b = new StringBuilder();
         for (byte by : bytes) {
-            // `| 0x10` for adding '0' before if hex len is 1
-            b.append(Integer.toHexString(Byte.toUnsignedInt(by) | 0x10));
+            b.append(String.format("%02X", by));
         }
         return b.toString();
     }
