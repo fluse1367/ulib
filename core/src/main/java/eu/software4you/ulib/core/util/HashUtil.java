@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.util;
 
+import eu.software4you.ulib.core.io.IOUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,11 +34,8 @@ public class HashUtil {
     @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
         return Expect.compute(() -> {
-            var buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) != -1) {
-                digest.update(buf, 0, len);
-            }
+            IOUtil.readBlockwise(in, (buf, len) -> digest.update(buf, 0, len))
+                    .rethrow(IOException.class);
             return digest.digest();
         });
     }
@@ -67,13 +65,8 @@ public class HashUtil {
     public static Expect<Long, IOException> computeCRC32(@NotNull InputStream in) {
         return Expect.compute(() -> {
             Checksum sum = new CRC32();
-
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) != -1) {
-                sum.update(buf, 0, len);
-            }
-
+            IOUtil.readBlockwise(in, (buf, len) -> sum.update(buf, 0, len))
+                    .rethrow(IOException.class);
             return sum.getValue();
         });
     }

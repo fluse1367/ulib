@@ -1,5 +1,6 @@
 package eu.software4you.ulib.core.io;
 
+import eu.software4you.ulib.core.function.BiParamTask;
 import eu.software4you.ulib.core.function.Task;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,77 @@ import java.util.concurrent.ThreadFactory;
  * Class containing I/O (stream) operations.
  */
 public class IOUtil {
+
+    /**
+     * Reads all available bytes from an input stream in blocks of 1024 and calls a consumer with the respective buffer.
+     *
+     * @param in       the stream to read from
+     * @param consumer the consumer, called with the buffer and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> readBlockwise(@NotNull InputStream in,
+                                                          BiParamTask<byte[], Integer, ? extends IOException> consumer) {
+        return readBlockwise(1024, in, consumer);
+    }
+
+
+    /**
+     * Reads all available bytes from an input stream in blocks of a certain size and calls a consumer with the respective buffer.
+     *
+     * @param blockSize the block size
+     * @param in        the stream to read from
+     * @param consumer  the consumer, called with the buffer and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> readBlockwise(int blockSize, @NotNull InputStream in,
+                                                          BiParamTask<byte[], Integer, ? extends IOException> consumer) {
+        if (blockSize <= 0)
+            throw new IllegalArgumentException("Invalid blocksize");
+
+        return Expect.compute(() -> {
+            byte[] buf = new byte[blockSize];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+                consumer.execute(buf, len);
+            }
+        });
+    }
+
+    /**
+     * Reads all available characters from a reader in blocks of 1024 and calls a consumer with the respective buffer.
+     *
+     * @param in       the stream to read from
+     * @param consumer the consumer, called with the buffer and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> readBlockwise(@NotNull Reader in,
+                                                          BiParamTask<char[], Integer, ? extends IOException> consumer) {
+        return readBlockwise(1024, in, consumer);
+    }
+
+    /**
+     * Reads all available characters from a reader in blocks of a certain size and calls a consumer with the respective buffer.
+     *
+     * @param blockSize the block size
+     * @param in        the stream to read from
+     * @param consumer  the consumer, called with the buffer and the read length
+     */
+    @NotNull
+    public static Expect<Void, IOException> readBlockwise(int blockSize, @NotNull Reader in,
+                                                          BiParamTask<char[], Integer, ? extends IOException> consumer) {
+        if (blockSize <= 0)
+            throw new IllegalArgumentException("Invalid blocksize");
+
+        return Expect.compute(() -> {
+            char[] buf = new char[blockSize];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+                consumer.execute(buf, len);
+            }
+        });
+    }
+
+
     /**
      * Writes an input stream into an output stream. This method does not close the streams.
      *
@@ -25,14 +97,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> write(@NotNull InputStream in, @NotNull OutputStream out) {
-        return Expect.compute(() -> {
-            byte[] buff = new byte[1024];
-            int len;
-            while ((len = in.read(buff)) != -1) {
-                out.write(buff, 0, len);
-            }
-            out.flush();
-        });
+        return readBlockwise(1024, in, (buf, len) -> out.write(buf, 0, len));
     }
 
     /**
@@ -48,14 +113,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<Void, IOException> write(@NotNull Reader in, @NotNull Writer out) {
-        return Expect.compute(() -> {
-            char[] buff = new char[1024];
-            int len;
-            while ((len = in.read(buff)) != -1) {
-                out.write(buff, 0, len);
-            }
-            out.flush();
-        });
+        return readBlockwise(1024, in, (buf, len) -> out.write(buf, 0, len));
     }
 
     /**
@@ -101,12 +159,7 @@ public class IOUtil {
      */
     @NotNull
     public static Expect<String, IOException> toString(@NotNull InputStream in) {
-        return Expect.compute(() -> {
-            try (var bout = new ByteArrayOutputStream()) {
-                write(in, bout).rethrow(IOException.class);
-                return bout.toString();
-            }
-        });
+        return read(in).map(String::new);
     }
 
     /**
