@@ -34,7 +34,7 @@ public class EnvironmentProvider {
         private final Map<String, Collection<Class<?>[]>> hooks;
 
         Environment(String... modules) {
-            this(Map.of(), modules);
+            this(Collections.emptyMap(), modules);
         }
 
         Environment(Map<String, Collection<Class<?>[]>> hooks, String... modules) {

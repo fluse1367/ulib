@@ -54,6 +54,12 @@ public class Initializer {
         this.coreLoader = classProvider.getLayer().findLoader("ulib.core");
         initImpl();
         injector.initDelegation();
+
+        // apply additional hooks
+        environment.getAdditionalClassLoaderHookings().forEach((method, coll) -> coll.forEach(types ->
+                injector.additionally(method, types, params ->
+                        params.length > 0 && params[0] instanceof String name ? Optional.of(name) : Optional.empty()
+                )));
     }
 
     @SneakyThrows

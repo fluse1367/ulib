@@ -4,8 +4,7 @@ import lombok.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 // handles injection of ulib
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -22,6 +21,14 @@ public class Injector {
         this.delegation = initializer.coreClass("eu.software4you.ulib.core.inject.ClassLoaderDelegation")
                 .getConstructor(ClassLoader.class)
                 .newInstance(initializer.getClassProvider());
+    }
+
+    @SneakyThrows
+    void additionally(String method, Class<?>[] paramTypes, Function<? super Object[], Optional<String>> classNameResolver) {
+        this.delegation.getClass()
+                // additionally(String method, Class<?>[] paramTypes, Function<? super Object[], Optional<String>> classNameResolver)
+                .getMethod("additionally", String.class, Class[].class, Function.class)
+                .invoke(this.delegation, method, paramTypes, classNameResolver);
     }
 
     private boolean testLoadingRequest(Class<?> requester, String request) {
