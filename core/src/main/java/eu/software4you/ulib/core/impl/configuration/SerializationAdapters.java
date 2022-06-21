@@ -123,13 +123,13 @@ public class SerializationAdapters {
             if (types.length != 1 || !(types[0] instanceof Class<?> cl))
                 throw new InvalidFactoryDeclarationException("Malformed type arguments: %s".formatted(Arrays.toString(types)));
 
-            if (!DeSerializationFactory.class.isAssignableFrom(cl))
-                throw new InvalidFactoryDeclarationException("%s does not implement %s".formatted(cl.getName(), DeSerializationFactory.class.getName()));
+            if (!DeserializationFactory.class.isAssignableFrom(cl))
+                throw new InvalidFactoryDeclarationException("%s does not implement %s".formatted(cl.getName(), DeserializationFactory.class.getName()));
 
-            Class<? extends DeSerializationFactory<Serializable<?>>> factoryClass = (Class<? extends DeSerializationFactory<Serializable<?>>>) cl;
+            Class<? extends DeserializationFactory<Serializable<?>>> factoryClass = (Class<? extends DeserializationFactory<Serializable<?>>>) cl;
 
             // get factory instance
-            DeSerializationFactory<Serializable<?>> factory;
+            DeserializationFactory<Serializable<?>> factory;
 
             a:
             try {
@@ -137,7 +137,7 @@ public class SerializationAdapters {
                     var getInstance = factoryClass.getMethod("getInstance");
 
                     if (Modifier.isStatic(getInstance.getModifiers()) && getInstance.getReturnType() == factoryClass) {
-                        factory = (DeSerializationFactory<Serializable<?>>) getInstance.invoke(null);
+                        factory = (DeserializationFactory<Serializable<?>>) getInstance.invoke(null);
                         break a;
                     }
                 } catch (NoSuchMethodException e) {

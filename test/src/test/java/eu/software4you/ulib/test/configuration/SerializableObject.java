@@ -1,6 +1,6 @@
 package eu.software4you.ulib.test.configuration;
 
-import eu.software4you.ulib.core.configuration.serialization.DeSerializationFactory;
+import eu.software4you.ulib.core.configuration.serialization.DeserializationFactory;
 import eu.software4you.ulib.core.configuration.serialization.Serializable;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Conversions;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class SerializableObject implements Serializable<SerializableObject.Factory> {
-    public static class Factory implements DeSerializationFactory<SerializableObject> {
+    public static class Factory implements DeserializationFactory<SerializableObject> {
         @Override
         public SerializableObject deserialize(@NotNull Map<String, Object> serialized) {
             return new SerializableObject(

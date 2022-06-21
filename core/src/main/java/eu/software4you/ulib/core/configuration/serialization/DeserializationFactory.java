@@ -17,7 +17,7 @@ import java.util.Map;
  * @param <T> the class that this factory fabricates
  * @see Serializable
  */
-public interface DeSerializationFactory<T extends Serializable<?>> {
+public interface DeserializationFactory<T extends Serializable<?>> {
     /**
      * Creates an object out of the serialized data.
      *
