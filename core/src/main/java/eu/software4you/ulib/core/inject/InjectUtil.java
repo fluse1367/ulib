@@ -7,7 +7,8 @@ import eu.software4you.ulib.core.util.LazyValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -98,8 +99,8 @@ public class InjectUtil {
                                                                  @NotNull Predicate<ClassLoader> filterLoader,
                                                                  @NotNull BiPredicate<Class<?>, String> filterRequest,
                                                                  @NotNull Class<? extends ClassLoader> target) {
-        return new ClassLoaderDelegationHook(target, Collections.emptyMap(), delegation,
-                filterLoader, filterRequest).inject();
+        return new ClassLoaderDelegationHook(target, delegation.additional.getAndSet(null),
+                delegation, filterLoader, filterRequest).inject();
     }
 
 }

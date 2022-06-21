@@ -10,7 +10,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 /**
  * A container for class loading hooks. The hooks may throw exceptions,
@@ -55,6 +57,8 @@ public final class ClassLoaderDelegation {
     private final BiParamFunc<String, String, Class<?>, Exception> delegateFindModuleClass;
     private final BiParamFunc<String, String, URL, IOException> delegateFindModuleResource;
     private final ParamFunc<String, URL, IOException> delegateFindResource;
+    final AtomicReference<Map<String, Map<Class<?>[], Function<Object[], Optional<String>>>>> additional =
+            new AtomicReference<>(new HashMap<>());
 
     /**
      * Constructs a delegation container that forwards any class loading request to the specified function.
@@ -156,6 +160,23 @@ public final class ClassLoaderDelegation {
         } else {
             this.delegateFindModuleResource = DEFAULT_DELEGATE_FIND_MODULE_RESOURCE;
         }
+
+    }
+
+    /**
+     * Marks an additional method to be injected as well.
+     *
+     * @param method            the name of the method
+     * @param paramTypes        the method's parameter types
+     * @param classNameResolver a function which is able to resolve the class name that should be loaded out of the calling parameters
+     */
+    public void additionally(String method, Class<?>[] paramTypes, Function<? super Object[], Optional<String>> classNameResolver) {
+        if (this.additional.getPlain() == null)
+            throw new IllegalStateException();
+
+        this.additional.getPlain()
+                .computeIfAbsent(method, __ -> new HashMap<>())
+                .computeIfAbsent(paramTypes, __ -> classNameResolver::apply);
 
     }
 

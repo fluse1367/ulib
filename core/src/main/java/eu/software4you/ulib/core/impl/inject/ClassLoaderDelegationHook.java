@@ -18,7 +18,10 @@ public final class ClassLoaderDelegationHook {
     // for injection
     private final Class<? extends ClassLoader> targetClazz;
     private final HookInjection injection;
-    private final Map<String, Collection<Class<?>[]>> additionalHooks;
+
+    // marks methods that should be injected additionally to the usual methods
+    // (method name) -> (parameter types) -> (mapping function to determine class name to resolve)
+    private final Map<String, Map<Class<?>[], Function<Object[], Optional<String>>>> additionalHooks;
 
     // for hook execution
     private final ClassLoaderDelegation delegation;
@@ -30,7 +33,7 @@ public final class ClassLoaderDelegationHook {
     private final Map<Integer, Map<String, Collection<Thread>>> threadAccess = new ConcurrentHashMap<>();
 
     public ClassLoaderDelegationHook(Class<? extends ClassLoader> targetClazz,
-                                     Map<String, Collection<Class<?>[]>> additional,
+                                     Map<String, Map<Class<?>[], Function<Object[], Optional<String>>>> additional,
                                      ClassLoaderDelegation delegation,
                                      Predicate<ClassLoader> filterClassLoader,
                                      BiPredicate<Class<?>, String> filterLoadingRequest) {
@@ -63,11 +66,14 @@ public final class ClassLoaderDelegationHook {
                         (p, c) -> hook_loadClass((String) p[0], (boolean) p[1], c)
                 ));
 
-        additionalHooks.forEach((name, coll) -> coll.forEach(params -> ReflectUtil
-                .findUnderlyingMethod(targetClazz, name, true, params)
-                .ifPresent(into -> injection.addHook(into, headSpec,
-                        this::hookAdditional_findClass
-                ))));
+        additionalHooks.forEach((name, map) -> map.forEach((types, mapper) -> ReflectUtil
+                .findUnderlyingMethod(targetClazz, name, true, types)
+                .ifPresent(into -> injection.<Class<?>>addHook(into, headSpec,
+                        (p, cb) -> mapper.apply(p).ifPresent(
+                                nameToResolve -> this.hook_findClass(nameToResolve, cb)
+                        )
+                ))
+        ));
 
         // delegate resource finding
 
@@ -174,17 +180,6 @@ public final class ClassLoaderDelegationHook {
                 () -> delegation.findClass(name));
 
         leave(0, "CLASS: " + name);
-    }
-
-    private void hookAdditional_findClass(Object[] params, Callback<Class<?>> cb) {
-        if (params.length == 0)
-            return;
-
-        if (!(params[0] instanceof String name)) {
-            return;
-        }
-
-        hook_findClass(name, cb);
     }
 
     private void hook_findClass(String module, String name, Callback<Class<?>> cb) {
