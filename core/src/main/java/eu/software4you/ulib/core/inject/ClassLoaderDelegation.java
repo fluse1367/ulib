@@ -170,7 +170,7 @@ public final class ClassLoaderDelegation {
      * @param paramTypes        the method's parameter types
      * @param classNameResolver a function which is able to resolve the class name that should be loaded out of the calling parameters
      */
-    public void additionally(String method, Class<?>[] paramTypes, Function<? super Object[], Optional<String>> classNameResolver) {
+    public void additionally(@NotNull String method, @NotNull Class<?>[] paramTypes, @NotNull Function<? super Object[], Optional<String>> classNameResolver) {
         if (this.additional.getPlain() == null)
             throw new IllegalStateException();
 
