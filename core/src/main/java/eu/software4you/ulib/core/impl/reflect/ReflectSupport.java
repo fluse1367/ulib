@@ -58,7 +58,17 @@ public final class ReflectSupport {
         // put value?
         if (!params.isEmpty()) {
             var param = params.get(0);
-            if (param.getClazz() == field.getType())
+            if (param.getClazz() == field.getType()) {
+
+                // bypass final modifier if necessary
+                // only for sudo threads tho
+                if (Modifier.isFinal(field.getModifiers()) && Internal.isSudoThread()) {
+                    var modifiers = Field.class.getDeclaredField("modifiers");
+                    modifiers.setAccessible(true);
+                    modifiers.set(field, field.getModifiers() & ~Modifier.STATIC);
+                }
+
+                // update the value
                 field.set(invoke, params.get(0).getValue());
             }
         }
