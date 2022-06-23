@@ -7,8 +7,7 @@ import com.velocitypowered.api.scheduler.ScheduledTask;
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
 import eu.software4you.ulib.core.io.IOUtil;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.Conversions;
-import eu.software4you.ulib.core.util.FileUtil;
+import eu.software4you.ulib.core.util.*;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -156,7 +155,7 @@ public abstract class VelocityJavaPlugin implements VelocityPlugin {
     public void cancelAllTasks() {
         var sch = proxyServer.getScheduler();
         //noinspection RedundantCast
-        ReflectUtil.icall(Multimap.class, sch, "tasksByPlugin")
+        Unsafe.doPrivileged(() -> ReflectUtil.icall(Multimap.class, sch, "tasksByPlugin"))
                 .map(Multimap::values)
                 .map(c -> Conversions.safecast(ScheduledTask.class, c).orElse(null))
                 .ifPresentOrElse(tasks -> tasks.forEach(ScheduledTask::cancel), thr -> thr

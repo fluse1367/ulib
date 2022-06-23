@@ -200,10 +200,10 @@ public class ReflectUtil {
         var cl = forName("sun.reflect.annotation.AnnotationParser", true, ClassLoader.getSystemClassLoader())
                 .orElseThrow();
 
-        return scall(Annotation.class, cl, "annotationForMap()",
+        return Unsafe.doPrivileged(() -> scall(Annotation.class, cl, "annotationForMap()",
                 Param.listOf(Class.class, type, Map.class, annoValues))
                 .map(type::cast)
-                .orElseThrow();
+                .orElseThrow());
     }
 
     /**

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @deprecated Well... its unsafe...
  */
+@SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated
 public final class Unsafe {
 

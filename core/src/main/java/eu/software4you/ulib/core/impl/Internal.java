@@ -6,8 +6,9 @@ import eu.software4you.ulib.core.function.Func;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
-import eu.software4you.ulib.core.util.Conditions;
-import eu.software4you.ulib.core.util.Expect;
+import eu.software4you.ulib.core.reflect.Param;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.*;
 import lombok.*;
 
 import java.io.*;
@@ -124,7 +125,7 @@ public final class Internal {
         Internal.instrumentation = Objects.requireNonNull(instrumentation);
 
         AccessibleObjectTransformer.acquirePrivileges();
-        widenModuleAccess();
+        Unsafe.doPrivileged(Internal::widenModuleAccess);
         PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY, InjectionManager.PROXY_KEY);
     }
 
@@ -169,11 +170,16 @@ public final class Internal {
         return !m.isExported(pack) && !m.isOpen(pack);
     }
 
+    // sudo
+
     public static boolean isSudoThread() {
         return sudoThreads.contains(Thread.currentThread());
     }
 
     public static <T, X extends Exception> T sudo(Func<T, X> task) throws X {
+        if (isSudoThread())
+            return task.execute();
+
         final var thr = Thread.currentThread();
         sudoThreads.add(thr);
         try {
@@ -181,5 +187,22 @@ public final class Internal {
         } finally {
             sudoThreads.remove(thr);
         }
+    }
+
+    public static void makeAccessibleTo(Module other) {
+        var noAccessYet = Internal.class.getModule().getLayer().modules().stream()
+                // grab ulib modules
+                .filter(m -> m.getName().startsWith("ulib."))
+                // filter out the modules `other` can already read
+                .filter(api -> !other.canRead(api))
+                .toList();
+        if (noAccessYet.isEmpty())
+            return;
+
+        Unsafe.doPrivileged(() -> {
+            for (Module api : noAccessYet) {
+                ReflectUtil.icall(other, "implAddReads()", Param.single(Module.class, api));
+            }
+        });
     }
 }

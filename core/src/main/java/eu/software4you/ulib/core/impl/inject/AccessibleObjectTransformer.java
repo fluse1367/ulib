@@ -11,10 +11,8 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.AccessibleObject;
 import java.security.ProtectionDomain;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccessibleObjectTransformer implements ClassFileTransformer {
@@ -23,11 +21,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
     public static final String SUDO_KEY = "ulib.sudo";
 
     public static void acquirePrivileges() {
-        Set<Module> permitted = AccessibleObjectTransformer.class.getModule().getLayer().modules().stream()
-                .filter(m -> m.getName().startsWith("ulib."))
-                .collect(Collectors.toSet());
-        System.getProperties().put(SUDO_KEY, (Predicate<Module>) module ->
-                permitted.contains(module) || Internal.isSudoThread());
+        System.getProperties().put(SUDO_KEY, (Predicate<Class<?>>) caller -> Internal.isSudoThread());
 
         var inst = Internal.getInstrumentation();
         inst.addTransformer(new AccessibleObjectTransformer(), true);
@@ -57,7 +51,7 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
             var cm = cc.getMethod("checkCanSetAccessible", "(Ljava/lang/Class;Ljava/lang/Class;)V");
 
             cm.insertBefore("""
-                    if (((Predicate) System.getProperties().get((Object) "%s")).test($1.getModule())) {
+                    if (((Predicate) System.getProperties().get((Object) "%s")).test($1)) {
                         return;
                     }
                     """.formatted(SUDO_KEY));

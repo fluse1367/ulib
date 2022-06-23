@@ -1,9 +1,11 @@
 package eu.software4you.ulib.spigot.impl.enchantment;
 
+import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Conversions;
+import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.minecraft.mappings.Mappings;
 import eu.software4you.ulib.spigot.enchantment.*;
 import lombok.SneakyThrows;
@@ -142,20 +144,25 @@ public final class EnchantUtilImpl {
 
     @SneakyThrows
     public static int getItemEnchantability(ItemStack stack) {
-        return ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"),
+        return Unsafe.doPrivileged(() -> ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"),
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
-                Param.single(ItemStack.class, stack)).orElseThrow();
+                Param.single(ItemStack.class, stack)).orElseThrow());
     }
 
     private static boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
-        Map<NamespacedKey, Enchantment> byKey = ReflectUtil.scall(Map.class, Enchantment.class, "byKey")
-                .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
-                .orElseThrow();
-        Map<String, Enchantment> byName = ReflectUtil.scall(Map.class, Enchantment.class, "byName")
-                .map(map -> Conversions.safecast(String.class, Enchantment.class, map).orElse(null))
-                .orElseThrow();
+        var pair = Unsafe.doPrivileged(() -> {
+            var byKey = ReflectUtil.scall(Map.class, Enchantment.class, "byKey")
+                    .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
+                    .orElseThrow();
 
-        return fun.apply(byKey, byName);
+            var byName = ReflectUtil.scall(Map.class, Enchantment.class, "byName")
+                    .map(map -> Conversions.safecast(String.class, Enchantment.class, map).orElse(null))
+                    .orElseThrow();
+
+            return new Pair<>(byKey, byName);
+        });
+
+        return fun.apply(pair.getFirst(), pair.getSecond());
     }
 
     @SneakyThrows
@@ -167,8 +174,9 @@ public final class EnchantUtilImpl {
         var ce = Class.forName("org.bukkit.craftbukkit.enchantments.CraftEnchantment");
         if (!ce.isInstance(enchantment))
             throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
-        rarityName = ReflectUtil.scall(String.class, ce, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
-                Param.single(Enchantment.class, enchantment)).orElseThrow();
+
+        rarityName = Unsafe.doPrivileged(() -> ReflectUtil.scall(String.class, ce, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
+                Param.single(Enchantment.class, enchantment)).orElseThrow());
 
         return EnchantmentRarity.valueOf(rarityName);
     }

@@ -3,6 +3,7 @@ package eu.software4you.ulib.core.impl.reflect;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.reflect.*;
+import eu.software4you.ulib.core.util.Unsafe;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,15 +60,6 @@ public final class ReflectSupport {
         if (!params.isEmpty()) {
             var param = params.get(0);
             if (param.getClazz() == field.getType()) {
-
-                // bypass final modifier if necessary
-                // only for sudo threads tho
-                if (Modifier.isFinal(field.getModifiers()) && Internal.isSudoThread()) {
-                    var modifiers = Field.class.getDeclaredField("modifiers");
-                    modifiers.setAccessible(true);
-                    modifiers.set(field, field.getModifiers() & ~Modifier.STATIC);
-                }
-
                 // update the value
                 field.set(invoke, params.get(0).getValue());
             }
@@ -149,6 +141,9 @@ public final class ReflectSupport {
 
     @SneakyThrows
     public static boolean deepEquals(@NotNull Object a, @NotNull Object b) {
+        if (!Internal.isSudoThread())
+            return Unsafe.doPrivileged(() -> deepEquals(a, b));
+
         // compare all fields
         var clazz = a.getClass();
         do {
@@ -176,6 +171,9 @@ public final class ReflectSupport {
     }
 
     public static int deepHash(@NotNull final Object obj, @NotNull final Class<?> anchor, boolean useImpl) {
+        if (!Internal.isSudoThread())
+            return Unsafe.doPrivileged(() -> deepHash(obj, anchor, useImpl));
+
         // attempt using implementation
         if (useImpl) {
             try {

@@ -83,24 +83,8 @@ public class Injector {
 
     @SneakyThrows
     public void addReadsTo(Module module) {
-        var addRecord = initializer.getApiModules().stream()
-                .filter(api -> !module.canRead(api))
-                .toList();
-        if (addRecord.isEmpty())
-            return;
-
-        // ReflectUtil.icall(module, "implAddReads()", Param.fromMultiple(module));
-
-        var clParam = Class.forName("eu.software4you.ulib.core.reflect.Param", true, initializer.getClassProvider());
-        var clRU = Class.forName("eu.software4you.ulib.core.reflect.ReflectUtil", true, initializer.getClassProvider());
-
-        var params = clParam.getMethod("fromMultiple", Object[].class)
-                .invoke(null, new Object[]{new Object[]{module}});
-
-        var method = clRU.getMethod("call", Object.class, String.class, List[].class);
-
-        for (Module m : addRecord) {
-            method.invoke(null, m, "implAddReads()", new List[]{(List<?>) params});
-        }
+        var clInternal = Class.forName("eu.software4you.ulib.core.impl.Internal", true, initializer.getClassProvider());
+        clInternal.getMethod("makeAccessibleTo", Module.class)
+                .invoke(null, module);
     }
 }
