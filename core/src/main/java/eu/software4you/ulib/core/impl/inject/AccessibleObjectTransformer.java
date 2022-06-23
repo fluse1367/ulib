@@ -26,7 +26,8 @@ public class AccessibleObjectTransformer implements ClassFileTransformer {
         Set<Module> permitted = AccessibleObjectTransformer.class.getModule().getLayer().modules().stream()
                 .filter(m -> m.getName().startsWith("ulib."))
                 .collect(Collectors.toSet());
-        System.getProperties().put(SUDO_KEY, (Predicate<Module>) permitted::contains);
+        System.getProperties().put(SUDO_KEY, (Predicate<Module>) module ->
+                permitted.contains(module) || Internal.isSudoThread());
 
         var inst = Internal.getInstrumentation();
         inst.addTransformer(new AccessibleObjectTransformer(), true);

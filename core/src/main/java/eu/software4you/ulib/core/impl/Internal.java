@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.impl;
 
 import eu.software4you.ulib.core.configuration.Configuration;
 import eu.software4you.ulib.core.configuration.YamlConfiguration;
+import eu.software4you.ulib.core.function.Func;
 import eu.software4you.ulib.core.impl.configuration.yaml.YamlSerializer;
 import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
@@ -14,6 +15,8 @@ import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Internal {
 
@@ -21,6 +24,7 @@ public final class Internal {
     private static final Path dataDir, cacheDir, localMavenDir;
     @Getter
     private static final boolean unsafeOperations, forceSync;
+    private static final Set<Thread> sudoThreads = ConcurrentHashMap.newKeySet();
     @Getter
     private static Instrumentation instrumentation;
 
@@ -163,5 +167,19 @@ public final class Internal {
         var m = cl.getModule();
         var pack = cl.getPackageName();
         return !m.isExported(pack) && !m.isOpen(pack);
+    }
+
+    public static boolean isSudoThread() {
+        return sudoThreads.contains(Thread.currentThread());
+    }
+
+    public static <T, X extends Exception> T sudo(Func<T, X> task) throws X {
+        final var thr = Thread.currentThread();
+        sudoThreads.add(thr);
+        try {
+            return task.execute();
+        } finally {
+            sudoThreads.remove(thr);
+        }
     }
 }
