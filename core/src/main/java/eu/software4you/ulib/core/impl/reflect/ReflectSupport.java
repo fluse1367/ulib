@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.impl.reflect;
 
 import eu.software4you.ulib.core.collection.Pair;
+import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.reflect.*;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -27,27 +28,39 @@ public final class ReflectSupport {
         var name = frame.getName();
         var params = frame.getParams();
 
-        if (!frame.isField()) {
-            var types = toParameterTypes(params);
-            var method = ReflectUtil.findUnderlyingMethod(clazz, name, true, types)
-                    .orElseThrow(() -> new NoSuchMethodException("%s(%s) in %s".formatted(name, Arrays.toString(types), clazz)));
-            if (!method.canAccess(invoke))
-                method.setAccessible(true);
+        return frame.isField() ? frameCallField(clazz, invoke, name, params) : frameCallMethod(clazz, invoke, name, params);
+    }
 
-            var result = method.invoke(invoke, toParameterObjects(params));
-            return new Pair<>(method.getReturnType(), result);
-        }
+    private static Pair<Class<?>, Object> frameCallMethod(Class<?> anchor, Object invoke, String identifier, List<Param<?>> params) throws ReflectiveOperationException {
+        // gather information
+        var types = toParameterTypes(params);
+        var method = ReflectUtil.findUnderlyingMethod(anchor, identifier, true, types)
+                .orElseThrow(() -> new NoSuchMethodException("%s(%s) in %s".formatted(identifier, Arrays.toString(types), anchor)));
 
-        var field = ReflectUtil.findUnderlyingField(clazz, name, true)
-                .orElseThrow(() -> new NoSuchFieldException("%s in %s".formatted(name, clazz)));
+        // make method accessible
+        if (!method.canAccess(invoke))
+            method.setAccessible(true);
+
+        // execute
+        var result = method.invoke(invoke, toParameterObjects(params));
+        return new Pair<>(method.getReturnType(), result);
+    }
+
+
+    private static Pair<Class<?>, Object> frameCallField(Class<?> anchor, Object invoke, String identifier, List<Param<?>> params) throws ReflectiveOperationException {
+        var field = ReflectUtil.findUnderlyingField(anchor, identifier, true)
+                .orElseThrow(() -> new NoSuchFieldException("%s in %s".formatted(identifier, anchor)));
+
+        // make field accessible
         if (!field.canAccess(invoke))
             field.setAccessible(true);
 
-        // put value
+        // put value?
         if (!params.isEmpty()) {
             var param = params.get(0);
             if (param.getClazz() == field.getType())
                 field.set(invoke, params.get(0).getValue());
+            }
         }
 
         // obtain value
