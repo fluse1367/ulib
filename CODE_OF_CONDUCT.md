@@ -11,7 +11,7 @@
 
 - Use `Optional` if a method may not have a value to return, **never** return `null`.
 - Methods may not declare any checked Exceptions;
-  Use [`Expect`](core-api/src/main/java/eu/software4you/ulib/core/api/util/value/Expect.java) to wrap any underlying
+  Use [`Expect`](core/src/main/java/eu/software4you/ulib/core/util/Expect.java) to wrap any underlying
   checked exception.
 - Document classes/methods with javadocs.
 - Keep the API clean, put the heavy code into the implementation.
