@@ -9,7 +9,8 @@
 
 ## API
 
-- Use `Optional` if a method may not have a value to return, **never** return `null`.
+- Use `Optional` if a method may not have a value to return, only return `null` if it's really necessary
+  (such as in [Callback#getReturnValue](core/src/main/java/eu/software4you/ulib/core/inject/Callback.java)).
 - Methods may not declare any checked Exceptions;
   Use [`Expect`](core/src/main/java/eu/software4you/ulib/core/util/Expect.java) to wrap any underlying
   checked exception.
