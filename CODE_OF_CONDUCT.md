@@ -14,6 +14,8 @@
 - Methods may not declare any checked Exceptions;
   Use [`Expect`](core/src/main/java/eu/software4you/ulib/core/util/Expect.java) to wrap any underlying
   checked exception.
+- Exception throwing (unchecked tho) is allowed if they are in direct contact with a method's parameter (
+  E.g. `IllegalArgumentException`).
 - Document classes/methods with javadocs.
 - Keep the API clean, put the heavy code into the implementation.
 
