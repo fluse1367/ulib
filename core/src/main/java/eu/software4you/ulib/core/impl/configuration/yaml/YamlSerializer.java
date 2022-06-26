@@ -147,6 +147,9 @@ public class YamlSerializer {
 
     private Node getLastChild(CollectionNode<?> root) {
         var li = root.getValue();
+        if (li.isEmpty()) {
+            return root;
+        }
         var elem = li.get(li.size() - 1);
 
         Node node;
