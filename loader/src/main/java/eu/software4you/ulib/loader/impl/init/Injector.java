@@ -83,8 +83,8 @@ public class Injector {
 
     @SneakyThrows
     public void addReadsTo(Module module) {
-        var clInternal = Class.forName("eu.software4you.ulib.core.impl.Internal", true, initializer.getClassProvider());
-        clInternal.getMethod("makeAccessibleTo", Module.class)
+        initializer.coreClass("eu.software4you.ulib.core.impl.Internal")
+                .getMethod("makeAccessibleTo", Module.class)
                 .invoke(null, module);
     }
 }
