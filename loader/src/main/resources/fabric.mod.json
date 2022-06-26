@@ -3,9 +3,14 @@
   "id": "ulib",
   "version": "{{project.version}}",
   "name": "uLib",
+  "icon": "assets/ulib/icon.png",
   "authors": [
     "fluse1367"
   ],
+  "contact": {
+    "sources": "https://gitlab.com/software4you.eu/ulib/",
+    "issues": "https://gitlab.com/software4you.eu/ulib/-/issues"
+  },
   "license": "GPLv3",
   "environment": "*",
   "entrypoints": {
@@ -16,5 +21,12 @@
   "depends": {
     "fabricloader": "*",
     "java": ">=17"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
   }
 }
