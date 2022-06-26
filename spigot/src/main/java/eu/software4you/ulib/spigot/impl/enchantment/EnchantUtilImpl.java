@@ -9,6 +9,7 @@ import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.minecraft.mappings.Mappings;
 import eu.software4you.ulib.spigot.enchantment.*;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -144,7 +145,7 @@ public final class EnchantUtilImpl {
 
     @SneakyThrows
     public static int getItemEnchantability(ItemStack stack) {
-        return Unsafe.doPrivileged(() -> ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack"),
+        return Unsafe.doPrivileged(() -> ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack", true, Bukkit.class.getClassLoader()),
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
                 Param.single(ItemStack.class, stack)).orElseThrow());
     }
@@ -171,7 +172,7 @@ public final class EnchantUtilImpl {
             return ce.getEnchantmentRarity();
 
         String rarityName;
-        var ce = Class.forName("org.bukkit.craftbukkit.enchantments.CraftEnchantment");
+        var ce = Class.forName("org.bukkit.craftbukkit.enchantments.CraftEnchantment", true, Bukkit.class.getClassLoader());
         if (!ce.isInstance(enchantment))
             throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
 

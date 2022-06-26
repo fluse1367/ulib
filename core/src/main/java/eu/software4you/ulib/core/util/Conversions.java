@@ -1,5 +1,8 @@
 package eu.software4you.ulib.core.util;
 
+import eu.software4you.ulib.core.function.Func;
+import eu.software4you.ulib.core.function.ParamFunc;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,6 +141,54 @@ public class Conversions {
 
         //noinspection unchecked
         return Optional.of((Map<K, V>) map);
+    }
+
+    /**
+     * Computes a given function with the {@link Thread#getContextClassLoader() context class loader} (if there is one).
+     * The given function will be computed again with caller's (the one directly calling this method) class loader, if the previous computation failed.
+     * <p>
+     * Use {@link #tryWithLoaders(ParamFunc, ClassLoader)} if you want to supply a custom fallback class loader.
+     *
+     * @param func the function
+     * @return the result of one of the functions
+     */
+    @NotNull
+    public static <T, X extends Exception> Expect<T, X> tryWithLoaders(@NotNull ParamFunc<? super ClassLoader, T, X> func) {
+        return tryWithLoaders(func, ReflectUtil.getCallerClass(2).getClassLoader());
+    }
+
+    /**
+     * Computes a given function with the {@link Thread#getContextClassLoader() context class loader} (if there is one).
+     * The given function will be computed again with the given fallback class loader, if the previous computation failed.
+     *
+     * @param func     the function
+     * @param fallback the fallback class loader
+     * @return the result of one of the functions
+     */
+    @NotNull
+    public static <T, X extends Exception> Expect<T, X> tryWithLoaders(@NotNull ParamFunc<? super ClassLoader, T, X> func,
+                                                                       @NotNull ClassLoader fallback) {
+        return tryWithLoaders(func, () -> func.apply(fallback));
+    }
+
+    /**
+     * Computes a given function with the {@link Thread#getContextClassLoader() context class loader} (if there is one).
+     * The given fallback function will be computed subsequently, if the previous computation failed.
+     *
+     * @param func     the function
+     * @param fallback the fallback function
+     * @return the result of one of the functions
+     */
+    @NotNull
+    public static <T, X extends Exception> Expect<T, X> tryWithLoaders(@NotNull ParamFunc<? super ClassLoader, T, X> func,
+                                                                       @NotNull Func<T, X> fallback) {
+        var contextLoader = Thread.currentThread().getContextClassLoader();
+
+        Expect<T, X> ex;
+        if ((contextLoader != null) && !(ex = Expect.compute(func, contextLoader)).hasCaught())
+            return ex;
+
+        return Expect.compute(fallback);
     }
 
     /**

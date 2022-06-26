@@ -267,7 +267,7 @@ public class Conditions {
      * @param init if the class should be initialized in case of loading success
      * @return {@code true} if the class could be loaded, {@code false} otherwise
      */
-    public static boolean clazz(@Nullable String name, boolean init) {
-        return !ReflectUtil.forName(name, init, ReflectUtil.getCallerClass().getClassLoader()).hasCaught();
+    public static boolean clazz(@NotNull String name, boolean init) {
+        return Conversions.tryWithLoaders(l -> ReflectUtil.forName(name, init, l)).isPresent();
     }
 }
