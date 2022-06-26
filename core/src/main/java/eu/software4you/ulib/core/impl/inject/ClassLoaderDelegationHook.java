@@ -39,7 +39,7 @@ public final class ClassLoaderDelegationHook {
                                      Predicate<ClassLoader> filterClassLoader,
                                      BiPredicate<Class<?>, String> filterLoadingRequest) {
         this.targetClazz = targetClazz;
-        this.additionalHooks = additional;
+        this.additionalHooks = Objects.requireNonNullElse(additional, Collections.emptyMap());
         this.injection = new HookInjection(targetClazz);
 
         this.delegation = delegation;
