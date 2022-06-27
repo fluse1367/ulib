@@ -171,9 +171,6 @@ public final class ReflectSupport {
     }
 
     public static int deepHash(@NotNull final Object obj, @NotNull final Class<?> anchor, boolean useImpl) {
-        if (!Internal.isSudoThread())
-            return Unsafe.doPrivileged(() -> deepHash(obj, anchor, useImpl));
-
         // attempt using implementation
         if (useImpl) {
             try {
@@ -195,6 +192,8 @@ public final class ReflectSupport {
         }
 
         // auto compute hash
+        if (!Internal.isSudoThread())
+            return Unsafe.doPrivileged(() -> deepHash(obj, anchor, false));
 
         var fields = Arrays.stream(anchor.getDeclaredFields())
                 .filter(f -> !f.isSynthetic())
