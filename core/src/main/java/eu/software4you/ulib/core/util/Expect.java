@@ -279,7 +279,7 @@ public final class Expect<T, X extends Exception> {
      * @throws XX if no value is present
      */
     @NotNull
-    public <XX extends Exception> T orElseThrow(@NotNull Supplier<XX> exceptionSupplier) throws XX {
+    public <XX extends Throwable> T orElseThrow(@NotNull Supplier<XX> exceptionSupplier) throws XX {
         if (isEmpty())
             throw exceptionSupplier.get();
 
