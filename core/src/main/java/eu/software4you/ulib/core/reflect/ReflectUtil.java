@@ -541,7 +541,7 @@ public class ReflectUtil {
     public static <T, X extends Exception> Expect<T, X> tryWithLoaders(@NotNull ParamFunc<? super ClassLoader, T, X> func,
                                                                        @NotNull Func<T, X> fallback) {
         return Expect.compute(func, Thread.currentThread().getContextClassLoader())
-                .or(() -> Expect.compute(fallback));
+                .or(fallback);
     }
 
 }

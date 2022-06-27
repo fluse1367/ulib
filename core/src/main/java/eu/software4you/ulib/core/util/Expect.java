@@ -427,6 +427,11 @@ public final class Expect<T, X extends Exception> {
         return isPresent() ? this : (Expect<T, X>) Objects.requireNonNull(func.get());
     }
 
+    @NotNull
+    public Expect<T, X> or(@NotNull Func<? extends T, ? extends X> func) {
+        return or(() -> compute(func));
+    }
+
     /**
      * Executes the supplied task if a value is present and catches and exception.
      *
