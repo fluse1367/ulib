@@ -300,6 +300,18 @@ public final class Expect<T, X extends Exception> {
     }
 
     /**
+     * Returns the contained value if it is present and attempts to rethrow the caught exception boxed in a runtime exception.
+     *
+     * @return the contained value
+     * @throws RuntimeException if no value is present
+     */
+    @NotNull
+    @Contract(pure = true)
+    public T orElseRethrowRE() throws RuntimeException {
+        return orElseRethrow(RuntimeException.class);
+    }
+
+    /**
      * Returns the contained value if it is present and attempts to rethrow the caught exception if it is from a specific type.
      * If this is an empty Expect object a {@link NoSuchElementException} is thrown instead.
      *
