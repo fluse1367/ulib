@@ -1,6 +1,7 @@
 package eu.software4you.ulib.core.util;
 
 import eu.software4you.ulib.core.function.*;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -446,6 +447,12 @@ public final class Expect<T, X extends Exception> {
         return isPresent() ? compute(() -> mapper.execute(value))
                 : hasCaught() ? new Expect<>(null, new IllegalStateException("Previous execution failed", caught))
                 : empty();
+    }
+
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    @Override
+    public boolean equals(Object o) {
+        return ReflectUtil.autoEquals(this, o);
     }
 
     @Override
