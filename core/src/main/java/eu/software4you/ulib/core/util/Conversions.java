@@ -144,13 +144,14 @@ public class Conversions {
      * Converts a byte array into the appropriate hex representation.
      *
      * @param bytes the byte array
+     * @param upper toggle to provide the characters in upper case instead of lower case
      * @return the hex string
      */
     @NotNull
-    public static String toHex(byte[] bytes) {
+    public static String toHex(byte[] bytes, boolean upper) {
         var b = new StringBuilder();
         for (byte by : bytes) {
-            b.append(String.format("%02X", by));
+            b.append(String.format("%02" + (upper ? "X" : "x"), by));
         }
         return b.toString();
     }

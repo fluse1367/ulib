@@ -20,7 +20,7 @@ public class HashUtil {
     @NotNull
     public static Expect<String, IOException> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
         return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest)
-                .orElseRethrow(IOException.class)));
+                .orElseRethrow(IOException.class), false));
     }
 
     /**
@@ -29,7 +29,7 @@ public class HashUtil {
      * @param in     the stream to compute the hash from
      * @param digest the digest to use
      * @return the computed hash
-     * @see Conversions#toHex(byte[])
+     * @see Conversions#toHex(byte[], boolean)
      */
     @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
@@ -46,7 +46,7 @@ public class HashUtil {
      * @param bytes  the bytes to compute the hash from
      * @param digest the digest to use
      * @return the computed hash
-     * @see Conversions#toHex(byte[])
+     * @see Conversions#toHex(byte[], boolean)
      */
     public static byte[] computeHash(byte[] bytes, @NotNull MessageDigest digest) {
         digest.update(bytes);
