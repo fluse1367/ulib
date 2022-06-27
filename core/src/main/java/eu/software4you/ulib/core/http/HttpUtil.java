@@ -20,30 +20,46 @@ public class HttpUtil {
     private static final HttpClient DEFAULT_CLIENT = HttpClient.newHttpClient();
 
     /**
-     * Sends a {@code application/x-www-form-urlencoded} POST request.
+     * Sends a {@code application/x-www-form-urlencoded} POST request using the default http client.
      * The key-value fields will be appended to in an url encoded format.
      *
      * @param uri    the uri
      * @param fields the key-value fields to send
      * @return the response
+     * @see #POST(URI, Map, HttpClient)
      * @see Map#of(Object, Object)
      */
     @NotNull
     public static Expect<HttpResponse<InputStream>, Exception> POST(@NotNull URI uri, @NotNull Map<String, String> fields) {
-        return Expect.compute(() -> {
-            var body = x_www_form_urlencoded(fields).getBytes(UTF_8);
+        return POST(uri, fields, DEFAULT_CLIENT);
+    }
 
+    /**
+     * Sends a {@code application/x-www-form-urlencoded} POST request using the given http client.
+     * The key-value fields will be appended to in an url encoded format.
+     *
+     * @param uri    the uri
+     * @param fields the key-value fields to send
+     * @param client the client to send the request with
+     * @return the response
+     * @see Map#of(Object, Object)
+     */
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> POST(@NotNull URI uri, @NotNull Map<String, String> fields,
+                                                                    @NotNull HttpClient client) {
+        return Expect.compute(() -> {
             var request = HttpRequest.newBuilder(uri)
-                    .POST(HttpRequest.BodyPublishers.ofByteArray(body))
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(formUrlEncode(fields).getBytes(UTF_8)))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .build();
 
-            return DEFAULT_CLIENT.send(request, ofInputStream());
+            return client.send(request, ofInputStream());
         });
     }
 
     /**
-     * Sends a GET request. The key-value fields will be appended to the base uri in an url encoded format.
+     * Sends a GET request using the default http client.
+     * The key-value fields will be appended to the base uri in an url encoded format.
      *
      * @param baseUri the base uri
      * @param fields  the key-value fields to send.
@@ -52,28 +68,64 @@ public class HttpUtil {
      */
     @NotNull
     public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI baseUri, @NotNull Map<String, String> fields) {
+        return GET(baseUri, fields, DEFAULT_CLIENT);
+    }
+
+    /**
+     * Sends a GET request using the given http client.
+     * The key-value fields will be appended to the base uri in an url encoded format.
+     *
+     * @param baseUri the base uri
+     * @param fields  the key-value fields to send.
+     * @param client  the client to send the request with
+     * @return the response
+     * @see Map#of(Object, Object)
+     */
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI baseUri, @NotNull Map<String, String> fields,
+                                                                   @NotNull HttpClient client) {
         return Expect.compute(() -> {
             var connect = baseUri.toString().endsWith("/") ? "?" : "/?";
-            var uri = baseUri.resolve(connect.concat(x_www_form_urlencoded(fields)));
-            return GET(uri).orElseRethrow();
+            var uri = baseUri.resolve(connect.concat(formUrlEncode(fields)));
+            return GET(uri, client).orElseRethrow();
         });
     }
 
     /**
-     * Sends a GET request.
+     * Sends a GET request using the default http client.
      *
      * @param uri the uri
      * @return the response
+     * @see #GET(URI, HttpClient)
      */
     @NotNull
     public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI uri) {
+        return GET(uri, DEFAULT_CLIENT);
+    }
+
+    /**
+     * Sends a GET request using the given http client.
+     *
+     * @param uri    the uri
+     * @param client the client to send the request with
+     * @return the response
+     */
+    @NotNull
+    public static Expect<HttpResponse<InputStream>, Exception> GET(@NotNull URI uri, @NotNull HttpClient client) {
         return Expect.compute(() -> {
             var request = HttpRequest.newBuilder(uri).GET().build();
-            return DEFAULT_CLIENT.send(request, ofInputStream());
+            return client.send(request, ofInputStream());
         });
     }
 
-    private static String x_www_form_urlencoded(Map<String, String> fields) {
+    /**
+     * Encodes a key-value map into the {@code x-www-form-urlencoded} standard.
+     *
+     * @param fields the key-value map
+     * @return the url encoded string
+     * @see <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">W3 reference</a>
+     */
+    public static String formUrlEncode(Map<String, String> fields) {
         var sj = new StringJoiner("&");
         fields.forEach((k, v) -> sj.add("%s=%s".formatted(encode(k, UTF_8), encode(v, UTF_8))));
         return sj.toString();
