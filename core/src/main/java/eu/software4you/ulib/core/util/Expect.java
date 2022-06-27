@@ -451,7 +451,7 @@ public final class Expect<T, X extends Exception> {
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         return ReflectUtil.autoEquals(this, o);
     }
 
