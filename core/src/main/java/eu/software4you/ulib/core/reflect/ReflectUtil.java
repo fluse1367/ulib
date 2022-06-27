@@ -456,7 +456,10 @@ public class ReflectUtil {
      * Automatically checks two objects for equality.
      * <p>
      * The subsequent implementation does not use {@link Object#equals(Object)} on the given objects.
-     * Instead, the hash values or the underlying fields itself are compared against each other.
+     * Instead, the hash values are compared against each other.
+     * <p>
+     * This method differs from {@link #autoEqualsDeep(Object, Object)} that it does not compare each field,
+     * instead it fully relies on the hash values.
      *
      * @param someObject  the first object
      * @param otherObject the second object
@@ -471,12 +474,23 @@ public class ReflectUtil {
             || someObject.getClass() != otherObject.getClass())
             return false;
 
-        // try to "prove" equality by hash codes
-        if (autoHash(someObject) == autoHash(otherObject))
-            return true;
+        return autoHash(someObject) == autoHash(otherObject);
+    }
 
-        // check all fields
-        return ReflectSupport.deepEquals(someObject, otherObject);
+    /**
+     * Automatically checks two objects for equality.
+     * <p>
+     * The subsequent implementation does not use {@link Object#equals(Object)} on the given objects.
+     * Instead, the hash values or the underlying fields itself are compared against each other.
+     *
+     * @param someObject  the first object
+     * @param otherObject the second object
+     * @return {@code true} if the given objects are considered equal, {@code false} otherwise
+     * @see #autoHash(Object)
+     */
+    public static boolean autoEqualsDeep(@Nullable Object someObject, @Nullable Object otherObject) {
+        return autoEquals(someObject, otherObject) ||
+               someObject != null && otherObject != null && ReflectSupport.deepEquals(someObject, otherObject);
     }
 
     /**
