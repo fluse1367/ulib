@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.impl.configuration;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.configuration.serialization.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.Conversions;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +68,7 @@ public class SerializationAdapters {
             elements.put(key.toString(), value);
         });
 
-        return Conversions.tryWithLoaders(l -> deserialize(ReflectUtil.forName(clazz, true, l).orElseThrow(), elements))
+        return ReflectUtil.tryWithLoaders(l -> deserialize(ReflectUtil.forName(clazz, true, l).orElseThrow(), elements))
                 .orElseThrow();
     }
 

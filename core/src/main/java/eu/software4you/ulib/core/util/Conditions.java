@@ -268,6 +268,6 @@ public class Conditions {
      * @return {@code true} if the class could be loaded, {@code false} otherwise
      */
     public static boolean clazz(@NotNull String name, boolean init) {
-        return Conversions.tryWithLoaders(l -> ReflectUtil.forName(name, init, l)).isPresent();
+        return ReflectUtil.tryWithLoaders(l -> ReflectUtil.forName(name, init, l)).isPresent();
     }
 }
