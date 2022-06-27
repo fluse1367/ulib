@@ -125,7 +125,8 @@ public class HttpUtil {
      * @return the url encoded string
      * @see <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">W3 reference</a>
      */
-    public static String formUrlEncode(Map<String, String> fields) {
+    @NotNull
+    public static String formUrlEncode(@NotNull Map<String, String> fields) {
         var sj = new StringJoiner("&");
         fields.forEach((k, v) -> sj.add("%s=%s".formatted(encode(k, UTF_8), encode(v, UTF_8))));
         return sj.toString();
