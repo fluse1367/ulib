@@ -123,7 +123,7 @@ public class HttpUtil {
      *
      * @param fields the key-value map
      * @return the url encoded string
-     * @see <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">W3 reference</a>
+     * @see <a href="https://url.spec.whatwg.org/#concept-urlencoded">URL Standard reference</a>
      */
     @NotNull
     public static String formUrlEncode(@NotNull Map<String, String> fields) {
