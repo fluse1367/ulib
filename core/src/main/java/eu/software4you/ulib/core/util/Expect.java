@@ -421,6 +421,12 @@ public final class Expect<T, X extends Exception> {
         return isPresent() ? this : compute(() -> task.execute(getCaught()));
     }
 
+    @NotNull
+    public Expect<T, X> or(@NotNull Supplier<Expect<? extends T, ? extends X>> func) {
+        //noinspection unchecked
+        return isPresent() ? this : (Expect<T, X>) Objects.requireNonNull(func.get());
+    }
+
     /**
      * Executes the supplied task if a value is present and catches and exception.
      *

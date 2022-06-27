@@ -540,13 +540,8 @@ public class ReflectUtil {
     @NotNull
     public static <T, X extends Exception> Expect<T, X> tryWithLoaders(@NotNull ParamFunc<? super ClassLoader, T, X> func,
                                                                        @NotNull Func<T, X> fallback) {
-        var contextLoader = Thread.currentThread().getContextClassLoader();
-
-        Expect<T, X> ex;
-        if ((contextLoader != null) && !(ex = Expect.compute(func, contextLoader)).hasCaught())
-            return ex;
-
-        return Expect.compute(fallback);
+        return Expect.compute(func, Thread.currentThread().getContextClassLoader())
+                .or(() -> Expect.compute(fallback));
     }
 
 }
