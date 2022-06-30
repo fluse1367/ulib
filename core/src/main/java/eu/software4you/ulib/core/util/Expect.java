@@ -2,6 +2,7 @@ package eu.software4you.ulib.core.util;
 
 import eu.software4you.ulib.core.function.*;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -331,6 +332,34 @@ public final class Expect<T, X extends Exception> {
 
         rethrow(type);
         throw new NoSuchElementException("Empty Expect object");
+    }
+
+    /**
+     * Throws the caught object if present.
+     *
+     * @deprecated This method is <b>unsafe</b> as it may throw <a href="https://projectlombok.org/features/SneakyThrows"><i>any</i> caught exception</a> regardless its type (despite the method declaration).
+     */
+    @SuppressWarnings("RedundantThrows")
+    @SneakyThrows
+    @Deprecated
+    public void $rethrow() throws X {
+        rethrow();
+    }
+
+    /**
+     * Returns the contained value if it is present and attempts to rethrow the caught exception.
+     * If this is an empty Expect object a {@link NoSuchElementException} is thrown instead.
+     *
+     * @return the contained value
+     * @throws X if no value is present
+     * @deprecated This method is <b>unsafe</b> as it may throw <a href="https://projectlombok.org/features/SneakyThrows"><i>any</i> caught exception</a> regardless its type (despite the method declaration).
+     */
+    @SuppressWarnings("RedundantThrows")
+    @SneakyThrows
+    @Deprecated
+    @NotNull
+    public T $orElseRethrow() throws X {
+        return orElseRethrow();
     }
 
     /**
