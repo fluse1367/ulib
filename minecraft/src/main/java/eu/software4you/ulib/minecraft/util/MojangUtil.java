@@ -3,12 +3,10 @@ package eu.software4you.ulib.minecraft.util;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.configuration.JsonConfiguration;
 import eu.software4you.ulib.core.http.HttpUtil;
-import eu.software4you.ulib.core.io.IOUtil;
 import eu.software4you.ulib.core.util.Conversions;
 import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpResponse;
 import java.time.Instant;
@@ -36,9 +34,6 @@ public final class MojangUtil {
     public static Expect<UUID, ?> fetchUUID(@NotNull String username) {
         return HttpUtil.GET(PROFILE.resolve(username))
                 .map(HttpResponse::body)
-                .map(IOUtil::toString)
-                .map(Expect::orElseRethrow)
-                .map(StringReader::new)
                 .map(JsonConfiguration::loadJson)
                 .map(Expect::orElseRethrow)
                 .map(json -> json.string("id")
