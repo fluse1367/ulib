@@ -36,8 +36,11 @@ public class PluginSubst extends ExtendedJavaPlugin implements Listener {
 
         // populate constants
         final var server = Bukkit.getServer();
-        SharedConstants.MC_VER.setInstance(ReflectUtil.icall(String.class, server, "getServer().getVersion()")
-                .orElseThrow());
+        var ver = ReflectUtil.icall(String.class, server, "getServer().getVersion()")
+                .or(() -> ReflectUtil.icall(String.class, server, "getServer().getServerVersion()"))
+                .or(() -> ReflectUtil.icall(String.class, server, "getMinecraftVersion()"))
+                .orElseThrow();
+        SharedConstants.MC_VER.setInstance(ver);
 
 
         // determine current mc version
