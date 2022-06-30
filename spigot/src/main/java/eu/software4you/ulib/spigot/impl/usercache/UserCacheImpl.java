@@ -7,11 +7,12 @@ import eu.software4you.ulib.spigot.impl.DelegationListener;
 import eu.software4you.ulib.spigot.plugin.ExtendedPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class UserCacheImpl extends AbstractUserCache {
-    private final ExtendedPlugin owner;
+    private final PluginBase<Listener, ?> owner;
 
     public UserCacheImpl(PluginBase<?, ?> pl, Table table) {
         super(table);

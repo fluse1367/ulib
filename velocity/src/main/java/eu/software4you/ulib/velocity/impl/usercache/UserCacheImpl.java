@@ -8,18 +8,15 @@ import com.velocitypowered.api.proxy.Player;
 import eu.software4you.ulib.core.database.sql.Table;
 import eu.software4you.ulib.minecraft.impl.usercache.AbstractUserCache;
 import eu.software4you.ulib.minecraft.plugin.PluginBase;
-import eu.software4you.ulib.velocity.plugin.VelocityPlugin;
 
 public final class UserCacheImpl extends AbstractUserCache {
-    private final VelocityPlugin owner;
+    private final PluginBase<Object, ?> owner;
 
     public UserCacheImpl(PluginBase<?, ?> pl, Table table) {
         super(table);
 
-        if (!(pl instanceof VelocityPlugin owner))
-            throw new IllegalArgumentException("Plugin not an instance of VelocityPlugin");
-
-        this.owner = owner;
+        //noinspection unchecked
+        this.owner = (PluginBase<Object, ?>) pl;
         this.owner.registerEvents(this);
     }
 
