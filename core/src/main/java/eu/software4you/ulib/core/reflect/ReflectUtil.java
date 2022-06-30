@@ -355,7 +355,7 @@ public class ReflectUtil {
     }
 
     /**
-     * Attempts to load a certain class.
+     * Attempts to load a certain class. Will also resolve primitives.
      *
      * @param name   the fully qualified name of the class
      * @param init   if the class should be initialized in case of loading success
@@ -364,7 +364,19 @@ public class ReflectUtil {
      */
     @NotNull
     public static Expect<Class<?>, ClassNotFoundException> forName(@NotNull String name, boolean init, @NotNull ClassLoader loader) {
-        return Expect.compute(Class::forName, name, init, loader);
+        return Expect.<Class<?>, ClassNotFoundException>ofNullable(
+                switch (name) {
+                    case "byte" -> byte.class;
+                    case "short" -> short.class;
+                    case "int" -> int.class;
+                    case "long" -> long.class;
+                    case "float" -> float.class;
+                    case "double" -> double.class;
+                    case "boolean" -> boolean.class;
+                    case "char" -> char.class;
+                    default -> null;
+                }
+        ).or(() -> Expect.compute(Class::forName, name, init, loader));
     }
 
     /**
