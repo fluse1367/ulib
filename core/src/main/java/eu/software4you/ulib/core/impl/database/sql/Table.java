@@ -4,9 +4,11 @@ import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.database.sql.Column;
 import eu.software4you.ulib.core.database.sql.DataType;
 import eu.software4you.ulib.core.impl.database.sql.query.*;
+import eu.software4you.ulib.core.util.Expect;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import static eu.software4you.ulib.core.util.ArrayUtil.concat;
@@ -29,9 +31,8 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
         return Optional.ofNullable(columns.get(name));
     }
 
-    @SneakyThrows
     @Override
-    public boolean create() {
+    public @NotNull Expect<Void, SQLException> create() {
         StringJoiner sj = new StringJoiner(", ");
         StringBuilder sb = new StringBuilder();
 
@@ -79,12 +80,13 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
 
         String sql = String.format("create table `%s` (%s);", name, sj);
 
-        try (var st = this.sql.prepareStatement(sql)) {
-            // rather let this throw something than returning `false`
-            // TODO: wrap in Expect object
-            st.executeUpdate();
-        }
-        return true;
+        return Expect.compute(() -> {
+            try (var st = this.sql.prepareStatement(sql)) {
+                // rather let this throw something than returning `false`
+                // TODO: wrap in Expect object
+                st.executeUpdate();
+            }
+        });
     }
 
     @SneakyThrows

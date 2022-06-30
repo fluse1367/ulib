@@ -42,7 +42,7 @@ public class SqliTest {
         Assert.assertFalse(table.exists());
 
         // create table
-        Assert.assertTrue(table.create());
+        table.create().rethrow(SQLException.class);
 
         // table should now exist
         Assert.assertTrue(table.exists());

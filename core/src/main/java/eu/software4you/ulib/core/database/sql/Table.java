@@ -3,8 +3,10 @@ package eu.software4you.ulib.core.database.sql;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.common.Keyable;
 import eu.software4you.ulib.core.database.sql.query.*;
+import eu.software4you.ulib.core.util.Expect;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
@@ -43,7 +45,8 @@ public interface Table extends Keyable<String> {
      *
      * @return {@code true}, if the operation was successful
      */
-    boolean create();
+    @NotNull
+    Expect<Void, SQLException> create();
 
     /**
      * Attempts to delete this table from the database.
