@@ -82,8 +82,6 @@ public abstract class Table implements eu.software4you.ulib.core.database.sql.Ta
 
         return Expect.compute(() -> {
             try (var st = this.sql.prepareStatement(sql)) {
-                // rather let this throw something than returning `false`
-                // TODO: wrap in Expect object
                 st.executeUpdate();
             }
         });
