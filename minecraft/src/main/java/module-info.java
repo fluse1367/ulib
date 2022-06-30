@@ -10,6 +10,7 @@ module ulib.minecraft {
 
     // ulib
     requires transitive ulib.core;
+    requires java.net.http;
 
     // api exports
     exports eu.software4you.ulib.minecraft.launchermeta;

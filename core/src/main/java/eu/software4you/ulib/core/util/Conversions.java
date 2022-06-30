@@ -177,4 +177,27 @@ public class Conversions {
         }
         return roman.toString();
     }
+
+    /**
+     * Converts a 32-character hex string into a UUID.
+     *
+     * @param hexUUID the 32-char hex string
+     * @return the uuid
+     * @throws IllegalArgumentException if the string is not 32 characters long or if it's not a hex string
+     */
+    @NotNull
+    public static UUID hexToUUID(@NotNull String hexUUID) {
+        if (hexUUID.length() != 32)
+            throw new IllegalArgumentException("invalid length: " + hexUUID.length());
+
+        long least, most;
+        try {
+            most = Long.parseUnsignedLong(hexUUID.substring(0, 16), 16);
+            least = Long.parseUnsignedLong(hexUUID.substring(16, 32), 16);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("not a hex string", e);
+        }
+
+        return new UUID(most, least);
+    }
 }
