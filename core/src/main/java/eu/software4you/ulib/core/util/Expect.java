@@ -141,6 +141,10 @@ public final class Expect<T, X extends Exception> {
         this.caught = caught;
     }
 
+    private <U, XX extends Exception> Expect<U, XX> asPreviousFailed() {
+        return new Expect<>(null, new IllegalStateException("Previous execution failed", caught));
+    }
+
     /**
      * Returns an optional wrapping the contained value if no exception is present.
      *
@@ -364,11 +368,21 @@ public final class Expect<T, X extends Exception> {
     /**
      * Runs the given task if a caught object is present.
      *
-     * @param peeker the task
+     * @param task the task
      */
-    public <XX extends Exception> void ifCaught(@NotNull ParamTask<? super Exception, XX> peeker) throws XX {
-        if (hasCaught())
-            peeker.execute(caught);
+    @NotNull
+    public <XX extends Exception> Expect<Void, XX> ifCaught(@NotNull ParamTask<? super Exception, XX> task) {
+        return hasCaught() ? compute(() -> task.execute(caught)) : empty();
+    }
+
+    /**
+     * Runs the given task if no caught object is present.
+     *
+     * @param task the task
+     */
+    @NotNull
+    public <XX extends Exception> Expect<Void, XX> ifNotCaught(@NotNull Task<XX> task) {
+        return hasCaught() ? asPreviousFailed() : compute(task);
     }
 
     /**
@@ -445,8 +459,18 @@ public final class Expect<T, X extends Exception> {
         Objects.requireNonNull(mapper);
 
         return isPresent() ? compute(() -> mapper.execute(value))
-                : hasCaught() ? new Expect<>(null, new IllegalStateException("Previous execution failed", caught))
+                : hasCaught() ? asPreviousFailed()
                 : empty();
+    }
+
+    /**
+     * Executes the supplied task if no exception has been caught.
+     *
+     * @param func the function to execute
+     */
+    @NotNull
+    public <U, XX extends Exception> Expect<U, XX> then(@NotNull Func<U, XX> func) {
+        return hasCaught() ? asPreviousFailed() : compute(func);
     }
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")

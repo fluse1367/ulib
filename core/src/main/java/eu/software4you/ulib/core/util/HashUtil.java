@@ -19,8 +19,8 @@ public class HashUtil {
      */
     @NotNull
     public static Expect<String, IOException> computeHex(@NotNull InputStream stream, @NotNull MessageDigest digest) {
-        return Expect.compute(() -> Conversions.toHex(computeHash(stream, digest)
-                .orElseRethrow(IOException.class), false));
+        return computeHash(stream, digest)
+                .map(b -> Conversions.toHex(b, false));
     }
 
     /**
@@ -33,11 +33,8 @@ public class HashUtil {
      */
     @NotNull
     public static Expect<byte[], IOException> computeHash(@NotNull InputStream in, @NotNull MessageDigest digest) {
-        return Expect.compute(() -> {
-            IOUtil.updateBlockwise(in, digest::update)
-                    .rethrow(IOException.class);
-            return digest.digest();
-        });
+        return IOUtil.updateBlockwise(in, digest::update)
+                .then(digest::digest);
     }
 
     /**
@@ -63,12 +60,9 @@ public class HashUtil {
      */
     @NotNull
     public static Expect<Long, IOException> computeCRC32(@NotNull InputStream in) {
-        return Expect.compute(() -> {
-            Checksum sum = new CRC32();
-            IOUtil.updateBlockwise(in, sum::update)
-                    .rethrow(IOException.class);
-            return sum.getValue();
-        });
+        final Checksum sum = new CRC32();
+        return IOUtil.updateBlockwise(in, sum::update)
+                .then(sum::getValue);
     }
 
     /**
