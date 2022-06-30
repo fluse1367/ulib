@@ -89,7 +89,7 @@ public class InitAccess {
         File me = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 
         var provider = new ModuleClassProvider(null, List.of(me),
-                ClassLoader.getSystemClassLoader(), ModuleLayer.boot(), true);
+                getClass().getClassLoader(), ModuleLayer.boot(), true);
 
         var loader = provider.getLayer().findLoader("ulib.loader");
 
