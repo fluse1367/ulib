@@ -2,6 +2,7 @@ package eu.software4you.ulib.spigot.impl.proxybridge;
 
 import com.google.common.io.*;
 import com.google.gson.*;
+import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
@@ -31,7 +32,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge imple
     }
 
     private void sendMessage(String server, Message message) {
-        byte[] data = new Gson().toJson(message).getBytes();
+        byte[] data = Unsafe.doPrivileged(() -> new Gson().toJson(message).getBytes());
         Bukkit.getOnlinePlayers().stream().findFirst().ifPresent(server.equals(PROXY_SERVER_NAME) ?
                 player -> player.sendPluginMessage(plugin.getPluginObject(), CHANNEL, data) :
                 player -> {
@@ -91,7 +92,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge imple
         if (!je.isJsonObject())
             return;
 
-        Message message = new Gson().fromJson(je, Message.class);
+        Message message = Unsafe.doPrivileged(() -> new Gson().fromJson(je, Message.class));
         String from = message.getFrom();
         switch (message.getType()) {
             case REQUEST:
