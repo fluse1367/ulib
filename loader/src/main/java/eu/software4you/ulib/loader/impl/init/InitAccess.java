@@ -3,6 +3,7 @@ package eu.software4you.ulib.loader.impl.init;
 import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.impl.Util;
 import eu.software4you.ulib.loader.impl.install.ModuleClassProvider;
+import eu.software4you.ulib.loader.install.Environment;
 import eu.software4you.ulib.loader.install.Installer;
 import eu.software4you.ulib.loader.minecraft.*;
 import lombok.SneakyThrows;
@@ -31,6 +32,7 @@ public class InitAccess {
     }
 
     private Object initializer, injector;
+    private EnvironmentProvider.Environment environment;
 
     private boolean init;
 
@@ -98,6 +100,12 @@ public class InitAccess {
         }
     }
 
+    public Environment getEnvironment() {
+        if (environment == null)
+            throw new IllegalStateException("Not initialized");
+        return environment.asExposed();
+    }
+
     @SneakyThrows
     public Object construct(String mod, String cn, Object... initArgs) {
         ensureAccess();
@@ -139,7 +147,10 @@ public class InitAccess {
     }
 
     private EnvironmentProvider.Environment getEnv() {
-        return Optional.ofNullable(System.getProperty("ulib.install.env_overwrite"))
+        if (environment != null)
+            return environment;
+
+        return environment = Optional.ofNullable(System.getProperty("ulib.install.env_overwrite"))
                 .map(envName -> {
                     try {
                         var env = EnvironmentProvider.Environment.valueOf(envName);
@@ -152,5 +163,4 @@ public class InitAccess {
                 })
                 .orElseGet(EnvironmentProvider::get);
     }
-
 }

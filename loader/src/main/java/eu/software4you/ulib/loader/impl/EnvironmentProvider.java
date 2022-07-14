@@ -1,6 +1,9 @@
 package eu.software4you.ulib.loader.impl;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 
 import java.util.*;
 
@@ -34,6 +37,7 @@ public class EnvironmentProvider {
         @Getter
         private final Collection<String> modules;
         private final Map<String, Collection<Class<?>[]>> hooks;
+        private final ExposedEnvironment exposedEnvironment;
 
         Environment(String... modules) {
             this(Collections.emptyMap(), modules);
@@ -42,10 +46,73 @@ public class EnvironmentProvider {
         Environment(Map<String, Collection<Class<?>[]>> hooks, String... modules) {
             this.hooks = hooks;
             this.modules = Set.of(modules);
+            this.exposedEnvironment = new ExposedEnvironment(this);
         }
 
         public Map<String, Collection<Class<?>[]>> getAdditionalClassLoaderHookings() {
             return hooks;
+        }
+
+        public eu.software4you.ulib.loader.install.Environment asExposed() {
+            return exposedEnvironment;
+        }
+    }
+
+    @RequiredArgsConstructor
+    private static final class ExposedEnvironment implements eu.software4you.ulib.loader.install.Environment {
+        private final Environment env;
+
+        @Override
+        public String getName() {
+            return env.name();
+        }
+
+        @Override
+        public Collection<String> getModules() {
+            return env.modules;
+        }
+
+        @Override
+        public boolean isStandalone() {
+            return switch (env) {
+                case STANDALONE, STANDALONE_MINECRAFT -> true;
+                default -> false;
+            };
+        }
+
+        @Override
+        public boolean isMinecraft() {
+            return env.modules.contains("minecraft");
+        }
+
+        @Override
+        public boolean isBungeecord() {
+            return env.modules.contains("bungeecord");
+        }
+
+        @Override
+        public boolean isVelocity() {
+            return env.modules.contains("velocity");
+        }
+
+        @Override
+        public boolean isSpigot() {
+            return env.modules.contains("spigot");
+        }
+
+        @Override
+        public boolean isFabric() {
+            return env.modules.contains("fabric");
+        }
+
+        @Override
+        public boolean isServer() {
+            return isVelocity() || isBungeecord() || isSpigot() || !isClient();
+        }
+
+        @Override
+        public boolean isClient() {
+            return env == Environment.FABRIC && FabricLoaderImpl.INSTANCE.getEnvironmentType() == EnvType.CLIENT;
         }
     }
 }

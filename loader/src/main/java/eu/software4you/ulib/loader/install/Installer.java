@@ -53,6 +53,15 @@ public final class Installer {
     }
 
     /**
+     * Returns the environment ulib is running in
+     *
+     * @return the environment object
+     */
+    public static Environment getEnvironment() {
+        return access.getEnvironment();
+    }
+
+    /**
      * Ensures the library is initialized. Attempts to initialize the library if necessary.
      *
      * @throws IllegalStateException if the initialization failed
