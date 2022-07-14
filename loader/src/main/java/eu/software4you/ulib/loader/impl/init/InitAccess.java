@@ -26,9 +26,7 @@ public class InitAccess {
     private static final InitAccess inst = new InitAccess();
 
     public static InitAccess getInstance() {
-        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        if (!PERMITTED.contains(caller))
-            throw new SecurityException();
+        inst.ensureAccess();
         return inst;
     }
 
@@ -36,7 +34,25 @@ public class InitAccess {
 
     private boolean init;
 
+    private void ensureAccess() {
+        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (!PERMITTED.contains(caller)
+            && caller.getClassLoader() != getClass().getClassLoader())
+            throw new SecurityException();
+    }
+
+    public void ensureInit() {
+        ensureAccess();
+        try {
+            init();
+        } catch (URISyntaxException | ReflectiveOperationException e) {
+            Throwable cause = e instanceof InvocationTargetException ite ? ite.getCause() : e;
+            throw new RuntimeException("Failure while initializing ulib", cause);
+        }
+    }
+
     public void install(ClassLoader cl, Module publish) throws ReflectiveOperationException {
+        ensureAccess();
         ensureInit();
 
         injector.getClass().getMethod("installLoaders", ClassLoader.class)
@@ -48,6 +64,8 @@ public class InitAccess {
     }
 
     public ClassLoader provider() {
+        ensureAccess();
+        ensureInit();
         try {
             return (ClassLoader) initializer.getClass()
                     .getMethod("getClassProvider")
@@ -58,6 +76,9 @@ public class InitAccess {
     }
 
     public ModuleLayer layer() {
+        ensureAccess();
+        ensureInit();
+
         try {
             return (ModuleLayer) initializer.getClass().getMethod("getLayer").invoke(initializer);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -65,17 +86,11 @@ public class InitAccess {
         }
     }
 
-    public void ensureInit() {
-        try {
-            init();
-        } catch (URISyntaxException | ReflectiveOperationException e) {
-            Throwable cause = e instanceof InvocationTargetException ite ? ite.getCause() : e;
-            throw new RuntimeException("Failure while initializing ulib", cause);
-        }
-    }
-
     @SneakyThrows
     public Object construct(String mod, String cn, Object... initArgs) {
+        ensureAccess();
+        ensureInit();
+
         return initializer.getClass()
                 .getMethod("construct", String.class, String.class, Object[].class)
                 .invoke(initializer, mod, cn, initArgs);
