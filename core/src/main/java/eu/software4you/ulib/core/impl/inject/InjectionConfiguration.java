@@ -19,12 +19,11 @@ public class InjectionConfiguration {
 
     @SuppressWarnings("unchecked")
     public <R> InjectionConfiguration with(String targetMethodSignature, Spec spec, BiParamTask<? super Object[], ? super Callback<R>, ?> call) {
-        if (Arrays.stream(targetClass.getDeclaredMethods())
-                .map(InjectionSupport::getSignature)
-                .noneMatch(targetMethodSignature::equals))
+        String signature;
+        if ((signature = validateTarget(targetMethodSignature)) == null)
             throw new IllegalArgumentException("Hook target `%s` not found in %s".formatted(targetMethodSignature, targetClass.getName()));
 
-        var cont = ((Hooks<R>) hooks.computeIfAbsent(targetMethodSignature, sig -> new Hooks<>()));
+        var cont = ((Hooks<R>) hooks.computeIfAbsent(signature, sig -> new Hooks<>()));
         var at = spec.point();
 
         switch (at) {
@@ -35,6 +34,30 @@ public class InjectionConfiguration {
         }
 
         return this;
+    }
+
+    private String validateTarget(String targetMethodSignature) {
+        if (targetMethodSignature.startsWith("<init>")) {
+
+            var descriptor = Objects.requireNonNull(InjectionSupport.splitSignature(targetMethodSignature).getSecond());
+            if (descriptor.isBlank()) {
+                targetMethodSignature += descriptor = InjectionSupport.getDescriptor(targetClass.getDeclaredConstructors()[0]);
+            }
+
+
+            if (Arrays.stream(targetClass.getDeclaredConstructors())
+                    .map(InjectionSupport::getDescriptor)
+                    .noneMatch(descriptor::equals))
+                return null;
+
+            return targetMethodSignature;
+
+        } else if (Arrays.stream(targetClass.getDeclaredMethods())
+                .map(InjectionSupport::getSignature)
+                .noneMatch(targetMethodSignature::equals))
+            return null;
+
+        return targetMethodSignature;
     }
 
 

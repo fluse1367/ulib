@@ -93,8 +93,12 @@ public final class ClassTransformer implements ClassFileTransformer {
                 .orElse(null); // method not found
     }
 
+    private String boxSig(CtBehavior ctb) {
+        return (ctb instanceof CtConstructor ? "<init>" : ctb.getName()) + ctb.getSignature();
+    }
+
     private void injectHookCalls(CtBehavior behavior) throws NotFoundException, CannotCompileException {
-        String methodDescriptor = behavior.getName() + behavior.getSignature();
+        String methodDescriptor = boxSig(behavior);
         CtClass ctReturnType;
         boolean isConstructor = false;
         if (behavior instanceof CtMethod ctm) {
@@ -151,7 +155,7 @@ public final class ClassTransformer implements ClassFileTransformer {
 
     @SneakyThrows
     private String buildProxyInjection(final CtBehavior box, final CtClass returnType, final HookPoint where, final String fullTargetSignature, final int n) {
-        var boxSignature = box.getName() + box.getSignature();
+        var boxSignature = boxSig(box);
 
         return String.format("""
                         {
@@ -190,7 +194,7 @@ public final class ClassTransformer implements ClassFileTransformer {
      * @return map containing information what has been proxied ( proxy point -> ( full target signature -> collection of ns ) )
      */
     private Map<HookPoint, Map<String, Collection<Integer>>> injectProxies(Class<?> cl, CtBehavior behavior) throws CannotCompileException {
-        final var boxSignature = behavior.getName() + behavior.getSignature();
+        final var boxSignature = boxSig(behavior);
 
         final Map<String, AtomicInteger> methodCallNs = new HashMap<>();
         final Map<String, AtomicInteger> fieldReadNs = new HashMap<>();
