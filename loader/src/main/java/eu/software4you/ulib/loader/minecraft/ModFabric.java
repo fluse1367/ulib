@@ -8,7 +8,7 @@ import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 public class ModFabric implements PreLaunchEntrypoint {
 
     static {
-        EnvironmentProvider.initAs(EnvironmentProvider.Environment.STANDALONE_MINECRAFT);
+        EnvironmentProvider.initAs(EnvironmentProvider.Environment.FABRIC);
         Installer.installTo(ClassLoader.getSystemClassLoader());
         Installer.installMe();
     }

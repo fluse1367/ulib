@@ -25,6 +25,7 @@ public class EnvironmentProvider {
                 MOD_DEF, MOD_ADD, "spigot"),
         BUNGEECORD(MOD_DEF, MOD_ADD, "bungeecord"),
         VELOCITY(MOD_DEF, MOD_ADD, "velocity"),
+        FABRIC(MOD_DEF, MOD_ADD),
         STANDALONE_MINECRAFT(MOD_DEF, MOD_ADD),
         STANDALONE(MOD_DEF),
         TEST(MOD_DEF, MOD_ADD, "spigot", "bungeecord", "velocity"),

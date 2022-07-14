@@ -19,7 +19,8 @@ public class InitAccess {
             () -> Installer.class,
             () -> PluginVelocity.class,
             () -> PluginSpigot.class,
-            () -> PluginBungeecord.class
+            () -> PluginBungeecord.class,
+            () -> ModFabric.class
     ); // tryClasses bc PluginVelocity/PluginSpigot might fail to load
 
     private static final InitAccess inst = new InitAccess();
@@ -44,6 +45,16 @@ public class InitAccess {
         if (publish != null)
             injector.getClass().getMethod("addReadsTo", Module.class)
                     .invoke(injector, publish);
+    }
+
+    public ClassLoader provider() {
+        try {
+            return (ClassLoader) initializer.getClass()
+                    .getMethod("getClassProvider")
+                    .invoke(initializer);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new InternalError(e);
+        }
     }
 
     public ModuleLayer layer() {
