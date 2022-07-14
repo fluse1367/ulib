@@ -25,7 +25,7 @@ test:
 # snapshots
 snapshot build:
   stage: build
-  script: "$GRADLE_EXEC build -Pvariation=snapshot"
+  script: "$GRADLE_EXEC build -x test -Pvariation=snapshot"
   artifacts: &artifacts
     paths:
       - loader/build/libs/ulib-loader-*.jar
@@ -41,7 +41,7 @@ snapshot build:
     - if: $CI_PIPELINE_SOURCE == 'web' # only via web
 snapshot publication:
   stage: publish
-  script: "$GRADLE_EXEC publish -Pvariation=snapshot"
+  script: "$GRADLE_EXEC publish -x test -Pvariation=snapshot"
   rules: *rules_snapshot
 
 # releases
