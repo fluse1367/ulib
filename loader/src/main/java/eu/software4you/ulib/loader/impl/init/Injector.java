@@ -12,8 +12,9 @@ public class Injector {
 
     private final Initializer initializer;
 
-    private final Set<ClassLoader> published = new HashSet<>();
+    private final Set<ClassLoader> published = new HashSet<>(); // contains all CL's that ulib is installed to
     private final Set<Class<? extends ClassLoader>> injected = new HashSet<>();
+    private final Set<ClassLoader> privileged = new HashSet<>(); // contains all CL's that may request loading of ulib classes regardless of installation state
     private Object delegation;
 
     @SneakyThrows
@@ -29,6 +30,14 @@ public class Injector {
                 // additionally(String method, Class<?>[] paramTypes, Function<? super Object[], Optional<String>> classNameResolver)
                 .getMethod("additionally", String.class, Class[].class, Function.class)
                 .invoke(this.delegation, method, paramTypes, classNameResolver);
+    }
+
+    public void privileged(ClassLoader loader, boolean is) {
+        if (is) {
+            privileged.add(loader);
+        } else {
+            privileged.remove(loader);
+        }
     }
 
     private boolean testLoadingRequest(Class<?> requester, String request) {
@@ -69,7 +78,7 @@ public class Injector {
         Object result = clIU.getMethod("injectLoaderDelegation", delegation.getClass(), Predicate.class, BiPredicate.class, Class.class)
                 .invoke(null,
                         delegation,
-                        (Predicate<ClassLoader>) published::contains,
+                        (Predicate<ClassLoader>) loader -> published.contains(loader) || privileged.contains(loader),
                         (BiPredicate<Class<?>, String>) this::testLoadingRequest,
                         cl);
         try {

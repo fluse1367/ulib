@@ -63,6 +63,18 @@ public class InitAccess {
                     .invoke(injector, publish);
     }
 
+    public void privileged(ClassLoader loader, boolean is) {
+        ensureAccess();
+        ensureInit();
+
+        try {
+            injector.getClass().getMethod("privileged", ClassLoader.class, boolean.class)
+                    .invoke(injector, loader, is);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new InternalError(e);
+        }
+    }
+
     public ClassLoader provider() {
         ensureAccess();
         ensureInit();
