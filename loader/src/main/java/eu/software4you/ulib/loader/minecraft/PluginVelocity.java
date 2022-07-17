@@ -44,7 +44,7 @@ public class PluginVelocity {
     @SneakyThrows
     @Subscribe
     public void onInit(ProxyInitializeEvent e) {
-        this.pluginSubstitute = InitAccess.getInstance().construct("velocity", "eu.software4you.ulib.velocity.impl.PluginSubst",
+        this.pluginSubstitute = InitAccess.getInstance().construct("velocity", "impl.PluginSubst",
                 this, proxyServer, logger, dataDir);
     }
 }

@@ -107,13 +107,13 @@ public class InitAccess {
     }
 
     @SneakyThrows
-    public Object construct(String mod, String cn, Object... initArgs) {
+    public Object construct(String module, String classNameSub, Object... initArgs) {
         ensureAccess();
         ensureInit();
 
         return initializer.getClass()
                 .getMethod("construct", String.class, String.class, Object[].class)
-                .invoke(initializer, mod, cn, initArgs);
+                .invoke(initializer, module, classNameSub, initArgs);
     }
 
     @Synchronized

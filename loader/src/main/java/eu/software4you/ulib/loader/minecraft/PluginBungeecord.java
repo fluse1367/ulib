@@ -15,7 +15,7 @@ public class PluginBungeecord extends Plugin {
 
     @Override
     public void onLoad() {
-        this.pluginSubstitute = (Plugin) InitAccess.getInstance().construct("bungeecord", "eu.software4you.ulib.bungeecord.impl.PluginSubst",
+        this.pluginSubstitute = (Plugin) InitAccess.getInstance().construct("bungeecord", "impl.PluginSubst",
                 this, getProxy(), getDescription());
     }
 

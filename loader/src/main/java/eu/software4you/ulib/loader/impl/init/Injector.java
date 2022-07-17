@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.*;
 
+import static eu.software4you.ulib.loader.impl.init.Shared.BASE_PACKAGE_PFX;
+
 // handles injection of ulib
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Injector {
@@ -48,12 +50,10 @@ public class Injector {
             return false;
         }
 
-        var pfx = "eu.software4you.ulib.";
-
         // dont handle other requests
-        if (!request.startsWith(pfx))
+        if (!request.startsWith(BASE_PACKAGE_PFX))
             return false;
-        request = request.substring(pfx.length());
+        request = request.substring(BASE_PACKAGE_PFX.length());
 
         // deny access to implementation
         int i = request.indexOf(".");

@@ -65,7 +65,7 @@ public class PluginSpigot extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onLoad() {
-        this.pluginSubstitute = (Plugin) InitAccess.getInstance().construct("spigot", "eu.software4you.ulib.spigot.impl.PluginSubst",
+        this.pluginSubstitute = (Plugin) InitAccess.getInstance().construct("spigot", "impl.PluginSubst",
                 this, getPluginLoader(), getDescription(), getDataFolder(), getFile());
     }
 
