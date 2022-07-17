@@ -5,7 +5,6 @@ import eu.software4you.ulib.core.function.ParamFunc;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
-import eu.software4you.ulib.core.util.Unsafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -123,7 +122,7 @@ public final class ClassLoaderDelegation {
         this.target = Objects.requireNonNull(delegateTarget);
 
         if ((flag & FLAG_DELEGATE_LOAD_CLASS) != 0) {
-            this.delegateLoadClass = (name, resolve) -> Unsafe.doPrivileged(() ->
+            this.delegateLoadClass = (name, resolve) -> ReflectUtil.doPrivileged(() ->
                     ReflectUtil.icall(Class.class, target, "loadClass()",
                             Param.listOf(String.class, name, boolean.class, resolve)).getValue()
             );
@@ -132,7 +131,7 @@ public final class ClassLoaderDelegation {
         }
 
         if ((flag & FLAG_DELEGATE_FIND_CLASS) != 0) {
-            this.delegateFindClass = name -> Unsafe.doPrivileged(() ->
+            this.delegateFindClass = name -> ReflectUtil.doPrivileged(() ->
                     ReflectUtil.icall(Class.class, target, "findClass()",
                             Param.listOf(String.class, name)).getValue()
             );
@@ -141,7 +140,7 @@ public final class ClassLoaderDelegation {
         }
 
         if ((flag & FLAG_DELEGATE_FIND_MODULE_CLASS) != 0) {
-            this.delegateFindModuleClass = (module, name) -> Unsafe.doPrivileged(() ->
+            this.delegateFindModuleClass = (module, name) -> ReflectUtil.doPrivileged(() ->
                     ReflectUtil.icall(Class.class, target, "findClass()",
                             Param.listOf(String.class, module, String.class, name)).getValue()
             );
@@ -150,7 +149,7 @@ public final class ClassLoaderDelegation {
         }
 
         if ((flag & FLAG_DELEGATE_FIND_RESOURCE) != 0) {
-            this.delegateFindResource = name -> Unsafe.doPrivileged(() ->
+            this.delegateFindResource = name -> ReflectUtil.doPrivileged(() ->
                     ReflectUtil.icall(URL.class, target, "findResource()",
                             Param.listOf(String.class, name)).getValue()
             );
@@ -159,7 +158,7 @@ public final class ClassLoaderDelegation {
         }
 
         if ((flag & FLAG_DELEGATE_FIND_MODULE_RESOURCE) != 0) {
-            this.delegateFindModuleResource = (module, name) -> Unsafe.doPrivileged(() ->
+            this.delegateFindModuleResource = (module, name) -> ReflectUtil.doPrivileged(() ->
                     ReflectUtil.icall(URL.class, target, "findResource()",
                             Param.listOf(String.class, module, String.class, name)).getValue()
             );

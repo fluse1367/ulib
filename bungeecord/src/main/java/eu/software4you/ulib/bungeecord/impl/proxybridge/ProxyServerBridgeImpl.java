@@ -2,7 +2,7 @@ package eu.software4you.ulib.bungeecord.impl.proxybridge;
 
 import com.google.gson.*;
 import eu.software4you.ulib.bungeecord.plugin.ExtendedPlugin;
-import eu.software4you.ulib.core.util.Unsafe;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.message.Message;
 import eu.software4you.ulib.minecraft.proxybridge.message.MessageType;
@@ -26,7 +26,7 @@ public class ProxyServerBridgeImpl extends AbstractProxyServerBridge implements 
     private ServerInfo lastReceivedCommand = null;
 
     private void sendMessage(ServerInfo server, Message message) {
-        server.sendData(CHANNEL, Unsafe.doPrivileged(() -> new Gson().toJson(message).getBytes()));
+        server.sendData(CHANNEL, ReflectUtil.doPrivileged(() -> new Gson().toJson(message).getBytes()));
     }
 
     private ServerInfo findServer(String serverName) {
@@ -76,7 +76,7 @@ public class ProxyServerBridgeImpl extends AbstractProxyServerBridge implements 
 
         ServerInfo from = ((ProxiedPlayer) e.getSender()).getServer().getInfo();
 
-        Message message = Unsafe.doPrivileged(() -> new Gson().fromJson(je, Message.class));
+        Message message = ReflectUtil.doPrivileged(() -> new Gson().fromJson(je, Message.class));
 
         switch (message.getType()) {
             case REQUEST:

@@ -4,7 +4,6 @@ import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Expect;
-import eu.software4you.ulib.core.util.Unsafe;
 
 import java.lang.StackWalker.StackFrame;
 import java.net.URL;
@@ -159,7 +158,7 @@ public final class ClassLoaderDelegationHook {
                 // try parent
                 .map(ClassLoader.class::cast)
                 .map(ClassLoader::getParent)
-                .map(parent -> Unsafe.doPrivileged(() -> ReflectUtil.icall(Class.class, parent, methodPrefix + "Class()", methodParams).orElse(null)))
+                .map(parent -> ReflectUtil.doPrivileged(() -> ReflectUtil.icall(Class.class, parent, methodPrefix + "Class()", methodParams).orElse(null)))
 
                 // try delegate
                 .or(() -> Optional.ofNullable(delegate.get()))

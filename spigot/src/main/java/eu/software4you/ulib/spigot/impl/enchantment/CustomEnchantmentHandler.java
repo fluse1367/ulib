@@ -3,7 +3,6 @@ package eu.software4you.ulib.spigot.impl.enchantment;
 import com.cryptomorin.xseries.XEnchantment;
 import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.minecraft.impl.SharedConstants;
 import eu.software4you.ulib.minecraft.mappings.Mappings;
 import eu.software4you.ulib.minecraft.plugin.controllers.SchedulerController;
@@ -135,7 +134,7 @@ public class CustomEnchantmentHandler {
 
         // set seed to exp seed of player
         if (methodName_player_getEnchantment != null) {
-            int xpSeed = Unsafe.doPrivileged(() -> ReflectUtil.icall(Integer.class, e.getEnchanter(),
+            int xpSeed = ReflectUtil.doPrivileged(() -> ReflectUtil.icall(Integer.class, e.getEnchanter(),
                     String.format("getHandle().%s()", methodName_player_getEnchantment)).orElseThrow());
             rand.setSeed(xpSeed);
         }

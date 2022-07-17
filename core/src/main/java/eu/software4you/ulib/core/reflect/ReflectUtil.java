@@ -1,7 +1,7 @@
 package eu.software4you.ulib.core.reflect;
 
-import eu.software4you.ulib.core.function.Func;
-import eu.software4you.ulib.core.function.ParamFunc;
+import eu.software4you.ulib.core.function.*;
+import eu.software4you.ulib.core.impl.BypassAnnotationEnforcement;
 import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.impl.reflect.ReflectSupport;
 import eu.software4you.ulib.core.util.*;
@@ -16,6 +16,36 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class ReflectUtil {
+
+    /**
+     * Executes a given task in the current thread with effectively no access control on reflective operations.
+     * <p>
+     * The access control on reflective objects is disabled for the current thread while executing this method.
+     *
+     * @param task the task to execute
+     * @deprecated this method is considered unsafe/unsecure as it allows unrestricted reflective access
+     */
+    @Deprecated
+    public static <X extends Exception> void doPrivileged(@NotNull Task<X> task) throws X {
+        doPrivileged((Func<Void, X>) () -> {
+            task.execute();
+            return null;
+        });
+    }
+
+    /**
+     * Executes a given task in the current thread with effectively no access control on reflective operations.
+     * <p>
+     * The access control on reflective objects is disabled for the current thread while executing this method.
+     *
+     * @param task the task to execute
+     * @deprecated this method is considered unsafe/unsecure as it allows unrestricted reflective access
+     */
+    @BypassAnnotationEnforcement
+    @Deprecated
+    public static <T, X extends Exception> T doPrivileged(@NotNull Func<T, X> task) throws X {
+        return Internal.sudo(task);
+    }
 
     /**
      * Calls a chain of methods/fields from an initial entry point object ("instance-call").
@@ -202,7 +232,7 @@ public class ReflectUtil {
         var cl = forName("sun.reflect.annotation.AnnotationParser", true, ClassLoader.getSystemClassLoader())
                 .orElseThrow();
 
-        return Unsafe.doPrivileged(() -> scall(Annotation.class, cl, "annotationForMap()",
+        return doPrivileged(() -> scall(Annotation.class, cl, "annotationForMap()",
                 Param.listOf(Class.class, type, Map.class, annoValues))
                 .map(type::cast)
                 .orElseThrow());

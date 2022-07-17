@@ -4,7 +4,8 @@ import eu.software4you.ulib.core.function.Func;
 import eu.software4you.ulib.core.function.ParamTask;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.*;
+import eu.software4you.ulib.core.util.Expect;
+import eu.software4you.ulib.core.util.LazyValue;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +68,7 @@ public class LazyValueImpl<T> implements LazyValue<T> {
             return;
 
         // forcibly cancel execution
-        Unsafe.doPrivileged(() -> ReflectUtil.icall(this.executingThread, "stop0()",
+        ReflectUtil.doPrivileged(() -> ReflectUtil.icall(this.executingThread, "stop0()",
                 Param.single(Object.class, new LazyValueCancel())).rethrowRE());
     }
 

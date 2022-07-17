@@ -6,7 +6,7 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.*;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import eu.software4you.ulib.core.util.Unsafe;
+import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.minecraft.impl.proxybridge.AbstractProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.ProxyServerBridge;
 import eu.software4you.ulib.minecraft.proxybridge.command.Command;
@@ -33,7 +33,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge {
     }
 
     private void sendMessage(ChannelMessageSink sink, Message message) {
-        sink.sendPluginMessage(IDENTIFIER, Unsafe.doPrivileged(() -> new Gson().toJson(message).getBytes()));
+        sink.sendPluginMessage(IDENTIFIER, ReflectUtil.doPrivileged(() -> new Gson().toJson(message).getBytes()));
     }
 
     private RegisteredServer findServer(String serverName) {
@@ -84,7 +84,7 @@ public final class ProxyServerBridgeImpl extends AbstractProxyServerBridge {
         if (!(e.getSource() instanceof ServerConnection from))
             return;
 
-        Message message = Unsafe.doPrivileged(() -> new Gson().fromJson(je, Message.class));
+        Message message = ReflectUtil.doPrivileged(() -> new Gson().fromJson(je, Message.class));
 
         switch (message.getType()) {
             case REQUEST:

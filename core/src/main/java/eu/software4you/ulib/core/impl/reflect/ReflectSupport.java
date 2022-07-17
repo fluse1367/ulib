@@ -3,7 +3,6 @@ package eu.software4you.ulib.core.impl.reflect;
 import eu.software4you.ulib.core.collection.Pair;
 import eu.software4you.ulib.core.impl.Internal;
 import eu.software4you.ulib.core.reflect.*;
-import eu.software4you.ulib.core.util.Unsafe;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -142,7 +141,7 @@ public final class ReflectSupport {
     @SneakyThrows
     public static boolean deepEquals(@NotNull Object a, @NotNull Object b) {
         if (!Internal.isSudoThread())
-            return Unsafe.doPrivileged(() -> deepEquals(a, b));
+            return ReflectUtil.doPrivileged(() -> deepEquals(a, b));
 
         // compare all fields
         var clazz = a.getClass();
@@ -193,7 +192,7 @@ public final class ReflectSupport {
 
         // auto compute hash
         if (!Internal.isSudoThread())
-            return Unsafe.doPrivileged(() -> deepHash(obj, anchor, false));
+            return ReflectUtil.doPrivileged(() -> deepHash(obj, anchor, false));
 
         var fields = Arrays.stream(anchor.getDeclaredFields())
                 .filter(f -> !f.isSynthetic())

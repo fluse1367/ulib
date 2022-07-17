@@ -3,7 +3,6 @@ package eu.software4you.ulib.loader.minecraft;
 import eu.software4you.ulib.core.inject.*;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.impl.init.InitAccess;
 import eu.software4you.ulib.loader.install.Installer;
@@ -49,7 +48,7 @@ public class PluginSpigot extends JavaPlugin {
                                 // cancel actual method call and artificially call it *before* processing the un-privilegement
                                 // -> simulates a post method call hook point
                                 cb.cancel();
-                                Unsafe.doPrivileged(() -> ReflectUtil.icall(pl, "setEnabled()",
+                                ReflectUtil.doPrivileged(() -> ReflectUtil.icall(pl, "setEnabled()",
                                         Param.listOf(boolean.class, false)).rethrow());
 
                                 // now process it

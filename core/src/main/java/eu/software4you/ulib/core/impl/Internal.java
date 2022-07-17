@@ -8,7 +8,8 @@ import eu.software4you.ulib.core.impl.inject.*;
 import eu.software4you.ulib.core.io.IOUtil;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
-import eu.software4you.ulib.core.util.*;
+import eu.software4you.ulib.core.util.Conditions;
+import eu.software4you.ulib.core.util.Expect;
 import lombok.*;
 
 import java.io.*;
@@ -125,7 +126,7 @@ public final class Internal {
         Internal.instrumentation = Objects.requireNonNull(instrumentation);
 
         AccessibleObjectTransformer.acquirePrivileges();
-        Unsafe.doPrivileged(Internal::widenModuleAccess);
+        ReflectUtil.doPrivileged(Internal::widenModuleAccess);
         PropertiesLock.lockSystemProperties(AccessibleObjectTransformer.SUDO_KEY, InjectionManager.HOOKING_KEY, InjectionManager.PROXY_KEY);
     }
 
@@ -199,7 +200,7 @@ public final class Internal {
         if (noAccessYet.isEmpty())
             return;
 
-        Unsafe.doPrivileged(() -> {
+        ReflectUtil.doPrivileged(() -> {
             for (Module api : noAccessYet) {
                 ReflectUtil.icall(other, "implAddReads()", Param.single(Module.class, api));
             }

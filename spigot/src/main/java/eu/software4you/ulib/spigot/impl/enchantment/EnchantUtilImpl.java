@@ -5,7 +5,6 @@ import eu.software4you.ulib.core.impl.Tasks;
 import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
 import eu.software4you.ulib.core.util.Conversions;
-import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.minecraft.mappings.Mappings;
 import eu.software4you.ulib.spigot.enchantment.*;
 import lombok.SneakyThrows;
@@ -145,13 +144,13 @@ public final class EnchantUtilImpl {
 
     @SneakyThrows
     public static int getItemEnchantability(ItemStack stack) {
-        return Unsafe.doPrivileged(() -> ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack", true, Bukkit.class.getClassLoader()),
+        return ReflectUtil.doPrivileged(() -> ReflectUtil.scall(Integer.class, Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack", true, Bukkit.class.getClassLoader()),
                 "asNMSCopy().getItem().%s()".formatted(methodName_item_getEnchantmentValue),
                 Param.single(ItemStack.class, stack)).orElseThrow());
     }
 
     private static boolean byKeyName(BiFunction<Map<NamespacedKey, Enchantment>, Map<String, Enchantment>, Boolean> fun) {
-        var pair = Unsafe.doPrivileged(() -> {
+        var pair = ReflectUtil.doPrivileged(() -> {
             var byKey = ReflectUtil.scall(Map.class, Enchantment.class, "byKey")
                     .map(map -> Conversions.safecast(NamespacedKey.class, Enchantment.class, map).orElse(null))
                     .orElseThrow();
@@ -176,7 +175,7 @@ public final class EnchantUtilImpl {
         if (!ce.isInstance(enchantment))
             throw new IllegalArgumentException("%s not an instance of %s".formatted(enchantment, ce));
 
-        rarityName = Unsafe.doPrivileged(() -> ReflectUtil.scall(String.class, ce, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
+        rarityName = ReflectUtil.doPrivileged(() -> ReflectUtil.scall(String.class, ce, "getRaw().%s().name()".formatted(methodName_enchantment_getRarity),
                 Param.single(Enchantment.class, enchantment)).orElseThrow());
 
         return EnchantmentRarity.valueOf(rarityName);
