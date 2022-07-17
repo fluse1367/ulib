@@ -1,7 +1,9 @@
 package eu.software4you.ulib.loader.minecraft;
 
 import eu.software4you.ulib.core.inject.*;
+import eu.software4you.ulib.core.reflect.Param;
 import eu.software4you.ulib.core.reflect.ReflectUtil;
+import eu.software4you.ulib.core.util.Unsafe;
 import eu.software4you.ulib.loader.impl.EnvironmentProvider;
 import eu.software4you.ulib.loader.impl.init.InitAccess;
 import eu.software4you.ulib.loader.install.Installer;
@@ -42,7 +44,15 @@ public class PluginSpigot extends JavaPlugin {
                     .addHook(JavaPluginLoader.class.getMethod("disablePlugin", Plugin.class),
                             InjectUtil.createHookingSpec(HookPoint.METHOD_CALL, "Lorg/bukkit/plugin/java/JavaPlugin;setEnabled(Z)V"),
                             (__, cb) -> {
-                                Plugin pl = (Plugin) cb.proxyInst().orElseThrow();
+                                JavaPlugin pl = (JavaPlugin) cb.proxyInst().orElseThrow();
+
+                                // cancel actual method call and artificially call it *before* processing the un-privilegement
+                                // -> simulates a post method call hook point
+                                cb.cancel();
+                                Unsafe.doPrivileged(() -> ReflectUtil.icall(pl, "setEnabled()",
+                                        Param.listOf(boolean.class, false)).rethrow());
+
+                                // now process it
                                 filter(pl.getDescription(), () -> InitAccess.getInstance().privileged(pl.getClass().getClassLoader(), false));
                             })
 
