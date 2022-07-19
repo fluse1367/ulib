@@ -37,7 +37,12 @@ public class InitAccess {
     private boolean init;
 
     private void ensureAccess() {
-        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(st -> st
+                // skip first frame as it is the caller of this method which is always this class itself
+                .skip(1)
+                .findFirst().orElseThrow()
+                .getDeclaringClass()
+        );
         if (!PERMITTED.contains(caller)
             && caller.getClassLoader() != getClass().getClassLoader())
             throw new SecurityException();

@@ -129,11 +129,11 @@ public class HookInjection {
 
         Hook anno = hook.getAnnotation(Hook.class);
 
-        var caller = ReflectUtil.getCallerStackAsStream()
+        var caller = ReflectUtil.walkStack(st -> st
                 .map(StackWalker.StackFrame::getDeclaringClass)
                 .dropWhile(clazz -> clazz == HookInjection.class)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow());
 
         var target = ReflectUtil.tryWithLoaders(l -> findTargetClass(anno, hook.getDeclaringClass(), l),
                 caller.getClassLoader()).orElseThrow();

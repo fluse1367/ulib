@@ -92,11 +92,11 @@ public final class ReflectSupport {
     @Deprecated(forRemoval = true)
     public static boolean identifyRecursion(int threshold, int maxPatternLength, int ignoreLeadingFrames) {
         List<Class<?>> pattern = new LinkedList<>(); // pattern will be iterated/modified quite often
-        List<Class<?>> stack = ReflectUtil.getCallerStackAsStream()
+        List<Class<?>> stack = ReflectUtil.walkStack(st -> st
                 .skip(1) // skip this
                 .skip(ignoreLeadingFrames) // skip leading frames
                 .map(StackWalker.StackFrame::getDeclaringClass)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
         int occurrence = 0;
 

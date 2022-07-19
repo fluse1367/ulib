@@ -339,10 +339,10 @@ public class ReflectUtil {
      */
     @NotNull
     public static StackFrame getCaller(int depth) {
-        return getCallerStackAsStream()
+        return walkStack(st -> st
                 .skip(depth)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow());
     }
 
     /**
@@ -353,22 +353,34 @@ public class ReflectUtil {
      */
     @NotNull
     public static StackFrame[] getCallerStack() {
-        return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-                .walk(st -> st.skip(2) // skip this
-                        .toArray(StackFrame[]::new));
+        return walkStack(st -> st
+                .skip(1)
+                .toArray(StackFrame[]::new)
+        );
     }
 
     /**
-     * Builds the calling stack, where the first element is the currently calling {@link StackFrame frame}
+     * Walks the calling stack with a walker function, where the first element is the currently calling {@link StackFrame frame}
      * from the perspective of the caller of this method.
      *
-     * @return the stack array
+     * @param walker the walking function
+     * @return the result produced by the walker function
      */
-    @NotNull
-    public static Stream<StackFrame> getCallerStackAsStream() {
-        return Arrays.stream(getCallerStack())
-                .skip(1) // skip this
-                ;
+    public static <R, X extends Exception> R walkStack(ParamFunc<? super Stream<StackFrame>, R, X> walker) throws X {
+        var ex = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                .walk(st -> {
+
+                    /*
+                        skip first frame as it is the direct caller of this method,
+                        but by specification the first frame is supposed to be the direct caller
+                        from the perspective of the method currently calling this method
+                     */
+                    st = st.skip(1);
+
+                    return Expect.compute(walker, st);
+                });
+        ex.$rethrow();
+        return ex.orElse(null);
     }
 
 
