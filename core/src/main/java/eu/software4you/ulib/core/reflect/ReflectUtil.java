@@ -366,16 +366,17 @@ public class ReflectUtil {
      * @param walker the walking function
      * @return the result produced by the walker function
      */
-    public static <R, X extends Exception> R walkStack(ParamFunc<? super Stream<StackFrame>, R, X> walker) throws X {
+    @BypassAnnotationEnforcement
+    public static <R, X extends Exception> R walkStack(@NotNull ParamFunc<? super Stream<StackFrame>, R, X> walker) throws X {
         var ex = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
                 .walk(st -> {
 
                     /*
-                        skip first frame as it is the direct caller of this method,
+                        skip first & second frame as they are the current frame (this) and the direct caller of this method,
                         but by specification the first frame is supposed to be the direct caller
                         from the perspective of the method currently calling this method
                      */
-                    st = st.skip(1);
+                    st = st.skip(2);
 
                     return Expect.compute(walker, st);
                 });
